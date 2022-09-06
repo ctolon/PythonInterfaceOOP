@@ -1,0 +1,146 @@
+{
+    "internal-dpl-clock": "",
+    "internal-dpl-aod-reader": {
+        "time-limit": "0",
+        "orbit-offset-enumeration": "0",
+        "orbit-multiplier-enumeration": "0",
+        "start-value-enumeration": "0",
+        "end-value-enumeration": "-1",
+        "step-value-enumeration": "1",
+        "aod-file": "AO2D_pp_285396.root"
+    },
+    "d-q-event-selection-task": {
+        "cfgEventCuts": "eventStandard",
+        "cfgWithQA": "false",
+        "processEventSelection": "true",
+        "processDummy": "false"
+    },
+    "d-q-barrel-track-selection": {
+        "cfgBarrelTrackCuts": "jpsiPID2,jpsiPID1",
+        "cfgWithQA": "false",
+        "processSelection": "true",
+        "processSelectionTiny": "false",
+        "processDummy": "false"
+    },
+    "d-q-muons-selection": {
+        "cfgMuonsCuts": "muonLowPt,muonHighPt",
+        "cfgWithQA": "false",
+        "processSelection": "true",
+        "processDummy": "false"
+    },
+    "d-q-filter-p-p-task": {
+        "cfgBarrelSels": "jpsiPID2::1,jpsiPID1:pairMassLow:1",
+        "cfgMuonSels": "muonLowPt::1,muonHighPt::1,muonLowPt:pairNoCut:1",
+        "cfgWithQA": "false",
+        "processFilterPP": "true",
+        "processFilterPPTiny": "false",
+        "processDummy": "false"
+    },
+    "internal-dpl-aod-global-analysis-file-sink": "",
+    "internal-dpl-aod-writer": "",
+    "timestamp-task": {
+        "verbose": "false",
+        "rct-path": "RCT\/Info\/RunInformation",
+        "orbit-reset-path": "CTP\/Calib\/OrbitReset",
+        "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
+        "isRun2MC": "false"
+    },
+    "tof-pid-full": {
+        "param-file": "",
+        "param-sigma": "TOFResoParams",
+        "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
+        "ccdbPath": "Analysis\/PID\/TOF",
+        "ccdb-timestamp": "-1",
+        "enableTimeDependentResponse": "false",
+        "pid-el": "1",
+        "pid-mu": "1",
+        "pid-pi": "1",
+        "pid-ka": "1",
+        "pid-pr": "1",
+        "pid-de": "-1",
+        "pid-tr": "-1",
+        "pid-he": "-1",
+        "pid-al": "-1",
+        "processWSlice": "true",
+        "processWoSlice": "false"
+    },
+    "tpc-pid-full": {
+        "param-file": "",
+        "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
+        "ccdbPath": "Analysis\/PID\/TPC\/Response",
+        "ccdb-timestamp": "0",
+        "useNetworkCorrection": "false",
+        "autofetchNetworks": "true",
+        "networkPathLocally": "network.onnx",
+        "enableNetworkOptimizations": "true",
+        "networkPathCCDB": "Analysis\/PID\/TPC\/ML",
+        "pid-el": "1",
+        "pid-mu": "1",
+        "pid-pi": "1",
+        "pid-ka": "1",
+        "pid-pr": "1",
+        "pid-de": "-1",
+        "pid-tr": "-1",
+        "pid-he": "-1",
+        "pid-al": "-1"
+    },
+    "bc-selection-task": {
+        "processRun2": "true",
+        "processRun3": "false"
+    },
+    "multiplicity-table": {
+        "doVertexZeq": "1",
+        "doDummyZeq": "0",
+        "processRun2": "false",
+        "processRun3": "true"
+    },
+    "tof-signal": "",
+    "track-extension": {
+        "processRun2": "true",
+        "processRun3": "false"
+    },
+    "tof-pid": {
+        "param-file": "",
+        "param-sigma": "TOFResoParams",
+        "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
+        "ccdbPath": "Analysis\/PID\/TOF",
+        "ccdb-timestamp": "-1",
+        "enableTimeDependentResponse": "false",
+        "pid-el": "-1",
+        "pid-mu": "-1",
+        "pid-pi": "-1",
+        "pid-ka": "-1",
+        "pid-pr": "-1",
+        "pid-de": "-1",
+        "pid-tr": "-1",
+        "pid-he": "-1",
+        "pid-al": "-1",
+        "processWSlice": "true",
+        "processWoSlice": "false"
+    },
+    "event-selection-task": {
+        "syst": "pp",
+        "muonSelection": "0",
+        "customDeltaBC": "300",
+        "isMC": "false",
+        "processRun2": "true",
+        "processRun3": "false"
+    },
+    "tof-pid-beta": {
+        "tof-expreso": "80"
+    },
+    "tof-event-time": {
+        "param-file": "",
+        "param-sigma": "TOFReso",
+        "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
+        "ccdbPath": "Analysis\/PID\/TOF",
+        "ccdb-timestamp": "-1",
+        "processRun2": "false",
+        "processNoFT0": "true",
+        "processFT0": "false",
+        "processOnlyFT0": "false"
+    },
+    "track-selection": {
+        "isRun3": "false"
+    }
+}

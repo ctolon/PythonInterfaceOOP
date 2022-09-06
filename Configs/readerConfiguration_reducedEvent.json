@@ -1,0 +1,47 @@
+{
+  "InputDirector": {
+    "debugmode": true,
+    "InputDescriptors": [
+      {
+        "table": "AOD/REDUCEDEVENT/0",
+        "treename": "ReducedEvents" 
+      },
+      {
+        "table": "AOD/REEXTENDED/0",
+        "treename": "ReducedEventsExtended"
+      },
+      {
+        "table": "AOD/REVTXCOV/0",
+        "treename": "ReducedEventsVtxCov"
+      },
+      {
+        "table": "AOD/REQVECTOR/0",
+        "treename": "ReducedEventsQvector"
+      },
+      {
+        "table": "AOD/REDUCEDTRACK/0",
+        "treename": "ReducedTracks"
+      },
+      {
+        "table": "AOD/RTBARREL/0",
+        "treename": "ReducedTracksBarrel"
+      },
+      {
+        "table": "AOD/RTBARRELPID/0",
+        "treename": "ReducedTracksBarrelPID"
+      },
+      {
+        "table": "AOD/RTMUON/0",
+        "treename": "ReducedMuons"
+      },
+      {
+        "table": "AOD/RTMUONEXTRA/0",
+        "treename": "ReducedMuonsExtra"
+      },
+      {
+        "table": "AOD/RTMUONCOV/0",
+        "treename": "ReducedMuonsCov"
+      }
+    ]
+  }
+}

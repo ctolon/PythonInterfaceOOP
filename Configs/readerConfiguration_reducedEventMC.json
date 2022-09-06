@@ -1,0 +1,67 @@
+{
+  "InputDirector": {
+    "debugmode": true,
+    "InputDescriptors": [
+      {
+        "table": "AOD/REDUCEDEVENT/0",
+        "treename": "ReducedEvents" 
+      },
+      {
+        "table": "AOD/REEXTENDED/0",
+        "treename": "ReducedEventsExtended"
+      },
+      {
+        "table": "AOD/REVTXCOV/0",
+        "treename": "ReducedEventsVtxCov"
+      },
+      {
+        "table": "AOD/REMCCOLLBL/0",
+        "treename": "ReducedMCEventLabels"
+      },
+      {
+        "table": "AOD/REDUCEDTRACK/0",
+        "treename": "ReducedTracks"
+      },
+      {
+        "table": "AOD/RTBARREL/0",
+        "treename": "ReducedTracksBarrel"
+      },
+      {
+        "table": "AOD/RTBARRELCOV/0",
+        "treename": "ReducedTracksBarrelCov"
+      },
+      {
+        "table": "AOD/RTBARRELPID/0",
+        "treename": "ReducedTracksBarrelPID"
+      },
+      {
+        "table": "AOD/RTBARRELLABELS/0",
+        "treename": "ReducedTracksBarrelLabels"
+      },
+      {
+        "table": "AOD/RTMUON/0",
+        "treename": "ReducedMuons"
+      },
+      {
+        "table": "AOD/RTMUONEXTRA/0",
+        "treename": "ReducedMuonsExtra"
+      },
+      {
+        "table": "AOD/RTMUONCOV/0",
+        "treename": "ReducedMuonsCov"
+      },
+      {
+        "table": "AOD/REMC/0",
+        "treename": "ReducedMCEvents"
+      },
+      {
+        "table": "AOD/RTMC/0",
+        "treename": "ReducedMCTracks"
+      },
+      {
+        "table": "AOD/RTMUONSLABELS/0",
+        "treename": "ReducedMuonsLabels"
+      }
+    ]
+  }
+}
