@@ -20,7 +20,7 @@
 
 import argparse
 
-from extraModules.choicesCompleterList import ChoicesCompleterList
+from extramodules.choicesCompleterList import ChoicesCompleterList
 
 class CentralityTable(object):
     """

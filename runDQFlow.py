@@ -26,20 +26,19 @@ from logging import handlers
 import os
 import argparse
 
-from extraModules.actionHandler import NoAction
-from extraModules.actionHandler import ChoicesAction
-from extraModules.debugOptions import DebugOptions
-from extraModules.stringOperations import listToString
+from extramodules.actionHandler import NoAction
+from extramodules.actionHandler import ChoicesAction
+from extramodules.debugOptions import DebugOptions
+from extramodules.stringOperations import listToString
 
-from commonDeps.centralityTable import CentralityTable
-from commonDeps.eventSelection import EventSelectionTask
-from commonDeps.multiplicityTable import MultiplicityTable
-from commonDeps.pidTOFBase import TofEventTime
-from commonDeps.pidTOFBeta import TofPidBeta
-from commonDeps.pidTPCTOFFull import TpcTofPidFull
-from commonDeps.trackPropagation import TrackPropagation
-
-from dqTasks.dqFlow import AnalysisQvector
+from commondeps.centralityTable import CentralityTable
+from commondeps.eventSelection import EventSelectionTask
+from commondeps.multiplicityTable import MultiplicityTable
+from commondeps.pidTOFBase import TofEventTime
+from commondeps.pidTOFBeta import TofPidBeta
+from commondeps.pidTPCTOFFull import TpcTofPidFull
+from commondeps.trackPropagation import TrackPropagation
+from dqtasks.dqFlow import AnalysisQvector
 
 """
 argcomplete - Bash tab completion for argparse

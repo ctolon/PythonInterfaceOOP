@@ -26,7 +26,7 @@ from urllib.request import Request, urlopen
 import ssl
 
 from argcomplete.completers import ChoicesCompleter
-from extraModules.choicesCompleterList import ChoicesCompleterList
+from extramodules.choicesCompleterList import ChoicesCompleterList
 
 class DQFilterPPTask(object):
     """

@@ -26,7 +26,7 @@ from urllib.request import Request, urlopen
 import ssl
 
 from argcomplete.completers import ChoicesCompleter
-from extraModules.choicesCompleterList import ChoicesCompleterList
+from extramodules.choicesCompleterList import ChoicesCompleterList
 
 # Special configurations for filterPP are combined to avoid conflicts in the tableMaker interface
 

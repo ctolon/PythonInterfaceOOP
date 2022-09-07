@@ -26,12 +26,12 @@ from logging import handlers
 import os
 import argparse
 
-from extraModules.actionHandler import NoAction
-from extraModules.actionHandler import ChoicesAction
-from extraModules.debugOptions import DebugOptions
-from extraModules.stringOperations import listToString, stringToList
+from extramodules.actionHandler import NoAction
+from extramodules.actionHandler import ChoicesAction
+from extramodules.debugOptions import DebugOptions
+from extramodules.stringOperations import listToString, stringToList
 
-from dqTasks.dqEfficiency import DQEfficiency
+from dqtasks.dqEfficiency import DQEfficiency
 
 """
 argcomplete - Bash tab completion for argparse

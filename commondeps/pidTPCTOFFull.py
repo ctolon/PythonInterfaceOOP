@@ -21,7 +21,7 @@
 
 import argparse
 
-from extraModules.choicesCompleterList import ChoicesCompleterList
+from extramodules.choicesCompleterList import ChoicesCompleterList
 from argcomplete.completers import ChoicesCompleter
 
 class TpcTofPidFull(object):

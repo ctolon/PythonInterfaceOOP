@@ -18,8 +18,7 @@
 
 import argparse
 
-from argcomplete.completers import ChoicesCompleter
-from extraModules.choicesCompleterList import ChoicesCompleterList
+from extramodules.choicesCompleterList import ChoicesCompleterList
 
 class DebugOptions(object):
     """
