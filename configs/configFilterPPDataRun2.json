@@ -45,6 +45,15 @@
         "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
         "isRun2MC": "false"
     },
+    "track-propagation": {
+        "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
+        "lutPath": "GLO\/Param\/MatLUT",
+        "geoPath": "GLO\/Config\/GeometryAligned",
+        "grpPath": "GLO\/GRP\/GRP",
+        "mVtxPath": "GLO\/Calib\/MeanVertex",
+        "processStandard": "false",
+        "processCovariance": "true"
+    },
     "tof-pid-full": {
         "param-file": "",
         "param-sigma": "TOFResoParams",

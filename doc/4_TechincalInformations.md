@@ -264,7 +264,7 @@ Choice List for debug Parameters:
 
 You will receive a message that. also the command can likewise be added after configuring other parameters. For example:
 ```ruby
- python3 runTableMaker.py Configs/configTableMakerMCRun3.json -runMC --run 3 --process MuonOnlyWithCov OnlyBCs --cfgMCsignals muFromJpsi Jpsi muFromPsi2S Psi2S --aod Datas/AO2D -h
+ python3 runTableMakerMC.py configs/configTableMakerMCRun3.json -runMC --run 3 --process MuonOnlyWithCov OnlyBCs --cfgMCsignals muFromJpsi Jpsi muFromPsi2S Psi2S --aod Datas/AO2D -h
  ```
  
 You will see helper messages again. As long as this command is added in the parameters, the script will not run and will only show a help message.
@@ -335,20 +335,20 @@ You can see the debug messages of the numeric value you selected and the level a
 Example usage Logging for Both File and terminal:
 
 ```ruby 
-  python3 runTableMaker.py Configs/configTableMakerMCRun3.json -runMC --run 3  --debug DEBUG --logFile --process MuonOnlyWithCov OnlyBCs --cfgMCsignals muFromJpsi Jpsi muFromPsi2S Psi2S --aod Datas/AO2D.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --syst pp --add_track_prop
+  python3 runTableMakerMC.py configs/configTableMakerMCRun3.json -runMC --run 3  --debug DEBUG --logFile --process MuonOnlyWithCov OnlyBCs --cfgMCsignals muFromJpsi Jpsi muFromPsi2S Psi2S --aod Datas/AO2D.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --syst pp --add_track_prop
 ```
 
 Example usage for only logging to terminal:
 
 ```ruby 
-  python3 runTableMaker.py Configs/configTableMakerMCRun3.json -runMC --run 3 --debug DEBUG --process MuonOnlyWithCov OnlyBCs --cfgMCsignals muFromJpsi Jpsi muFromPsi2S Psi2S --aod Datas/AO2D.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --syst pp --add_track_prop
+  python3 runTableMakerMC.py configs/configTableMakerMCRun3.json -runMC --run 3 --debug DEBUG --process MuonOnlyWithCov OnlyBCs --cfgMCsignals muFromJpsi Jpsi muFromPsi2S Psi2S --aod Datas/AO2D.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --syst pp --add_track_prop
 ```
 
 For example, when the file is logged, you should see a result like this when you open the relevant file.
 
 ```ruby 
   2022-08-17 17:15:06,628 - [DEBUG]  - [internal-dpl-aod-reader] aod-file : reducedAod.root
-  2022-08-17 17:15:06,628 - [DEBUG]  - [internal-dpl-aod-reader] aod-reader-json : Configs/readerConfiguration_reducedEventMC.json
+  2022-08-17 17:15:06,628 - [DEBUG]  - [internal-dpl-aod-reader] aod-reader-json : configs/readerConfiguration_reducedEventMC.json
   2022-08-17 17:15:06,628 - [DEBUG]  - [analysis-event-selection] processSkimmed : true
   2022-08-17 17:15:06,628 - [DEBUG]  - [analysis-track-selection] processSkimmed : false
   2022-08-17 17:15:06,628 - [DEBUG]  - [analysis-muon-selection] cfgMuonCuts : muonQualityCuts,muonTightQualityCutsForTests
@@ -362,16 +362,16 @@ For example, when the file is logged, you should see a result like this when you
   2022-08-17 17:15:06,630 - [DEBUG]  - [analysis-same-event-pairing] processJpsiToMuMuVertexingSkimmed : false
   2022-08-17 17:15:06,630 - [DEBUG]  - [analysis-dilepton-track] processDimuonMuonSkimmed : false
   2022-08-17 17:15:06,630 - [INFO] Command to run:
-  2022-08-17 17:15:06,630 - [INFO] o2-analysis-dq-efficiency --configuration json://tempConfigDQEfficiency.json -b --aod-writer-json Configs/writerConfiguration_dileptonMC.json
+  2022-08-17 17:15:06,630 - [INFO] o2-analysis-dq-efficiency --configuration json://tempConfigDQEfficiency.json -b --aod-writer-json configs/writerConfiguration_dileptonMC.json
   2022-08-17 17:15:06,630 - [INFO] Args provided configurations List
-  2022-08-17 17:15:06,631 - [INFO] --cfgFileName : Configs/configAnalysisMC.json 
+  2022-08-17 17:15:06,631 - [INFO] --cfgFileName : configs/configAnalysisMC.json 
   2022-08-17 17:15:06,631 - [INFO] --add_mc_conv : False 
   2022-08-17 17:15:06,631 - [INFO] --add_fdd_conv : False 
   2022-08-17 17:15:06,631 - [INFO] --add_track_prop : False 
   2022-08-17 17:15:06,631 - [INFO] --logFile : True 
   2022-08-17 17:15:06,631 - [INFO] --aod : reducedAod.root 
-  2022-08-17 17:15:06,631 - [INFO] --reader : Configs/readerConfiguration_reducedEventMC.json 
-  2022-08-17 17:15:06,632 - [INFO] --writer : Configs/writerConfiguration_dileptonMC.json 
+  2022-08-17 17:15:06,631 - [INFO] --reader : configs/readerConfiguration_reducedEventMC.json 
+  2022-08-17 17:15:06,632 - [INFO] --writer : configs/writerConfiguration_dileptonMC.json 
   2022-08-17 17:15:06,632 - [INFO] --analysis : ['muonSelection', 'eventSelection', 'sameEventPairing'] 
   2022-08-17 17:15:06,632 - [INFO] --process : ['JpsiToMuMu'] 
   2022-08-17 17:15:06,632 - [INFO] --autoDummy : true 
@@ -417,7 +417,7 @@ For example, when the file is logged, you should see a result like this when you
     * Example for MC Run3 commands are:
        
       ```ruby
-      python3 runTableMaker.py Configs/configTableMakerMCRun3.json -runMC --run 3 --aod AO2D.root --outputjson ConfiguredTableMakerData2 --onlySelect true --process BarrelOnly MuonOnlyWithCent BarrelOnlyWithEventFilter --isBarrelSelectionTiny true --syst pp --cfgMCsignals eeFromSingleBandBtoC
+      python3 runTableMakerMC.py configs/configTableMakerMCRun3.json -runMC --run 3 --aod AO2D.root --outputjson ConfiguredTableMakerData2 --onlySelect true --process BarrelOnly MuonOnlyWithCent BarrelOnlyWithEventFilter --isBarrelSelectionTiny true --syst pp --cfgMCsignals eeFromSingleBandBtoC
       ``` 
 
       ```ruby
@@ -602,7 +602,7 @@ For example, let's say we're working on a tableMaker:
 As seen here, the process functions for Full, FullWithCov, and OnlyBCs are true. Let's assume that we made the following configuration for the interface in the terminal:
 
 ```ruby
-python3 runTableMaker.py Configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs BarrelOnlyWithCent --onlySelect true
+python3 runTableMaker.py configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs BarrelOnlyWithCent --onlySelect true
 ```
 P.S. Since onlySelect is true (you don't need to add it to your workflow when configuring `--onlySelect` to true, its default value is true I just added it to show, JSON Overrider Mode):
 
@@ -641,7 +641,7 @@ As you can see, only the OnlyBCs and BarrelOnlyWithCent process functions are se
 If we configured onlySelect to false:
 
 ```ruby
-python3 runTableMaker.py Configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs BarrelOnlyWithCent --onlySelect false (JSON Additional Mode)
+python3 runTableMaker.py configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs BarrelOnlyWithCent --onlySelect false (JSON Additional Mode)
 ```
 
 Then our output would be:
@@ -695,7 +695,7 @@ A similar situation applies to Analysis Cut configurations and MC Signal configu
 Here we will configure the track cuts:
 
 ```ruby
-python3 runTableReader.py Configs/configAnalysisData.json --aod reducedAod.root --cfgTrackCuts jpsiPID1 jpsiPID2
+python3 runTableReader.py configs/configAnalysisData.json --aod reducedAod.root --cfgTrackCuts jpsiPID1 jpsiPID2
 ```
 
 The JSON is in overrider mode as the default is onlySelect true and the equivalent of this configuration is:
@@ -715,7 +715,7 @@ As we can see, the old cut values ​​were deleted, the new cut values ​​w
 If onlySelect is False:
 
 ```ruby
-python3 runTableReader.py Configs/configAnalysisData.json --aod reducedAod.root --cfgTrackCuts jpsiPID1 jpsiPID2 --onlySelect false
+python3 runTableReader.py configs/configAnalysisData.json --aod reducedAod.root --cfgTrackCuts jpsiPID1 jpsiPID2 --onlySelect false
 ```
 
 Then the JSON is in additional mode and the equivalent of this configuration is:

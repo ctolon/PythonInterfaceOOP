@@ -29,17 +29,17 @@ python3 runTableMaker.py Configs
 
 you will get this displayed options in your terminal:
 ```ruby
-Configs/configAnalysisData.json                  Configs/configFlowDataRun3.json                  Configs/configtestFilterPPDataRun3.json          Configs/readerConfiguration_reducedEventMC.json
-Configs/configAnalysisMC.json                    Configs/configTableMakerDataRun2.json            Configs/configtestFlowDataRun3.json              Configs/writerConfiguration_dileptonMC.json
-Configs/configFilterPPDataRun2.json              Configs/configTableMakerDataRun3.json            Configs/configtestTableMakerDataRun3.json        Configs/writerConfiguration_dileptons.json
-Configs/configFilterPPDataRun3.json                  Configs/configTableMakerMCRun2.json              Configs/readerConfiguration_dilepton.json        
-Configs/configFlowDataRun2.json                  Configs/configTableMakerMCRun3.json              Configs/readerConfiguration_reducedEvent.json 
+configs/configAnalysisData.json                  configs/configFlowDataRun3.json                  configs/configtestFilterPPDataRun3.json          configs/readerConfiguration_reducedEventMC.json
+configs/configAnalysisMC.json                    configs/configTableMakerDataRun2.json            configs/configtestFlowDataRun3.json              configs/writerConfiguration_dileptonMC.json
+configs/configFilterPPDataRun2.json              configs/configTableMakerDataRun3.json            configs/configtestTableMakerDataRun3.json        configs/writerConfiguration_dileptons.json
+configs/configFilterPPDataRun3.json                  configs/configTableMakerMCRun2.json              configs/readerConfiguration_dilepton.json        
+configs/configFlowDataRun2.json                  configs/configTableMakerMCRun3.json              configs/readerConfiguration_reducedEvent.json 
 ```
 
 then you can complete your JSON config file (for example assuming you export configTableMakerMCRun3.json to configure tablemaker for mc run 3
 
 ```ruby
-python3 runTableMaker.py Configs/configTableMakerMCRun3.json
+python3 runTableMaker.py configs/configTableMakerMCRun3.json
 ```
 
 P.S You can Complete this with a TAB key after each word and character you type in command line.
@@ -47,7 +47,7 @@ P.S You can Complete this with a TAB key after each word and character you type 
 step 4: now when you type -- and press TAB key all parameter options in interface will be listed
 
 ```ruby
-python3 runTableMaker.py Configs/configTableMakerMCRun3.json --
+python3 runTableMaker.py configs/configTableMakerMCRun3.json --
 ```
 
 if you type like this and press TAB you will see all the parameters in the interface in your terminal like this:
@@ -63,7 +63,7 @@ if you type like this and press TAB you will see all the parameters in the inter
 VERY IMPORTANT STEP AND P.S: When configuring the runTableMaker.py script, the -runData and -runMC parameters are used when configuring the tablemaker for MC or Data. Since these parameters start with a single minus, do not forget to configure the TableMaker script only at the first time, by pressing the tab and configuring it (other interfaces do not have a parameter that starts with a single minus)
 
 ```ruby
-python3 runTableMaker.py Configs/configTableMakerMCRun3.json -
+python3 runTableMaker.py configs/configTableMakerMCRun3.json -
 ```
 
 Then you will see -runData and -runMC in your parameters:
@@ -81,7 +81,7 @@ Then you will see -runData and -runMC in your parameters:
 step 5: After entering one of these parameters (eg --cfgBarrelTrackCuts for runTableMaker.py) leave a space and press tab again. As a result you will see each value this parameter can take.
 
 ```ruby
-python3 runTableMaker.py Configs/configTableMakerMCRun3.json -runMC --cfgBarrelTrackCuts
+python3 runTableMaker.py configs/configTableMakerMCRun3.json -runMC --cfgBarrelTrackCuts
 ```
 
 
@@ -110,7 +110,7 @@ eventMuonStandard                    jpsiPIDnsigmaRandomized              matche
 step 6: after configuring the config, type space and -- again to see other parameters again and see other parameters and use autocomplete with TAB as you type
 
 ```ruby
-python3 runTableMaker.py Configs/configTableMakerMCRun3.json -runMC --cfgBarrelTrackCuts --
+python3 runTableMaker.py configs/configTableMakerMCRun3.json -runMC --cfgBarrelTrackCuts --
 ```
 
 ```ruby
@@ -129,11 +129,11 @@ VERY IMPORTANT P.S: Not every parameter in the interface has a value to configur
 Example:
 
 ```ruby
-python3 runTableMaker.py Configs/configTableMakerMCRun3.json -runMC --add_track_prop
+python3 runTableMaker.py configs/configTableMakerMCRun3.json -runMC --add_track_prop
 ```
 
 ```ruby
-python3 runTableMaker.py Configs/configTableMakerMCRun3.json --cfgBarrelTrackCuts jpsiPID1 --cfgWithQA true
+python3 runTableMaker.py configs/configTableMakerMCRun3.json --cfgBarrelTrackCuts jpsiPID1 --cfgWithQA true
 ```
 
 list of metavar parameters:
@@ -144,8 +144,5 @@ list of metavar parameters:
 * `-runMC` (This parameter is only for tableMakerMC)
 * `-runData` (This parameter is only for tableMaker)
 * `--logFile`
-* `--MCSignalsLister` (this parameter only for tableMakerMC and dqEfficiency interface)
-* `--cutLister`
-* `--mixingLister` (this parameter only for tableReader interface)
 
 [← Go back to Prerequisites](2_Prerequisites.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Techincal Informations →](4_TechincalInformations.md)

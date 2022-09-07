@@ -69,7 +69,7 @@ Arg | Ref Type| Desc | Default | Real Type
 `--localPath` | String | Local: Configure your alice software folder name in your local home path. Default is alice. Example different configuration is --localpath alice-software --local --> home/user/alice-software | `alice` | str
 
 
-# Instructions for runTableMaker.py
+# Instructions for runTableMaker/runTableMakerMC.py
 
 Add extrac tables and converters with:
 1. **--add_mc_conv**: conversion from o2mcparticle to o2mcparticle_001
@@ -84,8 +84,8 @@ Add extrac tables and converters with:
   * `python3`
   * `runTableMaker.py`
   * JSON Config File
-    * Example usage: Configs/configTableMakerDataRun3.json 
-  *  `-run<MC|Data>` 
+    * Example usage: configs/configTableMakerDataRun3.json 
+  *  `-runData` 
      *  Usage (only select one value): `-runMC` or `-runData`
   *  `--process <Value>` 
      *  Usage examples (can take several value) : `--process MuonsOnly` or `--process BarrelOnly MuonOnly BarrelOnlyWithEventFilter`
@@ -93,29 +93,29 @@ Add extrac tables and converters with:
 Examples(in NewAllWorkFlows):
 - Run TableMaker on Data run3 With Minimum Commands for Barrel Only (with automation)
   ```ruby
-  python3 runTableMaker.py Configs/configTableMakerDataRun3.json -runData --process BarrelOnly
+  python3 runTableMaker.py configs/configTableMakerDataRun3.json -runData --process BarrelOnly
   ```
 - Run TableMaker on MC run3 with Minimum Commands for Barrel Only (with automation)
   ```ruby
-  python3 runTableMaker.py Configs/configTableMakerMCRun3.json -runMC --process BarrelOnly
+  python3 runTableMakerMC.py configs/configTableMakerMCRun3.json -runMC --process BarrelOnly
   ```
 - Run TableMaker on Data run2 With Minimum Commands for Barrel Only (with automation)
   ```ruby
-  python3 runTableMaker.py Configs/configTableMakerDataRun2.json -runData --process BarrelOnly
+  python3 runTableMaker.py configs/configTableMakerDataRun2.json -runData --process BarrelOnly
   ```
 - Run TableMaker on MC run2 with Minimum Commands for Barrel Only (with automation)
   ```ruby
-  python3 runTableMaker.py Configs/configTableMakerMCRun2.json -runMC --process BarrelOnly
+  python3 runTableMakerMC.py configs/configTableMakerMCRun2.json -runMC --process BarrelOnly
   ```
 
 In case of multiple configs example
   ```ruby
-python3 runTableMaker.py Configs/configTableMakerMCRun3.json -runMC --process MuonOnlyWithCov OnlyBCs --cfgMCsignals muFromJpsi Jpsi muFromPsi2S Psi2S --onlySelect true --aod Datas/AO2D.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --syst pp --onlySelect true --add_track_prop
+python3 runTableMakerMC.py configs/configTableMakerMCRun3.json -runMC --process MuonOnlyWithCov OnlyBCs --cfgMCsignals muFromJpsi Jpsi muFromPsi2S Psi2S --onlySelect true --aod Datas/AO2D.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --syst pp --onlySelect true --add_track_prop
   ```
 
-## Available configs in runTableMaker Interface
+## Available configs in runTableMaker/runTableMakerMC Interface
 
-* For `runTableMaker.py` Selections
+* For `runTableMaker.py` and `runTableMakerMC.py` Selections
 
 Arg | Opt | Task | nargs |
 --- | --- | --- | --- |
@@ -137,7 +137,6 @@ Arg | Opt | Task | nargs |
 `--isVertexZeq` | `true`<br> `false`<br>  | `multiplicity-table` | 1 |
 `--isCovariance` | `true`<br> `false`<br> | `track-propagation` | 1 |
 `--isWSlice` | `true`<br> `false`<br> | `tof-pid-full tof-pid` | 1 |
-`--enableTimeDependentResponse` | `true`<br> `false`<br> | `tof-pid-full tof-pid` | 1 |
 `--FT0` | `FT0`<br> `NOFT0`<br>`OnlyFT0`<br> `Run2` | `tof-event-time` | 1 |
 `--tof-expreso` | all | `tof-pid-beta` | 1 |
 `--isBarrelSelectionTiny` | `true`<br> `false`<br> | `d-q-barrel-track-selection-task` | 1 |
@@ -174,12 +173,10 @@ Arg | Opt | Task | nargs |
 `--cfgMinTpcSignal` | all | `table-maker` | 1 |
 `--cfgMaxTpcSignal` | all | `table-maker` | 1 |
 `--cfgMCsignals` | `allSignals` | `table-maker` | * |
-`--cutLister` | No Param | `allCuts` | 0 |
-`--MCSignalsLister` | No Param | `allSignals` | 0 |
 `--debug` | `NOTSET`<br> `DEBUG`<br>`INFO`<br>`WARNING` <br> `ERROR` <br>`CRITICAL` <br>  | all  | 1 |
 `--logFile` | No Param | special option  | 0 |
 
-* Details parameters for `runTableMaker.py`
+* Details parameters for `runTableMaker.py` and `runTableMakerMC.py`
 
 Arg | Ref Type| Desc | Default | Real Type
 --- | --- | --- | --- | --- |
@@ -201,7 +198,6 @@ Arg | Ref Type| Desc | Default | Real Type
 `--isVertexZeq` | Boolean  | if true: do vertex Z eq mult table |  | str.lower
 `--isCovariance` | Boolean | If false, Process without covariance, If true Process with covariance related to `track-propagation` |  | str.lower
 `--isWSlice` | Boolean | Process with track slices|  | str.lower
-`--enableTimeDependentResponse` | Boolean | Flag to use the collision timestamp to fetch the PID Response |  | str.lower
 `--FT0` | Boolean | FT0: Process with FT0, NoFT0: Process without FT0, OnlyFT0: Process only with FT0, Run2: Process with Run2 data |  | str.lower
 `--tof-expreso` | Float | Expected resolution for the computation of the expected beta |  | str
 `--isBarrelSelectionTiny` | Boolean | Run barrel track selection instead of normal(process func. for barrel selection must be true) |  | str.lower
@@ -238,8 +234,6 @@ Arg | Ref Type| Desc | Default | Real Type
 `--cfgMinTpcSignal` | Integer| TPC Min Signal Selection |  | str
 `--cfgMaxTpcSignal` | Integer | TPC Max Signal Selection |  | str
 `--cfgMCsignals` | String | Space separated list of MC signals |  | str
-`--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ  |  | -
-`--MCSignalsLister` | No Param | Lists All of the valid MCSignals from MCSignalLibrary.h from O2Physics-DQ |  | -
 `--debug` | String | execute with debug options  | - | str.upper |
 `--logFile` | No Param | Enable logger for both file and CLI  | - | - |
 
@@ -251,17 +245,17 @@ Arg | Ref Type| Desc | Default | Real Type
   * `python3`
   * `runTableReader.py`
   * JSON Config File
-    * Example For Most common usage: Configs/configAnalysisData.json  
+    * Example For Most common usage: configs/configAnalysisData.json  
 
 Examples(in NewAllWorkFlows):
 - Run TableReader on Data run3 With Minimum Commands
   ```ruby
-  python3 runTableReader.py Configs/configAnalysisData.json
+  python3 runTableReader.py configs/configAnalysisData.json
   ```
 
 In case of multiple configs example
   ```ruby
-  python3 runTableReader.py Configs/configAnalysisData.json --analysis eventSelection trackSelection eventMixing sameEventPairing --process JpsiToEE --cfgTrackCuts jpsiO2MCdebugCuts --aod reducedAod.root --debug debug --logFile
+  python3 runTableReader.py configs/configAnalysisData.json --analysis eventSelection trackSelection eventMixing sameEventPairing --process JpsiToEE --cfgTrackCuts jpsiO2MCdebugCuts --aod reducedAod.root --debug debug --logFile
   ```
 
 
@@ -284,8 +278,6 @@ Arg | Opt | Task | nargs |
 `--cfgTrackCuts` | `allCuts` | `analysis-track-selection`<br> | * |
 `--cfgMuonCuts` | `allCuts` | `analysis-muon-selection` | * |
 `--cfgLeptonCuts` | `true`<br> `false`<br> | `analysis-dilepton-hadron` | * |
-`--cutLister` | No Param | `allCuts` | 0 |
-`--mixingLister` | No Param | `allMixing` | 0 |
 `--debug` | `NOTSET`<br> `DEBUG`<br>`INFO`<br>`WARNING` <br> `ERROR` <br>`CRITICAL` <br>  | all  | 1 |
 `--logFile` | No Param | special option  | 0 |
 
@@ -296,8 +288,8 @@ Arg | Ref Type| Desc | Default | Real Type
 `-h` | No Param | list all helper messages for configurable command |  | *
 `--aod` | String | Add your AOD File with path | - | str
 `--autoDummy` | Boolean | Dummy automize parameter (if process skimmed false, it automatically activate dummy process and viceversa) | `true` | str.lower
-`--reader` | String | Add your AOD Reader JSON with path | `Configs/readerConfiguration_reducedEvent.json` | str
-`--writer` | String | Add your AOD Writer JSON with path | `Configs/writerConfiguration_dileptons.json` | str
+`--reader` | String | Add your AOD Reader JSON with path | `configs/readerConfiguration_reducedEvent.json` | str
+`--writer` | String | Add your AOD Writer JSON with path | `configs/writerConfiguration_dileptons.json` | str
 `--analysis` | String | Skimmed process selections for analysis | - | str
 `--mixing` | String | Skimmed process selections for Event Mixing manually | - | str
 `--process` | String | Skimmed process Selections for Same Event Pairing  | - | str |
@@ -308,8 +300,6 @@ Arg | Ref Type| Desc | Default | Real Type
 `--cfgTrackCuts` | String | Space separated list of barrel track cuts | - | str
 `--cfgMuonCuts` | String | Space separated list of muon cuts | - | str
 `--cfgLeptonCuts` | String | Space separated list of barrel track cuts | - | str
-`--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ  |  | -
-`--mixingLister` | No Param | Lists All of the valid event mixing selections from MixingLibrary.h from O2Physics-DQ |  | -
 `--debug` | String | execute with debug options  | - | str.upper |
 `--logFile` | No Param | Enable logger for both file and CLI  | - | - |
 # Instructions for runDQEfficiency.py
@@ -317,17 +307,17 @@ Arg | Ref Type| Desc | Default | Real Type
   * `python3`
   * `runDQEfficiency.py`
   * JSON Config File
-    * Example For Most common usage: Configs/configAnalysisMC.json  
+    * Example For Most common usage: configs/configAnalysisMC.json  
 
 Examples(in NewAllWorkFlows):
 - Run DQEfficiency on Data run3 With Minimum Commands
   ```ruby
-  python3 runDQEfficiency.py Configs/configAnalysisMC.json
+  python3 runDQEfficiency.py configs/configAnalysisMC.json
   ```
 
 In case of multiple configs example
   ```ruby
-python3 runDQEfficiency.py Configs/configAnalysisMC.json --analysis muonSelection eventSelection sameEventPairing --aod reducedAod.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --cfgMuonMCSignals muFromJpsi muFromPsi2S --cfgBarrelMCGenSignals Jpsi Psi2S --cfgBarrelMCRecSignals mumuFromJpsi mumuFromPsi2S dimuon --process JpsiToMuMu --cfgQA true
+python3 runDQEfficiency.py configs/configAnalysisMC.json --analysis muonSelection eventSelection sameEventPairing --aod reducedAod.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --cfgMuonMCSignals muFromJpsi muFromPsi2S --cfgBarrelMCGenSignals Jpsi Psi2S --cfgBarrelMCRecSignals mumuFromJpsi mumuFromPsi2S dimuon --process JpsiToMuMu --cfgQA true
 
 
   ```
@@ -358,8 +348,6 @@ Arg | Opt | Task | nargs |
 `--cfgFillCandidateTable` | `true` <br> `false` | `analysis-dilepton-track` | 1 | 
 `--cfgBarrelDileptonMCRecSignals` | `allMCSignals` | `analysis-dilepton-track` | * |
 `--cfgBarrelDileptonMCGenSignals` | `allMCSignals` | `analysis-dilepton-track` | * |
-`--cutLister` | No Param | `allCuts` | 0 |
-`--MCSignalsLister` | No Param | `allSignals` |  0 |
 `--debug` | `NOTSET`<br> `DEBUG`<br>`INFO`<br>`WARNING` <br> `ERROR` <br>`CRITICAL` <br>  | all  | 1 |
 `--logFile` | No Param | special option  | 0 |
 
@@ -370,8 +358,8 @@ Arg | Ref Type| Desc | Default | Real Type
 `-h` | No Param | list all helper messages for configurable command |  | *
 `--aod` | String | Add your AOD File with path | - | str
 `--autoDummy` | Boolean | Dummy automize parameter (if process skimmed false, it automatically activate dummy process and viceversa) | `true` | str.lower
-`--reader` | String | Add your AOD Reader JSON with path | `Configs/readerConfiguration_reducedEventMC.json` | str
-`--writer` | String | Add your AOD Writer JSON with path | `Configs/writerConfiguration_dileptonMC.json` | str
+`--reader` | String | Add your AOD Reader JSON with path | `configs/readerConfiguration_reducedEventMC.json` | str
+`--writer` | String | Add your AOD Writer JSON with path | `configs/writerConfiguration_dileptonMC.json` | str
 `--analysis` | String | Skimmed process selections for analysis | - | str
 `--process` | String | Skimmed process selections for Same Event Pairing | - | str
 `--cfgQA` | Boolean | If true, fill QA histograms | - | str
@@ -384,8 +372,6 @@ Arg | Ref Type| Desc | Default | Real Type
 `--cfgBarrelMCGenSignals` | String | Space separated list of MC signals (generated) | - | str
 `--cfgBarrelDileptonMCRecSignals` | String | Space separated list of MC signals (reconstructed) cuts | - | str
 `--cfgBarrelDileptonMCGenSignals` | String | Space separated list of MC signals (generated)cuts | - | str
-`--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ  |  | -
-`--MCSignalsLister` | No Param | Lists All of the valid MCSignals from MCSignalLibrary.h from O2Physics-DQ |  | -
 `--debug` | String | execute with debug options  | - | str.upper |
 `--logFile` | No Param | Enable logger for both file and CLI  | - | - |
 
@@ -404,22 +390,22 @@ Add extrac tables and converters with:
   * `python3`
   * `runFilterPP.py`
   * JSON Config File
-    * Example For usage: Configs/configFilterPPDataRun3.json 
+    * Example For usage: configs/configFilterPPDataRun3.json 
 
 Examples(in NewAllWorkFlows):
 - Run filterPP on Data run3 With Minimum Commands
   ```ruby
-  python3 runFilterPP.py Configs/configFilterPPDataRun3.json
+  python3 runFilterPP.py configs/configFilterPPDataRun3.json
   ```
 
 - Run filterPP on Data run2 With Minimum Commands
   ```ruby
-  python3 runFilterPP.py Configs/configFilterPPDataRun2.json
+  python3 runFilterPP.py configs/configFilterPPDataRun2.json
   ```
 
 In case of multiple configs example
   ```ruby
-python3 runFilterPP.py Configs/configFilterPPDataRun3.json --aod AO2D.root --syst pp --process barrelTrackSelection eventSelection --cfgBarrelSels jpsiO2MCdebugCuts2::1 --cfgEventCuts eventStandardNoINT7 --cfgBarrelTrackCuts jpsiO2MCdebugCuts2 jpsiO2MCdebugCuts2 --cfgWithQA true
+python3 runFilterPP.py configs/configFilterPPDataRun3.json --aod AO2D.root --syst pp --process barrelTrackSelection eventSelection --cfgBarrelSels jpsiO2MCdebugCuts2::1 --cfgEventCuts eventStandardNoINT7 --cfgBarrelTrackCuts jpsiO2MCdebugCuts2 jpsiO2MCdebugCuts2 --cfgWithQA true
   ```
 
 ## Available configs in runFilterPP Interface
@@ -441,7 +427,6 @@ Arg | Opt | Task | nargs |
 `--isVertexZeq` | `true`<br> `false`<br>  | `multiplicity-table` | 1 |
 `--pid` | `el`<br> `mu`<br> `pi`<br> `ka`<br> `pr`<br> `de`<br> `tr`<br> `he`<br> `al`<br> | `tof-pid tpc-pid` | * |
 `--isWSlice` | `true`<br> `false`<br> | `tof-pid-full tof-pid` | 1 |
-`--enableTimeDependentResponse` | `true`<br> `false`<br> | `tof-pid-full tof-pid` | 1 |
 `--tof-expreso` | all | `tof-pid-beta` | 1 |
 `--FT0` | `FT0`<br> `NOFT0`<br>`OnlyFT0`<br> `Run2` | `tof-event-time` | 1 |
 `--cfgWithQA` |`true` <br> `false`  | dq task selection<br> | 1 |
@@ -450,7 +435,6 @@ Arg | Opt | Task | nargs |
 `--cfgBarrelSels` | `namespacedCuts` | `d-q-filter-p-p-task` | * |
 `--cfgMuonSels` | `namespacedCuts` | `d-q-filter-p-p-task` | * |
 `--cfgMuonsCuts` | `allCuts` | `d-q-muons-selection` | * |
-`--cutLister` | No Param | `allCuts` | 0 |
 `--debug` | `NOTSET`<br> `DEBUG`<br>`INFO`<br>`WARNING` <br> `ERROR` <br>`CRITICAL` <br>  | all  | 1 |
 `--logFile` | No Param | special option  | 0 |
 
@@ -472,7 +456,6 @@ Arg | Ref Type| Desc | Default | Real Type
 `--isVertexZeq` | Boolean  | if true: do vertex Z eq mult table |  | str.lower
 `--pid` | String | Produce PID information for the particle mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1) |  | str.lower
 `--isWSlice` | Boolean | Process with track slices|  | str.lower
-`--enableTimeDependentResponse` | Boolean | Flag to use the collision timestamp to fetch the PID Response |  | str.lower
 `--tof-expreso` | Float | Expected resolution for the computation of the expected beta |  | str
 `--FT0` | Boolean | FT0: Process with FT0, NoFT0: Process without FT0, OnlyFT0: Process only with FT0, Run2: Process with Run2 data |  | str.lower
 `--cfgWithQA` | Boolean | If true, fill QA histograms |  | str.lower
@@ -481,7 +464,6 @@ Arg | Ref Type| Desc | Default | Real Type
 `--cfgBarrelSels` | String | Configure Barrel Selection track-cut:pair-cut:n,track-cut:pair-cut:n,... example jpsiO2MCdebugCuts2::1|  | str
 `--cfgMuonSels` | String | Configure Muon Selection muon-cut:[pair-cut]:n example muonQualityCuts:pairNoCut:1|  | str
 `--cfgMuonsCuts` | String | Space separated list of ADDITIONAL muon track cuts  |  | str
-`--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ  |  | -
 `--debug` | String | execute with debug options  | - | str.upper |
 `--logFile` | No Param | Enable logger for both file and CLI  | - | - |
 
@@ -492,22 +474,22 @@ Arg | Ref Type| Desc | Default | Real Type
   * `python3`
   * `runDQFlow.py`
   * JSON Config File
-    * Example For usage: Configs/configFlowDataRun3.json
+    * Example For usage: configs/configFlowDataRun3.json
 
 Examples(in NewAllWorkFlows):
 - Run filterPP on Data run3 With Minimum Commands
   ```ruby
-  python3 runDQFlow.py Configs/configFlowDataRun3.json
+  python3 runDQFlow.py configs/configFlowDataRun3.json
   ```
 
 - Run filterPP on Data run2 With Minimum Commands
   ```ruby
-  python3 runDQFlow.py Configs/configFlowDataRun2.json
+  python3 runDQFlow.py configs/configFlowDataRun2.json
   ```
 
 In case of multiple configs example
   ```ruby
-python3 runDQFlow.py Configs/configFilterPPDataRun3.json --aod AO2D.root --syst pp --cfgTrackCuts jpsiPID1 --cfgMuonCuts muonQualityCuts --cfgWithQA true --cfgCutPtMin 1 --cfgCutPtMax 15 
+python3 runDQFlow.py configs/configFilterPPDataRun3.json --aod AO2D.root --syst pp --cfgTrackCuts jpsiPID1 --cfgMuonCuts muonQualityCuts --cfgWithQA true --cfgCutPtMin 1 --cfgCutPtMax 15 
   ```
 
 ## Available configs in runDQFlow Interface
@@ -537,12 +519,11 @@ Arg | Opt | Task | nargs |
 `--est` | `Run2V0M`<br> `Run2SPDtks`<br> `Run2SPDcls`<br> `Run2CL0`<br> `Run2CL1`<br> `FV0A`<br> `FT0M`<br> `FDDM`<br> `NTPV`<br>| `centrality-table` | *
 `--isVertexZeq` | `true`<br> `false`<br>  | `multiplicity-table` | 1 |
 `--isWSlice` | `true`<br> `false`<br> | `tof-pid-full tof-pid` | 1 |
-`--enableTimeDependentResponse` | `true`<br> `false`<br> | `tof-pid-full tof-pid` | 1 |
 `--tof-expreso` | all | `tof-pid-beta` | 1 |
 `--FT0` | `FT0`<br> `NOFT0`<br>`OnlyFT0`<br> `Run2` | `tof-event-time` | 1 |
 `--cfgWithQA` |`true` <br> `false`  | `analysis-qvector`<br> | 1 |
 `--cfgEventCuts` | `allCuts` | `analysis-qvector`<br>  | * |
-`--cfgTrackCuts` | `allCuts` | `analysis-qvector`<br> | * |
+`--cfgBarrelTrackCuts` | `allCuts` | `analysis-qvector`<br> | * |
 `--cfgMuonCuts` | `allCuts` | `analysis-qvector` | * |
 `--cfgCutPtMin` | all  | `analysis-qvector`<br>  | 1 |
 `--cfgCutPtMax ` | all  | `analysis-qvector`<br> | 1 |
@@ -551,7 +532,6 @@ Arg | Opt | Task | nargs |
 `--cfgNPow` | all  | `analysis-qvector`<br> | 1 |
 `--cfgEfficiency` | all  | `analysis-qvector` | 1 |
 `--cfgAcceptance` | all  | `analysis-qvector`<br>  | 1 |
-`--cutLister` | No Param | all  |  |
 `--debug` | `NOTSET`<br> `DEBUG`<br>`INFO`<br>`WARNING` <br> `ERROR` <br>`CRITICAL` <br>  | all  | 1 |
 `--logFile` | No Param | special option  | 0 |
 
@@ -571,14 +551,13 @@ Arg | Ref Type| Desc | Default | Real Type
 `--CustomDeltaBC` | all |custom BC delta for FIT-collision matching |  | str
 `--isVertexZeq` | Boolean  | if true: do vertex Z eq mult table |  | str.lower
 `--isWSlice` | Boolean | Process with track slices|  | str.lower
-`--enableTimeDependentResponse` | Boolean | Flag to use the collision timestamp to fetch the PID Response |  | str.lower
 `--est` | String | Produces centrality percentiles parameters | | str
 `--pid` | String | Produce PID information for the particle mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1) |  | str.lower
 `--tof-expreso` | Float | Expected resolution for the computation of the expected beta |  | str
 `--FT0` | Boolean | FT0: Process with FT0, NoFT0: Process without FT0, OnlyFT0: Process only with FT0, Run2: Process with Run2 data |  | str.lower
 `--cfgWithQA` | Boolean | If true, fill QA histograms |  | str.lower
 `--cfgEventCuts` | String | Space separated list of event cuts |  | str
-`--cfgTrackCuts` | String | Space separated list of barrel track cuts |  | str
+`--cfgBarrelTrackCuts` | String | Space separated list of barrel track cuts |  | str
 `--cfgMuonCuts` | String | Space separated list of muon cuts |  | str
 `--cfgCutPtMin` | Float | Minimal pT for tracks |  | str
 `--cfgCutPtMax ` | Float | Maximal pT for tracks  |  | str
@@ -587,8 +566,9 @@ Arg | Ref Type| Desc | Default | Real Type
 `--cfgNPow` | Integer | Power of weights for Q vector  |  | str
 `--cfgEfficiency` | String | CCDB path to efficiency object  |  | str
 `--cfgAcceptance` | String | CCDB path to acceptance object  |  | str
-`--cutLister` | No Param | Lists All of the valid Analysis Cuts from CutsLibrary.h from O2Physics-DQ  |  | - -
 `--debug` | String | execute with debug options  | - | str.upper |
 `--logFile` | No Param | Enable logger for both file and CLI  | - | - |
+
+TODO v0selector interface instructions will be added.
 
 [← Go back to Instructions For Techincal Informations](4_TechincalInformations.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Tutorials →](6_Tutorials.md)

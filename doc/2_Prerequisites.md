@@ -7,7 +7,7 @@
 Clone Repository in your workspace:
 
 ```ruby
-git clone https://github.com/ctolon/PythonInterfaceDemo.git
+git clone https://github.com/ctolon/PythonInterfaceOOP.git
 ```
 
 Then go NewAllWorkFlows folder with `cd` commands
