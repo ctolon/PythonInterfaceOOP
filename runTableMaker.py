@@ -113,6 +113,14 @@ isProcessFuncLeftAfterCentDelete = True
 threeSelectedList = []
 clist = []  # control list for type control
 
+# List for Transcation management for FilterPP
+muonCutList = []  # List --> transcation management for filterPP
+barrelTrackCutList = []  # List --> transcation management for filterPP
+barrelSelsList = []
+muonSelsList = []
+barrelSelsListAfterSplit = []
+muonSelsListAfterSplit = []
+
 O2DPG_ROOT = os.environ.get("O2DPG_ROOT")
 QUALITYCONTROL_ROOT = os.environ.get("QUALITYCONTROL_ROOT")
 O2_ROOT = os.environ.get("O2_ROOT")
@@ -1055,7 +1063,7 @@ if not (isProcessFuncLeftAfterCentDelete and isNoDeleteNeedForCent):
     logging.error("After deleting the process functions related to the centrality table, there are no functions left to process, misconfigure for process!!!")    
     sys.exit()    
     
-"""
+
 # ================================================================    
 # Transcation Management for barrelsels and muonsels in filterPP 
 # ================================================================
@@ -1165,7 +1173,7 @@ if extrargs.cfgBarrelSels:
             logging.info("For example, if cfgBarrelTrackCuts is jpsiO2MCdebugCuts,jpsiO2MCdebugCuts2,jpsiO2MCdebugCuts then the cfgBarrelSels has to be something like: jpsiO2MCdebugCuts::1,jpsiO2MCdebugCuts2::1,jpsiO2MCdebugCuts:pairNoCut:1")      
             sys.exit()
             
-"""
+
             
 # AOD File Checker 
 if extrargs.aod != None:

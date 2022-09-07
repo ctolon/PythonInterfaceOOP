@@ -29,7 +29,7 @@ import argparse
 from extraModules.actionHandler import NoAction
 from extraModules.actionHandler import ChoicesAction
 from extraModules.debugOptions import DebugOptions
-from extraModules.stringOperations import listToString
+from extraModules.stringOperations import listToString, stringToList
 
 from commonDeps.eventSelection import EventSelectionTask
 from commonDeps.multiplicityTable import MultiplicityTable
@@ -87,6 +87,14 @@ clist = []  # control list for type control
 threeSelectedList = []
 
 booleanSelections = ["true", "false"]
+
+# List for Transcation management for FilterPP
+muonCutList = []  # List --> transcation management for filterPP
+barrelTrackCutList = []  # List --> transcation management for filterPP
+barrelSelsList = []
+muonSelsList = []
+barrelSelsListAfterSplit = []
+muonSelsListAfterSplit = []
 
 O2DPG_ROOT = os.environ.get("O2DPG_ROOT")
 QUALITYCONTROL_ROOT = os.environ.get("QUALITYCONTROL_ROOT")
@@ -565,7 +573,7 @@ for key, value in config.items():
                 if config["d-q-filter-p-p-task"]["processFilterPP"] == "false":
                     config["d-q-filter-p-p-task"]["processDummy"] = "true"
                 
-"""
+
 # ================================================================
 # Transcation Management for barrelsels and muonsels in filterPP 
 # ================================================================
@@ -674,7 +682,7 @@ if extrargs.cfgBarrelSels:
             logging.info("For fixing this issue, you should have the same number of cuts (and in the same order) provided to the cfgBarrelTrackCuts from dq-selection as those provided to the cfgBarrelSels in the DQFilterPPTask.") 
             logging.info("For example, if cfgBarrelTrackCuts is jpsiO2MCdebugCuts,jpsiO2MCdebugCuts2,jpsiO2MCdebugCuts then the cfgBarrelSels has to be something like: jpsiO2MCdebugCuts::1,jpsiO2MCdebugCuts2::1,jpsiO2MCdebugCuts:pairNoCut:1")      
             sys.exit()
-"""
+
   
 # AOD File Checker
 if extrargs.aod != None:
