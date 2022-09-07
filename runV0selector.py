@@ -26,20 +26,20 @@ from logging import handlers
 import os
 import argparse
 
-from ExtraModules.ActionHandler import NoAction
-from ExtraModules.ActionHandler import ChoicesAction
-from ExtraModules.DebugOptions import DebugOptions
-from ExtraModules.StringOperations import listToString
+from extraModules.actionHandler import NoAction
+from extraModules.actionHandler import ChoicesAction
+from extraModules.debugOptions import DebugOptions
+from extraModules.stringOperations import listToString
 
-from CommonDeps.centralityTable import CentralityTable
-from CommonDeps.eventSelection import EventSelectionTask
-from CommonDeps.multiplicityTable import MultiplicityTable
-from CommonDeps.pidTOFBase import tofEventTime
-from CommonDeps.pidTOFbeta import tofPidbeta
-from CommonDeps.pidTPCTOFFull import tpcTofPidFull
-from CommonDeps.trackPropagation import TrackPropagation
+from commonDeps.centralityTable import CentralityTable
+from commonDeps.eventSelection import EventSelectionTask
+from commonDeps.multiplicityTable import MultiplicityTable
+from commonDeps.pidTOFBase import TofEventTime
+from commonDeps.pidTOFBeta import TofPidBeta
+from commonDeps.pidTPCTOFFull import TpcTofPidFull
+from commonDeps.trackPropagation import TrackPropagation
 
-from dqTasks.v0selector import v0selector
+from dqTasks.v0selector import V0selector
 
 """
 argcomplete - Bash tab completion for argparse
@@ -112,13 +112,13 @@ class runV0selector(object):
                 parserrunV0selector=argparse.ArgumentParser(
                 formatter_class=argparse.ArgumentDefaultsHelpFormatter,
                 description="Arguments to pass"), 
-                v0selector=v0selector(),
+                v0selector=V0selector(),
                 eventSelection=EventSelectionTask(), 
                 centralityTable=CentralityTable(),
                 multiplicityTable=MultiplicityTable(),
-                tofEventTime=tofEventTime(),
-                tofPidBeta =tofPidbeta(),
-                tpcTofPidFull=tpcTofPidFull(),
+                tofEventTime=TofEventTime(),
+                tofPidBeta=TofPidBeta(),
+                tpcTofPidFull=TpcTofPidFull(),
                 trackPropagation=TrackPropagation(),
                 debugOptions=DebugOptions()
                 ):
@@ -188,13 +188,13 @@ class runV0selector(object):
         self.multiplicityTable.parserMultiplicityTable = self.parserrunV0selector
         self.multiplicityTable.addArguments()
         
-        self.tofEventTime.parsertofEventTime = self.parserrunV0selector
+        self.tofEventTime.parserTofEventTime = self.parserrunV0selector
         self.tofEventTime.addArguments()
         
-        self.tofPidBeta.parsertofPidbeta = self.parserrunV0selector
+        self.tofPidBeta.parserTofPidBeta = self.parserrunV0selector
         self.tofPidBeta.addArguments()
         
-        self.tpcTofPidFull.parsertpcTofPidFull = self.parserrunV0selector
+        self.tpcTofPidFull.parserTpcTofPidFull = self.parserrunV0selector
         self.tpcTofPidFull.addArguments()
         
         self.trackPropagation.parserTrackPropagation = self.parserrunV0selector
@@ -203,7 +203,7 @@ class runV0selector(object):
         self.debugOptions.parserDebugOptions = self.parserrunV0selector
         self.debugOptions.addArguments()
         
-        self.v0selector.parserv0selector = self.parserrunV0selector
+        self.v0selector.parserV0selector = self.parserrunV0selector
         self.v0selector.addArguments()
                 
         self.addArguments()

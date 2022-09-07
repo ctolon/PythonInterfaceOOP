@@ -24,8 +24,10 @@ import re
 import urllib.request
 from urllib.request import Request, urlopen
 import ssl
+
 from argcomplete.completers import ChoicesCompleter
-from ExtraModules.ChoicesCompleterList import ChoicesCompleterList
+from extraModules.choicesCompleterList import ChoicesCompleterList
+
 class DQFilterPPTask(object):
     """
     Class for Interface -> filterPP.cxx Task -> Configurable, Process Functions  

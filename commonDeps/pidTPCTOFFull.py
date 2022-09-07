@@ -20,10 +20,11 @@
 # Orginal Task For pidTOFFull.cxx: https://github.com/AliceO2Group/O2Physics/blob/master/Common/TableProducer/PID/pidTOFFull.cxx
 
 import argparse
-from ExtraModules.ChoicesCompleterList import ChoicesCompleterList
+
+from extraModules.choicesCompleterList import ChoicesCompleterList
 from argcomplete.completers import ChoicesCompleter
 
-class tpcTofPidFull(object):
+class TpcTofPidFull(object):
     """
     Class for Interface -> pidTPCFull.cxx and pidTOFFull.cxx Task -> Configurable, Process Functions  
 
@@ -31,9 +32,9 @@ class tpcTofPidFull(object):
         object (parser_args() object): pidTPCFull.cxx and pidTOFFull.cxx Interface
     """
     
-    def __init__(self, parsertpcTofPidFull=argparse.ArgumentParser(add_help=False)):
-        super(tpcTofPidFull, self).__init__()
-        self.parsertpcTofPidFull = parsertpcTofPidFull
+    def __init__(self, parserTpcTofPidFull=argparse.ArgumentParser(add_help=False)):
+        super(TpcTofPidFull, self).__init__()
+        self.parserTpcTofPidFull = parserTpcTofPidFull
 
     def addArguments(self):
         """
@@ -59,13 +60,13 @@ class tpcTofPidFull(object):
         booleanSelections = ["true", "false"]
 
         # Interface
-        groupPID = self.parsertpcTofPidFull.add_argument_group(title="Data processor options: tpc-pid-full, tof-pid-full")
+        groupPID = self.parserTpcTofPidFull.add_argument_group(title="Data processor options: tpc-pid-full, tof-pid-full")
         groupPID.add_argument("--pid", help="Produce PID information for the <particle> mass hypothesis", action="store", nargs="*", type=str.lower, metavar="PID", choices=pidSelectionsList).completer = ChoicesCompleterList(pidSelectionsList)
 
         for key,value in pidSelections.items():
             groupPID.add_argument(key, help=value, action = "none")
              
-        groupTofPid = self.parsertpcTofPidFull.add_argument_group(title="Data processor options: tof-pid, tof-pid-full")   
+        groupTofPid = self.parserTpcTofPidFull.add_argument_group(title="Data processor options: tof-pid, tof-pid-full")   
         groupTofPid.add_argument("--isWSlice", help="Process with track slices", action="store",type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
             
     def parseArgs(self):
@@ -76,4 +77,4 @@ class tpcTofPidFull(object):
             Namespace: returns parse_args()
         """
         
-        return self.parsertpcTofPidFull.parse_args()
+        return self.parserTpcTofPidFull.parse_args()

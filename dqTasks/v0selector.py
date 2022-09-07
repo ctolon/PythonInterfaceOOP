@@ -20,7 +20,7 @@
 
 import argparse
 
-class v0selector(object):
+class V0selector(object):
     """
     Class for Interface -> v0selector.cxx Task -> Configurable, Process Functions  
 
@@ -28,9 +28,9 @@ class v0selector(object):
         object (parser_args() object): v0selector.cxx Interface
     """
     
-    def __init__(self, parserv0selector=argparse.ArgumentParser(add_help=False)):
-        super(v0selector, self).__init__()
-        self.parserv0selector = parserv0selector
+    def __init__(self, parserV0selector=argparse.ArgumentParser(add_help=False)):
+        super(V0selector, self).__init__()
+        self.parserV0selector = parserV0selector
 
     def addArguments(self):
         """
@@ -38,7 +38,7 @@ class v0selector(object):
         """
 
         # Interface
-        groupV0Selector = self.parserv0selector.add_argument_group(title="Data processor options: v0-selector")
+        groupV0Selector = self.parserV0selector.add_argument_group(title="Data processor options: v0-selector")
         groupV0Selector.add_argument("--d_bz", help="bz field", action="store", type=str)
         groupV0Selector.add_argument("--v0cospa", help="v0cospa", action="store", type=str)
         groupV0Selector.add_argument("--dcav0dau", help="DCA V0 Daughters", action="store", type=str)
@@ -57,4 +57,4 @@ class v0selector(object):
             Namespace: returns parse_args()
         """
         
-        return self.parserv0selector.parse_args()
+        return self.parserV0selector.parse_args()

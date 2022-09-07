@@ -26,17 +26,17 @@ from logging import handlers
 import os
 import argparse
 
-from ExtraModules.ActionHandler import NoAction
-from ExtraModules.ActionHandler import ChoicesAction
-from ExtraModules.DebugOptions import DebugOptions
-from ExtraModules.StringOperations import listToString
+from extraModules.actionHandler import NoAction
+from extraModules.actionHandler import ChoicesAction
+from extraModules.debugOptions import DebugOptions
+from extraModules.stringOperations import listToString
 
-from CommonDeps.eventSelection import EventSelectionTask
-from CommonDeps.multiplicityTable import MultiplicityTable
-from CommonDeps.pidTOFBase import tofEventTime
-from CommonDeps.pidTOFbeta import tofPidbeta
-from CommonDeps.pidTPCTOFFull import tpcTofPidFull
-from CommonDeps.trackPropagation import TrackPropagation
+from commonDeps.eventSelection import EventSelectionTask
+from commonDeps.multiplicityTable import MultiplicityTable
+from commonDeps.pidTOFBase import TofEventTime
+from commonDeps.pidTOFBeta import TofPidBeta
+from commonDeps.pidTPCTOFFull import TpcTofPidFull
+from commonDeps.trackPropagation import TrackPropagation
 
 from dqTasks.filterPP import DQFilterPPTask
 
@@ -113,9 +113,9 @@ class runFilterPP(object):
                 filterPP=DQFilterPPTask(),
                 eventSelection=EventSelectionTask(), 
                 multiplicityTable=MultiplicityTable(),
-                tofEventTime=tofEventTime(),
-                tofPidBeta =tofPidbeta(),
-                tpcTofPidFull=tpcTofPidFull(),
+                tofEventTime=TofEventTime(),
+                tofPidBeta=TofPidBeta(),
+                tpcTofPidFull=TpcTofPidFull(),
                 trackPropagation=TrackPropagation(),
                 debugOptions=DebugOptions()
                 ):
@@ -180,13 +180,13 @@ class runFilterPP(object):
         self.multiplicityTable.parserMultiplicityTable = self.parserrunFilterPP
         self.multiplicityTable.addArguments()
         
-        self.tofEventTime.parsertofEventTime = self.parserrunFilterPP
+        self.tofEventTime.parserTofEventTime = self.parserrunFilterPP
         self.tofEventTime.addArguments()
         
-        self.tofPidBeta.parsertofPidbeta = self.parserrunFilterPP
+        self.tofPidBeta.parserTofPidBeta = self.parserrunFilterPP
         self.tofPidBeta.addArguments()
         
-        self.tpcTofPidFull.parsertpcTofPidFull = self.parserrunFilterPP
+        self.tpcTofPidFull.parserTpcTofPidFull = self.parserrunFilterPP
         self.tpcTofPidFull.addArguments()
         
         self.trackPropagation.parserTrackPropagation = self.parserrunFilterPP

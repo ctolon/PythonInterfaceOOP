@@ -16,38 +16,36 @@
 ##   along with this program. if not, see <https://www.gnu.org/licenses/>. ##
 #############################################################################
 
-# Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/Common/TableProducer/eventSelection.cxx
+# Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/Common/TableProducer/PID/pidTOFBase.cxx
 
 import argparse
 
 from argcomplete.completers import ChoicesCompleter
-class EventSelectionTask(object):
+
+class TofEventTime(object):
     """
-    Class for Interface -> eventSelection.cxx Task -> Configurable, Process Functions  
+    Class for Interface -> pidTOFBase.cxx.cxx Task -> Configurable, Process Functions  
 
     Args:
-        object (parser_args() object): eventSelection.cxx Interface
+        object (parser_args() object): pidTOFBase.cxx.cxx Interface
     """
-
-    def __init__(self, parserEventSelectionTask=argparse.ArgumentParser(add_help=False)):
-        super(EventSelectionTask, self).__init__()
-        self.parserEventSelectionTask = parserEventSelectionTask
+    
+    def __init__(self, parserTofEventTime=argparse.ArgumentParser(add_help=False)):
+        super(TofEventTime, self).__init__()
+        self.parserTofEventTime = parserTofEventTime
 
     def addArguments(self):
         """
         This function allows to add arguments for parser_args() function
         """
-      
-        # Predefined Selections  
-        collisionSystemSelections = ["PbPb", "pp", "pPb", "Pbp", "XeXe"]
-        eventMuonSelections = ["0", "1", "2"]
         
+        # Predefined Selections
+        ft0Selections = ["FT0", "NoFT0", "OnlyFT0", "Run2"]
+    
         # Interface
-        groupEventSelection = self.parserEventSelectionTask.add_argument_group(title="Data processor options: event-selection-task")
-        groupEventSelection.add_argument("--syst", help="Collision System Selection ex. pp", action="store", type=str, choices=(collisionSystemSelections)).completer = ChoicesCompleter(collisionSystemSelections)
-        groupEventSelection.add_argument("--muonSelection", help="0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts", action="store", type=str, choices=(eventMuonSelections)).completer = ChoicesCompleter(eventMuonSelections)
-        groupEventSelection.add_argument("--customDeltaBC", help="custom BC delta for FIT-collision matching", action="store", type=str)
-        
+        groupTofEventTime = self.parserTofEventTime.add_argument_group(title="Data processor options: tof-event-time")
+        groupTofEventTime.add_argument("--FT0", help="FT0: Process with FT0, NoFT0: Process without FT0, OnlyFT0: Process only with FT0, Run2: Process with Run2 data", action="store", type=str, choices=ft0Selections).completer = ChoicesCompleter(ft0Selections)
+            
     def parseArgs(self):
         """
         This function allows to save the obtained arguments to the parser_args() function
@@ -56,4 +54,4 @@ class EventSelectionTask(object):
             Namespace: returns parse_args()
         """
         
-        return self.parserEventSelectionTask.parse_args()
+        return self.parserTofEventTime.parse_args()

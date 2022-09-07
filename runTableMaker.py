@@ -26,21 +26,21 @@ from logging import handlers
 import os
 import argparse
 
-from ExtraModules.ActionHandler import NoAction
-from ExtraModules.ActionHandler import ChoicesAction
-from ExtraModules.DebugOptions import DebugOptions
-from ExtraModules.StringOperations import listToString, stringToList
+from extraModules.actionHandler import NoAction
+from extraModules.actionHandler import ChoicesAction
+from extraModules.debugOptions import DebugOptions
+from extraModules.stringOperations import listToString, stringToList
 
-from CommonDeps.centralityTable import CentralityTable
-from CommonDeps.eventSelection import EventSelectionTask
-from CommonDeps.multiplicityTable import MultiplicityTable
-from CommonDeps.pidTOFBase import tofEventTime
-from CommonDeps.pidTOFbeta import tofPidbeta
-from CommonDeps.pidTPCTOFFull import tpcTofPidFull
-from CommonDeps.trackPropagation import TrackPropagation
+from commonDeps.centralityTable import CentralityTable
+from commonDeps.eventSelection import EventSelectionTask
+from commonDeps.multiplicityTable import MultiplicityTable
+from commonDeps.pidTOFBase import TofEventTime
+from commonDeps.pidTOFBeta import TofPidBeta
+from commonDeps.pidTPCTOFFull import TpcTofPidFull
+from commonDeps.trackPropagation import TrackPropagation
 
 from dqTasks.tableMaker import TableMaker
-from dqTasks.v0selector import v0selector
+from dqTasks.v0selector import V0selector
 
 """
 argcomplete - Bash tab completion for argparse
@@ -158,11 +158,11 @@ class runTableMaker(object):
                 eventSelection=EventSelectionTask(), 
                 centralityTable=CentralityTable(),
                 multiplicityTable=MultiplicityTable(),
-                tofEventTime=tofEventTime(),
-                tofPidBeta =tofPidbeta(),
-                tpcTofPidFull=tpcTofPidFull(),
+                tofEventTime=TofEventTime(),
+                tofPidBeta =TofPidBeta(),
+                tpcTofPidFull=TpcTofPidFull(),
                 trackPropagation=TrackPropagation(),
-                v0selector = v0selector(),
+                v0selector = V0selector(),
                 tableMaker=TableMaker(),
                 debugOptions=DebugOptions()
                 ):
@@ -234,19 +234,19 @@ class runTableMaker(object):
         self.multiplicityTable.parserMultiplicityTable = self.parserRunTableMaker
         self.multiplicityTable.addArguments()
         
-        self.tofEventTime.parsertofEventTime = self.parserRunTableMaker
+        self.tofEventTime.parserTofEventTime = self.parserRunTableMaker
         self.tofEventTime.addArguments()
         
-        self.tofPidBeta.parsertofPidbeta = self.parserRunTableMaker
+        self.tofPidBeta.parserTofPidBeta = self.parserRunTableMaker
         self.tofPidBeta.addArguments()
         
-        self.tpcTofPidFull.parsertpcTofPidFull = self.parserRunTableMaker
+        self.tpcTofPidFull.parserTpcTofPidFull = self.parserRunTableMaker
         self.tpcTofPidFull.addArguments()
         
         self.trackPropagation.parserTrackPropagation = self.parserRunTableMaker
         self.trackPropagation.addArguments()
         
-        self.v0selector.parserv0selector = self.parserRunTableMaker
+        self.v0selector.parserV0selector = self.parserRunTableMaker
         self.v0selector.addArguments()
                 
         self.tableMaker.parserTableMaker = self.parserRunTableMaker

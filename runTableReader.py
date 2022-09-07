@@ -26,13 +26,13 @@ from logging import handlers
 import os
 import argparse
 
-from ExtraModules.ActionHandler import NoAction
-from ExtraModules.ActionHandler import ChoicesAction
-from ExtraModules.DebugOptions import DebugOptions
-from ExtraModules.StringOperations import listToString, stringToList
+from extraModules.actionHandler import NoAction
+from extraModules.actionHandler import ChoicesAction
+from extraModules.debugOptions import DebugOptions
+from extraModules.stringOperations import listToString, stringToList
 
 
-from dqTasks.tableReader import tableReader
+from dqTasks.tableReader import TableReader
 
 """
 argcomplete - Bash tab completion for argparse
@@ -92,18 +92,18 @@ class runTableReader(object):
     """
     
     def __init__(self, 
-                parserRuntableReader=argparse.ArgumentParser(
+                parserRunTableReader=argparse.ArgumentParser(
                 formatter_class=argparse.ArgumentDefaultsHelpFormatter,
                 description="Arguments to pass"), 
-                tableReader=tableReader(),
+                tableReader=TableReader(),
                 debugOptions=DebugOptions()
                 ):
         super(runTableReader, self).__init__()
-        self.parserRuntableReader = parserRuntableReader
+        self.parserRunTableReader = parserRunTableReader
         self.tableReader = tableReader
         self.debugOptions = debugOptions
-        self.parserRuntableReader.register("action", "none", NoAction)
-        self.parserRuntableReader.register("action", "store_choice", ChoicesAction)
+        self.parserRunTableReader.register("action", "none", NoAction)
+        self.parserRunTableReader.register("action", "store_choice", ChoicesAction)
     
     def addArguments(self):
         """
@@ -111,22 +111,22 @@ class runTableReader(object):
         """
         
         # Core Part
-        groupCoreSelections = self.parserRuntableReader.add_argument_group(title="Core configurations that must be configured")
+        groupCoreSelections = self.parserRunTableReader.add_argument_group(title="Core configurations that must be configured")
         groupCoreSelections.add_argument("cfgFileName", metavar="Config.json", default="config.json", help="config JSON file name")
                         
         # aod
-        groupDPLReader = self.parserRuntableReader.add_argument_group(title="Data processor options: internal-dpl-aod-reader")
+        groupDPLReader = self.parserRunTableReader.add_argument_group(title="Data processor options: internal-dpl-aod-reader")
         groupDPLReader.add_argument("--aod", help="Add your AOD File with path", action="store", type=str)
         groupDPLReader.add_argument("--reader", help="Add your AOD Reader JSON with path", action="store", default=readerPath, type=str)
         groupDPLReader.add_argument("--writer", help="Add your AOD Writer JSON with path", action="store", default=writerPath, type=str)
 
         # automation params
-        groupAutomations = self.parserRuntableReader.add_argument_group(title="Automation Parameters")
+        groupAutomations = self.parserRunTableReader.add_argument_group(title="Automation Parameters")
         groupAutomations.add_argument("--onlySelect", help="If false JSON Overrider Interface If true JSON Additional Interface", action="store", default="true", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
         groupAutomations.add_argument("--autoDummy", help="Dummy automize parameter (don't configure it, true is highly recomended for automation)", action="store", default="true", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
         
         # helper lister commands
-        #groupAdditionalHelperCommands = self.parserRuntableReader.add_argument_group(title="Additional Helper Command Options")
+        #groupAdditionalHelperCommands = self.parserRunTableReader.add_argument_group(title="Additional Helper Command Options")
         #groupAdditionalHelperCommands.add_argument("--cutLister", help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
         #groupAdditionalHelperCommands.add_argument("--mixingLister", help="List all of the event mixing selections from MixingLibrary.h", action="store_true")
     
@@ -139,7 +139,7 @@ class runTableReader(object):
         """
  
         argcomplete.autocomplete(self.parserRuntableReader, always_complete_options=False)  
-        return self.parserRuntableReader.parse_args()
+        return self.parserRunTableReader.parse_args()
 
     def mergeArgs(self):
         """
@@ -149,7 +149,7 @@ class runTableReader(object):
         self.debugOptions.parserDebugOptions = self.parserRuntableReader
         self.debugOptions.addArguments()
         
-        self.tableReader.parsertableReader = self.parserRuntableReader
+        self.tableReader.parserTableReader = self.parserRunTableReader
         self.tableReader.addArguments()
                 
         self.addArguments()

@@ -16,34 +16,50 @@
 ##   along with this program. if not, see <https://www.gnu.org/licenses/>. ##
 #############################################################################
 
-# Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/Common/TableProducer/PID/pidTOFBase.cxx
-
 import argparse
-from argcomplete.completers import ChoicesCompleter
 
-class tofEventTime(object):
+from argcomplete.completers import ChoicesCompleter
+from extraModules.choicesCompleterList import ChoicesCompleterList
+
+class DebugOptions(object):
     """
-    Class for Interface -> pidTOFBase.cxx.cxx Task -> Configurable, Process Functions  
+    Class for Interface -> Debug Options 
 
     Args:
-        object (parser_args() object): pidTOFBase.cxx.cxx Interface
+        object (parser_args() object): Debug Interface
     """
     
-    def __init__(self, parsertofEventTime=argparse.ArgumentParser(add_help=False)):
-        super(tofEventTime, self).__init__()
-        self.parsertofEventTime = parsertofEventTime
+    
+    def __init__(self, parserDebugOptions=argparse.ArgumentParser(add_help=False)):
+        super(DebugOptions, self).__init__()
+        self.parserDebugOptions = parserDebugOptions
 
     def addArguments(self):
         """
         This function allows to add arguments for parser_args() function
         """
-        
+
         # Predefined Selections
-        ft0Selections = ["FT0", "NoFT0", "OnlyFT0", "Run2"]
+        debugLevelSelections = {
+            "NOTSET": "Set Debug Level to NOTSET",
+            "DEBUG": "Set Debug Level to DEBUG",
+            "INFO": "Set Debug Level to INFO",
+            "WARNING": "Set Debug Level to WARNING",
+            "ERROR": "Set Debug Level to ERROR",
+            "CRITICAL": "Set Debug Level to CRITICAL"
+        }
+        debugLevelSelectionsList = []
+        for k, v in debugLevelSelections.items():
+            debugLevelSelectionsList.append(k)
     
         # Interface
-        groupTofEventTime = self.parsertofEventTime.add_argument_group(title="Data processor options: tof-event-time")
-        groupTofEventTime.add_argument("--FT0", help="FT0: Process with FT0, NoFT0: Process without FT0, OnlyFT0: Process only with FT0, Run2: Process with Run2 data", action="store", type=str, choices=ft0Selections).completer = ChoicesCompleter(ft0Selections)
+        groupDebugOptions = self.parserDebugOptions.add_argument_group(title="Additional Debug Options")
+        groupDebugOptions.add_argument("--debug", help="execute with debug options", action="store", type=str.upper, default="INFO", choices=debugLevelSelectionsList).completer = ChoicesCompleterList(debugLevelSelectionsList)
+        groupDebugOptions.add_argument("--logFile", help="Enable logger for both file and CLI", action="store_true")
+        groupDebug= self.parserDebugOptions.add_argument_group(title="Choice List for debug Parameters")
+
+        for key,value in debugLevelSelections.items():
+            groupDebug.add_argument(key, help=value, action="none")
             
     def parseArgs(self):
         """
@@ -53,4 +69,4 @@ class tofEventTime(object):
             Namespace: returns parse_args()
         """
         
-        return self.parsertofEventTime.parse_args()
+        return self.parserDebugOptions.parse_args()

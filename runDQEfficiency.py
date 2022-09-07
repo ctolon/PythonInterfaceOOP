@@ -26,12 +26,12 @@ from logging import handlers
 import os
 import argparse
 
-from ExtraModules.ActionHandler import NoAction
-from ExtraModules.ActionHandler import ChoicesAction
-from ExtraModules.DebugOptions import DebugOptions
-from ExtraModules.StringOperations import listToString, stringToList
+from extraModules.actionHandler import NoAction
+from extraModules.actionHandler import ChoicesAction
+from extraModules.debugOptions import DebugOptions
+from extraModules.stringOperations import listToString, stringToList
 
-from dqTasks.dqEfficiency import dqEfficiency
+from dqTasks.dqEfficiency import DQEfficiency
 
 """
 argcomplete - Bash tab completion for argparse
@@ -89,18 +89,18 @@ class runDQEffciency(object):
     """
 
     def __init__(self, 
-                parserRundqEfficiency=argparse.ArgumentParser(
+                parserRunDQEfficiency=argparse.ArgumentParser(
                 formatter_class=argparse.ArgumentDefaultsHelpFormatter,
                 description="Arguments to pass"), 
-                dqEfficiency=dqEfficiency(),
+                dqEfficiency=DQEfficiency(),
                 debugOptions=DebugOptions()
                 ):
         super(runDQEffciency, self).__init__()
-        self.parserRundqEfficiency = parserRundqEfficiency
+        self.parserRunDQEfficiency = parserRunDQEfficiency
         self.dqEfficiency = dqEfficiency
         self.debugOptions = debugOptions
-        self.parserRundqEfficiency.register("action", "none", NoAction)
-        self.parserRundqEfficiency.register("action", "store_choice", ChoicesAction)
+        self.parserRunDQEfficiency.register("action", "none", NoAction)
+        self.parserRunDQEfficiency.register("action", "store_choice", ChoicesAction)
     
     def addArguments(self):
         """
@@ -108,22 +108,22 @@ class runDQEffciency(object):
         """
         
         # Core Part
-        groupCoreSelections = self.parserRundqEfficiency.add_argument_group(title="Core configurations that must be configured")
+        groupCoreSelections = self.parserRunDQEfficiency.add_argument_group(title="Core configurations that must be configured")
         groupCoreSelections.add_argument("cfgFileName", metavar="Config.json", default="config.json", help="config JSON file name")
                         
         # aod
-        groupDPLReader = self.parserRundqEfficiency.add_argument_group(title="Data processor options: internal-dpl-aod-reader")
+        groupDPLReader = self.parserRunDQEfficiency.add_argument_group(title="Data processor options: internal-dpl-aod-reader")
         groupDPLReader.add_argument("--aod", help="Add your AOD File with path", action="store", type=str)
         groupDPLReader.add_argument("--reader", help="Add your AOD Reader JSON with path", action="store", default=readerPath, type=str)
         groupDPLReader.add_argument("--writer", help="Add your AOD Writer JSON with path", action="store", default=writerPath, type=str)
 
         # automation params
-        groupAutomations = self.parserRundqEfficiency.add_argument_group(title="Automation Parameters")
+        groupAutomations = self.parserRunDQEfficiency.add_argument_group(title="Automation Parameters")
         groupAutomations.add_argument("--onlySelect", help="If false JSON Overrider Interface If true JSON Additional Interface", action="store", default="true", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
         groupAutomations.add_argument("--autoDummy", help="Dummy automize parameter (don't configure it, true is highly recomended for automation)", action="store", default="true", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
         
         # helper lister commands
-        #groupAdditionalHelperCommands = self.parserRundqEfficiency.add_argument_group(title="Additional Helper Command Options")
+        #groupAdditionalHelperCommands = self.parserRunDQEfficiency.add_argument_group(title="Additional Helper Command Options")
         #groupAdditionalHelperCommands.add_argument("--cutLister", help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
         #groupAdditionalHelperCommands.add_argument("--MCSignalsLister", help="List all of the MCSignals from MCSignalLibrary.h", action="store_true")
     
@@ -135,18 +135,18 @@ class runDQEffciency(object):
             Namespace: returns parse_args()
         """
  
-        argcomplete.autocomplete(self.parserRundqEfficiency, always_complete_options=False)  
-        return self.parserRundqEfficiency.parse_args()
+        argcomplete.autocomplete(self.parserRunDQEfficiency, always_complete_options=False)  
+        return self.parserRunDQEfficiency.parse_args()
 
     def mergeArgs(self):
         """
         This function allows to merge parser_args argument information from different classes
         """
         
-        self.debugOptions.parserDebugOptions = self.parserRundqEfficiency
+        self.debugOptions.parserDebugOptions = self.parserRunDQEfficiency
         self.debugOptions.addArguments()
         
-        self.dqEfficiency.parserdqEfficiency = self.parserRundqEfficiency
+        self.dqEfficiency.parserDQEfficiency = self.parserRunDQEfficiency
         self.dqEfficiency.addArguments()
                 
         self.addArguments()
@@ -154,7 +154,7 @@ class runDQEffciency(object):
     # This function not work should be integrated instead of mergeArgs
     """  
     def mergeMultiArgs(self, *objects):
-        parser = self.parserRundqEfficiency
+        parser = self.parserRunDQEfficiency
         for object in objects:
             object.parser = parser
             object.addArguments()

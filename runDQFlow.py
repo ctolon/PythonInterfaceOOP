@@ -26,18 +26,18 @@ from logging import handlers
 import os
 import argparse
 
-from ExtraModules.ActionHandler import NoAction
-from ExtraModules.ActionHandler import ChoicesAction
-from ExtraModules.DebugOptions import DebugOptions
-from ExtraModules.StringOperations import listToString
+from extraModules.actionHandler import NoAction
+from extraModules.actionHandler import ChoicesAction
+from extraModules.debugOptions import DebugOptions
+from extraModules.stringOperations import listToString
 
-from CommonDeps.centralityTable import CentralityTable
-from CommonDeps.eventSelection import EventSelectionTask
-from CommonDeps.multiplicityTable import MultiplicityTable
-from CommonDeps.pidTOFBase import tofEventTime
-from CommonDeps.pidTOFbeta import tofPidbeta
-from CommonDeps.pidTPCTOFFull import tpcTofPidFull
-from CommonDeps.trackPropagation import TrackPropagation
+from commonDeps.centralityTable import CentralityTable
+from commonDeps.eventSelection import EventSelectionTask
+from commonDeps.multiplicityTable import MultiplicityTable
+from commonDeps.pidTOFBase import TofEventTime
+from commonDeps.pidTOFBeta import TofPidBeta
+from commonDeps.pidTPCTOFFull import TpcTofPidFull
+from commonDeps.trackPropagation import TrackPropagation
 
 from dqTasks.dqFlow import AnalysisQvector
 
@@ -115,9 +115,9 @@ class runAnalysisQvector(object):
                 eventSelection=EventSelectionTask(), 
                 centralityTable=CentralityTable(),
                 multiplicityTable=MultiplicityTable(),
-                tofEventTime=tofEventTime(),
-                tofPidBeta =tofPidbeta(),
-                tpcTofPidFull=tpcTofPidFull(),
+                tofEventTime=TofEventTime(),
+                tofPidBeta =TofPidBeta(),
+                tpcTofPidFull=TpcTofPidFull(),
                 trackPropagation=TrackPropagation(),
                 debugOptions=DebugOptions()
                 ):
@@ -186,13 +186,13 @@ class runAnalysisQvector(object):
         self.multiplicityTable.parserMultiplicityTable = self.parserRunAnalysisQvector
         self.multiplicityTable.addArguments()
         
-        self.tofEventTime.parsertofEventTime = self.parserRunAnalysisQvector
+        self.tofEventTime.parserTofEventTime = self.parserRunAnalysisQvector
         self.tofEventTime.addArguments()
         
-        self.tofPidBeta.parsertofPidbeta = self.parserRunAnalysisQvector
+        self.tofPidBeta.parserTofPidBeta = self.parserRunAnalysisQvector
         self.tofPidBeta.addArguments()
         
-        self.tpcTofPidFull.parsertpcTofPidFull = self.parserRunAnalysisQvector
+        self.tpcTofPidFull.parserTpcTofPidFull = self.parserRunAnalysisQvector
         self.tpcTofPidFull.addArguments()
         
         self.trackPropagation.parserTrackPropagation = self.parserRunAnalysisQvector

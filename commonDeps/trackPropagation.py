@@ -16,23 +16,23 @@
 ##   along with this program. if not, see <https://www.gnu.org/licenses/>. ##
 #############################################################################
 
+# Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/Common/TableProducer/trackPropagation.cxx
+
 import argparse
 
 from argcomplete.completers import ChoicesCompleter
-from ExtraModules.ChoicesCompleterList import ChoicesCompleterList
 
-class DebugOptions(object):
+class TrackPropagation(object):
     """
-    Class for Interface -> Debug Options 
+    Class for Interface -> trackPropagation.cxx Task -> Configurable, Process Functions  
 
     Args:
-        object (parser_args() object): Debug Interface
+        object (parser_args() object): trackPropagation.cxx Interface
     """
     
-    
-    def __init__(self, parserDebugOptions=argparse.ArgumentParser(add_help=False)):
-        super(DebugOptions, self).__init__()
-        self.parserDebugOptions = parserDebugOptions
+    def __init__(self, parserTrackPropagation=argparse.ArgumentParser(add_help=False)):
+        super(TrackPropagation, self).__init__()
+        self.parserTrackPropagation = parserTrackPropagation
 
     def addArguments(self):
         """
@@ -40,26 +40,11 @@ class DebugOptions(object):
         """
 
         # Predefined Selections
-        debugLevelSelections = {
-            "NOTSET": "Set Debug Level to NOTSET",
-            "DEBUG": "Set Debug Level to DEBUG",
-            "INFO": "Set Debug Level to INFO",
-            "WARNING": "Set Debug Level to WARNING",
-            "ERROR": "Set Debug Level to ERROR",
-            "CRITICAL": "Set Debug Level to CRITICAL"
-        }
-        debugLevelSelectionsList = []
-        for k, v in debugLevelSelections.items():
-            debugLevelSelectionsList.append(k)
+        booleanSelections = ["true", "false"]
     
         # Interface
-        groupDebugOptions = self.parserDebugOptions.add_argument_group(title="Additional Debug Options")
-        groupDebugOptions.add_argument("--debug", help="execute with debug options", action="store", type=str.upper, default="INFO", choices=debugLevelSelectionsList).completer = ChoicesCompleterList(debugLevelSelectionsList)
-        groupDebugOptions.add_argument("--logFile", help="Enable logger for both file and CLI", action="store_true")
-        groupDebug= self.parserDebugOptions.add_argument_group(title="Choice List for debug Parameters")
-
-        for key,value in debugLevelSelections.items():
-            groupDebug.add_argument(key, help=value, action="none")
+        groupTrackPropagation = self.parserTrackPropagation.add_argument_group(title="Data processor options: track-propagation")
+        groupTrackPropagation.add_argument("--isCovariance", help="track-propagation : If false, Process without covariance, If true Process with covariance", action="store",type=str.lower, choices=(booleanSelections)).completer = ChoicesCompleter(booleanSelections)
             
     def parseArgs(self):
         """
@@ -69,4 +54,4 @@ class DebugOptions(object):
             Namespace: returns parse_args()
         """
         
-        return self.parserDebugOptions.parse_args()
+        return self.parserTrackPropagation.parse_args()

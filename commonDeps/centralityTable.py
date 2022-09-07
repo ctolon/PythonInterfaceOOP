@@ -19,7 +19,8 @@
 # Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/Common/TableProducer/centralityTable.cxx
 
 import argparse
-from ExtraModules.ChoicesCompleterList import ChoicesCompleterList
+
+from extraModules.choicesCompleterList import ChoicesCompleterList
 
 class CentralityTable(object):
     """
