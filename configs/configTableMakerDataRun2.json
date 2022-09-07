@@ -214,7 +214,6 @@
         "cfgDetailedQA": "true",
         "cfgIsRun2": "true",
         "processFull": "false",
-        "processFullTiny": "false",
         "processFullWithCov": "false",
         "processFullWithCent": "false",
         "processBarrelOnlyWithV0Bits": "false",
