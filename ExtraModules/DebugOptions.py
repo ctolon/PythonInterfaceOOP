@@ -16,35 +16,50 @@
 ##   along with this program. if not, see <https://www.gnu.org/licenses/>. ##
 #############################################################################
 
-# Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/Common/TableProducer/multiplicityTable.cxx
-
 import argparse
-from argcomplete.completers import ChoicesCompleter
 
-class MultiplicityTable(object):
+from argcomplete.completers import ChoicesCompleter
+from ExtraModules.ChoicesCompleterList import ChoicesCompleterList
+
+class DebugOptions(object):
     """
-    Class for Interface -> multiplicityTable.cxx Task -> Configurable, Process Functions  
+    Class for Interface -> Debug Options 
 
     Args:
-        object (parser_args() object): multiplicityTable.cxx Interface
+        object (parser_args() object): Debug Interface
     """
     
-    def __init__(self, parserMultiplicityTable=argparse.ArgumentParser(add_help=False)):
-        super(MultiplicityTable, self).__init__()
-        self.parserMultiplicityTable = parserMultiplicityTable
+    
+    def __init__(self, parserDebugOptions=argparse.ArgumentParser(add_help=False)):
+        super(DebugOptions, self).__init__()
+        self.parserDebugOptions = parserDebugOptions
 
     def addArguments(self):
         """
         This function allows to add arguments for parser_args() function
         """
-        
+
         # Predefined Selections
-        booleanSelections = ["true", "false"]
+        debugLevelSelections = {
+            "NOTSET": "Set Debug Level to NOTSET",
+            "DEBUG": "Set Debug Level to DEBUG",
+            "INFO": "Set Debug Level to INFO",
+            "WARNING": "Set Debug Level to WARNING",
+            "ERROR": "Set Debug Level to ERROR",
+            "CRITICAL": "Set Debug Level to CRITICAL"
+        }
+        debugLevelSelectionsList = []
+        for k, v in debugLevelSelections.items():
+            debugLevelSelectionsList.append(k)
     
         # Interface
-        groupMultiplicityTable = self.parserMultiplicityTable.add_argument_group(title="Data processor options: multiplicity-table")
-        groupMultiplicityTable.add_argument("--isVertexZeq", help="if true: do vertex Z eq mult table", action="store", type=str.lower, choices=(booleanSelections)).completer = ChoicesCompleter(booleanSelections)
+        groupDebugOptions = self.parserDebugOptions.add_argument_group(title="Additional Debug Options")
+        groupDebugOptions.add_argument("--debug", help="execute with debug options", action="store", type=str.upper, default="INFO", choices=debugLevelSelectionsList).completer = ChoicesCompleterList(debugLevelSelectionsList)
+        groupDebugOptions.add_argument("--logFile", help="Enable logger for both file and CLI", action="store_true")
+        groupDebug= self.parserDebugOptions.add_argument_group(title="Choice List for debug Parameters")
 
+        for key,value in debugLevelSelections.items():
+            groupDebug.add_argument(key, help=value, action="none")
             
     def parseArgs(self):
         """
@@ -54,4 +69,4 @@ class MultiplicityTable(object):
             Namespace: returns parse_args()
         """
         
-        return self.parserMultiplicityTable.parse_args()
+        return self.parserDebugOptions.parse_args()

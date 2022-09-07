@@ -47,11 +47,11 @@
         "ccdb-path": "Users\/lm",
         "ccdb-no-later-than": "1638360910432",
         "processJpsiToEESkimmed": "true",
-        "processJpsiToMuMuSkimmed": "false",
+        "processJpsiToMuMuSkimmed": "true",
         "processJpsiToMuMuVertexingSkimmed": "false",
         "processVnJpsiToEESkimmed": "false",
         "processVnJpsiToMuMuSkimmed": "false",
-        "processElectronMuonSkimmed": "false",
+        "processElectronMuonSkimmed": "true",
         "processAllSkimmed": "false",
         "processDummy": "false"
     },

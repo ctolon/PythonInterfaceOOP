@@ -16,37 +16,38 @@
 ##   along with this program. if not, see <https://www.gnu.org/licenses/>. ##
 #############################################################################
 
-# Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/Common/TableProducer/PID/pidTOFbeta.cxx
-
 import argparse
 
-class tofPidbeta(object):
+
+class NoAction(argparse.Action):
     """
-    Class for Interface -> pidTOFbeta.cxx Task -> Configurable, Process Functions  
+    NoAction class adds dummy positional arguments to an argument,
+    so sub helper messages can be created
 
     Args:
-        object (parser_args() object): pidTOFbeta.cxx Interface
+        argparse (Class): Input as args
     """
-    
-    def __init__(self, parsertofPidbeta=argparse.ArgumentParser(add_help=False)):
-        super(tofPidbeta, self).__init__()
-        self.parsertofPidbeta = parsertofPidbeta
 
-    def addArguments(self):
-        """
-        This function allows to add arguments for parser_args() function
-        """
-    
-        # Interface
-        grouptofPidbeta = self.parsertofPidbeta.add_argument_group(title="Data processor options: tof-pid-beta")
-        grouptofPidbeta.add_argument("--tof-expreso", help="Expected resolution for the computation of the expected beta", action="store", type=str)
-            
-    def parseArgs(self):
-        """
-        This function allows to save the obtained arguments to the parser_args() function
-        
-        Returns:
-            Namespace: returns parse_args()
-        """
-        
-        return self.parsertofPidbeta.parse_args()
+    def __init__(self, **kwargs):
+        kwargs.setdefault("default", argparse.SUPPRESS)
+        kwargs.setdefault("nargs", 0)
+        super(NoAction, self).__init__(**kwargs)
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        pass
+
+
+class ChoicesAction(argparse._StoreAction):
+    """
+    ChoicesAction class is used to add extra choices
+    to a parseargs choices list
+
+    Args:
+        argparse (Class): Input as args
+    """
+
+    def add_choice(self, choice, help=""):
+        if self.choices is None:
+            self.choices = []
+        self.choices.append(choice)
+        self.container.add_argument(choice, help=help, action="none")

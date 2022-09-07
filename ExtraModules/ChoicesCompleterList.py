@@ -16,37 +16,19 @@
 ##   along with this program. if not, see <https://www.gnu.org/licenses/>. ##
 #############################################################################
 
-# Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/Common/TableProducer/PID/pidTOFbeta.cxx
-
-import argparse
-
-class tofPidbeta(object):
+class ChoicesCompleterList(object):
     """
-    Class for Interface -> pidTOFbeta.cxx Task -> Configurable, Process Functions  
+    For the ChoicesCompleterList package argcomplete,
+    the TAB key is the class written for autocomplete and validation when an argument can take multiple values.
+    By default, the argcomplete package has the ChoicesCompleter Class,
+    which can only validate arguments that take an one value and allows autocomplete with the TAB key.
 
     Args:
-        object (parser_args() object): pidTOFbeta.cxx Interface
+        object (list): parserargs choices object as a list
     """
-    
-    def __init__(self, parsertofPidbeta=argparse.ArgumentParser(add_help=False)):
-        super(tofPidbeta, self).__init__()
-        self.parsertofPidbeta = parsertofPidbeta
 
-    def addArguments(self):
-        """
-        This function allows to add arguments for parser_args() function
-        """
-    
-        # Interface
-        grouptofPidbeta = self.parsertofPidbeta.add_argument_group(title="Data processor options: tof-pid-beta")
-        grouptofPidbeta.add_argument("--tof-expreso", help="Expected resolution for the computation of the expected beta", action="store", type=str)
-            
-    def parseArgs(self):
-        """
-        This function allows to save the obtained arguments to the parser_args() function
-        
-        Returns:
-            Namespace: returns parse_args()
-        """
-        
-        return self.parsertofPidbeta.parse_args()
+    def __init__(self, choices):
+        self.choices = list(choices)
+
+    def __call__(self, **kwargs):
+        return self.choices

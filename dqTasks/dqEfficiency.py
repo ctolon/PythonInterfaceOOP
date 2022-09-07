@@ -1,0 +1,186 @@
+#!/usr/bin/env python
+# PYTHON_ARGCOMPLETE_OK
+# -*- coding: utf-8 -*- 
+#############################################################################
+##  © Copyright CERN 2018. All rights not expressly granted are reserved.  ##
+##                   Author: ionut.cristian.arsene@cern.ch                 ##
+##               Interface:  cevat.batuhan.tolon@cern.ch                   ## 
+## This program is free software: you can redistribute it and/or modify it ##
+##  under the terms of the GNU General Public License as published by the  ##
+## Free Software Foundation, either version 3 of the License, or (at your  ##
+## option) any later version. This program is distributed in the hope that ##
+##  it will be useful, but WITHOUT ANY WARRANTY; without even the implied  ##
+##     warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    ##
+##           See the GNU General Public License for more details.          ##
+##    You should have received a copy of the GNU General Public License    ##
+##   along with this program. if not, see <https://www.gnu.org/licenses/>. ##
+#############################################################################
+
+# Orginal Task For dqEfficiency.cxx: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/dqEfficiency.cxx
+
+import argparse
+import os
+import re
+import urllib.request
+from urllib.request import Request, urlopen
+import ssl
+
+from argcomplete.completers import ChoicesCompleter
+from ExtraModules.ChoicesCompleterList import ChoicesCompleterList
+class dqEfficiency(object):
+    """
+    Class for Interface -> dqEfficiency.cxx Task -> Configurable, Process Functions  
+
+    Args:
+        object (parser_args object): dqEfficiency.cxx Interface
+    """
+    
+    def __init__(self, parserdqEfficiency=argparse.ArgumentParser(add_help=False)):
+        super(dqEfficiency, self).__init__()
+        self.parserdqEfficiency = parserdqEfficiency
+
+    def addArguments(self):
+        """
+        This function allows to add arguments for parser_args() function
+        """
+
+        # Predefined Selections
+        analysisSelections = {
+            "eventSelection": "Run event selection on DQ skimmed events",
+            "muonSelection": "Run muon selection on DQ skimmed muons",
+            "trackSelection": "Run barrel track selection on DQ skimmed tracks",
+            "sameEventPairing": "Run same event pairing selection on DQ skimmed data",
+            "dileptonTrackDimuonMuonSelection": "Run dimuon-muon pairing, using skimmed data",
+            "dileptonTrackDielectronKaonSelection": "Run dielectron-kaon pairing, using skimmed data"
+        }
+        analysisSelectionsList = []
+        for k, v in analysisSelections.items():
+            analysisSelectionsList.append(k)
+
+        sameEventPairingProcessSelections = {
+            "JpsiToEE": "Run electron-electron pairing, with skimmed tracks",
+            "JpsiToMuMu": "Run muon-muon pairing, with skimmed muons",
+            "JpsiToMuMuVertexing": "Run muon-muon pairing and vertexing, with skimmed muons"
+        }
+        sameEventPairingProcessSelectionsList = []
+        for k, v in sameEventPairingProcessSelections.items():
+            sameEventPairingProcessSelectionsList.append(k)
+
+        booleanSelections = ["true", "false"]
+
+        allAnalysisCuts = []
+        allMCSignals = []
+
+        ################################
+        # Download DQ Libs From Github #
+        ################################
+
+        # It works on for only master branch
+
+        # header for github download
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36"
+        }
+
+        URL_CUTS_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/CutsLibrary.h?raw=true"
+        URL_MCSIGNALS_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MCSignalLibrary.h?raw=true"
+        URL_MIXING_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MixingLibrary.h?raw=true"
+
+        
+        # Github Links for CutsLibrary and MCSignalsLibrary from PWG-DQ --> download from github
+        # This condition solves performance issues    
+        if not (os.path.isfile("tempCutsLibrary.h") or os.path.isfile("tempMCSignalsLibrary.h") or os.path.isfile("tempMixingLibrary.h")):
+            print("[INFO] Some Libs are Missing. They will download.")
+            
+            # Dummy SSL Adder
+            context = ssl._create_unverified_context()  # prevent ssl problems
+            request = urllib.request.urlopen(URL_CUTS_LIBRARY, context=context)
+            
+            # HTTP Request
+            requestCutsLibrary = Request(URL_CUTS_LIBRARY, headers=headers)
+            requestMCSignalsLibrary = Request(URL_MCSIGNALS_LIBRARY, headers=headers)
+            requestMixingLibrary  = Request(URL_MIXING_LIBRARY , headers=headers)
+            
+            # Get Files With Http Requests
+            htmlCutsLibrary = urlopen(requestCutsLibrary, context=context).read()
+            htmlMCSignalsLibrary = urlopen(requestMCSignalsLibrary, context=context).read()
+            htmlMixingLibrary = urlopen(requestMixingLibrary, context=context).read()
+            
+            # Save Disk to temp DQ libs  
+            with open("tempCutsLibrary.h", "wb") as f:
+                f.write(htmlCutsLibrary)
+            with open("tempMCSignalsLibrary.h", "wb") as f:
+                f.write(htmlMCSignalsLibrary)
+            with open("tempMixingLibrary.h", "wb") as f:
+                f.write(htmlMixingLibrary)
+
+        # Read Cuts, Signals, Mixing vars from downloaded files
+        with open("tempMCSignalsLibrary.h") as f:
+            for line in f:
+                stringIfSearch = [x for x in f if "if" in x] 
+                for i in stringIfSearch:
+                    getSignals = re.findall('"([^"]*)"', i)
+                    allMCSignals = allMCSignals + getSignals
+            
+        with open("tempCutsLibrary.h") as f:
+            for line in f:
+                stringIfSearch = [x for x in f if "if" in x] 
+                for i in stringIfSearch:
+                    getAnalysisCuts = re.findall('"([^"]*)"', i)
+                    allAnalysisCuts = allAnalysisCuts + getAnalysisCuts
+    
+        # Interface
+        
+        # analysis task selections
+        groupAnalysisSelections = self.parserdqEfficiency.add_argument_group(title="Data processor options: analysis-event-selection, analysis-muon-selection, analysis-track-selection, analysis-dilepton-track")
+        groupAnalysisSelections.add_argument("--analysis", help="Skimmed process selections for MC Analysis", action="store", nargs="*", type=str, metavar="ANALYSIS", choices=analysisSelectionsList).completer = ChoicesCompleterList(analysisSelectionsList)
+
+        for key,value in analysisSelections.items():
+            groupAnalysisSelections.add_argument(key, help=value, action="none")
+
+        # same event pairing process function selection
+        groupProcessSEPSelections = self.parserdqEfficiency.add_argument_group(title="Data processor options: analysis-same-event-pairing")    
+        groupProcessSEPSelections.add_argument("--process", help="Skimmed process selections for analysis-same-event-pairing task", action="store", nargs="*", type=str, metavar="PROCESS", choices= sameEventPairingProcessSelectionsList).completer = ChoicesCompleterList(sameEventPairingProcessSelectionsList)
+        groupProcessSEPSelections.add_argument("--cfgBarrelMCRecSignals", help="Space separated list of MC signals (reconstructed)", nargs="*", action="store", type=str, metavar="CFGBARRELMCRECSIGNALS", choices=allMCSignals).completer = ChoicesCompleterList(allMCSignals)
+        groupProcessSEPSelections.add_argument("--cfgBarrelMCGenSignals", help="Space separated list of MC signals (generated)", nargs="*", action="store", type=str, metavar="CFGBARRELMCGENSIGNALS", choices=allMCSignals).completer = ChoicesCompleterList(allMCSignals)
+        groupProcessSEPSelections.add_argument("--cfgFlatTables", help="Produce a single flat tables with all relevant information of the pairs and single tracks", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+        groupProcess = self.parserdqEfficiency.add_argument_group(title="Choice List for analysis-same-event-pairing task Process options")
+
+        for key,value in sameEventPairingProcessSelections.items():
+            groupProcess.add_argument(key, help=value, action="none")
+
+        # cfg for QA
+        groupQASelections = self.parserdqEfficiency.add_argument_group(title="Data processor options: analysis-event-selection, analysis-muon-selection, analysis-track-selection, analysis-event-mixing, analysis-dilepton-hadron")
+        groupQASelections.add_argument("--cfgQA", help="If true, fill QA histograms", action="store", type=str.lower, choices=(booleanSelections)).completer = ChoicesCompleter(booleanSelections)
+
+        # analysis-event-selection
+        groupAnalysisEventSelection = self.parserdqEfficiency.add_argument_group(title="Data processor options: analysis-event-selection")
+        groupAnalysisEventSelection.add_argument("--cfgEventCuts", help="Space separated list of event cuts", nargs="*", action="store", type=str, metavar="CFGEVENTCUTS", choices=allAnalysisCuts).completer = ChoicesCompleterList(allAnalysisCuts)
+
+        # analysis-track-selection
+        groupAnalysisTrackSelection = self.parserdqEfficiency.add_argument_group(title="Data processor options: analysis-track-selection")
+        groupAnalysisTrackSelection.add_argument("--cfgTrackCuts", help="Space separated list of barrel track cuts", nargs="*", action="store", type=str, metavar="CFGTRACKCUTS", choices=allAnalysisCuts).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupAnalysisTrackSelection.add_argument("--cfgTrackMCSignals", help="Space separated list of MC signals", nargs="*", action="store", type=str, metavar="CFGTRACKMCSIGNALS", choices=allMCSignals).completer = ChoicesCompleterList(allMCSignals)
+
+        # analysis-muon-selection
+        groupAnalysisMuonSelection = self.parserdqEfficiency.add_argument_group(title="Data processor options: analysis-muon-selection")
+        groupAnalysisMuonSelection.add_argument("--cfgMuonCuts", help="Space separated list of muon cuts", nargs="*", action="store", type=str, metavar="CFGMUONCUTS", choices=allAnalysisCuts).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupAnalysisMuonSelection.add_argument("--cfgMuonMCSignals", help="Space separated list of MC signals", nargs="*", action="store", type=str, metavar="CFGMUONMCSIGNALS", choices=allMCSignals).completer = ChoicesCompleterList(allMCSignals)
+
+        # analysis-dilepton-track
+        groupAnalysisDileptonTrack = self.parserdqEfficiency.add_argument_group(title="Data processor options: analysis-dilepton-track")
+        groupAnalysisDileptonTrack.add_argument("--cfgLeptonCuts", help="Space separated list of barrel track cuts", nargs="*", action="store", type=str, metavar="CFGLEPTONCUTS", choices=allAnalysisCuts).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupAnalysisDileptonTrack.add_argument("--cfgFillCandidateTable", help="Produce a single flat tables with all relevant information dilepton-track candidates", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
+        groupAnalysisDileptonTrack.add_argument("--cfgBarrelDileptonMCRecSignals", help="Space separated list of MC signals (reconstructed)", nargs="*", action="store", type=str, metavar="CFGBARRELDILEPTONMCRECSIGNALS", choices=allMCSignals).completer = ChoicesCompleterList(allMCSignals)
+        groupAnalysisDileptonTrack.add_argument("--cfgBarrelDileptonMCGenSignals", help="Space separated list of MC signals (generated)", nargs="*", action="store", type=str, metavar="CFGBARRELDILEPTONMCRECSIGNALS", choices=allMCSignals).completer = ChoicesCompleterList(allMCSignals)
+
+            
+    def parseArgs(self):
+        """
+        This function allows to save the obtained arguments to the parser_args() function
+        
+        Returns:
+            Namespace: returns parse_args()
+        """
+        
+        return self.parserdqEfficiency.parse_args()
