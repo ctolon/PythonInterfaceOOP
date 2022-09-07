@@ -50,8 +50,8 @@ from argcomplete.completers import ChoicesCompleter
 # Interface Predefined Selections #
 ###################################
 
-readerPath = "Configs/readerConfiguration_reducedEvent.json"
-writerPath = "Configs/writerConfiguration_dileptons.json"
+readerPath = "configs/readerConfiguration_reducedEvent.json"
+writerPath = "configs/writerConfiguration_dileptons.json"
 
 isAnalysisEventSelected = True
 isAnalysisTrackSelected = True

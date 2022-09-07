@@ -49,8 +49,8 @@ from argcomplete.completers import ChoicesCompleter
 # Interface Predefined Selections #
 ###################################
 
-readerPath = "Configs/readerConfiguration_reducedEventMC.json"
-writerPath = "Configs/writerConfiguration_dileptonMC.json"
+readerPath = "configs/readerConfiguration_reducedEventMC.json"
+writerPath = "configs/writerConfiguration_dileptonMC.json"
 
 booleanSelections = ["true", "false"]
 
