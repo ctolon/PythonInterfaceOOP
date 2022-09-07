@@ -98,7 +98,7 @@ O2PHYSICS_ROOT = os.environ.get("O2PHYSICS_ROOT")
 # Init Workflow #
 #################
 
-class runV0selector(object):
+class RunV0selector(object):
     """
     This class is for managing the workflow by using the interface arguments from
     all other Common dependencies and the v0selector Task's own arguments in a combined structure.
@@ -109,7 +109,7 @@ class runV0selector(object):
     
 
     def __init__(self, 
-                parserrunV0selector=argparse.ArgumentParser(
+                parserRunV0selector=argparse.ArgumentParser(
                 formatter_class=argparse.ArgumentDefaultsHelpFormatter,
                 description="Arguments to pass"), 
                 v0selector=V0selector(),
@@ -122,8 +122,8 @@ class runV0selector(object):
                 trackPropagation=TrackPropagation(),
                 debugOptions=DebugOptions()
                 ):
-        super(runV0selector, self).__init__()
-        self.parserrunV0selector = parserrunV0selector
+        super(RunV0selector, self).__init__()
+        self.parserRunV0selector = parserRunV0selector
         self.v0selector = v0selector
         self.eventSelection = eventSelection
         self.centralityTable = centralityTable
@@ -133,8 +133,8 @@ class runV0selector(object):
         self.tpcTofPidFull = tpcTofPidFull
         self.trackPropagation = trackPropagation
         self.debugOptions = debugOptions
-        self.parserrunV0selector.register("action", "none", NoAction)
-        self.parserrunV0selector.register("action", "store_choice", ChoicesAction)
+        self.parserRunV0selector.register("action", "none", NoAction)
+        self.parserRunV0selector.register("action", "store_choice", ChoicesAction)
     
     def addArguments(self):
         """
@@ -142,25 +142,25 @@ class runV0selector(object):
         """
         
         # Core Part
-        groupCoreSelections = self.parserrunV0selector.add_argument_group(title="Core configurations that must be configured")
+        groupCoreSelections = self.parserRunV0selector.add_argument_group(title="Core configurations that must be configured")
         groupCoreSelections.add_argument("cfgFileName", metavar="Config.json", default="config.json", help="config JSON file name")
-        groupTaskAdders = self.parserrunV0selector.add_argument_group(title="Additional Task Adding Options")
+        groupTaskAdders = self.parserRunV0selector.add_argument_group(title="Additional Task Adding Options")
         groupTaskAdders.add_argument("--add_mc_conv", help="Add the converter from mcparticle to mcparticle+001 (Adds your workflow o2-analysis-mc-converter task)", action="store_true")
         groupTaskAdders.add_argument("--add_fdd_conv", help="Add the fdd converter (Adds your workflow o2-analysis-fdd-converter task)", action="store_true")
         groupTaskAdders.add_argument("--add_track_prop", help="Add track propagation to the innermost layer (TPC or ITS) (Adds your workflow o2-analysis-track-propagation task)", action="store_true")
         groupTaskAdders.add_argument("--add_weakdecay_ind", help="Add Converts V0 and cascade version 000 to 001 (Adds your workflow o2-analysis-weak-decay-indices task)", action="store_true")
                         
         # aod
-        groupDPLReader = self.parserrunV0selector.add_argument_group(title="Data processor options: internal-dpl-aod-reader")
+        groupDPLReader = self.parserRunV0selector.add_argument_group(title="Data processor options: internal-dpl-aod-reader")
         groupDPLReader.add_argument("--aod", help="Add your AOD File with path", action="store", type=str)
 
         # automation params
-        groupAutomations = self.parserrunV0selector.add_argument_group(title="Automation Parameters")
+        groupAutomations = self.parserRunV0selector.add_argument_group(title="Automation Parameters")
         groupAutomations.add_argument("--onlySelect", help="If false JSON Overrider Interface If true JSON Additional Interface", action="store", default="true", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
         groupAutomations.add_argument("--autoDummy", help="Dummy automize parameter (don't configure it, true is highly recomended for automation)", action="store", default="true", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
         
         # helper lister commands
-        #groupAdditionalHelperCommands = self.parserrunV0selector.add_argument_group(title="Additional Helper Command Options")
+        #groupAdditionalHelperCommands = self.parserRunV0selector.add_argument_group(title="Additional Helper Command Options")
         #groupAdditionalHelperCommands.add_argument("--cutLister", help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
     
     def parseArgs(self):
@@ -171,39 +171,39 @@ class runV0selector(object):
             Namespace: returns parse_args()
         """
  
-        argcomplete.autocomplete(self.parserrunV0selector, always_complete_options=False)  
-        return self.parserrunV0selector.parse_args()
+        argcomplete.autocomplete(self.parserRunV0selector, always_complete_options=False)  
+        return self.parserRunV0selector.parse_args()
 
     def mergeArgs(self):
         """
         This function allows to merge parser_args argument information from different classes
         """
         
-        self.eventSelection.parserEventSelectionTask = self.parserrunV0selector
+        self.eventSelection.parserEventSelectionTask = self.parserRunV0selector
         self.eventSelection.addArguments()
         
-        self.centralityTable.parserCentralityTable = self.parserrunV0selector
+        self.centralityTable.parserCentralityTable = self.parserRunV0selector
         self.centralityTable.addArguments()
         
-        self.multiplicityTable.parserMultiplicityTable = self.parserrunV0selector
+        self.multiplicityTable.parserMultiplicityTable = self.parserRunV0selector
         self.multiplicityTable.addArguments()
         
-        self.tofEventTime.parserTofEventTime = self.parserrunV0selector
+        self.tofEventTime.parserTofEventTime = self.parserRunV0selector
         self.tofEventTime.addArguments()
         
-        self.tofPidBeta.parserTofPidBeta = self.parserrunV0selector
+        self.tofPidBeta.parserTofPidBeta = self.parserRunV0selector
         self.tofPidBeta.addArguments()
         
-        self.tpcTofPidFull.parserTpcTofPidFull = self.parserrunV0selector
+        self.tpcTofPidFull.parserTpcTofPidFull = self.parserRunV0selector
         self.tpcTofPidFull.addArguments()
         
-        self.trackPropagation.parserTrackPropagation = self.parserrunV0selector
+        self.trackPropagation.parserTrackPropagation = self.parserRunV0selector
         self.trackPropagation.addArguments()
                 
-        self.debugOptions.parserDebugOptions = self.parserrunV0selector
+        self.debugOptions.parserDebugOptions = self.parserRunV0selector
         self.debugOptions.addArguments()
         
-        self.v0selector.parserV0selector = self.parserrunV0selector
+        self.v0selector.parserV0selector = self.parserRunV0selector
         self.v0selector.addArguments()
                 
         self.addArguments()
@@ -211,7 +211,7 @@ class runV0selector(object):
     # This function not work should be integrated instead of mergeArgs
     """  
     def mergeMultiArgs(self, *objects):
-        parser = self.parserrunV0selector
+        parser = self.parserRunV0selector
         for object in objects:
             object.parser = parser
             object.addArguments()
@@ -219,7 +219,7 @@ class runV0selector(object):
     """
 
 # init args manually    
-initArgs = runV0selector()
+initArgs = RunV0selector()
 initArgs.mergeArgs()
 initArgs.parseArgs()
 

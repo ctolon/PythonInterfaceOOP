@@ -153,7 +153,7 @@ qVectorSearch = []
 # Init Workflow #
 #################
 
-class runTableMaker(object):
+class RunTableMakerMC(object):
     """
     This class is for managing the workflow by using the interface arguments from
     all other Common dependencies and the tableMakerMC Task's own arguments in a combined structure.
@@ -163,7 +163,7 @@ class runTableMaker(object):
     """
 
     def __init__(self, 
-                parserRunTableMaker=argparse.ArgumentParser(
+                parserRunTableMakerMC=argparse.ArgumentParser(
                 formatter_class=argparse.ArgumentDefaultsHelpFormatter,
                 description="Arguments to pass"), 
                 eventSelection=EventSelectionTask(), 
@@ -175,8 +175,8 @@ class runTableMaker(object):
                 tableMakerMC=TableMakerMC(),
                 debugOptions=DebugOptions()
                 ):
-        super(runTableMaker, self).__init__()
-        self.parserRunTableMaker = parserRunTableMaker
+        super(RunTableMakerMC, self).__init__()
+        self.parserRunTableMakerMC = parserRunTableMakerMC
         self.eventSelection = eventSelection
         self.multiplicityTable = multiplicityTable
         self.tofEventTime = tofEventTime
@@ -185,8 +185,8 @@ class runTableMaker(object):
         self.trackPropagation = trackPropagation
         self.tableMakerMC = tableMakerMC
         self.debugOptions = debugOptions
-        self.parserRunTableMaker.register("action", "none", NoAction)
-        self.parserRunTableMaker.register("action", "store_choice", ChoicesAction)
+        self.parserRunTableMakerMC.register("action", "none", NoAction)
+        self.parserRunTableMakerMC.register("action", "store_choice", ChoicesAction)
 
     
     def addArguments(self):
@@ -195,7 +195,7 @@ class runTableMaker(object):
         """
         
         # Core Part
-        groupCoreSelections = self.parserRunTableMaker.add_argument_group(title="Core configurations that must be configured")
+        groupCoreSelections = self.parserRunTableMakerMC.add_argument_group(title="Core configurations that must be configured")
         groupCoreSelections.add_argument("cfgFileName", metavar="Config.json", default="config.json", help="config JSON file name")
         groupCoreSelections.add_argument("-runMC", help="Run over MC", action="store_true", default=True)
         groupTaskAdders = self.parserRunTableMaker.add_argument_group(title="Additional Task Adding Options")
@@ -204,17 +204,17 @@ class runTableMaker(object):
         groupTaskAdders.add_argument("--add_track_prop", help="Add track propagation to the innermost layer (TPC or ITS) (Adds your workflow o2-analysis-track-propagation task)", action="store_true")
                         
         # aod
-        groupDPLReader = self.parserRunTableMaker.add_argument_group(title="Data processor options: internal-dpl-aod-reader")
+        groupDPLReader = self.parserRunTableMakerMC.add_argument_group(title="Data processor options: internal-dpl-aod-reader")
         groupDPLReader.add_argument("--aod", help="Add your AOD File with path", action="store", type=str)
         groupDPLReader.add_argument("--aod-memory-rate-limit", help="Rate limit AOD processing based on memory", action="store", type=str)
 
         # automation params
-        groupAutomations = self.parserRunTableMaker.add_argument_group(title="Automation Parameters")
+        groupAutomations = self.parserRunTableMakerMC.add_argument_group(title="Automation Parameters")
         groupAutomations.add_argument("--onlySelect", help="If false JSON Overrider Interface If true JSON Additional Interface", action="store", default="true", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
         groupAutomations.add_argument("--autoDummy", help="Dummy automize parameter (don't configure it, true is highly recomended for automation)", action="store", default="true", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
         
         # helper lister commands
-        #groupAdditionalHelperCommands = self.parserRunTableMaker.add_argument_group(title="Additional Helper Command Options")
+        #groupAdditionalHelperCommands = self.parserRunTableMakerMC.add_argument_group(title="Additional Helper Command Options")
         #groupAdditionalHelperCommands.add_argument("--cutLister", help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
         #groupAdditionalHelperCommands.add_argument("--MCSignalsLister", help="List all of the MCSignals from MCSignalLibrary.h", action="store_true")
     
@@ -227,36 +227,36 @@ class runTableMaker(object):
             Namespace: returns parse_args()
         """
  
-        argcomplete.autocomplete(self.parserRunTableMaker, always_complete_options=False)  
-        return self.parserRunTableMaker.parse_args()
+        argcomplete.autocomplete(self.parserRunTableMakerMC, always_complete_options=False)  
+        return self.parserRunTableMakerMC.parse_args()
 
     def mergeArgs(self):
         """
         This function allows to merge parser_args argument information from different classes
         """
         
-        self.eventSelection.parserEventSelectionTask = self.parserRunTableMaker
+        self.eventSelection.parserEventSelectionTask = self.parserRunTableMakerMC
         self.eventSelection.addArguments()
         
-        self.multiplicityTable.parserMultiplicityTable = self.parserRunTableMaker
+        self.multiplicityTable.parserMultiplicityTable = self.parserRunTableMakerMC
         self.multiplicityTable.addArguments()
         
-        self.tofEventTime.parserTofEventTime = self.parserRunTableMaker
+        self.tofEventTime.parserTofEventTime = self.parserRunTableMakerMC
         self.tofEventTime.addArguments()
         
-        self.tofPidBeta.parserTofPidBeta = self.parserRunTableMaker
+        self.tofPidBeta.parserTofPidBeta = self.parserRunTableMakerMC
         self.tofPidBeta.addArguments()
         
-        self.tpcTofPidFull.parserTpcTofPidFull = self.parserRunTableMaker
+        self.tpcTofPidFull.parserTpcTofPidFull = self.parserRunTableMakerMC
         self.tpcTofPidFull.addArguments()
         
-        self.trackPropagation.parserTrackPropagation = self.parserRunTableMaker
+        self.trackPropagation.parserTrackPropagation = self.parserRunTableMakerMC
         self.trackPropagation.addArguments()
         
-        self.tableMakerMC.parserTableMakerMC = self.parserRunTableMaker
+        self.tableMakerMC.parserTableMakerMC = self.parserRunTableMakerMC
         self.tableMakerMC.addArguments()
         
-        self.debugOptions.parserDebugOptions = self.parserRunTableMaker
+        self.debugOptions.parserDebugOptions = self.parserRunTableMakerMC
         self.debugOptions.addArguments()
         
         self.addArguments()
@@ -272,7 +272,7 @@ class runTableMaker(object):
     """
      
 # init args manually    
-initArgs = runTableMaker()
+initArgs = RunTableMakerMC()
 initArgs.mergeArgs()
 initArgs.parseArgs()
 

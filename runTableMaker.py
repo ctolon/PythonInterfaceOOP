@@ -142,7 +142,7 @@ qVectorSearch = []
 # Init Workflow #
 #################
 
-class runTableMaker(object):
+class RunTableMaker(object):
     """
     This class is for managing the workflow by using the interface arguments from
     all other Common dependencies and the tableMaker Task's own arguments in a combined structure.
@@ -166,7 +166,7 @@ class runTableMaker(object):
                 tableMaker=TableMaker(),
                 debugOptions=DebugOptions()
                 ):
-        super(runTableMaker, self).__init__()
+        super(RunTableMaker, self).__init__()
         self.parserRunTableMaker = parserRunTableMaker
         self.eventSelection = eventSelection
         self.centralityTable = centralityTable
@@ -268,7 +268,7 @@ class runTableMaker(object):
     """
      
 # init args manually   
-initArgs = runTableMaker()
+initArgs = RunTableMaker()
 initArgs.mergeArgs()
 initArgs.parseArgs()
 

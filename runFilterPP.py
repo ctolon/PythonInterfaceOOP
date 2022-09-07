@@ -97,7 +97,7 @@ O2PHYSICS_ROOT = os.environ.get("O2PHYSICS_ROOT")
 # Init Workflow #
 #################
 
-class runFilterPP(object):
+class RunFilterPP(object):
     """
     This class is for managing the workflow by using the interface arguments from
     all other Common dependencies and the filterPP Task's own arguments in a combined structure.
@@ -107,7 +107,7 @@ class runFilterPP(object):
     """
 
     def __init__(self, 
-                parserrunFilterPP=argparse.ArgumentParser(
+                parserRunFilterPP=argparse.ArgumentParser(
                 formatter_class=argparse.ArgumentDefaultsHelpFormatter,
                 description="Arguments to pass"), 
                 filterPP=DQFilterPPTask(),
@@ -119,8 +119,8 @@ class runFilterPP(object):
                 trackPropagation=TrackPropagation(),
                 debugOptions=DebugOptions()
                 ):
-        super(runFilterPP, self).__init__()
-        self.parserrunFilterPP = parserrunFilterPP
+        super(RunFilterPP, self).__init__()
+        self.parserRunFilterPP = parserRunFilterPP
         self.filterPP = filterPP
         self.eventSelection = eventSelection
         self.multiplicityTable = multiplicityTable
@@ -129,8 +129,8 @@ class runFilterPP(object):
         self.tpcTofPidFull = tpcTofPidFull
         self.trackPropagation = trackPropagation
         self.debugOptions = debugOptions
-        self.parserrunFilterPP.register("action", "none", NoAction)
-        self.parserrunFilterPP.register("action", "store_choice", ChoicesAction)
+        self.parserRunFilterPP.register("action", "none", NoAction)
+        self.parserRunFilterPP.register("action", "store_choice", ChoicesAction)
     
     def addArguments(self):
         """
@@ -138,24 +138,24 @@ class runFilterPP(object):
         """
         
         # Core Part
-        groupCoreSelections = self.parserrunFilterPP.add_argument_group(title="Core configurations that must be configured")
+        groupCoreSelections = self.parserRunFilterPP.add_argument_group(title="Core configurations that must be configured")
         groupCoreSelections.add_argument("cfgFileName", metavar="Config.json", default="config.json", help="config JSON file name")
-        groupTaskAdders = self.parserrunFilterPP.add_argument_group(title="Additional Task Adding Options")
+        groupTaskAdders = self.parserRunFilterPP.add_argument_group(title="Additional Task Adding Options")
         groupTaskAdders.add_argument("--add_mc_conv", help="Add the converter from mcparticle to mcparticle+001 (Adds your workflow o2-analysis-mc-converter task)", action="store_true")
         groupTaskAdders.add_argument("--add_fdd_conv", help="Add the fdd converter (Adds your workflow o2-analysis-fdd-converter task)", action="store_true")
         groupTaskAdders.add_argument("--add_track_prop", help="Add track propagation to the innermost layer (TPC or ITS) (Adds your workflow o2-analysis-track-propagation task)", action="store_true")
                         
         # aod
-        groupDPLReader = self.parserrunFilterPP.add_argument_group(title="Data processor options: internal-dpl-aod-reader")
+        groupDPLReader = self.parserRunFilterPP.add_argument_group(title="Data processor options: internal-dpl-aod-reader")
         groupDPLReader.add_argument("--aod", help="Add your AOD File with path", action="store", type=str)
 
         # automation params
-        groupAutomations = self.parserrunFilterPP.add_argument_group(title="Automation Parameters")
+        groupAutomations = self.parserRunFilterPP.add_argument_group(title="Automation Parameters")
         groupAutomations.add_argument("--onlySelect", help="If false JSON Overrider Interface If true JSON Additional Interface", action="store", default="true", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
         groupAutomations.add_argument("--autoDummy", help="Dummy automize parameter (don't configure it, true is highly recomended for automation)", action="store", default="true", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
         
         # helper lister commands
-        #groupAdditionalHelperCommands = self.parserrunFilterPP.add_argument_group(title="Additional Helper Command Options")
+        #groupAdditionalHelperCommands = self.parserRunFilterPP.add_argument_group(title="Additional Helper Command Options")
         #groupAdditionalHelperCommands.add_argument("--cutLister", help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
     
     def parseArgs(self):
@@ -166,36 +166,36 @@ class runFilterPP(object):
             Namespace: returns parse_args()
         """
  
-        argcomplete.autocomplete(self.parserrunFilterPP, always_complete_options=False)  
-        return self.parserrunFilterPP.parse_args()
+        argcomplete.autocomplete(self.parserRunFilterPP, always_complete_options=False)  
+        return self.parserRunFilterPP.parse_args()
 
     def mergeArgs(self):
         """
         This function allows to merge parser_args argument information from different classes
         """
         
-        self.eventSelection.parserEventSelectionTask = self.parserrunFilterPP
+        self.eventSelection.parserEventSelectionTask = self.parserRunFilterPP
         self.eventSelection.addArguments()
                 
-        self.multiplicityTable.parserMultiplicityTable = self.parserrunFilterPP
+        self.multiplicityTable.parserMultiplicityTable = self.parserRunFilterPP
         self.multiplicityTable.addArguments()
         
-        self.tofEventTime.parserTofEventTime = self.parserrunFilterPP
+        self.tofEventTime.parserTofEventTime = self.parserRunFilterPP
         self.tofEventTime.addArguments()
         
-        self.tofPidBeta.parserTofPidBeta = self.parserrunFilterPP
+        self.tofPidBeta.parserTofPidBeta = self.parserRunFilterPP
         self.tofPidBeta.addArguments()
         
-        self.tpcTofPidFull.parserTpcTofPidFull = self.parserrunFilterPP
+        self.tpcTofPidFull.parserTpcTofPidFull = self.parserRunFilterPP
         self.tpcTofPidFull.addArguments()
         
-        self.trackPropagation.parserTrackPropagation = self.parserrunFilterPP
+        self.trackPropagation.parserTrackPropagation = self.parserRunFilterPP
         self.trackPropagation.addArguments()
                 
-        self.debugOptions.parserDebugOptions = self.parserrunFilterPP
+        self.debugOptions.parserDebugOptions = self.parserRunFilterPP
         self.debugOptions.addArguments()
         
-        self.filterPP.parserDQFilterPPTask = self.parserrunFilterPP
+        self.filterPP.parserDQFilterPPTask = self.parserRunFilterPP
         self.filterPP.addArguments()
                 
         self.addArguments()
@@ -203,7 +203,7 @@ class runFilterPP(object):
     # This function not work should be integrated instead of mergeArgs
     """  
     def mergeMultiArgs(self, *objects):
-        parser = self.parserrunFilterPP
+        parser = self.parserRunFilterPP
         for object in objects:
             object.parser = parser
             object.addArguments()
@@ -211,7 +211,7 @@ class runFilterPP(object):
     """
 
 # init args manually     
-initArgs = runFilterPP()
+initArgs = RunFilterPP()
 initArgs.mergeArgs()
 initArgs.parseArgs()
 

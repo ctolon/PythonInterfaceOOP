@@ -79,7 +79,7 @@ skimmedListDileptonTrack = []
 # Init Workflow #
 #################
 
-class runDQEffciency(object):
+class RunDQEffciency(object):
     """
     This class is for managing the workflow by using the interface arguments from
     all other Common dependencies and the dqEfficiency Task's own arguments in a combined structure.
@@ -95,7 +95,7 @@ class runDQEffciency(object):
                 dqEfficiency=DQEfficiency(),
                 debugOptions=DebugOptions()
                 ):
-        super(runDQEffciency, self).__init__()
+        super(RunDQEffciency, self).__init__()
         self.parserRunDQEfficiency = parserRunDQEfficiency
         self.dqEfficiency = dqEfficiency
         self.debugOptions = debugOptions
@@ -162,7 +162,7 @@ class runDQEffciency(object):
     """
 
 # init args manually    
-initArgs = runDQEffciency()
+initArgs = RunDQEffciency()
 initArgs.mergeArgs()
 initArgs.parseArgs()
 

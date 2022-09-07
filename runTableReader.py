@@ -82,7 +82,7 @@ O2PHYSICS_ROOT = os.environ.get("O2PHYSICS_ROOT")
 # Init Workflow #
 #################
 
-class runTableReader(object):
+class RunTableReader(object):
     """
     This class is for managing the workflow by using the interface arguments from
     all other Common dependencies and the tableReader Task's own arguments in a combined structure.
@@ -98,7 +98,7 @@ class runTableReader(object):
                 tableReader=TableReader(),
                 debugOptions=DebugOptions()
                 ):
-        super(runTableReader, self).__init__()
+        super(RunTableReader, self).__init__()
         self.parserRunTableReader = parserRunTableReader
         self.tableReader = tableReader
         self.debugOptions = debugOptions
@@ -165,7 +165,7 @@ class runTableReader(object):
     """
 
 # init args manually    
-initArgs = runTableReader()
+initArgs = RunTableReader()
 initArgs.mergeArgs()
 initArgs.parseArgs()
 

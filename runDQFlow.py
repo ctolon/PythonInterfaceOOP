@@ -98,7 +98,7 @@ O2PHYSICS_ROOT = os.environ.get("O2PHYSICS_ROOT")
 # Init Workflow #
 #################
 
-class runAnalysisQvector(object):
+class RunAnalysisQvector(object):
     """
     This class is for managing the workflow by using the interface arguments from
     all other Common dependencies and the dqFlow Task's own arguments in a combined structure.
@@ -121,7 +121,7 @@ class runAnalysisQvector(object):
                 trackPropagation=TrackPropagation(),
                 debugOptions=DebugOptions()
                 ):
-        super(runAnalysisQvector, self).__init__()
+        super(RunAnalysisQvector, self).__init__()
         self.parserRunAnalysisQvector = parserRunAnalysisQvector
         self.analysisQvector = analysisQvector
         self.eventSelection = eventSelection
@@ -217,7 +217,7 @@ class runAnalysisQvector(object):
     """
 
 # init args manually    
-initArgs = runAnalysisQvector()
+initArgs = RunAnalysisQvector()
 initArgs.mergeArgs()
 initArgs.parseArgs()
 
