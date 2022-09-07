@@ -138,7 +138,7 @@ class RunTableReader(object):
             Namespace: returns parse_args()
         """
  
-        argcomplete.autocomplete(self.parserRuntableReader, always_complete_options=False)  
+        argcomplete.autocomplete(self.parserRunTableReader, always_complete_options=False)  
         return self.parserRunTableReader.parse_args()
 
     def mergeArgs(self):
@@ -146,7 +146,7 @@ class RunTableReader(object):
         This function allows to merge parser_args argument information from different classes
         """
         
-        self.debugOptions.parserDebugOptions = self.parserRuntableReader
+        self.debugOptions.parserDebugOptions = self.parserRunTableReader
         self.debugOptions.addArguments()
         
         self.tableReader.parserTableReader = self.parserRunTableReader
