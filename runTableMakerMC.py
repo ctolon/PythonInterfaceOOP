@@ -31,6 +31,7 @@ from extramodules.actionHandler import ChoicesAction
 from extramodules.debugOptions import DebugOptions
 from extramodules.stringOperations import listToString
 
+from commondeps.centralityTable import CentralityTable
 from commondeps.eventSelection import EventSelectionTask
 from commondeps.multiplicityTable import MultiplicityTable
 from commondeps.pidTOFBase import TofEventTime
@@ -166,7 +167,8 @@ class RunTableMakerMC(object):
                 parserRunTableMakerMC=argparse.ArgumentParser(
                 formatter_class=argparse.ArgumentDefaultsHelpFormatter,
                 description="Arguments to pass"), 
-                eventSelection=EventSelectionTask(), 
+                eventSelection=EventSelectionTask(),
+                centralityTable=CentralityTable(), 
                 multiplicityTable=MultiplicityTable(),
                 tofEventTime=TofEventTime(),
                 tofPidBeta=TofPidBeta(),
@@ -178,6 +180,7 @@ class RunTableMakerMC(object):
         super(RunTableMakerMC, self).__init__()
         self.parserRunTableMakerMC = parserRunTableMakerMC
         self.eventSelection = eventSelection
+        self.centralityTable = centralityTable
         self.multiplicityTable = multiplicityTable
         self.tofEventTime = tofEventTime
         self.tofPidBeta = tofPidBeta
@@ -237,6 +240,9 @@ class RunTableMakerMC(object):
         
         self.eventSelection.parserEventSelectionTask = self.parserRunTableMakerMC
         self.eventSelection.addArguments()
+        
+        self.centralityTable.parserCentralityTable = self.parserRunTableMakerMC
+        self.centralityTable.addArguments()
         
         self.multiplicityTable.parserMultiplicityTable = self.parserRunTableMakerMC
         self.multiplicityTable.addArguments()
@@ -421,6 +427,11 @@ if extrargs.process != None:
 if extrargs.pid != None:
     prefix_pid = "pid-"
     extrargs.pid = [prefix_pid + sub for sub in extrargs.pid]
+    
+# add prefix for extrargs.est for centrality-table
+if extrargs.est != None:
+    prefix_est = "est"
+    extrargs.est = [prefix_est + sub for sub in extrargs.est]
     
 # add prefix for extrargs.FT0 for tof-event-time
 if extrargs.FT0 != None:
@@ -619,6 +630,17 @@ for key, value in config.items():
                     value2 = "-1"
                     config[key][value] = value2
                     logging.debug(" - [%s] %s : %s",key,value,value2)
+                    
+            # centrality-table
+            if (value in centralityTableParameters) and extrargs.est:
+                if value in extrargs.est:
+                    value2 = "1"
+                    config[key][value] = value2
+                    logging.debug(" - [%s] %s : %s",key,value,value2)   
+                elif extrargs.onlySelect == "true":
+                    value2 = "-1"
+                    config[key][value] = value2
+                    logging.debug(" - [%s] %s : %s",key,value,value2)  
                                                             
             # table-maker/table-maker-m-c cfg selections
             if value == "cfgEventCuts" and extrargs.cfgEventCuts:

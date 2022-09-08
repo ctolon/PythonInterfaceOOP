@@ -77,6 +77,22 @@
         "processRun2": "true",
         "processRun3": "false"
     },
+    "centrality-table": {
+        "estRun2V0M": "-1",
+        "estRun2SPDtks": "-1",
+        "estRun2SPDcls": "-1",
+        "estRun2CL0": "-1",
+        "estRun2CL1": "-1",
+        "estFV0A": "-1",
+        "estFT0M": "-1",
+        "estFDDM": "-1",
+        "estNTPV": "-1",
+        "ccdburl": "http://alice-ccdb.cern.ch",
+        "ccdbpath": "Centrality/Estimators",
+        "genname": "",
+        "processRun2": "true",
+        "processRun3": "false"
+    },
     "tof-signal": "",
     "track-extension": {
         "processRun2": "true",
