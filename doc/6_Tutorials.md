@@ -171,6 +171,14 @@ P.S. Root files are inputs for JSON configs
 
 ## MC Part
 
+IMPORTANT P.S If your O2 version is new, you will get DF_2589470057001/O2trackdca not found error in Run 3 Barrel MC simulations. This is because there are some changes in the MC data model after the O2 updates. To solve this problem, you can work on an older version on LXPLUS (before 28 august) or you can look at new productions on the grid and test them for shared AO2D.
+
+Errors Appears On This Shared Datasets:
+
+* LHC21i3b
+
+* LHC21i3f2
+
 ### Run tableMakerMC on LHC21i3d2 (jpsi to MuMu pp Run3Simulation)
 
 Command To Run:
@@ -226,6 +234,7 @@ python3 runDQEfficiency.py configs/configAnalysisMC.json --aod reducedAod.root -
 ```
 
 ## Data Part
+
 
 ### Run tableMaker on LHC15o (LHC15o PbPb Run2Data)
 
@@ -296,13 +305,15 @@ Command To Run:
 python3 runTableReader.py configs/configAnalysisData.json --aod reducedAod.root --analysis eventSelection muonSelection sameEventPairing --process JpsiToMuMuVertexing --cfgQA true --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --debug debug --logFile
 ```
 
-### Run filterPP on fwdprompt(fwdprompt pp Run3Data)
+### Run filterPP on fwdprompt(LHC22c pp Run3Data)
 
 Command To Run:
 
 ```ruby
-python3 runFilterPP.py configs/configFilterPPDataRun3.json --aod Datas/AO2D_fwdprompt.root --process barrelTrackSelection eventSelection muonSelection --syst pp --cfgBarrelTrackCuts jpsiO2MCdebugCuts jpsiPID2 --cfgBarrelSels jpsiO2MCdebugCuts:pairNoCut:1 jpsiPID2::1 --cfgMuonsCuts muonLowPt muonHighPt muonLowPt --cfgMuonSels muonLowPt::1 muonHighPt::1 muonLowPt:pairUpsilon:1 --isVertexZeq false --debug debug --logFile
+python3 runFilterPP.py configs/configFilterPPDataRun3.json --aod Datas/AO2D_ppDataRun3_LHC22c.root --process barrelTrackSelection eventSelection muonSelection --syst pp --cfgBarrelTrackCuts jpsiO2MCdebugCuts jpsiPID2 --cfgBarrelSels jpsiO2MCdebugCuts:pairNoCut:1 jpsiPID2::1 --cfgMuonsCuts muonLowPt muonHighPt muonLowPt --cfgMuonSels muonLowPt::1 muonHighPt::1 muonLowPt:pairUpsilon:1 --add_track_prop --isVertexZeq false --debug debug --logFile
 ```
+
+P.S. Cuts Needs to optimized.
 
 ## Special Part : Dilepton Analysis For Non-Standart Existing Workflows in DQ
 
