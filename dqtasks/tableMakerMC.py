@@ -1,20 +1,20 @@
 #!/usr/bin/env python
 # PYTHON_ARGCOMPLETE_OK
 # -*- coding: utf-8 -*- 
-#############################################################################
-##  © Copyright CERN 2018. All rights not expressly granted are reserved.  ##
-##                   Author: ionut.cristian.arsene@cern.ch                 ##
-##               Interface:  cevat.batuhan.tolon@cern.ch                   ## 
-## This program is free software: you can redistribute it and/or modify it ##
-##  under the terms of the GNU General Public License as published by the  ##
-## Free Software Foundation, either version 3 of the License, or (at your  ##
-## option) any later version. This program is distributed in the hope that ##
-##  it will be useful, but WITHOUT ANY WARRANTY; without even the implied  ##
-##     warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    ##
-##           See the GNU General Public License for more details.          ##
-##    You should have received a copy of the GNU General Public License    ##
-##   along with this program. if not, see <https://www.gnu.org/licenses/>. ##
-#############################################################################
+
+# Copyright 2019-2020 CERN and copyright holders of ALICE O2.
+# See https://alice-o2.web.cern.ch/copyright for details of the copyright holders.
+# All rights not expressly granted are reserved.
+#
+# This software is distributed under the terms of the GNU General Public
+# License v3 (GPL Version 3), copied verbatim in the file "COPYING".
+#
+# In applying this license CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
+
+# \Author: ionut.cristian.arsene@cern.ch                 
+# \Interface:  cevat.batuhan.tolon@cern.ch
 
 # Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/TableProducer/tableMakerMC.cxx
 
