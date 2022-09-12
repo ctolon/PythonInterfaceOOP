@@ -201,7 +201,7 @@
         "ccdb-url": "http:\/\/ccdb-test.cern.ch:8080",
         "ccdb-path": "Users\/lm",
         "ccdb-no-later-than": "1660516676044",
-        "processQvector": "true",
+        "processBarrelQvector": "true",
         "processDummy": "false"
     },
     "track-pid-qa": "",

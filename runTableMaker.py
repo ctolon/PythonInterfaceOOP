@@ -702,11 +702,11 @@ for key, value in config.items():
                         
                     # Automatization for Activate or Disable analysis-qvector
                     if len(qVectorSearch) > 0 and extrargs.runData:
-                        config["analysis-qvector"]["processQvector"] ="true"
+                        config["analysis-qvector"]["processBarrelQvector"] ="true"
                         isQVectorSelected = True
 
                     if len(qVectorSearch) == 0 and extrargs.runData and extrargs.onlySelect == "true":
-                        config["analysis-qvector"]["processQvector"] ="false"
+                        config["analysis-qvector"]["processBarrelQvector"] ="false"
                         isQVectorSelected = False
                                                                         
                 elif extrargs.onlySelect == "true":
@@ -963,9 +963,9 @@ for key, value in config.items():
                     config["d-q-filter-p-p-task"]["processDummy"] = "true"
                     #logging.debug("d-q-filter-p-p-task:processDummy:true")
                     
-                if config["analysis-qvector"]["processQvector"] == "true":
+                if config["analysis-qvector"]["processBarrelQvector"] == "true":
                     config["analysis-qvector"]["processDummy"] = "false" 
-                if config["analysis-qvector"]["processQvector"] == "false":
+                if config["analysis-qvector"]["processBarrelQvector"] == "false":
                     config["analysis-qvector"]["processDummy"] = "true"             
                     
 # LOGGER MESSAGES FOR DQ SELECTIONS
@@ -1009,9 +1009,9 @@ if extrargs.runData and extrargs.process:
     if not isFilterPPTinySelected:
         logging.debug(" - [d-q-filter-p-p-task-task] processFilterPPTiny : false")
     if isQVectorSelected:
-        logging.debug(" - [analysis-qvector] processQvector : true") 
+        logging.debug(" - [analysis-qvector] processBarrelQvector : true") 
     if not isQVectorSelected:
-        logging.debug(" - [analysis-qvector] processQvector : false") 
+        logging.debug(" - [analysis-qvector] processBarrelQvector : false") 
                                                   
 # Centrality table delete for pp processes
 if extrargs.process and len(centSearch) != 0 and (extrargs.syst == "pp" or (extrargs.syst == None and config["event-selection-task"]["syst"] == "pp")):
