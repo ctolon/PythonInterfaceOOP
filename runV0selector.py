@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
 # PYTHON_ARGCOMPLETE_OK
 # -*- coding: utf-8 -*- 
-#############################################################################
-##  © Copyright CERN 2018. All rights not expressly granted are reserved.  ## 
-##                   Author: ionut.cristian.arsene@cern.ch                 ##
-##               Interface:  cevat.batuhan.tolon@cern.ch                   ##
-## This program is free software: you can redistribute it and/or modify it ##
-##  under the terms of the GNU General Public License as published by the  ##
-## Free Software Foundation, either version 3 of the License, or (at your  ##
-## option) any later version. This program is distributed in the hope that ##
-##  it will be useful, but WITHOUT ANY WARRANTY; without even the implied  ##
-##     warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    ##
-##           See the GNU General Public License for more details.          ##
-##    You should have received a copy of the GNU General Public License    ##
-##   along with this program. if not, see <https://www.gnu.org/licenses/>. ##
-#############################################################################
+
+# Copyright 2019-2020 CERN and copyright holders of ALICE O2.
+# See https://alice-o2.web.cern.ch/copyright for details of the copyright holders.
+# All rights not expressly granted are reserved.
+#
+# This software is distributed under the terms of the GNU General Public
+# License v3 (GPL Version 3), copied verbatim in the file "COPYING".
+#
+# In applying this license CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as an Intergovernmental Organization
+# or submit itself to any jurisdiction.
+
+# \Author: ionut.cristian.arsene@cern.ch                 
+# \Interface:  cevat.batuhan.tolon@cern.ch
 
 # Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/v0selector.cxx
 
@@ -40,6 +40,8 @@ from commondeps.pidTPCTOFFull import TpcTofPidFull
 from commondeps.trackPropagation import TrackPropagation
 
 from dqtasks.v0selector import V0selector
+
+from pycacheRemover import PycacheRemover
 
 """
 argcomplete - Bash tab completion for argparse
@@ -376,9 +378,9 @@ for key, value in config.items():
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.customDeltaBC) 
                 
             # v0-selector
-            if value =="d_bz" and extrargs.d_bz:
-                config[key][value] = extrargs.d_bz
-                logging.debug(" - [%s] %s : %s",key,value,extrargs.d_bz)  
+            if value =="d_bz_input" and extrargs.d_bz_input:
+                config[key][value] = extrargs.d_bz_input
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.d_bz_input)  
             if value == "v0cospa" and extrargs.v0cospa:
                 config[key][value] = extrargs.v0cospa
                 logging.debug(" - [%s] %s : %s",key,value,extrargs.v0cospa)  
@@ -549,3 +551,21 @@ for key,value in configuredCommands.items():
         logging.info("--%s : %s ",key,value)
 
 os.system(commandToRun)
+
+# Pycache remove after running in O2
+getParrentDir = sys.path[-1]
+
+# trying to insert to false directory
+try:
+    os.chdir(getParrentDir)
+    logging.info("Inserting inside for pycache remove: %s", os.getcwd())
+
+# Caching the exception   
+except:
+    logging.error("Something wrong with specified\
+          directory. Exception- %s", sys.exc_info())
+
+pycacheRemover = PycacheRemover()
+pycacheRemover.__init__()
+
+logging.info("pycaches removed succesfully")

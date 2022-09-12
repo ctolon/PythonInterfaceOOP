@@ -144,15 +144,19 @@
     },
     "weak-decay-indices-cascades": "",
     "v0-selector": {
-        "d_bz": "-5",
+        "d_bz_input": "-999",
         "v0cospa": "0.998",
-        "dcav0dau": "0.300000012",
-        "v0Rmin": "3",
-        "v0Rmax": "60",
+        "dcav0dau": "0.3",
+        "v0Rmin": "0",
+        "v0Rmax": "90.0",
         "dcamin": "0",
         "dcamax": "1e+10",
         "mincrossedrows": "70",
-        "maxchi2tpc": "4"
+        "maxchi2tpc": "4",
+        "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
+        "lutPath": "GLO\/Param\/MatLUT",
+        "geoPath": "GLO\/Config\/GeometryAligned",
+        "grpmagPath": "GLO/Config/GRPMagField"
     },
     "d-q-barrel-track-selection-task": {
         "cfgBarrelTrackCuts": "jpsiPID1,jpsiPID2,jpsiPIDnsigma",

@@ -13,20 +13,20 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
+# This scripts provides remove pycache files recursively
 
-class ChoicesCompleterList(object):
-    """
-    For the ChoicesCompleterList package argcomplete,
-    the TAB key is the class written for autocomplete and validation when an argument can take multiple values.
-    By default, the argcomplete package has the ChoicesCompleter Class,
-    which can only validate arguments that take an one value and allows autocomplete with the TAB key.
+import os
 
-    Args:
-        object (list): parserargs choices object as a list
-    """
+class PycacheRemover(object):
+    def __init__(self):
+        
+        super(PycacheRemover, self).__init__()
 
-    def __init__(self, choices):
-        self.choices = list(choices)
+        commandOne = 'python3 -Bc ' + "\"" + "import pathlib;" + "[p.unlink() for p in pathlib.Path('.').rglob('*.py[co]')]" + "\""
+        commandTwo = 'python3 -Bc'  + "\"" + "import pathlib;" + "[p.rmdir() for p in pathlib.Path('.').rglob('__pycache__')]" + "\""
 
-    def __call__(self, **kwargs):
-        return self.choices
+        os.system(commandOne)
+        os.system(commandTwo)
+        
+        #print(commandOne)
+        #print(commandTwo)
