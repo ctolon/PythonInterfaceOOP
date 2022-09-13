@@ -184,7 +184,7 @@ Errors Appears On This Shared Datasets:
 Command To Run:
 
 ```ruby
-python3 runTableMaker.py configs/configTableMakerMCRun3.json -runMC --aod Datas/AO2D_ppMCRun3_LHC21i3d2.root --process MuonOnlyWithCov OnlyBCs --syst pp --cfgWithQA true --cfgMCsignals muFromJpsi Jpsi muon --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --add_track_prop --debug debug --logFile
+python3 runTableMakerMC.py configs/configTableMakerMCRun3.json -runMC --aod Datas/AO2D_ppMCRun3_LHC21i3d2.root --process MuonOnlyWithCov OnlyBCs --syst pp --cfgWithQA true --cfgMCsignals muFromJpsi Jpsi muon --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --add_track_prop --debug debug --logFile                               
 ```
 
  ### Run dqEfficiency on MC (LHC21i3d2 pp Run3Simulation)
@@ -197,7 +197,7 @@ Command To Run:
 python3 runDQEfficiency.py configs/configAnalysisMC.json --aod reducedAod.root --analysis muonSelection eventSelection sameEventPairing --process JpsiToMuMu --cfgQA true --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --cfgMuonMCSignals muFromJpsi --cfgBarrelMCGenSignals Jpsi --cfgBarrelMCRecSignals mumuFromJpsi dimuon --debug debug --logFile
 ```
 
-### Run tablemakerMC on LHC21i3b (Prompt jpsi to dilectron pp Run3Simulation)
+### Run tablemakerMC on LHC21i3b (Prompt jpsi to dielectron pp Run3Simulation)
 
 Command To Run:
 
@@ -215,7 +215,7 @@ Command To Run:
 python3 runDQEfficiency.py configs/configAnalysisMC.json --aod reducedAod.root --analysis trackSelection eventSelection sameEventPairing --process JpsiToEE --cfgQA true --cfgBarrelMCGenSignals Jpsi --cfgBarrelMCRecSignals eeFromJpsi dielectron --cfgTrackCuts jpsiO2MCdebugCuts --cfgTrackMCSignals eFromJpsi --debug debug --logFile
 ```
 
-### Run tablemakerMC on LHC21i3f2 (Non-Prompt jpsi to dilectron pp Run3Simulation)
+### Run tablemakerMC on LHC21i3f2 (Non-Prompt jpsi to dielectron pp Run3Simulation)
 
 Command To Run:
 
@@ -305,12 +305,12 @@ Command To Run:
 python3 runTableReader.py configs/configAnalysisData.json --aod reducedAod.root --analysis eventSelection muonSelection sameEventPairing --process JpsiToMuMuVertexing --cfgQA true --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --debug debug --logFile
 ```
 
-### Run filterPP on fwdprompt(LHC22c pp Run3Data)
+### Run filterPP on fwdprompt(From Hands-on-Session II)
 
 Command To Run:
 
 ```ruby
-python3 runFilterPP.py configs/configFilterPPDataRun3.json --aod Datas/AO2D_ppDataRun3_LHC22c.root --process barrelTrackSelection eventSelection muonSelection --syst pp --cfgBarrelTrackCuts jpsiO2MCdebugCuts jpsiPID2 --cfgBarrelSels jpsiO2MCdebugCuts:pairNoCut:1 jpsiPID2::1 --cfgMuonsCuts muonLowPt muonHighPt muonLowPt --cfgMuonSels muonLowPt::1 muonHighPt::1 muonLowPt:pairUpsilon:1 --add_track_prop --isVertexZeq false --debug debug --logFile
+python3 runFilterPP.py configs/configFilterPPDataRun3.json --aod Datas/AO2D_fwdprompt.root --process barrelTrackSelection eventSelection muonSelection --syst pp --cfgBarrelTrackCuts jpsiO2MCdebugCuts jpsiPID2 --cfgBarrelSels jpsiO2MCdebugCuts:pairNoCut:1 jpsiPID2::1 --cfgMuonsCuts muonLowPt muonHighPt muonLowPt --cfgMuonSels muonLowPt::1 muonHighPt::1 muonLowPt:pairUpsilon:1 --isVertexZeq false --debug debug --logFile
 ```
 
 P.S. Cuts Needs to optimized.
