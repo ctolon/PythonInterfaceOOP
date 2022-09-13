@@ -194,7 +194,7 @@ You need to produce reducedAod.root file with tableMakerMC in previous step.
 Command To Run:
 
 ```ruby
-python3 runDQEfficiency.py configs/configAnalysisMC.json --aod reducedAod.root --analysis muonSelection eventSelection sameEventPairing --process JpsiToMuMu --cfgQA true --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --cfgMuonMCSignals muFromJpsi --cfgBarrelMCGenSignals Jpsi --cfgBarrelMCRecSignals mumuFromJpsi dimuon --debug debug --logFile
+python3 runDQEfficiency.py configs/configAnalysisMC.json --aod reducedAod.root --analysis muonSelection eventSelection sameEventPairing --process JpsiToMuMu --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --cfgMuonMCSignals muFromJpsi --cfgBarrelMCGenSignals Jpsi --cfgBarrelMCRecSignals mumuFromJpsi dimuon --debug debug --logFile
 ```
 
 ### Run tablemakerMC on LHC21i3b (Prompt jpsi to dielectron pp Run3Simulation)
