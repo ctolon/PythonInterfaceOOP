@@ -38,6 +38,7 @@ from commondeps.pidTOFBase import TofEventTime
 from commondeps.pidTOFBeta import TofPidBeta
 from commondeps.pidTPCTOFFull import TpcTofPidFull
 from commondeps.trackPropagation import TrackPropagation
+from commondeps.trackselection import TrackSelectionTask
 
 from dqtasks.tableMaker import TableMaker
 from dqtasks.v0selector import V0selector
@@ -172,6 +173,7 @@ class RunTableMaker(object):
                 tofPidBeta =TofPidBeta(),
                 tpcTofPidFull=TpcTofPidFull(),
                 trackPropagation=TrackPropagation(),
+                trackSelection=TrackSelectionTask(),
                 v0selector = V0selector(),
                 tableMaker=TableMaker(),
                 debugOptions=DebugOptions()
@@ -185,6 +187,7 @@ class RunTableMaker(object):
         self.tofPidBeta = tofPidBeta
         self.tpcTofPidFull = tpcTofPidFull
         self.trackPropagation = trackPropagation
+        self.trackSelection = trackSelection
         self.v0selector = v0selector
         self.tableMaker = tableMaker
         self.debugOptions = debugOptions
@@ -255,6 +258,9 @@ class RunTableMaker(object):
         
         self.trackPropagation.parserTrackPropagation = self.parserRunTableMaker
         self.trackPropagation.addArguments()
+        
+        self.trackSelection.parserTrackSelectionTask = self.parserRunTableMaker
+        self.trackSelection.addArguments()
         
         self.v0selector.parserV0selector = self.parserRunTableMaker
         self.v0selector.addArguments()
@@ -930,7 +936,12 @@ for key, value in config.items():
                     config[key]["processStandard"] = "false"
                     config[key]["processCovariance"] = "true"
                     logging.debug(" - [%s] processStandart : false",key)
-                    logging.debug(" - [%s] processCovariance : true",key) 
+                    logging.debug(" - [%s] processCovariance : true",key)
+               
+            # track-selection        
+            if extrargs.itsMatching:
+                config[key][value] = extrargs.itsMatching
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.itsMatching)
                                     
             # dummy automizer
             if value == "processDummy" and extrargs.autoDummy and extrargs.runData:

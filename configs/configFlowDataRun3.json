@@ -37,7 +37,8 @@
         "processRun3": "true"
     },
     "track-selection": {
-        "isRun3": "true"
+        "isRun3": "true",
+        "itsMatching": "0"
     },
     "event-selection-task": {
         "syst": "PbPb",

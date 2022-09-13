@@ -38,6 +38,7 @@ from commondeps.pidTOFBase import TofEventTime
 from commondeps.pidTOFBeta import TofPidBeta
 from commondeps.pidTPCTOFFull import TpcTofPidFull
 from commondeps.trackPropagation import TrackPropagation
+from commondeps.trackselection import TrackSelectionTask
 
 from dqtasks.tableMakerMC import TableMakerMC
 
@@ -176,6 +177,7 @@ class RunTableMakerMC(object):
                 tofPidBeta=TofPidBeta(),
                 tpcTofPidFull=TpcTofPidFull(),
                 trackPropagation=TrackPropagation(),
+                trackSelection=TrackSelectionTask(),
                 tableMakerMC=TableMakerMC(),
                 debugOptions=DebugOptions()
                 ):
@@ -188,6 +190,7 @@ class RunTableMakerMC(object):
         self.tofPidBeta = tofPidBeta
         self.tpcTofPidFull = tpcTofPidFull
         self.trackPropagation = trackPropagation
+        self.trackSelection = trackSelection
         self.tableMakerMC = tableMakerMC
         self.debugOptions = debugOptions
         self.parserRunTableMakerMC.register("action", "none", NoAction)
@@ -260,6 +263,9 @@ class RunTableMakerMC(object):
         
         self.trackPropagation.parserTrackPropagation = self.parserRunTableMakerMC
         self.trackPropagation.addArguments()
+        
+        self.trackSelection.parserTrackSelectionTask = self.parserRunTableMakerMC
+        self.trackSelection.addArguments()
         
         self.tableMakerMC.parserTableMakerMC = self.parserRunTableMakerMC
         self.tableMakerMC.addArguments()
@@ -763,7 +769,12 @@ for key, value in config.items():
                     config[key]["processStandard"] = "false"
                     config[key]["processCovariance"] = "true"
                     logging.debug(" - [%s] processStandart : false",key)
-                    logging.debug(" - [%s] processCovariance : true",key) 
+                    logging.debug(" - [%s] processCovariance : true",key)
+                    
+            # track-selection
+            if extrargs.itsMatching:
+                config[key][value] = extrargs.itsMatching
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.itsMatching)    
                                                                                   
 # Centrality table delete for pp processes
 if extrargs.process and len(centSearch) != 0 and (extrargs.syst == "pp" or (extrargs.syst == None and config["event-selection-task"]["syst"] == "pp")):

@@ -37,6 +37,7 @@ from commondeps.pidTOFBase import TofEventTime
 from commondeps.pidTOFBeta import TofPidBeta
 from commondeps.pidTPCTOFFull import TpcTofPidFull
 from commondeps.trackPropagation import TrackPropagation
+from commondeps.trackselection import TrackSelectionTask
 
 from dqtasks.filterPP import DQFilterPPTask
 
@@ -127,6 +128,7 @@ class RunFilterPP(object):
                 tofPidBeta=TofPidBeta(),
                 tpcTofPidFull=TpcTofPidFull(),
                 trackPropagation=TrackPropagation(),
+                trackSelection=TrackSelectionTask(),
                 debugOptions=DebugOptions()
                 ):
         super(RunFilterPP, self).__init__()
@@ -138,6 +140,7 @@ class RunFilterPP(object):
         self.tofPidBeta = tofPidBeta
         self.tpcTofPidFull = tpcTofPidFull
         self.trackPropagation = trackPropagation
+        self.trackSelection = trackSelection
         self.debugOptions = debugOptions
         self.parserRunFilterPP.register("action", "none", NoAction)
         self.parserRunFilterPP.register("action", "store_choice", ChoicesAction)
@@ -201,6 +204,9 @@ class RunFilterPP(object):
         
         self.trackPropagation.parserTrackPropagation = self.parserRunFilterPP
         self.trackPropagation.addArguments()
+        
+        self.trackSelection.parserTrackSelectionTask = self.parserRunFilterPP
+        self.trackSelection.addArguments()
                 
         self.debugOptions.parserDebugOptions = self.parserRunFilterPP
         self.debugOptions.addArguments()
@@ -551,7 +557,12 @@ for key, value in config.items():
                 elif value != extrargs.FT0:
                     value2 = "false"
                     config[key][value] = value2
-                    logging.debug(" - [%s] %s : %s",key,value,value2)     
+                    logging.debug(" - [%s] %s : %s",key,value,value2)
+                    
+            # track-selection
+            if extrargs.itsMatching:
+                config[key][value] = extrargs.itsMatching
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.itsMatching)        
                                                     
                                                   
             if value == "processDummy" and extrargs.autoDummy:            

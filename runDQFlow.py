@@ -38,6 +38,8 @@ from commondeps.pidTOFBase import TofEventTime
 from commondeps.pidTOFBeta import TofPidBeta
 from commondeps.pidTPCTOFFull import TpcTofPidFull
 from commondeps.trackPropagation import TrackPropagation
+from commondeps.trackselection import TrackSelectionTask
+
 from dqtasks.dqFlow import AnalysisQvector
 
 from pycacheRemover import PycacheRemover
@@ -120,6 +122,7 @@ class RunAnalysisQvector(object):
                 tofPidBeta =TofPidBeta(),
                 tpcTofPidFull=TpcTofPidFull(),
                 trackPropagation=TrackPropagation(),
+                trackSelection=TrackSelectionTask(),
                 debugOptions=DebugOptions()
                 ):
         super(RunAnalysisQvector, self).__init__()
@@ -132,6 +135,7 @@ class RunAnalysisQvector(object):
         self.tofPidBeta = tofPidBeta
         self.tpcTofPidFull = tpcTofPidFull
         self.trackPropagation = trackPropagation
+        self.trackSelection = trackSelection
         self.debugOptions = debugOptions
         self.parserRunAnalysisQvector.register("action", "none", NoAction)
         self.parserRunAnalysisQvector.register("action", "store_choice", ChoicesAction)
@@ -198,6 +202,9 @@ class RunAnalysisQvector(object):
         
         self.trackPropagation.parserTrackPropagation = self.parserRunAnalysisQvector
         self.trackPropagation.addArguments()
+        
+        self.trackSelection.parserTrackSelectionTask = self.parserRunAnalysisQvector
+        self.trackSelection.addArguments()
                 
         self.debugOptions.parserDebugOptions = self.parserRunAnalysisQvector
         self.debugOptions.addArguments()
@@ -502,7 +509,12 @@ for key, value in config.items():
                 elif value != extrargs.FT0:
                     value2 = "false"
                     config[key][value] = value2
-                    logging.debug(" - [%s] %s : %s",key,value,value2)   
+                    logging.debug(" - [%s] %s : %s",key,value,value2)
+                    
+            # track-selection
+            if extrargs.itsMatching:
+                config[key][value] = extrargs.itsMatching
+                logging.debug(" - [%s] %s : %s",key,value,extrargs.itsMatching)   
                                                       
 # AOD File Checker
 if extrargs.aod != None:

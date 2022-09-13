@@ -134,7 +134,8 @@
         "processOnlyFT0": "false"
     },
     "track-selection": {
-        "isRun3": "true"
+        "isRun3": "true",
+        "itsMatching": "0"
     },
     "table-maker-m-c": {
         "cfgEventCuts": "eventStandardNoINT7",
