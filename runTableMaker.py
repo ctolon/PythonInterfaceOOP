@@ -1361,11 +1361,11 @@ for key,value in configuredCommands.items():
 os.system(commandToRun)
 
 # Pycache remove after running in O2
-getParrentDir = sys.path[-1]
+#getParrentDir = sys.path[-1]
 
 # trying to insert to false directory
 try:
-    os.chdir(getParrentDir)
+    #os.chdir(getParrentDir)
     logging.info("Inserting inside for pycache remove: %s", os.getcwd())
 
 # Caching the exception   
