@@ -88,9 +88,9 @@ if extrargs.debug:
 if extrargs.version and extrargs.local == False:
     logging.info("DQ libs will downloaded from github. Your Version For Downloading DQ Libs From Github : %s", extrargs.version)
     
-    URL_CUTS_LIBRARY = "https://raw.githubusercontent.com/AliceO2Group/O2Physics/" + extrargs.version + "/PWGDQ/Core/CutsLibrary.h"
-    URL_MCSIGNALS_LIBRARY = "https://raw.githubusercontent.com/AliceO2Group/O2Physics/" + extrargs.version + "/PWGDQ/Core/MCSignalLibrary.h"
-    URL_MIXING_LIBRARY = "https://raw.githubusercontent.com/AliceO2Group/O2Physics/" + extrargs.version + "/PWGDQ/Core/MixingLibrary.h"
+    URL_CUTS_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/" + extrargs.version + "/PWGDQ/Core/CutsLibrary.h?raw=true"
+    URL_MCSIGNALS_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/" + extrargs.version + "/PWGDQ/Core/MCSignalLibrary.h?raw=true"
+    URL_MIXING_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/" + extrargs.version + "/PWGDQ/Core/MixingLibrary.h?raw=true"
     
 if extrargs.local and extrargs.version:
     logging.warning("Your provided configuration for getting DQ libs in locally. You don't need to configure your github nightly version. It's for Online Downloading")
@@ -114,8 +114,12 @@ if extrargs.localPath and extrargs.local == False:
     
 if extrargs.local:
     if extrargs.localPath == None:
+        logging.info("Default Path will used for Alice Software. Default Path : %s", ALICE_SOFTWARE_PATH)
         if os.path.isdir(ALICE_SOFTWARE_PATH) == True:
-            logging.info("Default Path will used for Alice Software. Default Path : %s and Valid", ALICE_SOFTWARE_PATH)
+            logging.info("Default Path: %s is Valid", ALICE_SOFTWARE_PATH)
+        elif os.path.isdir(ALICE_SOFTWARE_PATH) == False:
+            logging.error("Default Path: %s is invalid!! Fatal Error. Check your Alice software path configuration", ALICE_SOFTWARE_PATH)
+            sys.exit()
         
         
     logging.info("DQ libs will be getting from local folders. You alice software path : %s", ALICE_SOFTWARE_PATH)
@@ -127,34 +131,45 @@ if extrargs.local:
     logging.info("Local CutsLibrary.h Path: %s ",localPathCutsLibrary)
     logging.info("Local MCSignalsLibrary.h Path: %s ",localPathMCSignalsLibrary)
     logging.info("Local MixingLibrary.h Path: %s ",localPathEventMixing)
+    try:   
+        with open("tempCutsLibrary.h", "wb") as f:
+            shutil.copyfile(localPathCutsLibrary, MY_PATH + "/tempCutsLibrary.h")
+            if os.path.isfile("tempCutsLibrary.h") == True:
+                logging.info("tempCutsLibrary.h created at %s",MY_PATH)
+            else:
+                logging.error("tempCutsLibrary.h not created at %s Fatal Error", MY_PATH)
+                sys.exit()
+    except FileNotFoundError:
+        logging.error("%s not found in your provided alice-software path!!! Check your alice software path",localPathCutsLibrary)
+        sys.exit()
+        
+    try:        
+        with open("tempMCSignalsLibrary.h", "wb") as f:
+            shutil.copyfile(localPathMCSignalsLibrary, MY_PATH + "/tempMCSignalsLibrary.h") 
+            if os.path.isfile("tempMCSignalsLibrary.h") == True:
+                logging.info("tempMCSignalsLibrary.h created at %s", MY_PATH)
+            else:
+                logging.error("tempMCSignalsLibrary.h not created at %s Fatal Error", MY_PATH)
+                sys.exit()
+    except FileNotFoundError:
+        logging.error("%s not found in your provided alice-software path!!! Check your alice software path",localPathMCSignalsLibrary)
+        sys.exit()
     
-    with open("tempCutsLibrary.h", "wb") as f:
-        shutil.copyfile(localPathCutsLibrary, MY_PATH + "/tempCutsLibrary.h")
-        if os.path.isfile("tempCutsLibrary.h") == True:
-            logging.info("tempCutsLibrary.h created at %s",MY_PATH)
-        else:
-            logging.info("tempCutsLibrary.h not created at %s Fatal Error", MY_PATH)
-            sys.exit()
-            
-    with open("tempMCSignalsLibrary.h", "wb") as f:
-        shutil.copyfile(localPathMCSignalsLibrary, MY_PATH + "/tempMCSignalsLibrary.h") 
-        if os.path.isfile("tempMCSignalsLibrary.h") == True:
-            logging.info("tempMCSignalsLibrary.h created at %s", MY_PATH)
-        else:
-            logging.info("tempMCSignalsLibrary.h not created at %s Fatal Error", MY_PATH)
-            sys.exit()
-            
-    with open("tempMixingLibrary.h", "wb") as f:
-        shutil.copyfile(localPathEventMixing, MY_PATH + "/tempMixingLibrary.h")
-        if os.path.isfile("tempMixingLibrary.h") == True :
-            logging.info("tempMixingLibrary.h created at %s", MY_PATH)
-        else:
-            logging.error("tempMixingLibrary.h not created at %s Fatal Error", MY_PATH)
-            sys.exit()
-            
+    try:            
+        with open("tempMixingLibrary.h", "wb") as f:
+            shutil.copyfile(localPathEventMixing, MY_PATH + "/tempMixingLibrary.h")
+            if os.path.isfile("tempMixingLibrary.h") == True :
+                logging.info("tempMixingLibrary.h created at %s", MY_PATH)
+            else:
+                logging.error("tempMixingLibrary.h not created at %s Fatal Error", MY_PATH)
+                sys.exit()
+    except FileNotFoundError:
+        logging.error("%s not found in your provided alice-software path!!! Check your alice software path",localPathEventMixing)
+        sys.exit()
+        
     logging.info("DQ Libraries pulled from local alice software successfully!")
     sys.exit()
- 
+    
  
 if extrargs.local == False:    
     if (os.path.isfile("tempCutsLibrary.h") == False) or (os.path.isfile("tempMCSignalsLibrary.h") == False) or (os.path.isfile("tempMixingLibrary.h")) == False:
