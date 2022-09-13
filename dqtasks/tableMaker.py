@@ -158,7 +158,7 @@ class TableMaker(object):
         # Interface
         
         # table-maker configurables
-        groupTableMakerConfigs = self.parserTableMaker.add_argument_group(title="Data processor options: table-maker-m-c")
+        groupTableMakerConfigs = self.parserTableMaker.add_argument_group(title="Data processor options: table-maker")
         groupTableMakerConfigs.add_argument("--cfgEventCuts", help="Space separated list of event cuts", nargs="*", action="store", type=str, metavar="CFGEVENTCUTS", choices=allAnalysisCuts).completer = ChoicesCompleterList(allAnalysisCuts)
         groupTableMakerConfigs.add_argument("--cfgBarrelTrackCuts", help=" Space separated list of barrel track cuts", nargs="*", action="store", type=str, metavar="CFGBARRELTRACKCUTS", choices=allAnalysisCuts).completer = ChoicesCompleterList(allAnalysisCuts)
         groupTableMakerConfigs.add_argument("--cfgMuonCuts", help="Space separated list of muon cuts in table-maker", action="store", nargs="*", type=str, metavar="CFGMUONCUTS", choices=allAnalysisCuts).completer = ChoicesCompleterList(allAnalysisCuts)
@@ -170,7 +170,7 @@ class TableMaker(object):
         groupTableMakerConfigs.add_argument("--cfgMinTpcSignal", help="Minimum TPC signal", action="store", type=str)
         groupTableMakerConfigs.add_argument("--cfgMaxTpcSignal", help="Maximum TPC signal", action="store", type=str)
 
-        groupProcessTableMaker = self.parserTableMaker.add_argument_group(title="Data processor options: table-maker-m-c")
+        groupProcessTableMaker = self.parserTableMaker.add_argument_group(title="Data processor options: table-maker")
         groupProcessTableMaker.add_argument("--process",help="Process Selection options for tableMaker/tableMakerMC Data Processing and Skimming", action="store", type=str, nargs="*", metavar="PROCESS", choices=tableMakerProcessSelectionsList).completer = ChoicesCompleterList(tableMakerProcessSelectionsList)
         for key,value in tableMakerProcessSelections.items():
             groupProcessTableMaker.add_argument(key, help=value, action="none")

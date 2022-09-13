@@ -140,7 +140,8 @@
         "processOnlyFT0": "false"
     },
     "track-selection": {
-        "isRun3": "true"
+        "isRun3": "true",
+        "itsMatching": "0"
     },
     "weak-decay-indices-cascades": "",
     "v0-selector": {
