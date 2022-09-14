@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # PYTHON_ARGCOMPLETE_OK
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 
 # Copyright 2019-2020 CERN and copyright holders of ALICE O2.
 # See https://alice-o2.web.cern.ch/copyright for details of the copyright holders.
@@ -18,15 +18,15 @@ import argparse
 
 from extramodules.choicesCompleterList import ChoicesCompleterList
 
+
 class DebugOptions(object):
     """
-    Class for Interface -> Debug Options 
+    Class for Interface -> Debug Options
 
     Args:
         object (parser_args() object): Debug Interface
     """
-    
-    
+
     def __init__(self, parserDebugOptions=argparse.ArgumentParser(add_help=False)):
         super(DebugOptions, self).__init__()
         self.parserDebugOptions = parserDebugOptions
@@ -43,27 +43,40 @@ class DebugOptions(object):
             "INFO": "Set Debug Level to INFO",
             "WARNING": "Set Debug Level to WARNING",
             "ERROR": "Set Debug Level to ERROR",
-            "CRITICAL": "Set Debug Level to CRITICAL"
+            "CRITICAL": "Set Debug Level to CRITICAL",
         }
         debugLevelSelectionsList = []
         for k, v in debugLevelSelections.items():
             debugLevelSelectionsList.append(k)
-    
-        # Interface
-        groupDebugOptions = self.parserDebugOptions.add_argument_group(title="Additional Debug Options")
-        groupDebugOptions.add_argument("--debug", help="execute with debug options", action="store", type=str.upper, default="INFO", choices=debugLevelSelectionsList).completer = ChoicesCompleterList(debugLevelSelectionsList)
-        groupDebugOptions.add_argument("--logFile", help="Enable logger for both file and CLI", action="store_true")
-        groupDebug= self.parserDebugOptions.add_argument_group(title="Choice List for debug Parameters")
 
-        for key,value in debugLevelSelections.items():
+        # Interface
+        groupDebugOptions = self.parserDebugOptions.add_argument_group(
+            title="Additional Debug Options"
+        )
+        groupDebugOptions.add_argument(
+            "--debug",
+            help="execute with debug options",
+            action="store",
+            type=str.upper,
+            default="INFO",
+            choices=debugLevelSelectionsList,
+        ).completer = ChoicesCompleterList(debugLevelSelectionsList)
+        groupDebugOptions.add_argument(
+            "--logFile", help="Enable logger for both file and CLI", action="store_true"
+        )
+        groupDebug = self.parserDebugOptions.add_argument_group(
+            title="Choice List for debug Parameters"
+        )
+
+        for key, value in debugLevelSelections.items():
             groupDebug.add_argument(key, help=value, action="none")
-            
+
     def parseArgs(self):
         """
         This function allows to save the obtained arguments to the parser_args() function
-        
+
         Returns:
             Namespace: returns parse_args()
         """
-        
+
         return self.parserDebugOptions.parse_args()

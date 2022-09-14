@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # PYTHON_ARGCOMPLETE_OK
 # -*- coding: utf-8 -*-
- 
+
 # Copyright 2019-2020 CERN and copyright holders of ALICE O2.
 # See https://alice-o2.web.cern.ch/copyright for details of the copyright holders.
 # All rights not expressly granted are reserved.
@@ -17,14 +17,15 @@
 
 import argparse
 
+
 class TofPidBeta(object):
     """
-    Class for Interface -> pidTOFbeta.cxx Task -> Configurable, Process Functions  
+    Class for Interface -> pidTOFbeta.cxx Task -> Configurable, Process Functions
 
     Args:
         object (parser_args() object): pidTOFbeta.cxx Interface
     """
-    
+
     def __init__(self, parserTofPidBeta=argparse.ArgumentParser(add_help=False)):
         super(TofPidBeta, self).__init__()
         self.parserTofPidBeta = parserTofPidBeta
@@ -33,17 +34,24 @@ class TofPidBeta(object):
         """
         This function allows to add arguments for parser_args() function
         """
-    
+
         # Interface
-        groupTofPidbeta = self.parserTofPidBeta.add_argument_group(title="Data processor options: tof-pid-beta")
-        groupTofPidbeta.add_argument("--tof-expreso", help="Expected resolution for the computation of the expected beta", action="store", type=str)
-            
+        groupTofPidbeta = self.parserTofPidBeta.add_argument_group(
+            title="Data processor options: tof-pid-beta"
+        )
+        groupTofPidbeta.add_argument(
+            "--tof-expreso",
+            help="Expected resolution for the computation of the expected beta",
+            action="store",
+            type=str,
+        )
+
     def parseArgs(self):
         """
         This function allows to save the obtained arguments to the parser_args() function
-        
+
         Returns:
             Namespace: returns parse_args()
         """
-        
+
         return self.parserTofPidBeta.parse_args()

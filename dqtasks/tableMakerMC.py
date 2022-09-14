@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # PYTHON_ARGCOMPLETE_OK
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 
 # Copyright 2019-2020 CERN and copyright holders of ALICE O2.
 # See https://alice-o2.web.cern.ch/copyright for details of the copyright holders.
@@ -13,7 +13,7 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-# \Author: ionut.cristian.arsene@cern.ch                 
+# \Author: ionut.cristian.arsene@cern.ch
 # \Interface:  cevat.batuhan.tolon@cern.ch
 
 # Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/TableProducer/tableMakerMC.cxx
@@ -21,21 +21,21 @@
 import argparse
 import os
 import re
-import urllib.request
 from urllib.request import Request, urlopen
 import ssl
 
 from argcomplete.completers import ChoicesCompleter
 from extramodules.choicesCompleterList import ChoicesCompleterList
 
+
 class TableMakerMC(object):
     """
-    Class for Interface -> tableMakerMC.cxx Task -> Configurable, Process Functions  
+    Class for Interface -> tableMakerMC.cxx Task -> Configurable, Process Functions
 
     Args:
         object (parser_args() object): tableMakerMC.cxx Interface
     """
-    
+
     def __init__(self, parserTableMakerMC=argparse.ArgumentParser(add_help=False)):
         super(TableMakerMC, self).__init__()
         self.parserTableMakerMC = parserTableMakerMC
@@ -47,21 +47,21 @@ class TableMakerMC(object):
 
         # Predefined Selections
         tableMakerProcessSelections = {
-        "Full": "Build full DQ skimmed data model, w/o centrality",
-        "FullWithCov": "Build full DQ skimmed data model, w/ track and fwdtrack covariance tables",
-        "BarrelOnly": "Build barrel-only DQ skimmed data model, w/o centrality",
-        "BarrelOnlyWithCov": "Build barrel-only DQ skimmed data model, w/ track cov matrix",
-        "BarrelOnlyWithCent": "Build barrel-only DQ skimmed data model, w/ centrality",
-        "MuonOnlyWithCov": "Build muon-only DQ skimmed data model, w/ muon cov matrix",
-        "MuonOnlyWithCent": "Build muon-only DQ skimmed data model, w/ centrality",
-        "OnlyBCs": "Analyze the BCs to store sampled lumi"
+            "Full": "Build full DQ skimmed data model, w/o centrality",
+            "FullWithCov": "Build full DQ skimmed data model, w/ track and fwdtrack covariance tables",
+            "BarrelOnly": "Build barrel-only DQ skimmed data model, w/o centrality",
+            "BarrelOnlyWithCov": "Build barrel-only DQ skimmed data model, w/ track cov matrix",
+            "BarrelOnlyWithCent": "Build barrel-only DQ skimmed data model, w/ centrality",
+            "MuonOnlyWithCov": "Build muon-only DQ skimmed data model, w/ muon cov matrix",
+            "MuonOnlyWithCent": "Build muon-only DQ skimmed data model, w/ centrality",
+            "OnlyBCs": "Analyze the BCs to store sampled lumi",
         }
         tableMakerProcessSelectionsList = []
         for k, v in tableMakerProcessSelections.items():
             tableMakerProcessSelectionsList.append(k)
-            
+
         booleanSelections = ["true", "false"]
-        
+
         allAnalysisCuts = []  # all analysis cuts
         allMCSignals = []  # all MC Signals
 
@@ -80,27 +80,30 @@ class TableMakerMC(object):
         URL_MCSIGNALS_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MCSignalLibrary.h?raw=true"
         URL_MIXING_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MixingLibrary.h?raw=true"
 
-        
         # Github Links for CutsLibrary and MCSignalsLibrary from PWG-DQ --> download from github
-        # This condition solves performance issues    
-        if not (os.path.isfile("tempCutsLibrary.h") or os.path.isfile("tempMCSignalsLibrary.h") or os.path.isfile("tempMixingLibrary.h")):
+        # This condition solves performance issues
+        if not (
+            os.path.isfile("tempCutsLibrary.h")
+            or os.path.isfile("tempMCSignalsLibrary.h")
+            or os.path.isfile("tempMixingLibrary.h")
+        ):
             print("[INFO] Some Libs are Missing. They will download.")
-            
+
             # Dummy SSL Adder
             context = ssl._create_unverified_context()  # prevent ssl problems
-            request = urllib.request.urlopen(URL_CUTS_LIBRARY, context=context)
-            
+            # request = urllib.request.urlopen(URL_CUTS_LIBRARY, context=context)
+
             # HTTP Request
             requestCutsLibrary = Request(URL_CUTS_LIBRARY, headers=headers)
             requestMCSignalsLibrary = Request(URL_MCSIGNALS_LIBRARY, headers=headers)
-            requestMixingLibrary  = Request(URL_MIXING_LIBRARY , headers=headers)
-            
+            requestMixingLibrary = Request(URL_MIXING_LIBRARY, headers=headers)
+
             # Get Files With Http Requests
             htmlCutsLibrary = urlopen(requestCutsLibrary, context=context).read()
             htmlMCSignalsLibrary = urlopen(requestMCSignalsLibrary, context=context).read()
             htmlMixingLibrary = urlopen(requestMixingLibrary, context=context).read()
-            
-            # Save Disk to temp DQ libs  
+
+            # Save Disk to temp DQ libs
             with open("tempCutsLibrary.h", "wb") as f:
                 f.write(htmlCutsLibrary)
             with open("tempMCSignalsLibrary.h", "wb") as f:
@@ -111,44 +114,107 @@ class TableMakerMC(object):
         # Read Cuts, Signals, Mixing vars from downloaded files
         with open("tempMCSignalsLibrary.h") as f:
             for line in f:
-                stringIfSearch = [x for x in f if "if" in x] 
+                stringIfSearch = [x for x in f if "if" in x]
                 for i in stringIfSearch:
                     getSignals = re.findall('"([^"]*)"', i)
                     allMCSignals = allMCSignals + getSignals
-            
+
         with open("tempCutsLibrary.h") as f:
             for line in f:
-                stringIfSearch = [x for x in f if "if" in x] 
+                stringIfSearch = [x for x in f if "if" in x]
                 for i in stringIfSearch:
                     getAnalysisCuts = re.findall('"([^"]*)"', i)
                     allAnalysisCuts = allAnalysisCuts + getAnalysisCuts
-                    
-    
-        # Interface
-        groupTableMakerConfigs = self.parserTableMakerMC.add_argument_group(title="Data processor options: table-maker-m-c")
-        groupTableMakerConfigs.add_argument("--cfgEventCuts", help="Space separated list of event cuts", nargs="*", action="store", type=str, metavar="CFGEVENTCUTS", choices=allAnalysisCuts).completer = ChoicesCompleterList(allAnalysisCuts)
-        groupTableMakerConfigs.add_argument("--cfgBarrelTrackCuts", help=" Space separated list of barrel track cuts", nargs="*", action="store", type=str, metavar="CFGBARRELTRACKCUTS", choices=allAnalysisCuts).completer = ChoicesCompleterList(allAnalysisCuts)
-        groupTableMakerConfigs.add_argument("--cfgMuonCuts", help="Space separated list of muon cuts in table-maker", action="store", nargs="*", type=str, metavar="CFGMUONCUTS", choices=allAnalysisCuts).completer = ChoicesCompleterList(allAnalysisCuts)
-        groupTableMakerConfigs.add_argument("--cfgBarrelLowPt", help="Low pt cut for tracks in the barrel", action="store", type=str)
-        groupTableMakerConfigs.add_argument("--cfgMuonLowPt", help="Low pt cut for muons", action="store", type=str)
-        groupTableMakerConfigs.add_argument("--cfgNoQA", help="If true, no QA histograms", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
-        groupTableMakerConfigs.add_argument("--cfgDetailedQA", help="If true, include more QA histograms (BeforeCuts classes and more)", action="store", type=str.lower, choices=booleanSelections).completer = ChoicesCompleter(booleanSelections)
-        #groupTableMakerConfigs.add_argument("--cfgIsRun2", help="Run selection true or false", action="store", choices=["true","false"], type=str) # no need
-        groupTableMakerConfigs.add_argument("--cfgMinTpcSignal", help="Minimum TPC signal", action="store", type=str)
-        groupTableMakerConfigs.add_argument("--cfgMaxTpcSignal", help="Maximum TPC signal", action="store", type=str)
-        groupTableMakerConfigs.add_argument("--cfgMCsignals", help="Space separated list of MC signals", action="store", nargs="*", type=str, metavar="CFGMCSIGNALS", choices=allMCSignals).completer = ChoicesCompleterList(allMCSignals)
 
-        groupProcessTableMaker = self.parserTableMakerMC.add_argument_group(title="Data processor options: table-maker-m-c")
-        groupProcessTableMaker.add_argument("--process",help="Process Selection options for tableMaker/tableMakerMC Data Processing and Skimming", action="store", type=str, nargs="*", metavar="PROCESS", choices=tableMakerProcessSelectionsList).completer = ChoicesCompleterList(tableMakerProcessSelectionsList)
-        for key,value in tableMakerProcessSelections.items():
+        # Interface
+        groupTableMakerConfigs = self.parserTableMakerMC.add_argument_group(
+            title="Data processor options: table-maker-m-c"
+        )
+        groupTableMakerConfigs.add_argument(
+            "--cfgEventCuts",
+            help="Space separated list of event cuts",
+            nargs="*",
+            action="store",
+            type=str,
+            metavar="CFGEVENTCUTS",
+            choices=allAnalysisCuts,
+        ).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupTableMakerConfigs.add_argument(
+            "--cfgBarrelTrackCuts",
+            help=" Space separated list of barrel track cuts",
+            nargs="*",
+            action="store",
+            type=str,
+            metavar="CFGBARRELTRACKCUTS",
+            choices=allAnalysisCuts,
+        ).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupTableMakerConfigs.add_argument(
+            "--cfgMuonCuts",
+            help="Space separated list of muon cuts in table-maker",
+            action="store",
+            nargs="*",
+            type=str,
+            metavar="CFGMUONCUTS",
+            choices=allAnalysisCuts,
+        ).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupTableMakerConfigs.add_argument(
+            "--cfgBarrelLowPt", help="Low pt cut for tracks in the barrel", action="store", type=str
+        )
+        groupTableMakerConfigs.add_argument(
+            "--cfgMuonLowPt", help="Low pt cut for muons", action="store", type=str
+        )
+        groupTableMakerConfigs.add_argument(
+            "--cfgNoQA",
+            help="If true, no QA histograms",
+            action="store",
+            type=str.lower,
+            choices=booleanSelections,
+        ).completer = ChoicesCompleter(booleanSelections)
+        groupTableMakerConfigs.add_argument(
+            "--cfgDetailedQA",
+            help="If true, include more QA histograms (BeforeCuts classes and more)",
+            action="store",
+            type=str.lower,
+            choices=booleanSelections,
+        ).completer = ChoicesCompleter(booleanSelections)
+        # groupTableMakerConfigs.add_argument("--cfgIsRun2", help="Run selection true or false", action="store", choices=["true","false"], type=str) # no need
+        groupTableMakerConfigs.add_argument(
+            "--cfgMinTpcSignal", help="Minimum TPC signal", action="store", type=str
+        )
+        groupTableMakerConfigs.add_argument(
+            "--cfgMaxTpcSignal", help="Maximum TPC signal", action="store", type=str
+        )
+        groupTableMakerConfigs.add_argument(
+            "--cfgMCsignals",
+            help="Space separated list of MC signals",
+            action="store",
+            nargs="*",
+            type=str,
+            metavar="CFGMCSIGNALS",
+            choices=allMCSignals,
+        ).completer = ChoicesCompleterList(allMCSignals)
+
+        groupProcessTableMaker = self.parserTableMakerMC.add_argument_group(
+            title="Data processor options: table-maker-m-c"
+        )
+        groupProcessTableMaker.add_argument(
+            "--process",
+            help="Process Selection options for tableMaker/tableMakerMC Data Processing and Skimming",
+            action="store",
+            type=str,
+            nargs="*",
+            metavar="PROCESS",
+            choices=tableMakerProcessSelectionsList,
+        ).completer = ChoicesCompleterList(tableMakerProcessSelectionsList)
+        for key, value in tableMakerProcessSelections.items():
             groupProcessTableMaker.add_argument(key, help=value, action="none")
-            
+
     def parseArgs(self):
         """
         This function allows to save the obtained arguments to the parser_args() function
-        
+
         Returns:
             Namespace: returns parse_args()
         """
-        
+
         return self.parserTableMakerMC.parse_args()

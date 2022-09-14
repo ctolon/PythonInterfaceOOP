@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # PYTHON_ARGCOMPLETE_OK
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 
 # Copyright 2019-2020 CERN and copyright holders of ALICE O2.
 # See https://alice-o2.web.cern.ch/copyright for details of the copyright holders.
@@ -36,6 +36,7 @@ def listToString(s):
         str1 = " "
 
         return str1.join(s)
+
 
 def stringToList(string):
     """
