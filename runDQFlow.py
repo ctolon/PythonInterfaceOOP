@@ -137,7 +137,8 @@ class RunAnalysisQvector(object):
     def __init__(
         self,
         parserRunAnalysisQvector=argparse.ArgumentParser(
-            formatter_class=argparse.ArgumentDefaultsHelpFormatter, description="Arguments to pass"
+            formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+            description="Example Usage: ./runDQFlow.py <yourConfig.json> --arg value "
         ),
         analysisQvector=AnalysisQvector(),
         eventSelection=EventSelectionTask(),

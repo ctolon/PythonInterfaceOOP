@@ -135,7 +135,8 @@ class RunV0selector(object):
     def __init__(
         self,
         parserRunV0selector=argparse.ArgumentParser(
-            formatter_class=argparse.ArgumentDefaultsHelpFormatter, description="Arguments to pass"
+            formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+            description="Example Usage: ./runV0selector.py <yourConfig.json> --arg value"
         ),
         v0selector=V0selector(),
         eventSelection=EventSelectionTask(),

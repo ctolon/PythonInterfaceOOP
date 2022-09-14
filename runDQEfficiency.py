@@ -97,7 +97,8 @@ class RunDQEfficiency(object):
     def __init__(
         self,
         parserRunDQEfficiency=argparse.ArgumentParser(
-            formatter_class=argparse.ArgumentDefaultsHelpFormatter, description="Arguments to pass"
+            formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+            description="Example Usage: ./runDQEfficiency.py <yourConfig.json> --arg value "
         ),
         dqEfficiency=DQEfficiency(),
         debugOptions=DebugOptions(),
