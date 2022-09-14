@@ -19,5 +19,5 @@ jobs:
           ignore: "F401, E501, C901, E203"
           exclude: "doc"
           max-line-length: "100"
-          path: ""
+          path: "echo "{path}" >> $GITHUB_PATH"
           plugins: "flake8-bugbear==22.1.11 flake8-black"
