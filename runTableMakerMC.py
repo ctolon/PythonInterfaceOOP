@@ -578,6 +578,8 @@ except FileNotFoundError:
 """
 
 runOverMC = True
+logging.info("runOverMC : %s, Reduced Tables will be produced for MC", runOverMC)
+
 taskNameInConfig = "table-maker-m-c"
 taskNameInCommandLine = "o2-analysis-dq-table-maker-mc"
 
@@ -860,7 +862,7 @@ if not isNoDeleteNeedForCent:
         leftProcessAfterDeleteCent,
     )
 try:
-    if len(leftProcessAfterDeleteCent) > 1:
+    if len(leftProcessAfterDeleteCent) > 1 or len(leftProcessAfterDeleteCent) == 0:
         logging.info("Process will continue after Centrality filter")
     else:
         raise CentFilterError
