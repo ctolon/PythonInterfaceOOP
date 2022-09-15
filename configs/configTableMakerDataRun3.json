@@ -141,7 +141,7 @@
     },
     "track-selection": {
         "isRun3": "true",
-        "itsMatching": "0"
+        "itsMatching": "1"
     },
     "weak-decay-indices-cascades": "",
     "v0-selector": {
