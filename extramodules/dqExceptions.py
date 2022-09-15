@@ -18,7 +18,7 @@ class TasknameNotFoundInConfigFileError(Exception):
     """Exception raised if taskname not found in json config file.
 
     Attributes:
-        taskName -- input main task name
+        taskName: input main task name
     """
 
     def __init__(self, taskName):
@@ -33,7 +33,7 @@ class CfgInvalidFormatError(Exception):
     """Exception raised for Invalid format json file
 
     Attributes:
-        config -- input provided config json file
+        config: input provided config json file
     """
 
     def __init__(self, configjson):
@@ -47,8 +47,9 @@ class CfgInvalidFormatError(Exception):
 
 class NotInAlienvError(Exception):
     """Exception raised for O2Physics Alienv Loading
+    
     Attributes:
-        message -- error message for forgetting loading alienv
+        message: error message for forgetting loading alienv
     """
 
     def __init__(self, message="You must load O2Physics with alienv"):
@@ -60,7 +61,7 @@ class ForgettedArgsError(Exception):
     """Exception raised for forgetted args errors in parser args.
 
     Attributes:
-        forgettedArgs -- arguments whose configuration is forgotten
+        forgettedArgs: arguments whose configuration is forgotten
     """
 
     def __init__(self, forgettedArgs):
@@ -86,8 +87,8 @@ class BarrelSelsNotInBarrelTrackCutsError(Exception):
     """Exception raised for if filterPP selection is not valid for BarrelSels
 
     Attributes:
-        barrelSels -- FilterPP Barrel Selections
-        barrelTrackCuts -- Barrel Track Cuts
+        barrelSels: In filterPP task, barrel selections for event filtering
+        barrelTrackCuts: In DQBarrelTrackSelection, Barrel track cuts
     """
 
     def __init__(self, barrelSels, barrelTrackCuts):
@@ -103,8 +104,8 @@ class MuonSelsNotInMuonsCutsError(Exception):
     """Exception raised for if filterPP selection is not valid for MuonSels
 
     Attributes:
-        muonSels -- FilterPP Muon Selections
-        muonsCuts -- Additional Muon Cuts
+        muonSels: In filterPP task, muon selections for event filtering
+        muonsCuts: in DQMuonsSelection, additional muon Cuts
     """
 
     def __init__(self, muonSels, muonsCuts):
@@ -122,8 +123,8 @@ class BarrelTrackCutsNotInBarrelSelsError(Exception):
     """Exception raised for if filterPP selection is not valid for BarrelSels
 
     Attributes:
-        barrelSels -- FilterPP Barrel Selections
-        barrelTrackCuts -- Barrel Track Cuts
+        barrelSels: In filterPP task, barrel selections for event filtering
+        barrelTrackCuts: In DQBarrelTrackSelection, Barrel track cuts
     """
 
     def __init__(self, barrelSels, barrelTrackCuts):
@@ -139,8 +140,8 @@ class MuonsCutsNotInMuonSelsError(Exception):
     """Exception raised for if filterPP selection is not valid for MuonSels
 
     Attributes:
-        muonSels -- FilterPP Muon Selections
-        muonsCuts -- Additional Muon Cuts
+        muonSels: In filterPP task, muon selections for event filtering
+        muonsCuts: in DQMuonsSelection, additional muon Cuts
     """
 
     def __init__(self, muonSels, muonsCuts):
@@ -156,7 +157,7 @@ class MandatoryArgNotFoundError(Exception):
     """Exception raised for if mandatory arg not found
 
     Attributes:
-        arg -- mandatoryArg
+        arg: mandatory argument
     """
 
     def __init__(self, arg):
