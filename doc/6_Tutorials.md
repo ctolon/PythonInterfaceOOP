@@ -48,7 +48,7 @@ if you used the command `exec bash` you don't need to do anything.
 
 You can Found MC Datas, pre-made JSON config files and DQ Skimmed datas for tutorial at: [Click Here](https://cernbox.cern.ch/index.php/s/XWOFJVaBxiIw0Ft) password: DQ
 
-Create a new folder in NewAllWorkflows directory with `mkdir Datas` and move the downloaded datas here.
+Create a new folder in pythonInterfaceOOP directory with `mkdir Datas` and move the downloaded datas here.
 
 You can found Real Data for pp at : [Click Here](https://alimonitor.cern.ch/catalogue/index.jsp?path=%2Falice%2Fdata%2F2022%2FLHC22c%2F517616%2Fapass1#/alice/data/2022/LHC22c/517616/apass1)
 
@@ -170,14 +170,6 @@ Config | For | Description
 P.S. Root files are inputs for JSON configs
 
 ## MC Part
-
-IMPORTANT P.S If your O2 version is new, you will get DF_2589470057001/O2trackdca not found error in Run 3 Barrel MC simulations. This is because there are some changes in the MC data model after the O2 updates. To solve this problem, you can work on an older version on LXPLUS (before 28 august) or you can look at new productions on the grid and test them for shared AO2D.
-
-Errors Appears On This Shared Datasets:
-
-* LHC21i3b
-
-* LHC21i3f2
 
 ### Run tableMakerMC on LHC21i3d2 (jpsi to MuMu pp Run3Simulation)
 
