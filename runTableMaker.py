@@ -29,7 +29,7 @@ import argparse
 from extramodules.actionHandler import NoAction
 from extramodules.actionHandler import ChoicesAction
 from extramodules.debugOptions import DebugOptions
-from extramodules.stringOperations import listToString, stringToList
+from extramodules.stringOperations import listToString, stringToList, multiConfigurableSet
 from extramodules.dqExceptions import (
     CfgInvalidFormatError,
     ForgettedArgsError,
@@ -614,7 +614,7 @@ try:
         logging.info("You are in %s alienv", O2PHYSICS_ROOT)
 except NotInAlienvError as e:
     logging.exception(e)
-    sys.exit()
+    #sys.exit()
 
 # ===========================
 # Start Interface Processes =
@@ -794,20 +794,10 @@ for key, value in config.items():
 
             # filterPP Selections
             if value == "cfgBarrelSels" and args.cfgBarrelSels:
-                if isinstance(args.cfgBarrelSels, list):
-                    args.cfgBarrelSels = listToString(args.cfgBarrelSels)
-                if args.onlySelect == "false":
-                    actualConfig = config[key][value]
-                    args.cfgBarrelSels = actualConfig + "," + args.cfgBarrelSels
-                config[key][value] = args.cfgBarrelSels
+                multiConfigurableSet(config, key, value, args.cfgBarrelSels, args.onlySelect)
                 logging.debug(" - [%s] %s : %s", key, value, args.cfgBarrelSels)
             if value == "cfgMuonSels" and args.cfgMuonSels:
-                if isinstance(args.cfgMuonSels, list):
-                    args.cfgMuonSels = listToString(args.cfgMuonSels)
-                if args.onlySelect == "false":
-                    actualConfig = config[key][value]
-                    args.cfgMuonSels = actualConfig + "," + args.cfgMuonSels
-                config[key][value] = args.cfgMuonSels
+                multiConfigurableSet(config, key, value, args.cfgMuonSels, args.onlySelect)
                 logging.debug(" - [%s] %s : %s", key, value, args.cfgMuonSels)
 
             # PID Selections
@@ -886,28 +876,13 @@ for key, value in config.items():
 
             # table-maker/table-maker-m-c cfg selections
             if value == "cfgEventCuts" and args.cfgEventCuts:
-                if isinstance(args.cfgEventCuts, list):
-                    args.cfgEventCuts = listToString(args.cfgEventCuts)
-                if args.onlySelect == "false":
-                    actualConfig = config[key][value]
-                    args.cfgEventCuts = actualConfig + "," + args.cfgEventCuts
-                config[key][value] = args.cfgEventCuts
+                multiConfigurableSet(config, key, value, args.cfgEventCuts, args.onlySelect)
                 logging.debug(" - [%s] %s : %s", key, value, args.cfgEventCuts)
             if value == "cfgBarrelTrackCuts" and args.cfgBarrelTrackCuts:
-                if isinstance(args.cfgBarrelTrackCuts, list):
-                    args.cfgBarrelTrackCuts = listToString(args.cfgBarrelTrackCuts)
-                if args.onlySelect == "false":
-                    actualConfig = config[key][value]
-                    args.cfgBarrelTrackCuts = actualConfig + "," + args.cfgBarrelTrackCuts
-                config[key][value] = args.cfgBarrelTrackCuts
+                multiConfigurableSet(config, key, value, args.cfgBarrelTrackCuts, args.onlySelect)
                 logging.debug(" - [%s] %s : %s", key, value, args.cfgBarrelTrackCuts)
             if value == "cfgMuonCuts" and args.cfgMuonCuts:
-                if isinstance(args.cfgMuonCuts, list):
-                    args.cfgMuonCuts = listToString(args.cfgMuonCuts)
-                if args.onlySelect == "false":
-                    actualConfig = config[key][value]
-                    args.cfgMuonCuts = actualConfig + "," + args.cfgMuonCuts
-                config[key][value] = args.cfgMuonCuts
+                multiConfigurableSet(config, key, value, args.cfgMuonCuts, args.onlySelect)
                 logging.debug(" - [%s] %s : %s", key, value, args.cfgMuonCuts)
             if value == "cfgBarrelLowPt" and args.cfgBarrelLowPt:
                 config[key][value] = args.cfgBarrelLowPt
@@ -930,12 +905,7 @@ for key, value in config.items():
 
             # d-q-muons-selection
             if value == "cfgMuonsCuts" and args.cfgMuonsCuts:
-                if isinstance(args.cfgMuonsCuts, list):
-                    args.cfgMuonsCuts = listToString(args.cfgMuonsCuts)
-                if args.onlySelect == "false":
-                    actualConfig = config[key][value]
-                    args.cfgMuonsCuts = actualConfig + "," + args.cfgMuonsCuts
-                config[key][value] = args.cfgMuonsCuts
+                multiConfigurableSet(config, key, value, args.cfgMuonsCuts, args.onlySelect)
                 logging.debug(" - [%s] %s : %s", key, value, args.cfgMuonsCuts)
 
             # event-selection-task

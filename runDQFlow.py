@@ -29,7 +29,7 @@ import argparse
 from extramodules.actionHandler import NoAction
 from extramodules.actionHandler import ChoicesAction
 from extramodules.debugOptions import DebugOptions
-from extramodules.stringOperations import listToString
+from extramodules.stringOperations import listToString, multiConfigurableSet
 from extramodules.dqExceptions import (
     CfgInvalidFormatError,
     ForgettedArgsError,
@@ -453,28 +453,13 @@ for key, value in config.items():
 
             # analysis-qvector selections
             if value == "cfgBarrelTrackCuts" and args.cfgBarrelTrackCuts:
-                if isinstance(args.cfgBarrelTrackCuts, list):
-                    args.cfgBarrelTrackCuts = listToString(args.cfgBarrelTrackCuts)
-                if args.onlySelect == "false":
-                    actualConfig = config[key][value]
-                    args.cfgBarrelTrackCuts = actualConfig + "," + args.cfgBarrelTrackCuts
-                config[key][value] = args.cfgBarrelTrackCuts
+                multiConfigurableSet(config, key, value, args.cfgBarrelTrackCuts, args.onlySelect)
                 logging.debug(" - [%s] %s : %s", key, value, args.cfgBarrelTrackCuts)
             if value == "cfgMuonCuts" and args.cfgMuonCuts:
-                if isinstance(args.cfgMuonCuts, list):
-                    args.cfgMuonCuts = listToString(args.cfgMuonCuts)
-                if args.onlySelect == "false":
-                    actualConfig = config[key][value]
-                    args.cfgMuonCuts = actualConfig + "," + args.cfgMuonCuts
-                config[key][value] = args.cfgMuonCuts
+                multiConfigurableSet(config, key, value, args.cfgMuonCuts, args.onlySelect)
                 logging.debug(" - [%s] %s : %s", key, value, args.cfgMuonCuts)
             if value == "cfgEventCuts" and args.cfgEventCuts:
-                if isinstance(args.cfgEventCuts, list):
-                    args.cfgEventCuts = listToString(args.cfgEventCuts)
-                if args.onlySelect == "false":
-                    actualConfig = config[key][value]
-                    args.cfgEventCuts = actualConfig + "," + args.cfgEventCuts
-                config[key][value] = args.cfgEventCuts
+                multiConfigurableSet(config, key, value, args.cfgEventCuts, args.onlySelect)
                 logging.debug(" - [%s] %s : %s", key, value, args.cfgEventCuts)
             if value == "cfgWithQA" and args.cfgWithQA:
                 config[key][value] = args.cfgWithQA

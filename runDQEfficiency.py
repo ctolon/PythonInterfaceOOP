@@ -29,7 +29,7 @@ import argparse
 from extramodules.actionHandler import NoAction
 from extramodules.actionHandler import ChoicesAction
 from extramodules.debugOptions import DebugOptions
-from extramodules.stringOperations import listToString, stringToList
+from extramodules.stringOperations import listToString, stringToList, multiConfigurableSet
 from extramodules.dqExceptions import (
     CfgInvalidFormatError,
     ForgettedArgsError,
@@ -409,48 +409,23 @@ for key, value in config.items():
 
             # analysis-event-selection
             if value == "cfgEventCuts" and args.cfgEventCuts:
-                if isinstance(args.cfgEventCuts, list):
-                    args.cfgEventCuts = listToString(args.cfgEventCuts)
-                if args.onlySelect == "false":
-                    actualConfig = config[key][value]
-                    args.cfgEventCuts = actualConfig + "," + args.cfgEventCuts
-                config[key][value] = args.cfgEventCuts
+                multiConfigurableSet(config, key, value, args.cfgEventCuts, args.onlySelect)
                 logging.debug(" - [%s] %s : %s", key, value, args.cfgEventCuts)
 
             # analysis-track-selection
             if value == "cfgTrackCuts" and args.cfgTrackCuts:
-                if isinstance(args.cfgTrackCuts, list):
-                    args.cfgTrackCuts = listToString(args.cfgTrackCuts)
-                if args.onlySelect == "false":
-                    actualConfig = config[key][value]
-                    args.cfgTrackCuts = actualConfig + "," + args.cfgTrackCuts
-                config[key][value] = args.cfgTrackCuts
+                multiConfigurableSet(config, key, value, args.cfgTrackCuts, args.onlySelect)
                 logging.debug(" - [%s] %s : %s", key, value, args.cfgTrackCuts)
             if value == "cfgTrackMCSignals" and args.cfgTrackMCSignals:
-                if isinstance(args.cfgTrackMCSignals, list):
-                    args.cfgTrackMCSignals = listToString(args.cfgTrackMCSignals)
-                if args.onlySelect == "false":
-                    actualConfig = config[key][value]
-                    args.cfgTrackMCSignals = actualConfig + "," + args.cfgTrackMCSignals
-                config[key][value] = args.cfgTrackMCSignals
+                multiConfigurableSet(config, key, value, args.cfgTrackMCSignals, args.onlySelect)
                 logging.debug(" - [%s] %s : %s", key, value, args.cfgTrackMCSignals)
 
             # analysis-muon-selection
             if value == "cfgMuonCuts" and args.cfgMuonCuts:
-                if isinstance(args.cfgMuonCuts, list):
-                    args.cfgMuonCuts = listToString(args.cfgMuonCuts)
-                if args.onlySelect == "false":
-                    actualConfig = config[key][value]
-                    args.cfgMuonCuts = actualConfig + "," + args.cfgMuonCuts
-                config[key][value] = args.cfgMuonCuts
+                multiConfigurableSet(config, key, value, args.cfgMuonCuts, args.onlySelect)
                 logging.debug(" - [%s] %s : %s", key, value, args.cfgMuonCuts)
             if value == "cfgMuonMCSignals" and args.cfgMuonMCSignals:
-                if isinstance(args.cfgMuonMCSignals, list):
-                    args.cfgMuonMCSignals = listToString(args.cfgMuonMCSignals)
-                if args.onlySelect == "false":
-                    actualConfig = config[key][value]
-                    args.cfgMuonMCSignals = actualConfig + "," + args.cfgMuonMCSignals
-                config[key][value] = args.cfgMuonMCSignals
+                multiConfigurableSet(config, key, value, args.cfgMuonMCSignals, args.onlySelect)
                 logging.debug(" - [%s] %s : %s", key, value, args.cfgMuonMCSignals)
 
             # analysis-same-event-pairing
@@ -530,21 +505,11 @@ for key, value in config.items():
             # analysis-same-event-pairing
             if key == "analysis-same-event-pairing":
                 if value == "cfgBarrelMCRecSignals" and args.cfgBarrelMCRecSignals:
-                    if isinstance(args.cfgBarrelMCRecSignals, list):
-                        args.cfgBarrelMCRecSignals = listToString(args.cfgBarrelMCRecSignals)
-                    if args.onlySelect == "false":
-                        actualConfig = config[key][value]
-                        args.cfgBarrelMCRecSignals = actualConfig + "," + args.cfgBarrelMCRecSignals
-                    config[key][value] = args.cfgBarrelMCRecSignals
+                    multiConfigurableSet(config, key, value, args.cfgBarrelMCRecSignals, args.onlySelect)
                     logging.debug(" - [%s] %s : %s", key, value, args.cfgBarrelMCRecSignals)
 
                 if value == "cfgBarrelMCGenSignals" and args.cfgBarrelMCGenSignals:
-                    if isinstance(args.cfgBarrelMCGenSignals, list):
-                        args.cfgBarrelMCGenSignals = listToString(args.cfgBarrelMCGenSignals)
-                    if args.onlySelect == "false":
-                        actualConfig = config[key][value]
-                        args.cfgBarrelMCGenSignals = actualConfig + "," + args.cfgBarrelMCGenSignals
-                    config[key][value] = args.cfgBarrelMCGenSignals
+                    multiConfigurableSet(config, key, value, args.cfgBarrelMCGenSignals, args.onlySelect)
                     logging.debug(" - [%s] %s : %s", key, value, args.cfgBarrelMCGenSignals)
 
                 if value == "cfgFlatTables" and args.cfgFlatTables:
@@ -554,37 +519,15 @@ for key, value in config.items():
             # analysis-dilepton-track
             if key == "analysis-dilepton-track":
                 if value == "cfgBarrelMCRecSignals" and args.cfgBarrelDileptonMCRecSignals:
-                    if isinstance(args.cfgBarrelDileptonMCRecSignals, list):
-                        args.cfgBarrelDileptonMCRecSignals = listToString(
-                            args.cfgBarrelDileptonMCRecSignals
-                        )
-                    if args.onlySelect == "false":
-                        actualConfig = config[key][value]
-                        args.cfgBarrelDileptonMCRecSignals = (
-                            actualConfig + "," + args.cfgBarrelDileptonMCRecSignals
-                        )
+                    multiConfigurableSet(config, key, value, args.cfgBarrelDileptonMCRecSignals, args.onlySelect)
                     config[key][value] = args.cfgBarrelDileptonMCRecSignals
                     logging.debug(" - [%s] %s : %s", key, value, args.cfgBarrelDileptonMCRecSignals)
 
                 if value == "cfgBarrelMCGenSignals" and args.cfgBarrelDileptonMCGenSignals:
-                    if isinstance(args.cfgBarrelDileptonMCGenSignals, list):
-                        args.cfgBarrelDileptonMCGenSignals = listToString(
-                            args.cfgBarrelDileptonMCGenSignals
-                        )
-                    if args.onlySelect == "false":
-                        actualConfig = config[key][value]
-                        args.cfgBarrelDileptonMCGenSignals = (
-                            actualConfig + "," + args.cfgBarrelDileptonMCGenSignals
-                        )
-                    config[key][value] = args.cfgBarrelDileptonMCRecSignals
+                    multiConfigurableSet(config, key, value, args.cfgBarrelDileptonMCGenSignals, args.onlySelect)
                     logging.debug(" - [%s] %s : %s", key, value, args.cfgBarrelDileptonMCGenSignals)
                 if value == "cfgLeptonCuts" and args.cfgLeptonCuts:
-                    if isinstance(args.cfgLeptonCuts, list):
-                        args.cfgLeptonCuts = listToString(args.cfgLeptonCuts)
-                    if args.onlySelect == "false":
-                        actualConfig = config[key][value]
-                        args.cfgLeptonCuts = actualConfig + "," + args.cfgLeptonCuts
-                    config[key][value] = args.cfgLeptonCuts
+                    multiConfigurableSet(config, key, value, args.cfgLeptonCuts, args.onlySelect)
                     logging.debug(" - [%s] %s : %s", key, value, args.cfgLeptonCuts)
 
                 if value == "cfgFillCandidateTable" and args.cfgFillCandidateTable:

@@ -29,7 +29,7 @@ import argparse
 from extramodules.actionHandler import NoAction
 from extramodules.actionHandler import ChoicesAction
 from extramodules.debugOptions import DebugOptions
-from extramodules.stringOperations import listToString, stringToList
+from extramodules.stringOperations import listToString, stringToList, multiConfigurableSet
 from extramodules.dqExceptions import (
     CfgInvalidFormatError,
     ForgettedArgsError,
@@ -685,50 +685,25 @@ for key, value in config.items():
 
             # analysis-event-selection
             if value == "cfgMixingVars" and args.cfgMixingVars:
-                if isinstance(args.cfgMixingVars, list):
-                    args.cfgMixingVars = listToString(args.cfgMixingVars)
-                if args.onlySelect == "false":
-                    actualConfig = config[key][value]
-                    args.cfgMixingVars = actualConfig + "," + args.cfgMixingVars
-                config[key][value] = args.cfgMixingVars
+                multiConfigurableSet(config, key, value, args.cfgMixingVars, args.onlySelect)
                 logging.debug(" - [%s] %s : %s", key, value, args.cfgMixingVars)
             if value == "cfgEventCuts" and args.cfgEventCuts:
-                if isinstance(args.cfgEventCuts, list):
-                    args.cfgEventCuts = listToString(args.cfgEventCuts)
-                if args.onlySelect == "false":
-                    actualConfig = config[key][value]
-                    args.cfgEventCuts = actualConfig + "," + args.cfgEventCuts
-                config[key][value] = args.cfgEventCuts
+                multiConfigurableSet(config, key, value, args.cfgEventCuts, args.onlySelect)
                 logging.debug(" - [%s] %s : %s", key, value, args.cfgEventCuts)
 
             # analysis-track-selection
             if value == "cfgTrackCuts" and args.cfgTrackCuts:
-                if isinstance(args.cfgTrackCuts, list):
-                    args.cfgTrackCuts = listToString(args.cfgTrackCuts)
-                if args.onlySelect == "false":
-                    actualConfig = config[key][value]
-                    args.cfgTrackCuts = actualConfig + "," + args.cfgTrackCuts
-                config[key][value] = args.cfgTrackCuts
+                multiConfigurableSet(config, key, value, args.cfgTrackCuts, args.onlySelect)
                 logging.debug(" - [%s] %s : %s", key, value, args.cfgTrackCuts)
 
             # analysis-muon-selection
             if value == "cfgMuonCuts" and args.cfgMuonCuts:
-                if isinstance(args.cfgMuonCuts, list):
-                    args.cfgMuonCuts = listToString(args.cfgMuonCuts)
-                if args.onlySelect == "false":
-                    actualConfig = config[key][value]
-                    args.cfgMuonCuts = actualConfig + "," + args.cfgMuonCuts
-                config[key][value] = args.cfgMuonCuts
+                multiConfigurableSet(config, key, value, args.cfgMuonCuts, args.onlySelect)
                 logging.debug(" - [%s] %s : %s", key, value, args.cfgMuonCuts)
 
             # analysis-dilepton-hadron
             if value == "cfgLeptonCuts" and args.cfgLeptonCuts:
-                if isinstance(args.cfgLeptonCuts, list):
-                    args.cfgLeptonCuts = listToString(args.cfgLeptonCuts)
-                if args.onlySelect == "false":
-                    actualConfig = config[key][value]
-                    args.cfgLeptonCuts = actualConfig + "," + args.cfgLeptonCuts
-                config[key][value] = args.cfgLeptonCuts
+                multiConfigurableSet(config, key, value, args.cfgLeptonCuts, args.onlySelect)
                 logging.debug(" - [%s] %s : %s", key, value, args.cfgLeptonCuts)
 
             # analysis-same-event-pairing
