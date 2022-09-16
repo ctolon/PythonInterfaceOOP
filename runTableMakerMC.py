@@ -895,9 +895,9 @@ Some of the track parameters used in the track selection require additional calc
 which is produced by either the o2-analysis-trackextension task (Run 2) or o2-analysis-track-propagation (Run 3).
 The quantities contained in this table can also be directly used in the analysis.
 """
-# if config["bc-selection-task"]["processRun3"] == "true":
-# barrelDeps.remove("o2-analysis-trackextension")
-# logging.info("o2-analysis-trackextension is not valid dep for run 3, It will deleted from your workflow.")
+if args.add_track_prop:
+    barrelDeps.remove("o2-analysis-trackextension")
+    logging.info("o2-analysis-trackextension is not valid dep for run 3, It will deleted from your workflow.")
 
 
 ###########################
