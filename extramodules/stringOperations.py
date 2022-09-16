@@ -14,7 +14,7 @@
 # or submit itself to any jurisdiction.
 
 
-def listToString(s=list):
+def listToString(s = list):
     """
     ListToString provides converts lists to strings with commas.
     This function is written to save as string type instead of list
@@ -29,16 +29,16 @@ def listToString(s=list):
     if len(s) > 1:
         # initialize an empty string
         str1 = ","
-
+        
         # return string
         return str1.join(s)
     else:
         str1 = " "
-
+        
         return str1.join(s)
 
 
-def stringToList(string=str):
+def stringToList(string = str):
     """
     stringToList provides converts strings to list with commas.
     This function is written to save as list type instead of string
@@ -54,7 +54,7 @@ def stringToList(string=str):
 
 
 # We don't need this. config[key][value] = args.<arg> has less verbosity
-def singleConfigurableSet(config=dict, key=str, value=str, arg=str):
+def singleConfigurableSet(config = dict, key = str, value = str, arg = str):
     """
     singleConfigurableSet method allows to assign value
     to single configurable value arguments in JSON with overriding.
@@ -77,8 +77,9 @@ def singleConfigurableSet(config=dict, key=str, value=str, arg=str):
     config[key][value] = arg
     #logging.debug(" - [%s] %s : %s", key, value, args.v0Rmax)
 
+
 # For multiple configurables in JSON, always use this method for less verbosity
-def multiConfigurableSet(config=dict, key=str, value=str, arg=list, onlySelect=bool):
+def multiConfigurableSet(config = dict, key = str, value = str, arg = list, onlySelect = bool):
     """
     multiConfigurableSet method allows to assign values
     for multiple configurable value arguments in JSON with/without overriding

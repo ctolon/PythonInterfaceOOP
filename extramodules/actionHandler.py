@@ -13,11 +13,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-
 import argparse
 
 
 class NoAction(argparse.Action):
+    
     """
     NoAction class adds dummy positional arguments to an argument,
     so sub helper messages can be created
@@ -25,17 +25,18 @@ class NoAction(argparse.Action):
     Args:
         argparse (Class): Input as args
     """
-
+    
     def __init__(self, **kwargs):
         kwargs.setdefault("default", argparse.SUPPRESS)
         kwargs.setdefault("nargs", 0)
         super(NoAction, self).__init__(**kwargs)
-
-    def __call__(self, parser, namespace, values, option_string=None):
+    
+    def __call__(self, parser, namespace, values, option_string = None):
         pass
 
 
 class ChoicesAction(argparse._StoreAction):
+    
     """
     ChoicesAction class is used to add extra choices
     to a parseargs choices list
@@ -43,9 +44,9 @@ class ChoicesAction(argparse._StoreAction):
     Args:
         argparse (Class): Input as args
     """
-
-    def add_choice(self, choice, help=""):
+    
+    def add_choice(self, choice, help = ""):
         if self.choices is None:
             self.choices = []
         self.choices.append(choice)
-        self.container.add_argument(choice, help=help, action="none")
+        self.container.add_argument(choice, help = help, action = "none")

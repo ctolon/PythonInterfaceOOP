@@ -1,0 +1,1 @@
+yapf -e .style.yapf -p -vv *.py dqtasks/dqEfficiency.py dqtasks/*.py  commondeps/*.py extramodules/*.py -i

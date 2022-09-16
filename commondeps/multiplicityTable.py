@@ -21,37 +21,32 @@ from argcomplete.completers import ChoicesCompleter
 
 
 class MultiplicityTable(object):
+    
     """
     Class for Interface -> multiplicityTable.cxx Task -> Configurable, Process Functions
 
     Args:
         object (parser_args() object): multiplicityTable.cxx Interface
     """
-
-    def __init__(self, parserMultiplicityTable=argparse.ArgumentParser(add_help=False)):
+    
+    def __init__(self, parserMultiplicityTable = argparse.ArgumentParser(add_help = False)):
         super(MultiplicityTable, self).__init__()
         self.parserMultiplicityTable = parserMultiplicityTable
-
+    
     def addArguments(self):
         """
         This function allows to add arguments for parser_args() function
         """
-
+        
         # Predefined Selections
         booleanSelections = ["true", "false"]
-
+        
         # Interface
-        groupMultiplicityTable = self.parserMultiplicityTable.add_argument_group(
-            title="Data processor options: multiplicity-table"
-        )
+        groupMultiplicityTable = self.parserMultiplicityTable.add_argument_group(title = "Data processor options: multiplicity-table")
         groupMultiplicityTable.add_argument(
-            "--isVertexZeq",
-            help="if true: do vertex Z eq mult table",
-            action="store",
-            type=str.lower,
-            choices=(booleanSelections),
-        ).completer = ChoicesCompleter(booleanSelections)
-
+            "--isVertexZeq", help = "if true: do vertex Z eq mult table", action = "store", type = str.lower, choices = (booleanSelections),
+            ).completer = ChoicesCompleter(booleanSelections)
+    
     def parseArgs(self):
         """
         This function allows to save the obtained arguments to the parser_args() function
@@ -59,5 +54,5 @@ class MultiplicityTable(object):
         Returns:
             Namespace: returns parse_args()
         """
-
+        
         return self.parserMultiplicityTable.parse_args()

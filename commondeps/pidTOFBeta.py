@@ -19,33 +19,29 @@ import argparse
 
 
 class TofPidBeta(object):
+    
     """
     Class for Interface -> pidTOFbeta.cxx Task -> Configurable, Process Functions
 
     Args:
         object (parser_args() object): pidTOFbeta.cxx Interface
     """
-
-    def __init__(self, parserTofPidBeta=argparse.ArgumentParser(add_help=False)):
+    
+    def __init__(self, parserTofPidBeta = argparse.ArgumentParser(add_help = False)):
         super(TofPidBeta, self).__init__()
         self.parserTofPidBeta = parserTofPidBeta
-
+    
     def addArguments(self):
         """
         This function allows to add arguments for parser_args() function
         """
-
+        
         # Interface
-        groupTofPidbeta = self.parserTofPidBeta.add_argument_group(
-            title="Data processor options: tof-pid-beta"
-        )
+        groupTofPidbeta = self.parserTofPidBeta.add_argument_group(title = "Data processor options: tof-pid-beta")
         groupTofPidbeta.add_argument(
-            "--tof-expreso",
-            help="Expected resolution for the computation of the expected beta",
-            action="store",
-            type=str,
-        )
-
+            "--tof-expreso", help = "Expected resolution for the computation of the expected beta", action = "store", type = str,
+            )
+    
     def parseArgs(self):
         """
         This function allows to save the obtained arguments to the parser_args() function
@@ -53,5 +49,5 @@ class TofPidBeta(object):
         Returns:
             Namespace: returns parse_args()
         """
-
+        
         return self.parserTofPidBeta.parse_args()

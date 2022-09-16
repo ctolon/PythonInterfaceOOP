@@ -21,37 +21,33 @@ from argcomplete.completers import ChoicesCompleter
 
 
 class TrackPropagation(object):
+    
     """
     Class for Interface -> trackPropagation.cxx Task -> Configurable, Process Functions
 
     Args:
         object (parser_args() object): trackPropagation.cxx Interface
     """
-
-    def __init__(self, parserTrackPropagation=argparse.ArgumentParser(add_help=False)):
+    
+    def __init__(self, parserTrackPropagation = argparse.ArgumentParser(add_help = False)):
         super(TrackPropagation, self).__init__()
         self.parserTrackPropagation = parserTrackPropagation
-
+    
     def addArguments(self):
         """
         This function allows to add arguments for parser_args() function
         """
-
+        
         # Predefined Selections
         booleanSelections = ["true", "false"]
-
+        
         # Interface
-        groupTrackPropagation = self.parserTrackPropagation.add_argument_group(
-            title="Data processor options: track-propagation"
-        )
+        groupTrackPropagation = self.parserTrackPropagation.add_argument_group(title = "Data processor options: track-propagation")
         groupTrackPropagation.add_argument(
-            "--isCovariance",
-            help="track-propagation : If false, Process without covariance, If true Process with covariance",
-            action="store",
-            type=str.lower,
-            choices=(booleanSelections),
-        ).completer = ChoicesCompleter(booleanSelections)
-
+            "--isCovariance", help = "track-propagation : If false, Process without covariance, If true Process with covariance",
+            action = "store", type = str.lower, choices = (booleanSelections),
+            ).completer = ChoicesCompleter(booleanSelections)
+    
     def parseArgs(self):
         """
         This function allows to save the obtained arguments to the parser_args() function
@@ -59,5 +55,5 @@ class TrackPropagation(object):
         Returns:
             Namespace: returns parse_args()
         """
-
+        
         return self.parserTrackPropagation.parse_args()

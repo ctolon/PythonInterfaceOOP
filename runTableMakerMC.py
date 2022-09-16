@@ -31,13 +31,8 @@ from extramodules.actionHandler import ChoicesAction
 from extramodules.debugOptions import DebugOptions
 from extramodules.stringOperations import listToString, multiConfigurableSet
 from extramodules.dqExceptions import (
-    CfgInvalidFormatError,
-    ForgettedArgsError,
-    NotInAlienvError,
-    TasknameNotFoundInConfigFileError,
-    CentFilterError,
-)
-
+    CfgInvalidFormatError, ForgettedArgsError, NotInAlienvError, TasknameNotFoundInConfigFileError, CentFilterError,
+    )
 
 from commondeps.centralityTable import CentralityTable
 from commondeps.eventSelection import EventSelectionTask
@@ -51,7 +46,6 @@ from commondeps.trackselection import TrackSelectionTask
 from dqtasks.tableMakerMC import TableMakerMC
 
 from pycacheRemover import PycacheRemover
-
 """
 argcomplete - Bash tab completion for argparse
 Documentation https://kislyuk.github.io/argcomplete/
@@ -69,63 +63,22 @@ from argcomplete.completers import ChoicesCompleter
 ###################################
 
 tablemakerProcessAllParameters = [
-    "processFull",
-    "processFullTiny",
-    "processFullWithCov",
-    "processFullWithCent",
-    "processBarrelOnlyWithV0Bits",
-    "processBarrelOnlyWithEventFilter",
-    "processBarrelOnlyWithQvector",
-    "processBarrelOnlyWithCent",
-    "processBarrelOnlyWithCov",
-    "processBarrelOnly",
-    "processMuonOnlyWithCent",
-    "processMuonOnlyWithCov",
-    "processMuonOnly",
-    "processMuonOnlyWithFilter",
-    "processMuonOnlyWithQvector",
-    "processOnlyBCs",
-]
+    "processFull", "processFullTiny", "processFullWithCov", "processFullWithCent", "processBarrelOnlyWithV0Bits",
+    "processBarrelOnlyWithEventFilter", "processBarrelOnlyWithQvector", "processBarrelOnlyWithCent", "processBarrelOnlyWithCov",
+    "processBarrelOnly", "processMuonOnlyWithCent", "processMuonOnlyWithCov", "processMuonOnly", "processMuonOnlyWithFilter",
+    "processMuonOnlyWithQvector", "processOnlyBCs",
+    ]
 
 centralityTableParameters = [
-    "estRun2V0M",
-    "estRun2SPDtks",
-    "estRun2SPDcls",
-    "estRun2CL0",
-    "estRun2CL1",
-    "estFV0A",
-    "estFT0M",
-    "estFDDM",
-    "estNTPV",
-]
+    "estRun2V0M", "estRun2SPDtks", "estRun2SPDcls", "estRun2CL0", "estRun2CL1", "estFV0A", "estFT0M", "estFDDM", "estNTPV",
+    ]
 # TODO: Add genname parameter
 
-v0SelectorParameters = [
-    "d_bz",
-    "v0cospa",
-    "dcav0dau",
-    "v0RMin",
-    "v0Rmax",
-    "dcamin",
-    "dcamax",
-    "mincrossedrows",
-    "maxchi2tpc",
-]
+v0SelectorParameters = ["d_bz", "v0cospa", "dcav0dau", "v0RMin", "v0Rmax", "dcamin", "dcamax", "mincrossedrows", "maxchi2tpc",]
 
 ft0Parameters = ["processFT0", "processNoFT0", "processOnlyFT0", "processRun2"]
 
-pidParameters = [
-    "pid-el",
-    "pid-mu",
-    "pid-pi",
-    "pid-ka",
-    "pid-pr",
-    "pid-de",
-    "pid-tr",
-    "pid-he",
-    "pid-al",
-]
-
+pidParameters = ["pid-el", "pid-mu", "pid-pi", "pid-ka", "pid-pr", "pid-de", "pid-tr", "pid-he", "pid-al",]
 
 booleanSelections = ["true", "false"]
 
@@ -168,20 +121,11 @@ leftProcessAfterDeleteCent = []
 # Dependencies #
 ################
 
-commonDeps = [
-    "o2-analysis-timestamp",
-    "o2-analysis-event-selection",
-    "o2-analysis-multiplicity-table",
-]
+commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table",]
 barrelDeps = [
-    "o2-analysis-trackselection",
-    "o2-analysis-trackextension",
-    "o2-analysis-pid-tof-base",
-    "o2-analysis-pid-tof",
-    "o2-analysis-pid-tof-full",
-    "o2-analysis-pid-tof-beta",
-    "o2-analysis-pid-tpc-full",
-]
+    "o2-analysis-trackselection", "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof",
+    "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full",
+    ]
 specificDeps = {
     "processFull": [],
     "processFullTiny": [],
@@ -189,27 +133,18 @@ specificDeps = {
     "processFullWithCent": ["o2-analysis-centrality-table"],
     "processBarrelOnly": [],
     "processBarrelOnlyWithCov": [],
-    "processBarrelOnlyWithV0Bits": [
-        "o2-analysis-dq-v0-selector",
-        "o2-analysis-weak-decay-indices",
-    ],
+    "processBarrelOnlyWithV0Bits": ["o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices",],
     "processBarrelOnlyWithEventFilter": ["o2-analysis-dq-filter-pp"],
-    "processBarrelOnlyWithQvector": [
-        "o2-analysis-centrality-table",
-        "o2-analysis-dq-flow",
-    ],
+    "processBarrelOnlyWithQvector": ["o2-analysis-centrality-table", "o2-analysis-dq-flow",],
     "processBarrelOnlyWithCent": ["o2-analysis-centrality-table"],
     "processMuonOnly": [],
     "processMuonOnlyWithCov": [],
     "processMuonOnlyWithCent": ["o2-analysis-centrality-table"],
-    "processMuonOnlyWithQvector": [
-        "o2-analysis-centrality-table",
-        "o2-analysis-dq-flow",
-    ],
+    "processMuonOnlyWithQvector": ["o2-analysis-centrality-table", "o2-analysis-dq-flow",],
     "processMuonOnlyWithFilter": ["o2-analysis-dq-filter-pp"]
     # "processFullWithCentWithV0Bits": ["o2-analysis-centrality-table","o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices"],
     # "processFullWithEventFilterWithV0Bits": ["o2-analysis-dq-filter-pp","o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices"],
-}
+    }
 
 #############################
 # Skimming Table Selections #
@@ -217,53 +152,71 @@ specificDeps = {
 
 # Definition of all the tables we may write
 tables = {
-    "ReducedEvents": {"table": "AOD/REDUCEDEVENT/0", "treename": "ReducedEvents"},
+    "ReducedEvents": {
+        "table": "AOD/REDUCEDEVENT/0",
+        "treename": "ReducedEvents"
+        },
     "ReducedEventsExtended": {
         "table": "AOD/REEXTENDED/0",
         "treename": "ReducedEventsExtended",
-    },
+        },
     "ReducedEventsVtxCov": {
         "table": "AOD/REVTXCOV/0",
         "treename": "ReducedEventsVtxCov",
-    },
+        },
     "ReducedEventsQvector": {
         "table": "AOD/REQVECTOR/0",
         "treename": "ReducedEventsQvector",
-    },
+        },
     "ReducedMCEventLabels": {
         "table": "AOD/REMCCOLLBL/0",
         "treename": "ReducedMCEventLabels",
-    },
-    "ReducedMCEvents": {"table": "AOD/REMC/0", "treename": "ReducedMCEvents"},
-    "ReducedTracks": {"table": "AOD/REDUCEDTRACK/0", "treename": "ReducedTracks"},
+        },
+    "ReducedMCEvents": {
+        "table": "AOD/REMC/0",
+        "treename": "ReducedMCEvents"
+        },
+    "ReducedTracks": {
+        "table": "AOD/REDUCEDTRACK/0",
+        "treename": "ReducedTracks"
+        },
     "ReducedTracksBarrel": {
         "table": "AOD/RTBARREL/0",
         "treename": "ReducedTracksBarrel",
-    },
+        },
     "ReducedTracksBarrelCov": {
         "table": "AOD/RTBARRELCOV/0",
         "treename": "ReducedTracksBarrelCov",
-    },
+        },
     "ReducedTracksBarrelPID": {
         "table": "AOD/RTBARRELPID/0",
         "treename": "ReducedTracksBarrelPID",
-    },
+        },
     "ReducedTracksBarrelLabels": {
         "table": "AOD/RTBARRELLABELS/0",
         "treename": "ReducedTracksBarrelLabels",
-    },
-    "ReducedMCTracks": {"table": "AOD/RTMC/0", "treename": "ReducedMCTracks"},
-    "ReducedMuons": {"table": "AOD/RTMUON/0", "treename": "ReducedMuons"},
+        },
+    "ReducedMCTracks": {
+        "table": "AOD/RTMC/0",
+        "treename": "ReducedMCTracks"
+        },
+    "ReducedMuons": {
+        "table": "AOD/RTMUON/0",
+        "treename": "ReducedMuons"
+        },
     "ReducedMuonsExtra": {
         "table": "AOD/RTMUONEXTRA/0",
         "treename": "ReducedMuonsExtra",
-    },
-    "ReducedMuonsCov": {"table": "AOD/RTMUONCOV/0", "treename": "ReducedMuonsCov"},
+        },
+    "ReducedMuonsCov": {
+        "table": "AOD/RTMUONCOV/0",
+        "treename": "ReducedMuonsCov"
+        },
     "ReducedMuonsLabels": {
         "table": "AOD/RTMUONSLABELS/0",
         "treename": "ReducedMuonsLabels",
-    },
-}
+        },
+    }
 # Tables to be written, per process function
 commonTables = ["ReducedEvents", "ReducedEventsExtended", "ReducedEventsVtxCov"]
 barrelCommonTables = ["ReducedTracks", "ReducedTracksBarrel", "ReducedTracksBarrelPID"]
@@ -284,7 +237,7 @@ specificTables = {
     "processMuonOnlyWithCent": [],
     "processMuonOnlyWithQvector": ["ReducedEventsQvector"],
     "processMuonOnlyWithFilter": [],
-}
+    }
 
 #################
 # Init Workflow #
@@ -292,6 +245,7 @@ specificTables = {
 
 
 class RunTableMakerMC(object):
+    
     """
     This class is for managing the workflow by using the interface arguments from
     all other Common dependencies and the tableMakerMC Task's own arguments in a combined structure.
@@ -299,24 +253,16 @@ class RunTableMakerMC(object):
     Args:
       object (parser_args() object): runTableMakerMC.py workflow
     """
-
+    
     def __init__(
-        self,
-        parserRunTableMakerMC=argparse.ArgumentParser(
-            formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-            description="Example Usage: ./runTableMakerMC.py <yourConfig.json> --arg value",
-        ),
-        eventSelection=EventSelectionTask(),
-        centralityTable=CentralityTable(),
-        multiplicityTable=MultiplicityTable(),
-        tofEventTime=TofEventTime(),
-        tofPidBeta=TofPidBeta(),
-        tpcTofPidFull=TpcTofPidFull(),
-        trackPropagation=TrackPropagation(),
-        trackSelection=TrackSelectionTask(),
-        tableMakerMC=TableMakerMC(),
-        debugOptions=DebugOptions(),
-    ):
+            self, parserRunTableMakerMC = argparse.ArgumentParser(
+                formatter_class = argparse.ArgumentDefaultsHelpFormatter,
+                description = "Example Usage: ./runTableMakerMC.py <yourConfig.json> --arg value",
+                ), eventSelection = EventSelectionTask(), centralityTable = CentralityTable(), multiplicityTable = MultiplicityTable(),
+            tofEventTime = TofEventTime(), tofPidBeta = TofPidBeta(), tpcTofPidFull = TpcTofPidFull(),
+            trackPropagation = TrackPropagation(), trackSelection = TrackSelectionTask(), tableMakerMC = TableMakerMC(),
+            debugOptions = DebugOptions(),
+        ):
         super(RunTableMakerMC, self).__init__()
         self.parserRunTableMakerMC = parserRunTableMakerMC
         self.eventSelection = eventSelection
@@ -331,84 +277,54 @@ class RunTableMakerMC(object):
         self.debugOptions = debugOptions
         self.parserRunTableMakerMC.register("action", "none", NoAction)
         self.parserRunTableMakerMC.register("action", "store_choice", ChoicesAction)
-
+    
     def addArguments(self):
         """
         This function allows to add arguments for parser_args() function
         """
-
+        
         # Core Part
-        groupCoreSelections = self.parserRunTableMakerMC.add_argument_group(
-            title="Core configurations that must be configured"
-        )
-        groupCoreSelections.add_argument(
-            "cfgFileName",
-            metavar="Config.json",
-            default="config.json",
-            help="config JSON file name",
-        )
-        groupCoreSelections.add_argument(
-            "-runMC", help="Run over MC", action="store_true", default=True
-        )
-        groupTaskAdders = self.parserRunTableMakerMC.add_argument_group(
-            title="Additional Task Adding Options"
-        )
+        groupCoreSelections = self.parserRunTableMakerMC.add_argument_group(title = "Core configurations that must be configured")
+        groupCoreSelections.add_argument("cfgFileName", metavar = "Config.json", default = "config.json", help = "config JSON file name",)
+        groupCoreSelections.add_argument("-runMC", help = "Run over MC", action = "store_true", default = True)
+        groupTaskAdders = self.parserRunTableMakerMC.add_argument_group(title = "Additional Task Adding Options")
         groupTaskAdders.add_argument(
             "--add_mc_conv",
-            help="Add the converter from mcparticle to mcparticle+001 (Adds your workflow o2-analysis-mc-converter task)",
-            action="store_true",
-        )
+            help = "Add the converter from mcparticle to mcparticle+001 (Adds your workflow o2-analysis-mc-converter task)",
+            action = "store_true",
+            )
         groupTaskAdders.add_argument(
-            "--add_fdd_conv",
-            help="Add the fdd converter (Adds your workflow o2-analysis-fdd-converter task)",
-            action="store_true",
-        )
+            "--add_fdd_conv", help = "Add the fdd converter (Adds your workflow o2-analysis-fdd-converter task)", action = "store_true",
+            )
         groupTaskAdders.add_argument(
             "--add_track_prop",
-            help="Add track propagation to the innermost layer (TPC or ITS) (Adds your workflow o2-analysis-track-propagation task)",
-            action="store_true",
-        )
-
+            help = "Add track propagation to the innermost layer (TPC or ITS) (Adds your workflow o2-analysis-track-propagation task)",
+            action = "store_true",
+            )
+        
         # aod
-        groupDPLReader = self.parserRunTableMakerMC.add_argument_group(
-            title="Data processor options: internal-dpl-aod-reader"
-        )
+        groupDPLReader = self.parserRunTableMakerMC.add_argument_group(title = "Data processor options: internal-dpl-aod-reader")
+        groupDPLReader.add_argument("--aod", help = "Add your AOD File with path", action = "store", type = str)
         groupDPLReader.add_argument(
-            "--aod", help="Add your AOD File with path", action="store", type=str
-        )
-        groupDPLReader.add_argument(
-            "--aod-memory-rate-limit",
-            help="Rate limit AOD processing based on memory",
-            action="store",
-            type=str,
-        )
-
+            "--aod-memory-rate-limit", help = "Rate limit AOD processing based on memory", action = "store", type = str,
+            )
+        
         # automation params
-        groupAutomations = self.parserRunTableMakerMC.add_argument_group(
-            title="Automation Parameters"
-        )
+        groupAutomations = self.parserRunTableMakerMC.add_argument_group(title = "Automation Parameters")
         groupAutomations.add_argument(
-            "--onlySelect",
-            help="If false JSON Overrider Interface If true JSON Additional Interface",
-            action="store",
-            default="true",
-            type=str.lower,
-            choices=booleanSelections,
-        ).completer = ChoicesCompleter(booleanSelections)
+            "--onlySelect", help = "If false JSON Overrider Interface If true JSON Additional Interface", action = "store",
+            default = "true", type = str.lower, choices = booleanSelections,
+            ).completer = ChoicesCompleter(booleanSelections)
         groupAutomations.add_argument(
-            "--autoDummy",
-            help="Dummy automize parameter (don't configure it, true is highly recomended for automation)",
-            action="store",
-            default="true",
-            type=str.lower,
-            choices=booleanSelections,
-        ).completer = ChoicesCompleter(booleanSelections)
-
+            "--autoDummy", help = "Dummy automize parameter (don't configure it, true is highly recomended for automation)",
+            action = "store", default = "true", type = str.lower, choices = booleanSelections,
+            ).completer = ChoicesCompleter(booleanSelections)
+        
         # helper lister commands
         # groupAdditionalHelperCommands = self.parserRunTableMakerMC.add_argument_group(title="Additional Helper Command Options")
         # groupAdditionalHelperCommands.add_argument("--cutLister", help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
         # groupAdditionalHelperCommands.add_argument("--MCSignalsLister", help="List all of the MCSignals from MCSignalLibrary.h", action="store_true")
-
+    
     def parseArgs(self):
         """
         This function allows to save the obtained arguments to the parser_args() function
@@ -416,45 +332,45 @@ class RunTableMakerMC(object):
         Returns:
             Namespace: returns parse_args()
         """
-
-        argcomplete.autocomplete(self.parserRunTableMakerMC, always_complete_options=False)
+        
+        argcomplete.autocomplete(self.parserRunTableMakerMC, always_complete_options = False)
         return self.parserRunTableMakerMC.parse_args()
-
+    
     def mergeArgs(self):
         """
         This function allows to merge parser_args argument information from different classes
         """
-
+        
         self.eventSelection.parserEventSelectionTask = self.parserRunTableMakerMC
         self.eventSelection.addArguments()
-
+        
         self.centralityTable.parserCentralityTable = self.parserRunTableMakerMC
         self.centralityTable.addArguments()
-
+        
         self.multiplicityTable.parserMultiplicityTable = self.parserRunTableMakerMC
         self.multiplicityTable.addArguments()
-
+        
         self.tofEventTime.parserTofEventTime = self.parserRunTableMakerMC
         self.tofEventTime.addArguments()
-
+        
         self.tofPidBeta.parserTofPidBeta = self.parserRunTableMakerMC
         self.tofPidBeta.addArguments()
-
+        
         self.tpcTofPidFull.parserTpcTofPidFull = self.parserRunTableMakerMC
         self.tpcTofPidFull.addArguments()
-
+        
         self.trackPropagation.parserTrackPropagation = self.parserRunTableMakerMC
         self.trackPropagation.addArguments()
-
+        
         self.trackSelection.parserTrackSelectionTask = self.parserRunTableMakerMC
         self.trackSelection.addArguments()
-
+        
         self.tableMakerMC.parserTableMakerMC = self.parserRunTableMakerMC
         self.tableMakerMC.addArguments()
-
+        
         self.debugOptions.parserDebugOptions = self.parserRunTableMakerMC
         self.debugOptions.addArguments()
-
+        
         self.addArguments()
 
 
@@ -464,7 +380,7 @@ initArgs.mergeArgs()
 initArgs.parseArgs()
 
 args = initArgs.parseArgs()
-configuredCommands = vars(args)  # for get args
+configuredCommands = vars(args) # for get args
 
 # Debug Settings
 if args.debug and (not args.logFile):
@@ -472,26 +388,25 @@ if args.debug and (not args.logFile):
     numeric_level = getattr(logging, DEBUG_SELECTION.upper(), None)
     if not isinstance(numeric_level, int):
         raise ValueError("Invalid log level: %s" % DEBUG_SELECTION)
-    logging.basicConfig(format="[%(levelname)s] %(message)s", level=DEBUG_SELECTION)
+    logging.basicConfig(format = "[%(levelname)s] %(message)s", level = DEBUG_SELECTION)
 
 if args.logFile and args.debug:
     log = logging.getLogger("")
     level = logging.getLevelName(args.debug)
     log.setLevel(level)
     format = logging.Formatter("%(asctime)s - [%(levelname)s] %(message)s")
-
+    
     ch = logging.StreamHandler(sys.stdout)
     ch.setFormatter(format)
     log.addHandler(ch)
-
+    
     loggerFile = "tableMakerMC.log"
     if os.path.isfile(loggerFile):
         os.remove(loggerFile)
-
-    fh = handlers.RotatingFileHandler(loggerFile, maxBytes=(1048576 * 5), backupCount=7, mode="w")
+    
+    fh = handlers.RotatingFileHandler(loggerFile, maxBytes = (1048576 * 5), backupCount = 7, mode = "w")
     fh.setFormatter(format)
     log.addHandler(fh)
-
 
 # Transcation management for forgettining assign a value to parameters
 forgetParams = []
@@ -505,7 +420,6 @@ try:
 except ForgettedArgsError as e:
     logging.exception(e)
     sys.exit()
-
 
 ######################
 # PREFIX ADDING PART #
@@ -533,7 +447,6 @@ if args.FT0 is not None:
 
 ######################################################################################
 
-
 # Make some checks on provided arguments
 if len(sys.argv) < 2:
     logging.error("Invalid syntax! The command line should look like this:")
@@ -555,7 +468,6 @@ try:
 except CfgInvalidFormatError as e:
     logging.exception(e)
     sys.exit()
-
 
 with open(sys.argv[1]) as configFile:
     config = json.load(configFile)
@@ -619,37 +531,35 @@ tableMakerProcessSearch = set()
 for key, value in config.items():
     if isinstance(value, dict):
         for value, value2 in value.items():
-
+            
             # aod
             if value == "aod-file" and args.aod:
                 config[key][value] = args.aod
                 logging.debug(" - [%s] %s : %s", key, value, args.aod)
-
+            
             # table-maker/table-maker-m-c process selections
             if (value in tablemakerProcessAllParameters) and args.process:
                 if value in args.process:
-
+                    
                     # processOnlyBCs have to always be true
                     if "processOnlyBCs" not in args.process:
                         args.process.append("processOnlyBCs")
-                        logging.warning(
-                            "You forget to add OnlyBCs value in --process parameter! It will automaticaly added."
-                        )
+                        logging.warning("You forget to add OnlyBCs value in --process parameter! It will automaticaly added.")
                     value2 = "true"
                     config[key][value] = value2
                     logging.debug(" - [%s] %s : %s", key, value, value2)
-
+                    
                     # For find all process parameters for TableMaker/TableMakerMC in Orginal JSON
                     for s in config[key].keys():
                         if s in tablemakerProcessAllParameters:
                             tableMakerProcessSearch.add(s)
-
+                    
                     # check args is contain Cov for transcation management --> add track prop task
                     covSearch = [s for s in args.process if "Cov" in s]
-
+                    
                     # check args is contain Cent for transcation management Centrality Filter
                     centSearch = [s for s in args.process if "Cent" in s]
-
+                
                 elif args.onlySelect == "true":
                     if value == "processOnlyBCs":
                         config[key][value] = "true"
@@ -658,7 +568,7 @@ for key, value in config.items():
                         value2 = "false"
                         config[key][value] = value2
                         logging.debug(" - [%s] %s : %s", key, value, value2)
-
+            
             # PID Selections
             if (value in pidParameters) and args.pid and key != "tof-pid":
                 if value in args.pid:
@@ -669,7 +579,7 @@ for key, value in config.items():
                     value2 = "-1"
                     config[key][value] = value2
                     logging.debug(" - [%s] %s : %s", key, value, value2)
-
+            
             # centrality-table
             if (value in centralityTableParameters) and args.est:
                 if value in args.est:
@@ -680,7 +590,7 @@ for key, value in config.items():
                     value2 = "-1"
                     config[key][value] = value2
                     logging.debug(" - [%s] %s : %s", key, value, value2)
-
+            
             # table-maker/table-maker-m-c cfg selections
             if value == "cfgEventCuts" and args.cfgEventCuts:
                 multiConfigurableSet(config, key, value, args.cfgEventCuts, args.onlySelect)
@@ -712,7 +622,7 @@ for key, value in config.items():
             if value == "cfgMCsignals" and args.cfgMCsignals:
                 multiConfigurableSet(config, key, value, args.cfgMCsignals, args.onlySelect)
                 logging.debug(" - [%s] %s : %s", key, value, args.cfgMCsignals)
-
+            
             # event-selection-task
             if value == "syst" and args.syst:
                 config[key][value] = args.syst
@@ -723,7 +633,7 @@ for key, value in config.items():
             if value == "customDeltaBC" and args.customDeltaBC:
                 config[key][value] = args.customDeltaBC
                 logging.debug(" - [%s] %s : %s", key, value, args.customDeltaBC)
-
+            
             # multiplicity-table
             if value == "doVertexZeq" and args.isVertexZeq:
                 if args.isVertexZeq == "true":
@@ -736,7 +646,7 @@ for key, value in config.items():
                     config[key]["doDummyZeq"] = "1"
                     logging.debug(" - %s %s : 0", key, value)
                     logging.debug(" - [%s] doDummyZeq : 1", key)
-
+            
             # tof-pid, tof-pid-full
             if value == "processWSlice" and args.isWSlice:
                 if args.isWSlice == "true":
@@ -749,12 +659,12 @@ for key, value in config.items():
                     config[key]["processWoSlice"] = "true"
                     logging.debug(" - %s %s : false", key, value)
                     logging.debug(" - [%s] processWoSlice : true", key)
-
+            
             # tof-pid-beta
             if value == "tof-expreso" and args.tof_expreso:
                 config[key][value] = args.tof_expreso
                 logging.debug(" - [%s] %s : %s", key, value, args.tof_expreso)
-
+            
             # tof-event-time
             if (value in ft0Parameters) and args.FT0 and key == "tof-event-time":
                 if value == args.FT0:
@@ -765,24 +675,20 @@ for key, value in config.items():
                     value2 = "false"
                     config[key][value] = value2
                     logging.debug(" - [%s] %s : %s", key, value, value2)
-
+            
             # track-propagation
             if args.isCovariance:
-                if (
-                    value == "processStandard" or value == "processCovariance"
-                ) and args.isCovariance == "false":
+                if (value == "processStandard" or value == "processCovariance") and args.isCovariance == "false":
                     config[key]["processStandard"] = "true"
                     config[key]["processCovariance"] = "false"
                     logging.debug(" - [%s] processStandart : true", key)
                     logging.debug(" - [%s] processCovariance : false", key)
-                if (
-                    value == "processStandard" or value == "processCovariance"
-                ) and args.isCovariance == "true":
+                if (value == "processStandard" or value == "processCovariance") and args.isCovariance == "true":
                     config[key]["processStandard"] = "false"
                     config[key]["processCovariance"] = "true"
                     logging.debug(" - [%s] processStandart : false", key)
                     logging.debug(" - [%s] processCovariance : true", key)
-
+            
             # track-selection
             if args.itsMatching:
                 config[key][value] = args.itsMatching
@@ -790,41 +696,31 @@ for key, value in config.items():
 
 # Centrality table delete for pp processes
 if (
-    args.process
-    and len(centSearch) != 0
-    and (
-        args.syst == "pp" or (args.syst is None and config["event-selection-task"]["syst"] == "pp")
-    )
-):
+    args.process and len(centSearch) != 0 and (args.syst == "pp" or (args.syst is None and config["event-selection-task"]["syst"] == "pp"))
+    ):
     # delete centrality-table configurations for data. If it"s MC don't delete from JSON
     # Firstly try for Data then if not data it gives warning message for MC
     isNoDeleteNeedForCent = False
     logging.warning(
         "JSON file does not include configs for centrality-table task, It's for DATA. Centrality will removed because you select pp collision system."
-    )
+        )
     # del(config["centrality-table"])
-
+    
     # check for is TableMaker includes task related to Centrality?
     if args.process is not None:
         processCentralityMatch = [s for s in args.process if "Cent" in s]
         if len(processCentralityMatch) > 0:
             logging.warning(
                 "Collision System pp can't be include related task about Centrality. They Will be removed in automation. Check your JSON configuration file for Tablemaker process function!!!"
-            )
+                )
             for paramValueTableMaker in processCentralityMatch:
                 # Centrality process should be false
                 config[taskNameInConfig][paramValueTableMaker] = "false"
-                logging.warning(
-                    "- [%s] %s will converted to false in json config file",
-                    taskNameInConfig,
-                    paramValueTableMaker,
-                )
-
+                logging.warning("- [%s] %s will converted to false in json config file", taskNameInConfig, paramValueTableMaker,)
+    
     else:
-        logging.warning(
-            "No process function provided so no need delete related to centrality-table dependency"
-        )
-
+        logging.warning("No process function provided so no need delete related to centrality-table dependency")
+    
     for deletedParamTableMaker in config[taskNameInConfig]:
         if "process" not in deletedParamTableMaker:
             continue
@@ -837,7 +733,7 @@ if not isNoDeleteNeedForCent:
     logging.info(
         "After deleting the process functions related to the centrality table (for collision system pp), the remaining processes: %s",
         leftProcessAfterDeleteCent,
-    )
+        )
 try:
     if len(leftProcessAfterDeleteCent) > 1 or len(leftProcessAfterDeleteCent) == 0:
         logging.info("Process will continue after Centrality filter")
@@ -846,7 +742,6 @@ try:
 except CentFilterError as e:
     logging.exception(e)
     sys.exit()
-
 
 # AOD File Checker
 if args.aod is not None:
@@ -860,17 +755,17 @@ if args.aod is not None:
         try:
             open(argProvidedAod, "r")
             logging.info("%s has valid File Format and Path, File Found", argProvidedAod)
-
+        
         except FileNotFoundError:
             logging.exception("%s AO2D file text list not found in path!!!", argProvidedAod)
             sys.exit()
-
+    
     elif endsWithRoot:
         logging.info("You provided single AO2D root file : %s", argProvidedAod)
         try:
             open(argProvidedAod, "r")
             logging.info("%s has valid File Format and Path, File Found", argProvidedAod)
-
+        
         except FileNotFoundError:
             logging.exception("%s AO2D single root file not found in path!!!", argProvidedAod)
             sys.exit()
@@ -878,11 +773,10 @@ if args.aod is not None:
         try:
             open(argProvidedAod, "r")
             logging.info("%s has valid File Format and Path, File Found", argProvidedAod)
-
+        
         except FileNotFoundError:
             logging.exception("%s Wrong formatted File, check your file extension!", argProvidedAod)
             sys.exit()
-
 
 #####################
 # Deps Transcations #
@@ -890,6 +784,7 @@ if args.aod is not None:
 
 # In extended tracks, o2-analysis-trackextension is not a valid dep for run 3
 # More Information : https://aliceo2group.github.io/analysis-framework/docs/basics-usage/HelperTasks.html#track-propagation
+
 """
 Some of the track parameters used in the track selection require additional calculation effort and are then stored in a table called TracksExtended
 which is produced by either the o2-analysis-trackextension task (Run 2) or o2-analysis-track-propagation (Run 3).
@@ -899,7 +794,6 @@ if args.add_track_prop:
     barrelDeps.remove("o2-analysis-trackextension")
     logging.info("o2-analysis-trackextension is not valid dep for run 3, It will deleted from your workflow.")
 
-
 ###########################
 # End Interface Processes #
 ###########################
@@ -908,7 +802,7 @@ if args.add_track_prop:
 updatedConfigFileName = "tempConfigTableMakerMC.json"
 
 with open(updatedConfigFileName, "w") as outputFile:
-    json.dump(config, outputFile, indent=2)
+    json.dump(config, outputFile, indent = 2)
 
 # Check which dependencies need to be run
 depsToRun = {}
@@ -969,11 +863,14 @@ writerConfig["OutputDirector"] = {
     "resfilemode": "RECREATE",
     "ntfmerge": 1,
     "OutputDescriptors": [],
-}
+    }
 
 # Generate the aod-reader output descriptor json file
 readerConfig = {}
-readerConfig["InputDirector"] = {"debugmode": True, "InputDescriptors": []}
+readerConfig["InputDirector"] = {
+    "debugmode": True,
+    "InputDescriptors": []
+    }
 
 iTable = 0
 for table in tablesToProduce.keys():
@@ -983,12 +880,11 @@ for table in tablesToProduce.keys():
 
 writerConfigFileName = "aodWriterTempConfig.json"
 with open(writerConfigFileName, "w") as writerConfigFile:
-    json.dump(writerConfig, writerConfigFile, indent=2)
-
+    json.dump(writerConfig, writerConfigFile, indent = 2)
 
 readerConfigFileName = "aodReaderTempConfig.json"
 with open(readerConfigFileName, "w") as readerConfigFile:
-    json.dump(readerConfig, readerConfigFile, indent=2)
+    json.dump(readerConfig, readerConfigFile, indent = 2)
 
 logging.info("aodWriterTempConfig==========")
 print(writerConfig)
@@ -997,24 +893,15 @@ logging.info("aodReaderTempConfig==========")
 print(readerConfig)
 
 commandToRun = (
-    taskNameInCommandLine
-    + " --configuration json://"
-    + updatedConfigFileName
-    + " --severity error --shm-segment-size 12000000000 --aod-writer-json "
-    + writerConfigFileName
-    + " -b"
-)
+    taskNameInCommandLine + " --configuration json://" + updatedConfigFileName +
+    " --severity error --shm-segment-size 12000000000 --aod-writer-json " + writerConfigFileName + " -b"
+    )
 if args.aod_memory_rate_limit:
     commandToRun = (
-        taskNameInCommandLine
-        + " --configuration json://"
-        + updatedConfigFileName
-        + " --severity error --shm-segment-size 12000000000 --aod-memory-rate-limit "
-        + args.aod_memory_rate_limit
-        + " --aod-writer-json "
-        + writerConfigFileName
-        + " -b"
-    )
+        taskNameInCommandLine + " --configuration json://" + updatedConfigFileName +
+        " --severity error --shm-segment-size 12000000000 --aod-memory-rate-limit " + args.aod_memory_rate_limit + " --aod-writer-json " +
+        writerConfigFileName + " -b"
+        )
 
 for dep in depsToRun.keys():
     commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"
@@ -1022,42 +909,28 @@ for dep in depsToRun.keys():
 
 if args.add_mc_conv:
     logging.debug("o2-analysis-mc-converter added your workflow")
-    commandToRun += (
-        " | o2-analysis-mc-converter --configuration json://" + updatedConfigFileName + " -b"
-    )
+    commandToRun += (" | o2-analysis-mc-converter --configuration json://" + updatedConfigFileName + " -b")
 
 if args.add_fdd_conv:
-    commandToRun += (
-        " | o2-analysis-fdd-converter --configuration json://" + updatedConfigFileName + " -b"
-    )
+    commandToRun += (" | o2-analysis-fdd-converter --configuration json://" + updatedConfigFileName + " -b")
     logging.debug("o2-analysis-fdd-converter added your workflow")
 
 if args.add_track_prop:
-    commandToRun += (
-        " | o2-analysis-track-propagation --configuration json://" + updatedConfigFileName + " -b"
-    )
+    commandToRun += (" | o2-analysis-track-propagation --configuration json://" + updatedConfigFileName + " -b")
     logging.debug("o2-analysis-track-propagation added your workflow")
 
-print(
-    "===================================================================================================================="
-)
+print("====================================================================================================================")
 logging.info("Command to run:")
 logging.info(commandToRun)
-print(
-    "===================================================================================================================="
-)
+print("====================================================================================================================")
 logging.info("Tables to produce:")
 logging.info(tablesToProduce.keys())
-print(
-    "===================================================================================================================="
-)
+print("====================================================================================================================")
 # sys.exit()
 
 # Listing Added Commands
 logging.info("Args provided configurations List")
-print(
-    "===================================================================================================================="
-)
+print("====================================================================================================================")
 for key, value in configuredCommands.items():
     if value is not None:
         if isinstance(value, list):
@@ -1077,7 +950,7 @@ try:
         pycacheRemover = PycacheRemover()
         pycacheRemover.__init__()
         logging.info("pycaches removed succesfully")
-
+    
     elif not os.path.exists(parentPath):
         logging.error("OS Path is not valid for pycacheRemover. Fatal Error.")
         sys.exit()
@@ -1086,9 +959,6 @@ try:
 
 # Caching the exception
 except FileNotFoundError:
-    logging.exception(
-        "Something wrong with specified\
-          directory. Exception- %s",
-        sys.exc_info(),
-    )
+    logging.exception("Something wrong with specified\
+          directory. Exception- %s", sys.exc_info(),)
     sys.exit()

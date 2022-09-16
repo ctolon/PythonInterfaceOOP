@@ -15,6 +15,7 @@
 
 
 class ChoicesCompleterList(object):
+    
     """
     For the ChoicesCompleterList package argcomplete,
     the TAB key is the class written for autocomplete and validation when an argument can take multiple values.
@@ -24,9 +25,9 @@ class ChoicesCompleterList(object):
     Args:
         object (list): parserargs choices object as a list
     """
-
+    
     def __init__(self, choices):
         self.choices = list(choices)
-
+    
     def __call__(self, **kwargs):
         return self.choices

@@ -19,27 +19,16 @@ import os
 
 
 class PycacheRemover(object):
+    
     def __init__(self):
-
+        
         super(PycacheRemover, self).__init__()
-
-        commandOne = (
-            "python3 -Bc "
-            + '"'
-            + "import pathlib;"
-            + "[p.unlink() for p in pathlib.Path('.').rglob('*.py[co]')]"
-            + '"'
-        )
-        commandTwo = (
-            "python3 -Bc"
-            + '"'
-            + "import pathlib;"
-            + "[p.rmdir() for p in pathlib.Path('.').rglob('__pycache__')]"
-            + '"'
-        )
-
+        
+        commandOne = ("python3 -Bc " + '"' + "import pathlib;" + "[p.unlink() for p in pathlib.Path('.').rglob('*.py[co]')]" + '"')
+        commandTwo = ("python3 -Bc" + '"' + "import pathlib;" + "[p.rmdir() for p in pathlib.Path('.').rglob('__pycache__')]" + '"')
+        
         os.system(commandOne)
         os.system(commandTwo)
-
+        
         # print(commandOne)
         # print(commandTwo)

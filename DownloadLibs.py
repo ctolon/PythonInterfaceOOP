@@ -15,7 +15,6 @@
 # \Author: ionut.cristian.arsene@cern.ch
 # \Interface:  cevat.batuhan.tolon@cern.ch
 
-
 import urllib.request
 from urllib.request import Request, urlopen
 import os
@@ -25,7 +24,6 @@ import ssl
 import logging
 import logging.config
 import shutil
-
 """
 argcomplete - Bash tab completion for argparse
 Documentation https://kislyuk.github.io/argcomplete/
@@ -37,40 +35,32 @@ Activate libraries in below and activate #argcomplete.autocomplete(parser) line
 """
 import argcomplete
 
-
 # This script provides download to DQ libraries from O2Physics-DQ Manually with/without Production tag or get DQ libraries from alice-software in local machine
 
 # header for github download
 headers = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36"
-}
+    }
 
-parser = argparse.ArgumentParser(description="Arguments to pass")
+parser = argparse.ArgumentParser(description = "Arguments to pass")
 parser.add_argument(
-    "--version",
-    help="Online: Your Production tag for O2Physics example: for nightly-20220619, just enter as 20220619",
-    action="store",
-    type=str.lower,
-)
+    "--version", help = "Online: Your Production tag for O2Physics example: for nightly-20220619, just enter as 20220619", action = "store",
+    type = str.lower,
+    )
 parser.add_argument(
-    "--debug",
-    help="Online and Local: execute with debug options",
-    action="store",
-    choices=["NOTSET", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
-    default="DEBUG",
-    type=str.upper,
-)
+    "--debug", help = "Online and Local: execute with debug options", action = "store",
+    choices = ["NOTSET", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], default = "DEBUG", type = str.upper,
+    )
 parser.add_argument(
     "--local",
-    help="Local: Use Local Paths for getting DQ Libraries instead of online github download. If you are working LXPLUS, It will not working so don't configure with option",
-    action="store_true",
-)
+    help = "Local: Use Local Paths for getting DQ Libraries instead of online github download. If you are working LXPLUS, It will not working so don't configure with option",
+    action = "store_true",
+    )
 parser.add_argument(
     "--localPath",
-    help="Local: Configure your alice software folder name in your local home path (prefix: home/<user>). Default is home/<user>/alice. Example different configuration is --localpath alice-software --local --> home/<user>/alice-software",
-    action="store",
-    type=str,
-)
+    help = "Local: Configure your alice software folder name in your local home path (prefix: home/<user>). Default is home/<user>/alice. Example different configuration is --localpath alice-software --local --> home/<user>/alice-software",
+    action = "store", type = str
+    )
 
 argcomplete.autocomplete(parser)
 extrargs = parser.parse_args()
@@ -84,15 +74,9 @@ localPathCutsLibrary = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/CutsLibrary.
 localPathMCSignalsLibrary = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/MCSignalLibrary.h"
 localPathEventMixing = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/MixingLibrary.h"
 
-URL_CUTS_LIBRARY = (
-    "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/CutsLibrary.h?raw=true"
-)
-URL_MCSIGNALS_LIBRARY = (
-    "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MCSignalLibrary.h?raw=true"
-)
-URL_MIXING_LIBRARY = (
-    "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MixingLibrary.h?raw=true"
-)
+URL_CUTS_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/CutsLibrary.h?raw=true")
+URL_MCSIGNALS_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MCSignalLibrary.h?raw=true")
+URL_MIXING_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MixingLibrary.h?raw=true")
 
 isLibsExist = True
 
@@ -105,37 +89,22 @@ if extrargs.debug:
     numeric_level = getattr(logging, DEBUG_SELECTION.upper(), None)
     if not isinstance(numeric_level, int):
         raise ValueError("Invalid log level: %s" % DEBUG_SELECTION)
-    logging.basicConfig(format="[%(levelname)s] %(message)s", level=DEBUG_SELECTION)
+    logging.basicConfig(format = "[%(levelname)s] %(message)s", level = DEBUG_SELECTION)
 
 if extrargs.version and extrargs.local is False:
-    logging.info(
-        "DQ libs will downloaded from github. Your Version For Downloading DQ Libs From Github : %s",
-        extrargs.version,
-    )
-
-    URL_CUTS_LIBRARY = (
-        "https://github.com/AliceO2Group/O2Physics/blob/"
-        + extrargs.version
-        + "/PWGDQ/Core/CutsLibrary.h?raw=true"
-    )
+    logging.info("DQ libs will downloaded from github. Your Version For Downloading DQ Libs From Github : %s", extrargs.version,)
+    
+    URL_CUTS_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/" + extrargs.version + "/PWGDQ/Core/CutsLibrary.h?raw=true")
     URL_MCSIGNALS_LIBRARY = (
-        "https://github.com/AliceO2Group/O2Physics/blob/"
-        + extrargs.version
-        + "/PWGDQ/Core/MCSignalLibrary.h?raw=true"
-    )
-    URL_MIXING_LIBRARY = (
-        "https://github.com/AliceO2Group/O2Physics/blob/"
-        + extrargs.version
-        + "/PWGDQ/Core/MixingLibrary.h?raw=true"
-    )
+        "https://github.com/AliceO2Group/O2Physics/blob/" + extrargs.version + "/PWGDQ/Core/MCSignalLibrary.h?raw=true"
+        )
+    URL_MIXING_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/" + extrargs.version + "/PWGDQ/Core/MixingLibrary.h?raw=true")
 
 if extrargs.local and extrargs.version:
     logging.warning(
         "Your provided configuration for getting DQ libs in locally. You don't need to configure your github nightly version. It's for Online Downloading"
-    )
-    logging.warning(
-        "%s nightly version will not used in interface. Local working on going", extrargs.version
-    )
+        )
+    logging.warning("%s nightly version will not used in interface. Local working on going", extrargs.version)
 
 if extrargs.localPath and extrargs.local:
     ALICE_SOFTWARE_PATH = os.environ["HOME"] + "/" + extrargs.localPath
@@ -143,43 +112,31 @@ if extrargs.localPath and extrargs.local:
     if os.path.isdir(ALICE_SOFTWARE_PATH) is True:
         logging.info("Alice software found at %s local Path change is true", ALICE_SOFTWARE_PATH)
     else:
-        logging.error(
-            "Alice software not found in path!!! Fatal Error. Check your Alice software path configuration"
-        )
+        logging.error("Alice software not found in path!!! Fatal Error. Check your Alice software path configuration")
         sys.exit()
-
 
 if extrargs.localPath and extrargs.local is False:
     logging.error(
         "Misconfiguration. You forget to add --local option interface for working localy. You need add this parameter to workflow"
-    )
+        )
     logging.info("Example usage: python3 DownloadLibs.py --local --localPath alice")
     sys.exit()
 
-
 if extrargs.local:
     if extrargs.localPath is None:
-        logging.info(
-            "Default Path will used for Alice Software. Default Path : %s", ALICE_SOFTWARE_PATH
-        )
+        logging.info("Default Path will used for Alice Software. Default Path : %s", ALICE_SOFTWARE_PATH)
         if os.path.isdir(ALICE_SOFTWARE_PATH) is True:
             logging.info("Default Path: %s is Valid", ALICE_SOFTWARE_PATH)
         elif os.path.isdir(ALICE_SOFTWARE_PATH) is False:
-            logging.error(
-                "Default Path: %s is invalid!! Fatal Error. Check your Alice software path configuration",
-                ALICE_SOFTWARE_PATH,
-            )
+            logging.error("Default Path: %s is invalid!! Fatal Error. Check your Alice software path configuration", ALICE_SOFTWARE_PATH,)
             sys.exit()
-
-    logging.info(
-        "DQ libs will be getting from local folders. You alice software path : %s",
-        ALICE_SOFTWARE_PATH,
-    )
-
+    
+    logging.info("DQ libs will be getting from local folders. You alice software path : %s", ALICE_SOFTWARE_PATH,)
+    
     localPathCutsLibrary = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/CutsLibrary.h"
     localPathMCSignalsLibrary = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/MCSignalLibrary.h"
     localPathEventMixing = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/MixingLibrary.h"
-
+    
     logging.info("Local CutsLibrary.h Path: %s ", localPathCutsLibrary)
     logging.info("Local MCSignalsLibrary.h Path: %s ", localPathMCSignalsLibrary)
     logging.info("Local MixingLibrary.h Path: %s ", localPathEventMixing)
@@ -192,12 +149,9 @@ if extrargs.local:
                 logging.error("tempCutsLibrary.h not created at %s Fatal Error", MY_PATH)
                 sys.exit()
     except FileNotFoundError:
-        logging.error(
-            "%s not found in your provided alice-software path!!! Check your alice software path",
-            localPathCutsLibrary,
-        )
+        logging.error("%s not found in your provided alice-software path!!! Check your alice software path", localPathCutsLibrary,)
         sys.exit()
-
+    
     try:
         with open("tempMCSignalsLibrary.h", "wb") as f:
             shutil.copyfile(localPathMCSignalsLibrary, MY_PATH + "/tempMCSignalsLibrary.h")
@@ -207,12 +161,9 @@ if extrargs.local:
                 logging.error("tempMCSignalsLibrary.h not created at %s Fatal Error", MY_PATH)
                 sys.exit()
     except FileNotFoundError:
-        logging.error(
-            "%s not found in your provided alice-software path!!! Check your alice software path",
-            localPathMCSignalsLibrary,
-        )
+        logging.error("%s not found in your provided alice-software path!!! Check your alice software path", localPathMCSignalsLibrary,)
         sys.exit()
-
+    
     try:
         with open("tempMixingLibrary.h", "wb") as f:
             shutil.copyfile(localPathEventMixing, MY_PATH + "/tempMixingLibrary.h")
@@ -222,22 +173,17 @@ if extrargs.local:
                 logging.error("tempMixingLibrary.h not created at %s Fatal Error", MY_PATH)
                 sys.exit()
     except FileNotFoundError:
-        logging.error(
-            "%s not found in your provided alice-software path!!! Check your alice software path",
-            localPathEventMixing,
-        )
+        logging.error("%s not found in your provided alice-software path!!! Check your alice software path", localPathEventMixing,)
         sys.exit()
-
+    
     logging.info("DQ Libraries pulled from local alice software successfully!")
     sys.exit()
 
-
 if extrargs.local is False:
     if (
-        (os.path.isfile("tempCutsLibrary.h") is False)
-        or (os.path.isfile("tempMCSignalsLibrary.h") is False)
-        or (os.path.isfile("tempMixingLibrary.h")) is False
-    ):
+        (os.path.isfile("tempCutsLibrary.h") is False) or (os.path.isfile("tempMCSignalsLibrary.h") is False) or
+        (os.path.isfile("tempMixingLibrary.h")) is False
+        ):
         logging.info("Some Libs are Missing. All DQ libs will download")
         logging.info("Github CutsLibrary.h Path: %s ", URL_CUTS_LIBRARY)
         logging.info("Github MCSignalsLibrary.h Path: %s ", URL_MCSIGNALS_LIBRARY)
@@ -245,27 +191,27 @@ if extrargs.local is False:
         isLibsExist = False
         if extrargs.debug:
             try:
-                context = ssl._create_unverified_context()  # prevent ssl problems
-                request = urllib.request.urlopen(URL_CUTS_LIBRARY, context=context)
-                request = urllib.request.urlopen(URL_MCSIGNALS_LIBRARY, context=context)
-                request = urllib.request.urlopen(URL_MIXING_LIBRARY, context=context)
+                context = ssl._create_unverified_context() # prevent ssl problems
+                request = urllib.request.urlopen(URL_CUTS_LIBRARY, context = context)
+                request = urllib.request.urlopen(URL_MCSIGNALS_LIBRARY, context = context)
+                request = urllib.request.urlopen(URL_MIXING_LIBRARY, context = context)
             except urllib.error.HTTPError as error:
                 logging.error(error)
         else:
             # Dummy SSL Adder
-            context = ssl._create_unverified_context()  # prevent ssl problems
-            request = urllib.request.urlopen(URL_CUTS_LIBRARY, context=context)
-
+            context = ssl._create_unverified_context() # prevent ssl problems
+            request = urllib.request.urlopen(URL_CUTS_LIBRARY, context = context)
+        
         # HTTP Request
-        requestCutsLibrary = Request(URL_CUTS_LIBRARY, headers=headers)
-        requestMCSignalsLibrary = Request(URL_MCSIGNALS_LIBRARY, headers=headers)
-        requestMixingLibrary = Request(URL_MIXING_LIBRARY, headers=headers)
-
+        requestCutsLibrary = Request(URL_CUTS_LIBRARY, headers = headers)
+        requestMCSignalsLibrary = Request(URL_MCSIGNALS_LIBRARY, headers = headers)
+        requestMixingLibrary = Request(URL_MIXING_LIBRARY, headers = headers)
+        
         # Get Files With Http Requests
-        htmlCutsLibrary = urlopen(requestCutsLibrary, context=context).read()
-        htmlMCSignalsLibrary = urlopen(requestMCSignalsLibrary, context=context).read()
-        htmlMixingLibrary = urlopen(requestMixingLibrary, context=context).read()
-
+        htmlCutsLibrary = urlopen(requestCutsLibrary, context = context).read()
+        htmlMCSignalsLibrary = urlopen(requestMCSignalsLibrary, context = context).read()
+        htmlMixingLibrary = urlopen(requestMixingLibrary, context = context).read()
+        
         with open("tempCutsLibrary.h", "wb") as f:
             f.write(htmlCutsLibrary)
             logging.info("tempCutsLibrary.h downloaded successfully from github")
@@ -275,11 +221,9 @@ if extrargs.local is False:
         with open("tempMixingLibrary.h", "wb") as f:
             f.write(htmlMixingLibrary)
             logging.info("tempMixingLibrary.h downloaded successfully from github")
-
+    
     if isLibsExist:
-        logging.info(
-            "DQ Libraries have been downloaded before. If you want to update, delete they manually and run this script again."
-        )
+        logging.info("DQ Libraries have been downloaded before. If you want to update, delete they manually and run this script again.")
         sys.exit()
     else:
         logging.info("DQ Libraries downloaded from github successfully!")

@@ -30,16 +30,11 @@ from extramodules.actionHandler import NoAction
 from extramodules.actionHandler import ChoicesAction
 from extramodules.debugOptions import DebugOptions
 from extramodules.stringOperations import listToString, stringToList, multiConfigurableSet
-from extramodules.dqExceptions import (
-    CfgInvalidFormatError,
-    ForgettedArgsError,
-    NotInAlienvError,
-)
+from extramodules.dqExceptions import (CfgInvalidFormatError, ForgettedArgsError, NotInAlienvError,)
 
 from dqtasks.dqEfficiency import DQEfficiency
 
 from pycacheRemover import PycacheRemover
-
 """
 argcomplete - Bash tab completion for argparse
 Documentation https://kislyuk.github.io/argcomplete/
@@ -86,6 +81,7 @@ skimmedListDileptonTrack = []
 
 
 class RunDQEfficiency(object):
+    
     """
     This class is for managing the workflow by using the interface arguments from
     all other Common dependencies and the dqEfficiency Task's own arguments in a combined structure.
@@ -93,87 +89,58 @@ class RunDQEfficiency(object):
     Args:
       object (parser_args() object): runDQEfficiency.py workflow
     """
-
+    
     def __init__(
-        self,
-        parserRunDQEfficiency=argparse.ArgumentParser(
-            formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-            description="Example Usage: ./runDQEfficiency.py <yourConfig.json> --arg value "
-        ),
-        dqEfficiency=DQEfficiency(),
-        debugOptions=DebugOptions(),
-    ):
+            self, parserRunDQEfficiency = argparse.ArgumentParser(
+                formatter_class = argparse.ArgumentDefaultsHelpFormatter,
+                description = "Example Usage: ./runDQEfficiency.py <yourConfig.json> --arg value "
+                ), dqEfficiency = DQEfficiency(), debugOptions = DebugOptions(),
+        ):
         super(RunDQEfficiency, self).__init__()
         self.parserRunDQEfficiency = parserRunDQEfficiency
         self.dqEfficiency = dqEfficiency
         self.debugOptions = debugOptions
         self.parserRunDQEfficiency.register("action", "none", NoAction)
         self.parserRunDQEfficiency.register("action", "store_choice", ChoicesAction)
-
+    
     def addArguments(self):
         """
         This function allows to add arguments for parser_args() function
         """
-
+        
         # Core Part
-        groupCoreSelections = self.parserRunDQEfficiency.add_argument_group(
-            title="Core configurations that must be configured"
-        )
-        groupCoreSelections.add_argument(
-            "cfgFileName",
-            metavar="Config.json",
-            default="config.json",
-            help="config JSON file name",
-        )
-
+        groupCoreSelections = self.parserRunDQEfficiency.add_argument_group(title = "Core configurations that must be configured")
+        groupCoreSelections.add_argument("cfgFileName", metavar = "Config.json", default = "config.json", help = "config JSON file name",)
+        
         # aod
-        groupDPLReader = self.parserRunDQEfficiency.add_argument_group(
-            title="Data processor options: internal-dpl-aod-reader"
-        )
-        groupDPLReader.add_argument(
-            "--aod", help="Add your AOD File with path", action="store", type=str
-        )
+        groupDPLReader = self.parserRunDQEfficiency.add_argument_group(title = "Data processor options: internal-dpl-aod-reader")
+        groupDPLReader.add_argument("--aod", help = "Add your AOD File with path", action = "store", type = str)
         groupDPLReader.add_argument(
             "--reader",
-            help="Reader config JSON with path. For Standart Analysis use as default, for dilepton analysis change to dilepton JSON config file",
-            action="store",
-            default=readerPath,
-            type=str,
-        )
+            help = "Reader config JSON with path. For Standart Analysis use as default, for dilepton analysis change to dilepton JSON config file",
+            action = "store", default = readerPath, type = str,
+            )
         groupDPLReader.add_argument(
-            "--writer",
-            help="Argument for producing dileptonAOD.root. Set false for disable",
-            action="store",
-            default=writerPath,
-            type=str,
-        )
-
+            "--writer", help = "Argument for producing dileptonAOD.root. Set false for disable", action = "store", default = writerPath,
+            type = str,
+            )
+        
         # automation params
-        groupAutomations = self.parserRunDQEfficiency.add_argument_group(
-            title="Automation Parameters"
-        )
+        groupAutomations = self.parserRunDQEfficiency.add_argument_group(title = "Automation Parameters")
         groupAutomations.add_argument(
-            "--onlySelect",
-            help="If false JSON Overrider Interface If true JSON Additional Interface",
-            action="store",
-            default="true",
-            type=str.lower,
-            choices=booleanSelections,
-        ).completer = ChoicesCompleter(booleanSelections)
+            "--onlySelect", help = "If false JSON Overrider Interface If true JSON Additional Interface", action = "store",
+            default = "true", type = str.lower, choices = booleanSelections,
+            ).completer = ChoicesCompleter(booleanSelections)
         groupAutomations.add_argument(
-            "--autoDummy",
-            help="Dummy automize parameter (don't configure it, true is highly recomended for automation)",
-            action="store",
-            default="true",
-            type=str.lower,
-            choices=booleanSelections,
-        ).completer = ChoicesCompleter(booleanSelections)
-
+            "--autoDummy", help = "Dummy automize parameter (don't configure it, true is highly recomended for automation)",
+            action = "store", default = "true", type = str.lower, choices = booleanSelections,
+            ).completer = ChoicesCompleter(booleanSelections)
+        
         # helper lister commands
         # groupAdditionalHelperCommands = self.parserRunDQEfficiency.add_argument_group(title="Additional Helper Command Options")
         # groupAdditionalHelperCommands.add_argument("--cutLister", help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
         # groupAdditionalHelperCommands.add_argument("--MCSignalsLister", help="List all of the MCSignals from MCSignalLibrary.h", action="store_true")
-
+    
     def parseArgs(self):
         """
         This function allows to save the obtained arguments to the parser_args() function
@@ -181,21 +148,21 @@ class RunDQEfficiency(object):
         Returns:
             Namespace: returns parse_args()
         """
-
-        argcomplete.autocomplete(self.parserRunDQEfficiency, always_complete_options=False)
+        
+        argcomplete.autocomplete(self.parserRunDQEfficiency, always_complete_options = False)
         return self.parserRunDQEfficiency.parse_args()
-
+    
     def mergeArgs(self):
         """
         This function allows to merge parser_args argument information from different classes
         """
-
+        
         self.debugOptions.parserDebugOptions = self.parserRunDQEfficiency
         self.debugOptions.addArguments()
-
+        
         self.dqEfficiency.parserDQEfficiency = self.parserRunDQEfficiency
         self.dqEfficiency.addArguments()
-
+        
         self.addArguments()
 
 
@@ -205,7 +172,7 @@ initArgs.mergeArgs()
 initArgs.parseArgs()
 
 args = initArgs.parseArgs()
-configuredCommands = vars(args)  # for get args
+configuredCommands = vars(args) # for get args
 
 # Debug Settings
 if args.debug and (not args.logFile):
@@ -213,23 +180,23 @@ if args.debug and (not args.logFile):
     numeric_level = getattr(logging, DEBUG_SELECTION.upper(), None)
     if not isinstance(numeric_level, int):
         raise ValueError("Invalid log level: %s" % DEBUG_SELECTION)
-    logging.basicConfig(format="[%(levelname)s] %(message)s", level=DEBUG_SELECTION)
+    logging.basicConfig(format = "[%(levelname)s] %(message)s", level = DEBUG_SELECTION)
 
 if args.logFile and args.debug:
     log = logging.getLogger("")
     level = logging.getLevelName(args.debug)
     log.setLevel(level)
     format = logging.Formatter("%(asctime)s - [%(levelname)s] %(message)s")
-
+    
     ch = logging.StreamHandler(sys.stdout)
     ch.setFormatter(format)
     log.addHandler(ch)
-
+    
     loggerFile = "tableReader.log"
     if os.path.isfile(loggerFile):
         os.remove(loggerFile)
-
-    fh = handlers.RotatingFileHandler(loggerFile, maxBytes=(1048576 * 5), backupCount=7, mode="w")
+    
+    fh = handlers.RotatingFileHandler(loggerFile, maxBytes = (1048576 * 5), backupCount = 7, mode = "w")
     fh.setFormatter(format)
     log.addHandler(fh)
 
@@ -248,7 +215,7 @@ except ForgettedArgsError as e:
 
 # Get Some cfg values provided from --param
 for keyCfg, valueCfg in configuredCommands.items():
-    if valueCfg is not None:  # Skipped None types, because can"t iterate in None type
+    if valueCfg is not None: # Skipped None types, because can"t iterate in None type
         if keyCfg == "analysis":
             if isinstance(valueCfg, str):
                 valueCfg = stringToList(valueCfg)
@@ -279,10 +246,8 @@ except CfgInvalidFormatError as e:
     logging.exception(e)
     sys.exit()
 
-
 with open(sys.argv[1]) as configFile:
     config = json.load(configFile)
-
 """
 try:
     if cfgControl:
@@ -314,7 +279,6 @@ except NotInAlienvError as e:
     logging.exception(e)
     sys.exit()
 
-
 #############################
 # Start Interface Processes #
 #############################
@@ -328,7 +292,7 @@ if args.onlySelect == "false":
 for key, value in config.items():
     if type(value) == type(config):
         for value, value2 in value.items():
-
+            
             # aod
             if value == "aod-file" and args.aod:
                 config[key][value] = args.aod
@@ -337,10 +301,10 @@ for key, value in config.items():
             if value == "aod-reader-json" and args.reader:
                 config[key][value] = args.reader
                 logging.debug(" - [%s] %s : %s", key, value, args.reader)
-
+            
             # analysis-skimmed-selections
             if value == "processSkimmed" and args.analysis:
-
+                
                 if key == "analysis-event-selection":
                     if "eventSelection" in analysisCfg:
                         config[key][value] = "true"
@@ -349,10 +313,10 @@ for key, value in config.items():
                     if "eventSelection" not in analysisCfg:
                         logging.warning(
                             "YOU MUST ALWAYS CONFIGURE eventSelection value in --analysis parameter!! It is Missing and this issue will fixed by CLI"
-                        )
+                            )
                         config[key][value] = "true"
                         logging.debug(" - [%s] %s : true", key, value)
-
+                
                 if key == "analysis-track-selection":
                     if "trackSelection" in analysisCfg:
                         config[key][value] = "true"
@@ -361,7 +325,7 @@ for key, value in config.items():
                     if "trackSelection" not in analysisCfg and args.onlySelect == "true":
                         config[key][value] = "false"
                         logging.debug(" - [%s] %s : false", key, value)
-
+                
                 if key == "analysis-muon-selection":
                     if "muonSelection" in analysisCfg:
                         config[key][value] = "true"
@@ -370,48 +334,42 @@ for key, value in config.items():
                     if "muonSelection" not in analysisCfg and args.onlySelect == "true":
                         config[key][value] = "false"
                         logging.debug(" - [%s] %s : false", key, value)
-
+                
                 if "sameEventPairing" in analysisCfg:
                     isAnalysisSameEventPairingSelected = True
                 if "sameEventPairing" not in analysisCfg:
                     isAnalysisSameEventPairingSelected = False
-
+            
             if value == "processDimuonMuonSkimmed" and args.analysis:
-
+                
                 if key == "analysis-dilepton-track":
                     if "dileptonTrackDimuonMuonSelection" in analysisCfg:
                         config[key][value] = "true"
                         logging.debug(" - [%s] %s : true", key, value)
-                    if (
-                        "dileptonTrackDimuonMuonSelection" not in analysisCfg
-                        and args.onlySelect == "true"
-                    ):
+                    if ("dileptonTrackDimuonMuonSelection" not in analysisCfg and args.onlySelect == "true"):
                         config[key][value] = "false"
                         logging.debug(" - [%s] %s : false", key, value)
-
+            
             if value == "processDielectronKaonSkimmed" and args.analysis:
-
+                
                 if key == "analysis-dilepton-track":
                     if "dileptonTrackDielectronKaonSelection" in analysisCfg:
                         config[key][value] = "true"
                         logging.debug(" - [%s] %s : true", key, value)
-                    if (
-                        "dileptonTrackDielectronKaonSelection" not in analysisCfg
-                        and args.onlySelect == "true"
-                    ):
+                    if ("dileptonTrackDielectronKaonSelection" not in analysisCfg and args.onlySelect == "true"):
                         config[key][value] = "false"
                         logging.debug(" - [%s] %s : false", key, value)
-
+            
             # QA selections
             if value == "cfgQA" and args.cfgQA:
                 config[key][value] = args.cfgQA
                 logging.debug(" - [%s] %s : %s", key, value, args.cfgQA)
-
+            
             # analysis-event-selection
             if value == "cfgEventCuts" and args.cfgEventCuts:
                 multiConfigurableSet(config, key, value, args.cfgEventCuts, args.onlySelect)
                 logging.debug(" - [%s] %s : %s", key, value, args.cfgEventCuts)
-
+            
             # analysis-track-selection
             if value == "cfgTrackCuts" and args.cfgTrackCuts:
                 multiConfigurableSet(config, key, value, args.cfgTrackCuts, args.onlySelect)
@@ -419,7 +377,7 @@ for key, value in config.items():
             if value == "cfgTrackMCSignals" and args.cfgTrackMCSignals:
                 multiConfigurableSet(config, key, value, args.cfgTrackMCSignals, args.onlySelect)
                 logging.debug(" - [%s] %s : %s", key, value, args.cfgTrackMCSignals)
-
+            
             # analysis-muon-selection
             if value == "cfgMuonCuts" and args.cfgMuonCuts:
                 multiConfigurableSet(config, key, value, args.cfgMuonCuts, args.onlySelect)
@@ -427,120 +385,97 @@ for key, value in config.items():
             if value == "cfgMuonMCSignals" and args.cfgMuonMCSignals:
                 multiConfigurableSet(config, key, value, args.cfgMuonMCSignals, args.onlySelect)
                 logging.debug(" - [%s] %s : %s", key, value, args.cfgMuonMCSignals)
-
+            
             # analysis-same-event-pairing
             if key == "analysis-same-event-pairing" and args.process:
-
+                
                 if not isAnalysisSameEventPairingSelected:
-                    logging.warning(
-                        "You forget to add sameEventPairing option to analysis for Workflow. It Automatically added by CLI."
-                    )
+                    logging.warning("You forget to add sameEventPairing option to analysis for Workflow. It Automatically added by CLI.")
                     isAnalysisSameEventPairingSelected = True
-
+                
                 if "JpsiToEE" in processCfg and value == "processJpsiToEESkimmed":
                     if isAnalysisTrackSelected:
                         config[key]["processJpsiToEESkimmed"] = "true"
                         logging.debug(" - [%s] %s : true", key, value)
                     if not isAnalysisTrackSelected:
-                        logging.error(
-                            "trackSelection not found in analysis for processJpsiToEESkimmed -> analysis-same-event-pairing"
-                        )
+                        logging.error("trackSelection not found in analysis for processJpsiToEESkimmed -> analysis-same-event-pairing")
                         sys.exit()
-                if (
-                    "JpsiToEE" not in processCfg
-                    and value == "processJpsiToEESkimmed"
-                    and args.onlySelect == "true"
-                ):
+                if ("JpsiToEE" not in processCfg and value == "processJpsiToEESkimmed" and args.onlySelect == "true"):
                     config[key]["processJpsiToEESkimmed"] = "false"
                     logging.debug(" - [%s] %s : false", key, value)
-
+                
                 if "JpsiToMuMu" in processCfg and value == "processJpsiToMuMuSkimmed":
                     if isAnalysisMuonSelected:
                         config[key]["processJpsiToMuMuSkimmed"] = "true"
                         logging.debug(" - [%s] %s : true", key, value)
                     if not isAnalysisMuonSelected:
-                        logging.error(
-                            "muonSelection not found in analysis for processJpsiToMuMuSkimmed -> analysis-same-event-pairing"
-                        )
+                        logging.error("muonSelection not found in analysis for processJpsiToMuMuSkimmed -> analysis-same-event-pairing")
                         sys.exit()
-                if (
-                    "JpsiToMuMu" not in processCfg
-                    and value == "processJpsiToMuMuSkimmed"
-                    and args.onlySelect == "true"
-                ):
+                if ("JpsiToMuMu" not in processCfg and value == "processJpsiToMuMuSkimmed" and args.onlySelect == "true"):
                     config[key]["processJpsiToMuMuSkimmed"] = "false"
                     logging.debug(" - [%s] %s : false", key, value)
-
-                if (
-                    "JpsiToMuMuVertexing" in processCfg
-                    and value == "processJpsiToMuMuVertexingSkimmed"
-                ):
+                
+                if ("JpsiToMuMuVertexing" in processCfg and value == "processJpsiToMuMuVertexingSkimmed"):
                     if isAnalysisMuonSelected:
                         config[key]["processJpsiToMuMuVertexingSkimmed"] = "true"
                         logging.debug(" - [%s] %s : true", key, value)
                     if not isAnalysisMuonSelected:
                         logging.error(
                             "muonSelection not found in analysis for processJpsiToMuMuVertexingSkimmed -> analysis-same-event-pairing"
-                        )
+                            )
                         sys.exit()
-                if (
-                    "JpsiToMuMuVertexing" not in processCfg
-                    and value == "processJpsiToMuMuVertexingSkimmed"
-                    and args.onlySelect == "true"
-                ):
+                if ("JpsiToMuMuVertexing" not in processCfg and value == "processJpsiToMuMuVertexingSkimmed" and args.onlySelect == "true"):
                     config[key]["processJpsiToMuMuVertexingSkimmed"] = "false"
                     logging.debug(" - [%s] %s : false", key, value)
-
+            
             # If no process function is provided, all SEP process functions are pulled false (for JSON Overrider mode)
             if (
-                key == "analysis-same-event-pairing"
-                and args.process is None
-                and not isAnalysisSameEventPairingSelected
-                and args.onlySelect == "true"
-            ):
+                key == "analysis-same-event-pairing" and args.process is None and not isAnalysisSameEventPairingSelected and
+                args.onlySelect == "true"
+                ):
                 config[key]["processJpsiToEESkimmed"] = "false"
                 config[key]["processJpsiToMuMuSkimmed"] = "false"
                 config[key]["processJpsiToMuMuVertexingSkimmed"] = "false"
-
+            
             # analysis-same-event-pairing
             if key == "analysis-same-event-pairing":
                 if value == "cfgBarrelMCRecSignals" and args.cfgBarrelMCRecSignals:
                     multiConfigurableSet(config, key, value, args.cfgBarrelMCRecSignals, args.onlySelect)
                     logging.debug(" - [%s] %s : %s", key, value, args.cfgBarrelMCRecSignals)
-
+                
                 if value == "cfgBarrelMCGenSignals" and args.cfgBarrelMCGenSignals:
                     multiConfigurableSet(config, key, value, args.cfgBarrelMCGenSignals, args.onlySelect)
                     logging.debug(" - [%s] %s : %s", key, value, args.cfgBarrelMCGenSignals)
-
+                
                 if value == "cfgFlatTables" and args.cfgFlatTables:
                     config[key][value] = args.cfgFlatTables
                     logging.debug(" - [%s] %s : %s", key, value, args.cfgFlatTables)
-
+            
             # analysis-dilepton-track
             if key == "analysis-dilepton-track":
                 if value == "cfgBarrelMCRecSignals" and args.cfgBarrelDileptonMCRecSignals:
                     multiConfigurableSet(config, key, value, args.cfgBarrelDileptonMCRecSignals, args.onlySelect)
                     config[key][value] = args.cfgBarrelDileptonMCRecSignals
                     logging.debug(" - [%s] %s : %s", key, value, args.cfgBarrelDileptonMCRecSignals)
-
+                
                 if value == "cfgBarrelMCGenSignals" and args.cfgBarrelDileptonMCGenSignals:
                     multiConfigurableSet(config, key, value, args.cfgBarrelDileptonMCGenSignals, args.onlySelect)
                     logging.debug(" - [%s] %s : %s", key, value, args.cfgBarrelDileptonMCGenSignals)
                 if value == "cfgLeptonCuts" and args.cfgLeptonCuts:
                     multiConfigurableSet(config, key, value, args.cfgLeptonCuts, args.onlySelect)
                     logging.debug(" - [%s] %s : %s", key, value, args.cfgLeptonCuts)
-
+                
                 if value == "cfgFillCandidateTable" and args.cfgFillCandidateTable:
                     config[key][value] = args.cfgFillCandidateTable
                     logging.debug(" - [%s] %s : %s", key, value, args.cfgFillCandidateTable)
-
+            
             # Dummy automizer
             if args.autoDummy:
                 """
                 value.endswith("Skimmed") --> get all skimmed process functions without dummy
                 if "true" in skimmedListEventSelection ... else ... --> # if no skimmed process true, processDummy true else processDummy false
                 """
-
+                
                 if key == "analysis-event-selection":
                     if value.endswith("Skimmed"):
                         if config[key][value] == "true":
@@ -551,7 +486,7 @@ for key, value in config.items():
                         config[key]["processDummy"] = "false"
                     else:
                         config[key]["processDummy"] = "true"
-
+                
                 if key == "analysis-muon-selection":
                     if value.endswith("Skimmed"):
                         if config[key][value] == "true":
@@ -562,7 +497,7 @@ for key, value in config.items():
                         config[key]["processDummy"] = "false"
                     else:
                         config[key]["processDummy"] = "true"
-
+                
                 if key == "analysis-track-selection":
                     if value.endswith("Skimmed"):
                         if config[key][value] == "true":
@@ -573,7 +508,7 @@ for key, value in config.items():
                         config[key]["processDummy"] = "false"
                     else:
                         config[key]["processDummy"] = "true"
-
+                
                 if key == "analysis-same-event-pairing":
                     if value.endswith("Skimmed"):
                         if config[key][value] == "true":
@@ -584,7 +519,7 @@ for key, value in config.items():
                         config[key]["processDummy"] = "false"
                     else:
                         config[key]["processDummy"] = "true"
-
+                
                 if key == "analysis-dilepton-track":
                     if value.endswith("Skimmed"):
                         if config[key][value] == "true":
@@ -608,17 +543,17 @@ if args.aod is not None:
         try:
             open(argProvidedAod, "r")
             logging.info("%s has valid File Format and Path, File Found", argProvidedAod)
-
+        
         except FileNotFoundError:
             logging.exception("%s AO2D file text list not found in path!!!", argProvidedAod)
             sys.exit()
-
+    
     elif endsWithRoot:
         logging.info("You provided single AO2D root file : %s", argProvidedAod)
         try:
             open(argProvidedAod, "r")
             logging.info("%s has valid File Format and Path, File Found", argProvidedAod)
-
+        
         except FileNotFoundError:
             logging.exception("%s AO2D single root file not found in path!!!", argProvidedAod)
             sys.exit()
@@ -626,7 +561,7 @@ if args.aod is not None:
         try:
             open(argProvidedAod, "r")
             logging.info("%s has valid File Format and Path, File Found", argProvidedAod)
-
+        
         except FileNotFoundError:
             logging.exception("%s Wrong formatted File, check your file extension!", argProvidedAod)
             sys.exit()
@@ -636,9 +571,7 @@ if args.reader is not None:
         logging.error("%s File not found in path!!!", args.reader)
         sys.exit()
 elif not os.path.isfile((config["internal-dpl-aod-reader"]["aod-reader-json"])):
-    logging.error(
-        " %s File not found in path!!!", config["internal-dpl-aod-reader"]["aod-reader-json"]
-    )
+    logging.error(" %s File not found in path!!!", config["internal-dpl-aod-reader"]["aod-reader-json"])
     sys.exit()
 
 ###########################
@@ -649,35 +582,20 @@ elif not os.path.isfile((config["internal-dpl-aod-reader"]["aod-reader-json"])):
 updatedConfigFileName = "tempConfigDQEfficiency.json"
 
 with open(updatedConfigFileName, "w") as outputFile:
-    json.dump(config, outputFile, indent=2)
+    json.dump(config, outputFile, indent = 2)
 
-commandToRun = (
-    taskNameInCommandLine
-    + " --configuration json://"
-    + updatedConfigFileName
-    + " -b"
-    + " --aod-writer-json "
-    + args.writer
-)
+commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b" + " --aod-writer-json " + args.writer)
 if args.writer == "false":
-    commandToRun = (
-        taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b"
-    )
+    commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b")
 
-print(
-    "===================================================================================================================="
-)
+print("====================================================================================================================")
 logging.info("Command to run:")
 logging.info(commandToRun)
-print(
-    "===================================================================================================================="
-)
+print("====================================================================================================================")
 
 # Listing Added Commands
 logging.info("Args provided configurations List")
-print(
-    "===================================================================================================================="
-)
+print("====================================================================================================================")
 for key, value in configuredCommands.items():
     if value is not None:
         if isinstance(value, list):
@@ -697,7 +615,7 @@ try:
         pycacheRemover = PycacheRemover()
         pycacheRemover.__init__()
         logging.info("pycaches removed succesfully")
-
+    
     elif not os.path.exists(parentPath):
         logging.error("OS Path is not valid for pycacheRemover. Fatal Error.")
         sys.exit()
@@ -706,9 +624,6 @@ try:
 
 # Caching the exception
 except FileNotFoundError:
-    logging.exception(
-        "Something wrong with specified\
-          directory. Exception- %s",
-        sys.exc_info(),
-    )
+    logging.exception("Something wrong with specified\
+          directory. Exception- %s", sys.exc_info(),)
     sys.exit()
