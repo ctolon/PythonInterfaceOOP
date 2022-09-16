@@ -117,7 +117,7 @@ Data | Dataset | Used Workflow | Selected Processes (from tableMaker) |
 `reducedAod_PbPbData_LHC15o.root` | `LHC15o` | `tableMaker` | `BarrelOnlyWithCent`<br>`OnlyBCs`
 `reducedAod_PbPbData_LHC15o_Flow.root` | `LHC15o` | `tableMaker` | `FullWithCent`<br>`BarrelOnlyWithQvector`<br>`OnlyBCs`
 `reducedAod_PbPbData_LHC15o_dileptonHadron.root` | `LHC15o` | `tableMaker` | `BarrelOnly`<br>`OnlyBCs`
-`reducedAod_ppData_LHC222c.root` | `LHC222c` | `tableMaker` | `MuonOnlyWithCov`<br>`OnlyBCs`
+`reducedAod_ppData_LHC22c.root` | `LHC22c` | `tableMaker` | `MuonOnlyWithCov`<br>`OnlyBCs`
 
 Reduced DQ Dileptons skimmed data list For Dilepton Analysis (dilepton-track and dilepton-hadron) created with tableReader/dqEfficiency:
 

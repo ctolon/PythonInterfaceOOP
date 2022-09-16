@@ -889,7 +889,7 @@ if args.aod is not None:
 #####################
 
 # In extended tracks, o2-analysis-trackextension is not a valid dep for run 3
-# More Information : https://aliceo2group.github.io/analysis-framework/docs/helperTasks/trackselection.html?highlight=some%20of%20the%20track%20parameters
+# More Information : https://aliceo2group.github.io/analysis-framework/docs/basics-usage/HelperTasks.html#track-propagation
 """
 Some of the track parameters used in the track selection require additional calculation effort and are then stored in a table called TracksExtended
 which is produced by either the o2-analysis-trackextension task (Run 2) or o2-analysis-track-propagation (Run 3).

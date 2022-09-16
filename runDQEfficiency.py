@@ -135,14 +135,14 @@ class RunDQEfficiency(object):
         )
         groupDPLReader.add_argument(
             "--reader",
-            help="Add your AOD Reader JSON with path",
+            help="Reader config JSON with path. For Standart Analysis use as default, for dilepton analysis change to dilepton JSON config file",
             action="store",
             default=readerPath,
             type=str,
         )
         groupDPLReader.add_argument(
             "--writer",
-            help="Add your AOD Writer JSON with path",
+            help="Argument for producing dileptonAOD.root. Set false for disable",
             action="store",
             default=writerPath,
             type=str,

@@ -11,6 +11,10 @@ Ionut Cristian Arsene (Owner of [`O2DQWorkflows`](https://github.com/iarsene/O2D
 
 Cevat Batuhan Tolon (Author Of Interface)
 
+## Important
+
+Since the interface is constantly updated for stability, it is recommended to update it with `git pull --rebase` command
+
 ## Table Of Contents
 - [Python Scripts And JSON Configs](doc/1_ScriptsAndConfigs.md)
   - [Main Python Scripts](doc/1_ScriptsAndConfigs.md#main-python-scripts)
@@ -65,9 +69,9 @@ Cevat Batuhan Tolon (Author Of Interface)
   - [MC Part](doc/6_Tutorials.md#mc-part)
     - [Run tableMakerMC on LHC21i3d2 (jpsi to MuMu pp Run3Simulation)](doc/6_Tutorials.md#run-tablemakermc-on-lhc21i3d2-jpsi-to-mumu-pp-run3simulation)
     - [Run dqEfficiency on MC (LHC21i3d2 pp Run3Simulation)](doc/6_Tutorials.md#run-dqefficiency-on-mc-lhc21i3d2-pp-run3simulation)
-    - [Run tablemakerMC on LHC21i3b (Prompt jpsi to dilectron pp Run3Simulation)](doc/6_Tutorials.md#run-tablemakermc-on-lhc21i3b-prompt-jpsi-to-dilectron-pp-run3simulation)
+    - [Run tablemakerMC on LHC21i3b (Prompt jpsi to dielectron pp Run3Simulation)](doc/6_Tutorials.md#run-tablemakermc-on-lhc21i3b-prompt-jpsi-to-dielectron-pp-run3simulation)
     - [Run dqEfficiency on MC (LHC21i3b pp Run3Simulation)](doc/6_Tutorials.md#run-dqefficiency-on-mc-lhc21i3b-pp-run3simulation)
-    - [Run tablemakerMC on LHC21i3f2 (Non-Prompt jpsi to dilectron pp Run3Simulation)](doc/6_Tutorials.md#run-tablemakermc-on-lhc21i3f2-non-prompt-jpsi-to-dilectron-pp-run3simulation)
+    - [Run tablemakerMC on LHC21i3f2 (Non-Prompt jpsi to dielectron pp Run3Simulation)](doc/6_Tutorials.md#run-tablemakermc-on-lhc21i3f2-non-prompt-jpsi-to-dielectron-pp-run3simulation)
     - [Run dqEfficiency on LHC21i3f2 (LHC21i3f2 pp Run3Simulation)](doc/6_Tutorials.md#run-dqefficiency-on-lhc21i3f2-lhc21i3f2-pp-run3simulation)
   - [Data Part](doc/6_Tutorials.md#data-part)
     - [Run tableMaker on LHC15o (LHC15o PbPb Run2Data)](doc/6_Tutorials.md#tablemaker-on-lhc15o-lhc15o-pbpb-run2data)
@@ -87,3 +91,20 @@ Cevat Batuhan Tolon (Author Of Interface)
   - [Feedbacks, Suggestions and User Acceptance Test List](doc/7_DesignNotes.md#feedbacks-suggestions-and-user-acceptance-test-list)
   - [Updates](doc/7_DesignNotes.md#design-notes)
   - [Naming Conventions](doc/7_DesignNotes.md#naming-conventions)
+- [8_TroubleshootingTreeNotFound](doc/8_TroubleshootingTreeNotFound.md)
+  - [Converters](doc/8_TroubleshootingTreeNotFound.md#converters-special-additional-tasks-for-workflows)
+  - [add_track_prop](doc/8_TroubleshootingTreeNotFound.md#addtrackprop)
+
+
+## TODO LIST
+
+- Add Troubleshoot chapter
+- Add Contributing guide chapter
+- Maintaince need for available configs part
+- Python Scripts And JSON Configs need update
+- Need more details for arguments for user guide
+- Needed to explain O2-DQ Data Model and Workflow
+- Doxygen doc should be updated
+- More tutorials needed for users
+- On tutorial side, we need explain all arguments one by one
+- 
