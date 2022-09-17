@@ -28,13 +28,11 @@ import argparse
 
 from extramodules.actionHandler import NoAction
 from extramodules.actionHandler import ChoicesAction
-from extramodules.debugOptions import DebugOptions
-from extramodules.stringOperations import listToString, stringToList, multiConfigurableSet
-from extramodules.dqExceptions import (CfgInvalidFormatError, ForgettedArgsError, NotInAlienvError,)
+from extramodules.helperOptions import HelperOptions
+from extramodules.dqOperations import listToString, stringToList, multiConfigurableSet
+from extramodules.dqOperations import (CfgInvalidFormatError, ForgettedArgsError, NotInAlienvError, runPycacheRemover)
 
 from dqtasks.tableReader import TableReader
-
-from pycacheRemover import PycacheRemover
 """
 argcomplete - Bash tab completion for argparse
 Documentation https://kislyuk.github.io/argcomplete/
@@ -97,12 +95,12 @@ class RunTableReader(object):
             self, parserRunTableReader = argparse.ArgumentParser(
                 formatter_class = argparse.ArgumentDefaultsHelpFormatter,
                 description = "Example Usage: ./runTableReader.py <yourConfig.json> --arg value",
-                ), tableReader = TableReader(), debugOptions = DebugOptions(),
+                ), tableReader = TableReader(), helperOptions = HelperOptions(),
         ):
         super(RunTableReader, self).__init__()
         self.parserRunTableReader = parserRunTableReader
         self.tableReader = tableReader
-        self.debugOptions = debugOptions
+        self.helperOptions = helperOptions
         self.parserRunTableReader.register("action", "none", NoAction)
         self.parserRunTableReader.register("action", "store_choice", ChoicesAction)
     
@@ -128,16 +126,6 @@ class RunTableReader(object):
             type = str,
             )
         
-        # automation params
-        groupAutomations = self.parserRunTableReader.add_argument_group(title = "Automation Parameters")
-        groupAutomations.add_argument(
-            "--onlySelect", help = "If false JSON Overrider Interface If true JSON Additional Interface", action = "store",
-            default = "true", type = str.lower, choices = booleanSelections,
-            ).completer = ChoicesCompleter(booleanSelections)
-        groupAutomations.add_argument(
-            "--autoDummy", help = "Dummy automize parameter (don't configure it, true is highly recomended for automation)",
-            action = "store", default = "true", type = str.lower, choices = booleanSelections,
-            ).completer = ChoicesCompleter(booleanSelections)
         
         # helper lister commands
         # groupAdditionalHelperCommands = self.parserRunTableReader.add_argument_group(title="Additional Helper Command Options")
@@ -160,8 +148,8 @@ class RunTableReader(object):
         This function allows to merge parser_args argument information from different classes
         """
         
-        self.debugOptions.parserDebugOptions = self.parserRunTableReader
-        self.debugOptions.addArguments()
+        self.helperOptions.parserHelperOptions = self.parserRunTableReader
+        self.helperOptions.addArguments()
         
         self.tableReader.parserTableReader = self.parserRunTableReader
         self.tableReader.addArguments()
@@ -844,26 +832,4 @@ for key, value in configuredCommands.items():
 
 os.system(commandToRun)
 
-# Pycache remove after running in O2
-# getParrentDir = sys.path[-1]
-
-# trying to insert to false directory
-try:
-    parentPath = os.getcwd()
-    if os.path.exists(parentPath) and os.path.isfile(parentPath + "/pycacheRemover.py"):
-        logging.info("Inserting inside for pycache remove: %s", os.getcwd())
-        pycacheRemover = PycacheRemover()
-        pycacheRemover.__init__()
-        logging.info("pycaches removed succesfully")
-    
-    elif not os.path.exists(parentPath):
-        logging.error("OS Path is not valid for pycacheRemover. Fatal Error.")
-        sys.exit()
-    elif not os.path.isfile(parentPath + "/pycacheRemover.py"):
-        raise FileNotFoundError
-
-# Caching the exception
-except FileNotFoundError:
-    logging.exception("Something wrong with specified\
-          directory. Exception- %s", sys.exc_info(),)
-    sys.exit()
+runPycacheRemover()

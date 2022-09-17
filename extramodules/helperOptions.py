@@ -16,20 +16,21 @@
 import argparse
 
 from extramodules.choicesCompleterList import ChoicesCompleterList
+from argcomplete.completers import ChoicesCompleter
 
 
-class DebugOptions(object):
+class HelperOptions(object):
     
     """
-    Class for Interface -> Debug Options
+    Class for Interface -> Helper Options
 
     Args:
-        object (parser_args() object): Debug Interface
+        object (parser_args() object): Helper Options Interface
     """
     
-    def __init__(self, parserDebugOptions = argparse.ArgumentParser(add_help = False)):
-        super(DebugOptions, self).__init__()
-        self.parserDebugOptions = parserDebugOptions
+    def __init__(self, parserHelperOptions = argparse.ArgumentParser(add_help = False)):
+        super(HelperOptions, self).__init__()
+        self.parserHelperOptions = parserHelperOptions
     
     def addArguments(self):
         """
@@ -49,17 +50,29 @@ class DebugOptions(object):
         for k, v in debugLevelSelections.items():
             debugLevelSelectionsList.append(k)
         
+        booleanSelections = ["true", "false"]
+        
         # Interface
-        groupDebugOptions = self.parserDebugOptions.add_argument_group(title = "Additional Debug Options")
+        groupDebugOptions = self.parserHelperOptions.add_argument_group(title = "Additional Debug Options")
         groupDebugOptions.add_argument(
             "--debug", help = "execute with debug options", action = "store", type = str.upper, default = "INFO",
             choices = debugLevelSelectionsList,
             ).completer = ChoicesCompleterList(debugLevelSelectionsList)
         groupDebugOptions.add_argument("--logFile", help = "Enable logger for both file and CLI", action = "store_true")
-        groupDebug = self.parserDebugOptions.add_argument_group(title = "Choice List for debug Parameters")
+        groupDebug = self.parserHelperOptions.add_argument_group(title = "Choice List for debug Parameters")
         
         for key, value in debugLevelSelections.items():
             groupDebug.add_argument(key, help = value, action = "none")
+        
+        groupAutomations = self.parserHelperOptions.add_argument_group(title = "Automation Parameters")
+        groupAutomations.add_argument(
+            "--onlySelect", help = "If false JSON Overrider Interface If true JSON Additional Interface", action = "store",
+            default = "true", type = str.lower, choices = booleanSelections,
+            ).completer = ChoicesCompleter(booleanSelections)
+        groupAutomations.add_argument(
+            "--autoDummy", help = "Dummy automize parameter (don't configure it, true is highly recomended for automation)",
+            action = "store", default = "true", type = str.lower, choices = booleanSelections,
+            ).completer = ChoicesCompleter(booleanSelections)
     
     def parseArgs(self):
         """
@@ -69,4 +82,4 @@ class DebugOptions(object):
             Namespace: returns parse_args()
         """
         
-        return self.parserDebugOptions.parse_args()
+        return self.parserHelperOptions.parse_args()

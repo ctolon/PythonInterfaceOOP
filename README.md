@@ -107,4 +107,8 @@ Since the interface is constantly updated for stability, it is recommended to up
 - Doxygen doc should be updated
 - More tutorials needed for users
 - On tutorial side, we need explain all arguments one by one
-- 
+- TableReader and dqEfficiency should be refactored
+- interface logic part needs refactor
+- github downloader util should be integrated
+- Clean the code
+- fix filter pp transaction

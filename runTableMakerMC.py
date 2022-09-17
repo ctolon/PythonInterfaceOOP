@@ -24,57 +24,22 @@ import logging
 import logging.config
 from logging import handlers
 import os
-import argparse
 
-from extramodules.actionHandler import NoAction
-from extramodules.actionHandler import ChoicesAction
-from extramodules.debugOptions import DebugOptions
-from extramodules.stringOperations import listToString, multiConfigurableSet
-from extramodules.dqExceptions import (
-    CfgInvalidFormatError, ForgettedArgsError, NotInAlienvError, TasknameNotFoundInConfigFileError, CentFilterError,
+from extramodules.dqOperations import listToString, multiConfigurableSet
+from extramodules.dqOperations import (
+    runPycacheRemover, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, centTranscation, aodFileChecker, trackPropTransaction
     )
 
-from commondeps.centralityTable import CentralityTable
-from commondeps.eventSelection import EventSelectionTask
-from commondeps.multiplicityTable import MultiplicityTable
-from commondeps.pidTOFBase import TofEventTime
-from commondeps.pidTOFBeta import TofPidBeta
-from commondeps.pidTPCTOFFull import TpcTofPidFull
-from commondeps.trackPropagation import TrackPropagation
-from commondeps.trackselection import TrackSelectionTask
-
 from dqtasks.tableMakerMC import TableMakerMC
-
-from pycacheRemover import PycacheRemover
-"""
-argcomplete - Bash tab completion for argparse
-Documentation https://kislyuk.github.io/argcomplete/
-Instalation Steps
-pip install argcomplete
-sudo activate-global-python-argcomplete
-Only Works On Local not in O2
-Activate libraries in below and activate #argcomplete.autocomplete(parser) line
-"""
-import argcomplete
-from argcomplete.completers import ChoicesCompleter
 
 ###################################
 # Interface Predefined Selections #
 ###################################
 
-tablemakerProcessAllParameters = [
-    "processFull", "processFullTiny", "processFullWithCov", "processFullWithCent", "processBarrelOnlyWithV0Bits",
-    "processBarrelOnlyWithEventFilter", "processBarrelOnlyWithQvector", "processBarrelOnlyWithCent", "processBarrelOnlyWithCov",
-    "processBarrelOnly", "processMuonOnlyWithCent", "processMuonOnlyWithCov", "processMuonOnly", "processMuonOnlyWithFilter",
-    "processMuonOnlyWithQvector", "processOnlyBCs",
-    ]
-
 centralityTableParameters = [
     "estRun2V0M", "estRun2SPDtks", "estRun2SPDcls", "estRun2CL0", "estRun2CL1", "estFV0A", "estFT0M", "estFDDM", "estNTPV",
     ]
 # TODO: Add genname parameter
-
-v0SelectorParameters = ["d_bz", "v0cospa", "dcav0dau", "v0RMin", "v0Rmax", "dcamin", "dcamax", "mincrossedrows", "maxchi2tpc",]
 
 ft0Parameters = ["processFT0", "processNoFT0", "processOnlyFT0", "processRun2"]
 
@@ -82,40 +47,8 @@ pidParameters = ["pid-el", "pid-mu", "pid-pi", "pid-ka", "pid-pr", "pid-de", "pi
 
 booleanSelections = ["true", "false"]
 
-# Centrality Filter for pp systems in tableMaker
-isNoDeleteNeedForCent = True
-isProcessFuncLeftAfterCentDelete = True
-
-threeSelectedList = []
-
-O2DPG_ROOT = os.environ.get("O2DPG_ROOT")
-QUALITYCONTROL_ROOT = os.environ.get("QUALITYCONTROL_ROOT")
-O2_ROOT = os.environ.get("O2_ROOT")
-O2PHYSICS_ROOT = os.environ.get("O2PHYSICS_ROOT")
-
-# Predefined values for DQ Logger messages
-isDQBarrelSelected = False
-isDQBarrelTinySelected = False
-isDQMuonSelected = False
-isDQEventSelected = True
-isDQFullSelected = False
-isFilterPPSelected = False
-isFilterPPTinySelected = False
-isQVectorSelected = False
-
 # Predefined Search Lists
-fullSearch = []
-barrelSearch = []
-muonSearch = []
-# bcsSearch = []
-covSearch = []
 centSearch = []
-filterSearch = []
-qVectorSearch = []
-
-# After deleting centrality we need to check if we have process function
-isProcessFuncLeftAfterCentDelete = True
-leftProcessAfterDeleteCent = []
 
 ################
 # Dependencies #
@@ -243,139 +176,8 @@ specificTables = {
 # Init Workflow #
 #################
 
-
-class RunTableMakerMC(object):
-    
-    """
-    This class is for managing the workflow by using the interface arguments from
-    all other Common dependencies and the tableMakerMC Task's own arguments in a combined structure.
-
-    Args:
-      object (parser_args() object): runTableMakerMC.py workflow
-    """
-    
-    def __init__(
-            self, parserRunTableMakerMC = argparse.ArgumentParser(
-                formatter_class = argparse.ArgumentDefaultsHelpFormatter,
-                description = "Example Usage: ./runTableMakerMC.py <yourConfig.json> --arg value",
-                ), eventSelection = EventSelectionTask(), centralityTable = CentralityTable(), multiplicityTable = MultiplicityTable(),
-            tofEventTime = TofEventTime(), tofPidBeta = TofPidBeta(), tpcTofPidFull = TpcTofPidFull(),
-            trackPropagation = TrackPropagation(), trackSelection = TrackSelectionTask(), tableMakerMC = TableMakerMC(),
-            debugOptions = DebugOptions(),
-        ):
-        super(RunTableMakerMC, self).__init__()
-        self.parserRunTableMakerMC = parserRunTableMakerMC
-        self.eventSelection = eventSelection
-        self.centralityTable = centralityTable
-        self.multiplicityTable = multiplicityTable
-        self.tofEventTime = tofEventTime
-        self.tofPidBeta = tofPidBeta
-        self.tpcTofPidFull = tpcTofPidFull
-        self.trackPropagation = trackPropagation
-        self.trackSelection = trackSelection
-        self.tableMakerMC = tableMakerMC
-        self.debugOptions = debugOptions
-        self.parserRunTableMakerMC.register("action", "none", NoAction)
-        self.parserRunTableMakerMC.register("action", "store_choice", ChoicesAction)
-    
-    def addArguments(self):
-        """
-        This function allows to add arguments for parser_args() function
-        """
-        
-        # Core Part
-        groupCoreSelections = self.parserRunTableMakerMC.add_argument_group(title = "Core configurations that must be configured")
-        groupCoreSelections.add_argument("cfgFileName", metavar = "Config.json", default = "config.json", help = "config JSON file name",)
-        groupCoreSelections.add_argument("-runMC", help = "Run over MC", action = "store_true", default = True)
-        groupTaskAdders = self.parserRunTableMakerMC.add_argument_group(title = "Additional Task Adding Options")
-        groupTaskAdders.add_argument(
-            "--add_mc_conv",
-            help = "Add the converter from mcparticle to mcparticle+001 (Adds your workflow o2-analysis-mc-converter task)",
-            action = "store_true",
-            )
-        groupTaskAdders.add_argument(
-            "--add_fdd_conv", help = "Add the fdd converter (Adds your workflow o2-analysis-fdd-converter task)", action = "store_true",
-            )
-        groupTaskAdders.add_argument(
-            "--add_track_prop",
-            help = "Add track propagation to the innermost layer (TPC or ITS) (Adds your workflow o2-analysis-track-propagation task)",
-            action = "store_true",
-            )
-        
-        # aod
-        groupDPLReader = self.parserRunTableMakerMC.add_argument_group(title = "Data processor options: internal-dpl-aod-reader")
-        groupDPLReader.add_argument("--aod", help = "Add your AOD File with path", action = "store", type = str)
-        groupDPLReader.add_argument(
-            "--aod-memory-rate-limit", help = "Rate limit AOD processing based on memory", action = "store", type = str,
-            )
-        
-        # automation params
-        groupAutomations = self.parserRunTableMakerMC.add_argument_group(title = "Automation Parameters")
-        groupAutomations.add_argument(
-            "--onlySelect", help = "If false JSON Overrider Interface If true JSON Additional Interface", action = "store",
-            default = "true", type = str.lower, choices = booleanSelections,
-            ).completer = ChoicesCompleter(booleanSelections)
-        groupAutomations.add_argument(
-            "--autoDummy", help = "Dummy automize parameter (don't configure it, true is highly recomended for automation)",
-            action = "store", default = "true", type = str.lower, choices = booleanSelections,
-            ).completer = ChoicesCompleter(booleanSelections)
-        
-        # helper lister commands
-        # groupAdditionalHelperCommands = self.parserRunTableMakerMC.add_argument_group(title="Additional Helper Command Options")
-        # groupAdditionalHelperCommands.add_argument("--cutLister", help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
-        # groupAdditionalHelperCommands.add_argument("--MCSignalsLister", help="List all of the MCSignals from MCSignalLibrary.h", action="store_true")
-    
-    def parseArgs(self):
-        """
-        This function allows to save the obtained arguments to the parser_args() function
-
-        Returns:
-            Namespace: returns parse_args()
-        """
-        
-        argcomplete.autocomplete(self.parserRunTableMakerMC, always_complete_options = False)
-        return self.parserRunTableMakerMC.parse_args()
-    
-    def mergeArgs(self):
-        """
-        This function allows to merge parser_args argument information from different classes
-        """
-        
-        self.eventSelection.parserEventSelectionTask = self.parserRunTableMakerMC
-        self.eventSelection.addArguments()
-        
-        self.centralityTable.parserCentralityTable = self.parserRunTableMakerMC
-        self.centralityTable.addArguments()
-        
-        self.multiplicityTable.parserMultiplicityTable = self.parserRunTableMakerMC
-        self.multiplicityTable.addArguments()
-        
-        self.tofEventTime.parserTofEventTime = self.parserRunTableMakerMC
-        self.tofEventTime.addArguments()
-        
-        self.tofPidBeta.parserTofPidBeta = self.parserRunTableMakerMC
-        self.tofPidBeta.addArguments()
-        
-        self.tpcTofPidFull.parserTpcTofPidFull = self.parserRunTableMakerMC
-        self.tpcTofPidFull.addArguments()
-        
-        self.trackPropagation.parserTrackPropagation = self.parserRunTableMakerMC
-        self.trackPropagation.addArguments()
-        
-        self.trackSelection.parserTrackSelectionTask = self.parserRunTableMakerMC
-        self.trackSelection.addArguments()
-        
-        self.tableMakerMC.parserTableMakerMC = self.parserRunTableMakerMC
-        self.tableMakerMC.addArguments()
-        
-        self.debugOptions.parserDebugOptions = self.parserRunTableMakerMC
-        self.debugOptions.addArguments()
-        
-        self.addArguments()
-
-
 # init args manually
-initArgs = RunTableMakerMC()
+initArgs = TableMakerMC()
 initArgs.mergeArgs()
 initArgs.parseArgs()
 
@@ -408,18 +210,8 @@ if args.logFile and args.debug:
     fh.setFormatter(format)
     log.addHandler(fh)
 
-# Transcation management for forgettining assign a value to parameters
-forgetParams = []
-for key, value in configuredCommands.items():
-    if value is not None:
-        if (isinstance(value, str) or isinstance(value, list)) and len(value) == 0:
-            forgetParams.append(key)
-try:
-    if len(forgetParams) > 0:
-        raise ForgettedArgsError(forgetParams)
-except ForgettedArgsError as e:
-    logging.exception(e)
-    sys.exit()
+# Transcation management
+forgettedArgsChecker(configuredCommands)
 
 ######################
 # PREFIX ADDING PART #
@@ -447,47 +239,12 @@ if args.FT0 is not None:
 
 ######################################################################################
 
-# Make some checks on provided arguments
-if len(sys.argv) < 2:
-    logging.error("Invalid syntax! The command line should look like this:")
-    logging.info("  ./runTableMakerMC.py <yourConfig.json> <-runData|-runMC> --param value ...")
-    sys.exit()
-
 # Load the configuration file provided as the first parameter
-cfgControl = sys.argv[1] == args.cfgFileName
-isConfigJson = sys.argv[1].endswith(".json")
 config = {}
-
-try:
-    if cfgControl:
-        if not isConfigJson:
-            raise CfgInvalidFormatError(sys.argv[1])
-        else:
-            logging.info("%s is valid json config file", args.cfgFileName)
-
-except CfgInvalidFormatError as e:
-    logging.exception(e)
-    sys.exit()
-
-with open(sys.argv[1]) as configFile:
+with open(args.cfgFileName) as configFile:
     config = json.load(configFile)
-"""
-try:
-    if cfgControl:
-        with open(sys.argv[1]) as configFile:
-            config = json.load(configFile)
-    else:
-        # raise ConfigFileInvalidFormat(args.cfgFileName)
-        logging.error(
-            "Invalid syntax! After the script, you must define your json configuration file!!! \
-            The command line should look like this:"
-        )
-        logging.info("  ./runTableMaker.py <yourConfig.json> <-runData|-runMC> --param value ...")
-        sys.exit()
 
-except FileNotFoundError:
-    sys.exit()
-"""
+jsonTypeChecker(args.cfgFileName)
 
 runOverMC = True
 logging.info("runOverMC : %s, Reduced Tables will be produced for MC", runOverMC)
@@ -495,25 +252,7 @@ logging.info("runOverMC : %s, Reduced Tables will be produced for MC", runOverMC
 taskNameInConfig = "table-maker-m-c"
 taskNameInCommandLine = "o2-analysis-dq-table-maker-mc"
 
-# Check dependencies
-try:
-    if taskNameInConfig not in config:
-        raise TasknameNotFoundInConfigFileError(taskNameInConfig)
-    else:
-        logging.info("%s is in your JSON Config File", taskNameInConfig)
-except TasknameNotFoundInConfigFileError as e:
-    logging.exception(e)
-    sys.exit()
-
-# Check alienv
-try:
-    if O2PHYSICS_ROOT is None:
-        raise NotInAlienvError
-    else:
-        logging.info("You are in %s alienv", O2PHYSICS_ROOT)
-except NotInAlienvError as e:
-    logging.exception(e)
-    sys.exit()
+mainTaskChecker(config, taskNameInConfig)
 
 #############################
 # Start Interface Processes #
@@ -538,7 +277,7 @@ for key, value in config.items():
                 logging.debug(" - [%s] %s : %s", key, value, args.aod)
             
             # table-maker/table-maker-m-c process selections
-            if (value in tablemakerProcessAllParameters) and args.process:
+            if (value in specificDeps.keys()) and args.process:
                 if value in args.process:
                     
                     # processOnlyBCs have to always be true
@@ -549,15 +288,10 @@ for key, value in config.items():
                     config[key][value] = value2
                     logging.debug(" - [%s] %s : %s", key, value, value2)
                     
-                    # For find all process parameters for TableMaker/TableMakerMC in Orginal JSON
                     for s in config[key].keys():
-                        if s in tablemakerProcessAllParameters:
+                        if s in specificDeps.keys():
                             tableMakerProcessSearch.add(s)
                     
-                    # check args is contain Cov for transcation management --> add track prop task
-                    covSearch = [s for s in args.process if "Cov" in s]
-                    
-                    # check args is contain Cent for transcation management Centrality Filter
                     centSearch = [s for s in args.process if "Cent" in s]
                 
                 elif args.onlySelect == "true":
@@ -694,105 +428,10 @@ for key, value in config.items():
                 config[key][value] = args.itsMatching
                 logging.debug(" - [%s] %s : %s", key, value, args.itsMatching)
 
-# Centrality table delete for pp processes
-if (
-    args.process and len(centSearch) != 0 and (args.syst == "pp" or (args.syst is None and config["event-selection-task"]["syst"] == "pp"))
-    ):
-    # delete centrality-table configurations for data. If it"s MC don't delete from JSON
-    # Firstly try for Data then if not data it gives warning message for MC
-    isNoDeleteNeedForCent = False
-    logging.warning(
-        "JSON file does not include configs for centrality-table task, It's for DATA. Centrality will removed because you select pp collision system."
-        )
-    # del(config["centrality-table"])
-    
-    # check for is TableMaker includes task related to Centrality?
-    if args.process is not None:
-        processCentralityMatch = [s for s in args.process if "Cent" in s]
-        if len(processCentralityMatch) > 0:
-            logging.warning(
-                "Collision System pp can't be include related task about Centrality. They Will be removed in automation. Check your JSON configuration file for Tablemaker process function!!!"
-                )
-            for paramValueTableMaker in processCentralityMatch:
-                # Centrality process should be false
-                config[taskNameInConfig][paramValueTableMaker] = "false"
-                logging.warning("- [%s] %s will converted to false in json config file", taskNameInConfig, paramValueTableMaker,)
-    
-    else:
-        logging.warning("No process function provided so no need delete related to centrality-table dependency")
-    
-    for deletedParamTableMaker in config[taskNameInConfig]:
-        if "process" not in deletedParamTableMaker:
-            continue
-        elif config[taskNameInConfig].get(deletedParamTableMaker) == "true":
-            isProcessFuncLeftAfterCentDelete = True
-            leftProcessAfterDeleteCent.append(deletedParamTableMaker)
-
-# logging Message for Centrality
-if not isNoDeleteNeedForCent:
-    logging.info(
-        "After deleting the process functions related to the centrality table (for collision system pp), the remaining processes: %s",
-        leftProcessAfterDeleteCent,
-        )
-try:
-    if len(leftProcessAfterDeleteCent) > 1 or len(leftProcessAfterDeleteCent) == 0:
-        logging.info("Process will continue after Centrality filter")
-    else:
-        raise CentFilterError
-except CentFilterError as e:
-    logging.exception(e)
-    sys.exit()
-
-# AOD File Checker
-if args.aod is not None:
-    argProvidedAod = args.aod
-    textAodList = argProvidedAod.startswith("@")
-    endsWithRoot = argProvidedAod.endswith(".root")
-    endsWithTxt = argProvidedAod.endswith("txt") or argProvidedAod.endswith("text")
-    if textAodList and endsWithTxt:
-        argProvidedAod = argProvidedAod.replace("@", "")
-        logging.info("You provided AO2D list as text file : %s", argProvidedAod)
-        try:
-            open(argProvidedAod, "r")
-            logging.info("%s has valid File Format and Path, File Found", argProvidedAod)
-        
-        except FileNotFoundError:
-            logging.exception("%s AO2D file text list not found in path!!!", argProvidedAod)
-            sys.exit()
-    
-    elif endsWithRoot:
-        logging.info("You provided single AO2D root file : %s", argProvidedAod)
-        try:
-            open(argProvidedAod, "r")
-            logging.info("%s has valid File Format and Path, File Found", argProvidedAod)
-        
-        except FileNotFoundError:
-            logging.exception("%s AO2D single root file not found in path!!!", argProvidedAod)
-            sys.exit()
-    else:
-        try:
-            open(argProvidedAod, "r")
-            logging.info("%s has valid File Format and Path, File Found", argProvidedAod)
-        
-        except FileNotFoundError:
-            logging.exception("%s Wrong formatted File, check your file extension!", argProvidedAod)
-            sys.exit()
-
-#####################
-# Deps Transcations #
-#####################
-
-# In extended tracks, o2-analysis-trackextension is not a valid dep for run 3
-# More Information : https://aliceo2group.github.io/analysis-framework/docs/basics-usage/HelperTasks.html#track-propagation
-
-"""
-Some of the track parameters used in the track selection require additional calculation effort and are then stored in a table called TracksExtended
-which is produced by either the o2-analysis-trackextension task (Run 2) or o2-analysis-track-propagation (Run 3).
-The quantities contained in this table can also be directly used in the analysis.
-"""
-if args.add_track_prop:
-    barrelDeps.remove("o2-analysis-trackextension")
-    logging.info("o2-analysis-trackextension is not valid dep for run 3, It will deleted from your workflow.")
+# Transactions
+centTranscation(config, args.process, args.syst, centSearch)
+aodFileChecker(args.aod)
+trackPropTransaction(args.add_track_prop, barrelDeps)
 
 ###########################
 # End Interface Processes #
@@ -939,26 +578,4 @@ for key, value in configuredCommands.items():
 
 os.system(commandToRun)
 
-# Pycache remove after running in O2
-# getParrentDir = sys.path[-1]
-
-# trying to insert to false directory
-try:
-    parentPath = os.getcwd()
-    if os.path.exists(parentPath) and os.path.isfile(parentPath + "/pycacheRemover.py"):
-        logging.info("Inserting inside for pycache remove: %s", os.getcwd())
-        pycacheRemover = PycacheRemover()
-        pycacheRemover.__init__()
-        logging.info("pycaches removed succesfully")
-    
-    elif not os.path.exists(parentPath):
-        logging.error("OS Path is not valid for pycacheRemover. Fatal Error.")
-        sys.exit()
-    elif not os.path.isfile(parentPath + "/pycacheRemover.py"):
-        raise FileNotFoundError
-
-# Caching the exception
-except FileNotFoundError:
-    logging.exception("Something wrong with specified\
-          directory. Exception- %s", sys.exc_info(),)
-    sys.exit()
+runPycacheRemover()

@@ -28,13 +28,11 @@ import argparse
 
 from extramodules.actionHandler import NoAction
 from extramodules.actionHandler import ChoicesAction
-from extramodules.debugOptions import DebugOptions
-from extramodules.stringOperations import listToString, stringToList, multiConfigurableSet
-from extramodules.dqExceptions import (CfgInvalidFormatError, ForgettedArgsError, NotInAlienvError,)
+from extramodules.helperOptions import HelperOptions
+from extramodules.dqOperations import listToString, stringToList, multiConfigurableSet
+from extramodules.dqOperations import (CfgInvalidFormatError, ForgettedArgsError, NotInAlienvError, runPycacheRemover)
 
 from dqtasks.dqEfficiency import DQEfficiency
-
-from pycacheRemover import PycacheRemover
 """
 argcomplete - Bash tab completion for argparse
 Documentation https://kislyuk.github.io/argcomplete/
@@ -94,12 +92,12 @@ class RunDQEfficiency(object):
             self, parserRunDQEfficiency = argparse.ArgumentParser(
                 formatter_class = argparse.ArgumentDefaultsHelpFormatter,
                 description = "Example Usage: ./runDQEfficiency.py <yourConfig.json> --arg value "
-                ), dqEfficiency = DQEfficiency(), debugOptions = DebugOptions(),
+                ), dqEfficiency = DQEfficiency(), helperOptions = HelperOptions(),
         ):
         super(RunDQEfficiency, self).__init__()
         self.parserRunDQEfficiency = parserRunDQEfficiency
         self.dqEfficiency = dqEfficiency
-        self.debugOptions = debugOptions
+        self.helperOptions = helperOptions
         self.parserRunDQEfficiency.register("action", "none", NoAction)
         self.parserRunDQEfficiency.register("action", "store_choice", ChoicesAction)
     
@@ -124,23 +122,7 @@ class RunDQEfficiency(object):
             "--writer", help = "Argument for producing dileptonAOD.root. Set false for disable", action = "store", default = writerPath,
             type = str,
             )
-        
-        # automation params
-        groupAutomations = self.parserRunDQEfficiency.add_argument_group(title = "Automation Parameters")
-        groupAutomations.add_argument(
-            "--onlySelect", help = "If false JSON Overrider Interface If true JSON Additional Interface", action = "store",
-            default = "true", type = str.lower, choices = booleanSelections,
-            ).completer = ChoicesCompleter(booleanSelections)
-        groupAutomations.add_argument(
-            "--autoDummy", help = "Dummy automize parameter (don't configure it, true is highly recomended for automation)",
-            action = "store", default = "true", type = str.lower, choices = booleanSelections,
-            ).completer = ChoicesCompleter(booleanSelections)
-        
-        # helper lister commands
-        # groupAdditionalHelperCommands = self.parserRunDQEfficiency.add_argument_group(title="Additional Helper Command Options")
-        # groupAdditionalHelperCommands.add_argument("--cutLister", help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
-        # groupAdditionalHelperCommands.add_argument("--MCSignalsLister", help="List all of the MCSignals from MCSignalLibrary.h", action="store_true")
-    
+                    
     def parseArgs(self):
         """
         This function allows to save the obtained arguments to the parser_args() function
@@ -157,8 +139,8 @@ class RunDQEfficiency(object):
         This function allows to merge parser_args argument information from different classes
         """
         
-        self.debugOptions.parserDebugOptions = self.parserRunDQEfficiency
-        self.debugOptions.addArguments()
+        self.helperOptions.parserHelperOptions = self.parserRunDQEfficiency
+        self.helperOptions.addArguments()
         
         self.dqEfficiency.parserDQEfficiency = self.parserRunDQEfficiency
         self.dqEfficiency.addArguments()
@@ -604,26 +586,4 @@ for key, value in configuredCommands.items():
 
 os.system(commandToRun)
 
-# Pycache remove after running in O2
-# getParrentDir = sys.path[-1]
-
-# trying to insert to false directory
-try:
-    parentPath = os.getcwd()
-    if os.path.exists(parentPath) and os.path.isfile(parentPath + "/pycacheRemover.py"):
-        logging.info("Inserting inside for pycache remove: %s", os.getcwd())
-        pycacheRemover = PycacheRemover()
-        pycacheRemover.__init__()
-        logging.info("pycaches removed succesfully")
-    
-    elif not os.path.exists(parentPath):
-        logging.error("OS Path is not valid for pycacheRemover. Fatal Error.")
-        sys.exit()
-    elif not os.path.isfile(parentPath + "/pycacheRemover.py"):
-        raise FileNotFoundError
-
-# Caching the exception
-except FileNotFoundError:
-    logging.exception("Something wrong with specified\
-          directory. Exception- %s", sys.exc_info(),)
-    sys.exit()
+runPycacheRemover()

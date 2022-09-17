@@ -23,9 +23,24 @@ import os
 import re
 from urllib.request import Request, urlopen
 import ssl
+import argcomplete
 
 from argcomplete.completers import ChoicesCompleter
 from extramodules.choicesCompleterList import ChoicesCompleterList
+from extramodules.actionHandler import NoAction
+from extramodules.actionHandler import ChoicesAction
+from extramodules.helperOptions import HelperOptions
+from extramodules.converters import O2Converters
+
+from commondeps.centralityTable import CentralityTable
+from commondeps.eventSelection import EventSelectionTask
+from commondeps.multiplicityTable import MultiplicityTable
+from commondeps.pidTOFBase import TofEventTime
+from commondeps.pidTOFBeta import TofPidBeta
+from commondeps.pidTPCTOFFull import TpcTofPidFull
+from commondeps.trackPropagation import TrackPropagation
+from commondeps.trackselection import TrackSelectionTask
+from commondeps.dplAodReader import DplAodReader
 
 
 class AnalysisQvector(object):
@@ -37,9 +52,29 @@ class AnalysisQvector(object):
         object (parser_args() object): dqFlow.cxx Interface
     """
     
-    def __init__(self, parserAnalysisQvector = argparse.ArgumentParser(add_help = False)):
+    def __init__(
+        self, parserAnalysisQvector = argparse.ArgumentParser(
+            formatter_class = argparse.ArgumentDefaultsHelpFormatter,
+            description = "Example Usage: ./runDQFlow.py <yourConfig.json> --arg value "
+            ), eventSelection = EventSelectionTask(), centralityTable = CentralityTable(), multiplicityTable = MultiplicityTable(),
+        tofEventTime = TofEventTime(), tofPidBeta = TofPidBeta(), tpcTofPidFull = TpcTofPidFull(), trackPropagation = TrackPropagation(),
+        trackSelection = TrackSelectionTask(), helperOptions = HelperOptions(), o2Converters = O2Converters(), dplAodReader = DplAodReader()
+        ):
         super(AnalysisQvector, self).__init__()
         self.parserAnalysisQvector = parserAnalysisQvector
+        self.eventSelection = eventSelection
+        self.centralityTable = centralityTable
+        self.multiplicityTable = multiplicityTable
+        self.tofEventTime = tofEventTime
+        self.tofPidBeta = tofPidBeta
+        self.tpcTofPidFull = tpcTofPidFull
+        self.trackPropagation = trackPropagation
+        self.trackSelection = trackSelection
+        self.helperOptions = helperOptions
+        self.o2Converters = o2Converters
+        self.dplAodReader = dplAodReader
+        self.parserAnalysisQvector.register("action", "none", NoAction)
+        self.parserAnalysisQvector.register("action", "store_choice", ChoicesAction)
     
     def addArguments(self):
         """
@@ -143,5 +178,45 @@ class AnalysisQvector(object):
         Returns:
             Namespace: returns parse_args()
         """
-        
+        argcomplete.autocomplete(self.parserAnalysisQvector, always_complete_options = False)
         return self.parserAnalysisQvector.parse_args()
+    
+    def mergeArgs(self):
+        """
+        This function allows to merge parser_args argument information from different classes
+        """
+        
+        self.eventSelection.parserEventSelectionTask = self.parserAnalysisQvector
+        self.eventSelection.addArguments()
+        
+        self.centralityTable.parserCentralityTable = self.parserAnalysisQvector
+        self.centralityTable.addArguments()
+        
+        self.multiplicityTable.parserMultiplicityTable = self.parserAnalysisQvector
+        self.multiplicityTable.addArguments()
+        
+        self.tofEventTime.parserTofEventTime = self.parserAnalysisQvector
+        self.tofEventTime.addArguments()
+        
+        self.tofPidBeta.parserTofPidBeta = self.parserAnalysisQvector
+        self.tofPidBeta.addArguments()
+        
+        self.tpcTofPidFull.parserTpcTofPidFull = self.parserAnalysisQvector
+        self.tpcTofPidFull.addArguments()
+        
+        self.trackPropagation.parserTrackPropagation = self.parserAnalysisQvector
+        self.trackPropagation.addArguments()
+        
+        self.trackSelection.parserTrackSelectionTask = self.parserAnalysisQvector
+        self.trackSelection.addArguments()
+        
+        self.helperOptions.parserHelperOptions = self.parserAnalysisQvector
+        self.helperOptions.addArguments()
+        
+        self.o2Converters.parserO2Converters = self.parserAnalysisQvector
+        self.o2Converters.addArguments()
+        
+        self.dplAodReader.parserDplAodReader = self.parserAnalysisQvector
+        self.dplAodReader.addArguments()
+        
+        self.addArguments()

@@ -24,8 +24,26 @@ import re
 from urllib.request import Request, urlopen
 import ssl
 
+from extramodules.actionHandler import NoAction
+from extramodules.actionHandler import ChoicesAction
+from extramodules.helperOptions import HelperOptions
+from extramodules.converters import O2Converters
+
+import argcomplete
 from argcomplete.completers import ChoicesCompleter
 from extramodules.choicesCompleterList import ChoicesCompleterList
+
+from commondeps.centralityTable import CentralityTable
+from commondeps.eventSelection import EventSelectionTask
+from commondeps.multiplicityTable import MultiplicityTable
+from commondeps.pidTOFBase import TofEventTime
+from commondeps.pidTOFBeta import TofPidBeta
+from commondeps.pidTPCTOFFull import TpcTofPidFull
+from commondeps.trackPropagation import TrackPropagation
+from commondeps.trackselection import TrackSelectionTask
+from commondeps.dplAodReader import DplAodReader
+
+from dqtasks.v0selector import V0selector
 
 # Special configurations for filterPP are combined to avoid conflicts in the tableMaker interface
 
@@ -40,9 +58,31 @@ class TableMaker(object):
         object (parser_args() object): tableMaker.cxx Interface
     """
     
-    def __init__(self, parserTableMaker = argparse.ArgumentParser(add_help = False)):
+    def __init__(
+        self, parserTableMaker = argparse.ArgumentParser(
+            formatter_class = argparse.ArgumentDefaultsHelpFormatter,
+            description = "Example Usage: ./runTableMaker.py <yourConfig.json> --arg value "
+            ), eventSelection = EventSelectionTask(), centralityTable = CentralityTable(), multiplicityTable = MultiplicityTable(),
+        tofEventTime = TofEventTime(), tofPidBeta = TofPidBeta(), tpcTofPidFull = TpcTofPidFull(), trackPropagation = TrackPropagation(),
+        trackSelection = TrackSelectionTask(), v0selector = V0selector(), helperOptions = HelperOptions(), o2Converters = O2Converters(),
+        dplAodReader = DplAodReader()
+        ):
         super(TableMaker, self).__init__()
         self.parserTableMaker = parserTableMaker
+        self.eventSelection = eventSelection
+        self.centralityTable = centralityTable
+        self.multiplicityTable = multiplicityTable
+        self.tofEventTime = tofEventTime
+        self.tofPidBeta = tofPidBeta
+        self.tpcTofPidFull = tpcTofPidFull
+        self.trackPropagation = trackPropagation
+        self.trackSelection = trackSelection
+        self.v0selector = v0selector
+        self.helperOptions = helperOptions
+        self.o2Converters = o2Converters
+        self.dplAodReader = dplAodReader
+        self.parserTableMaker.register("action", "none", NoAction)
+        self.parserTableMaker.register("action", "store_choice", ChoicesAction)
     
     def addArguments(self):
         """
@@ -79,6 +119,8 @@ class TableMaker(object):
         allSels = [] # track/muon cut::n
         oneColon = ":" # Namespace reference
         doubleColon = "::" # Namespace reference
+        
+        booleanSelections = ["true", "false"]
         
         ################################
         # Download DQ Libs From Github #
@@ -152,7 +194,6 @@ class TableMaker(object):
         
         # Merge All possible styles for Sels (cfgBarrelSels and cfgMuonSels) in FilterPP Task
         allSels = selsWithOneColon + nAddedallAnalysisCutsList
-        booleanSelections = ["true", "false"]
         
         # Interface
         
@@ -249,6 +290,10 @@ class TableMaker(object):
         groupQASelections.add_argument(
             "--cfgWithQA", help = "If true, fill QA histograms", action = "store", type = str.lower, choices = booleanSelections,
             ).completer = ChoicesCompleter(booleanSelections)
+        
+        # core part
+        groupCoreSelections = self.parserTableMaker.add_argument_group(title = "Core configurations that must be configured")
+        groupCoreSelections.add_argument("-runData", help = "Run over Data", action = "store_true", default = True)
     
     def parseArgs(self):
         """
@@ -258,4 +303,59 @@ class TableMaker(object):
             Namespace: returns parse_args()
         """
         
+        argcomplete.autocomplete(self.parserTableMaker, always_complete_options = False)
         return self.parserTableMaker.parse_args()
+    
+    def mergeArgs(self):
+        """
+        This function allows to merge parser_args argument information from different classes
+        """
+        
+        self.eventSelection.parserEventSelectionTask = self.parserTableMaker
+        self.eventSelection.addArguments()
+        
+        self.centralityTable.parserCentralityTable = self.parserTableMaker
+        self.centralityTable.addArguments()
+        
+        self.multiplicityTable.parserMultiplicityTable = self.parserTableMaker
+        self.multiplicityTable.addArguments()
+        
+        self.tofEventTime.parserTofEventTime = self.parserTableMaker
+        self.tofEventTime.addArguments()
+        
+        self.tofPidBeta.parserTofPidBeta = self.parserTableMaker
+        self.tofPidBeta.addArguments()
+        
+        self.tpcTofPidFull.parserTpcTofPidFull = self.parserTableMaker
+        self.tpcTofPidFull.addArguments()
+        
+        self.trackPropagation.parserTrackPropagation = self.parserTableMaker
+        self.trackPropagation.addArguments()
+        
+        self.trackSelection.parserTrackSelectionTask = self.parserTableMaker
+        self.trackSelection.addArguments()
+        
+        self.v0selector.parserV0selector = self.parserTableMaker
+        self.v0selector.addArguments()
+        
+        self.helperOptions.parserHelperOptions = self.parserTableMaker
+        self.helperOptions.addArguments()
+        
+        self.o2Converters.parserO2Converters = self.parserTableMaker
+        self.o2Converters.addArguments()
+        
+        self.dplAodReader.parserDplAodReader = self.parserTableMaker
+        self.dplAodReader.addArguments()
+        
+        self.addArguments()
+    
+    # This function not work should be integrated instead of mergeArgs
+    
+    """
+    def mergeMultiArgs(self, *objects):
+        parser = self.parserTableMaker
+        for object in objects:
+            object.parser = parser
+            object.addArguments()
+        self.addArguments()
+    """
