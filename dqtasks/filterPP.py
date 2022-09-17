@@ -25,7 +25,22 @@ from urllib.request import Request, urlopen
 import ssl
 
 from argcomplete.completers import ChoicesCompleter
+import argcomplete
 from extramodules.choicesCompleterList import ChoicesCompleterList
+
+from extramodules.actionHandler import NoAction
+from extramodules.actionHandler import ChoicesAction
+from extramodules.helperOptions import HelperOptions
+from extramodules.converters import O2Converters
+
+from commondeps.eventSelection import EventSelectionTask
+from commondeps.multiplicityTable import MultiplicityTable
+from commondeps.pidTOFBase import TofEventTime
+from commondeps.pidTOFBeta import TofPidBeta
+from commondeps.pidTPCTOFFull import TpcTofPidFull
+from commondeps.trackPropagation import TrackPropagation
+from commondeps.trackselection import TrackSelectionTask
+from commondeps.dplAodReader import DplAodReader
 
 
 class DQFilterPPTask(object):
@@ -37,9 +52,28 @@ class DQFilterPPTask(object):
         object (parser_args() object): filterPP.cxx Interface
     """
     
-    def __init__(self, parserDQFilterPPTask = argparse.ArgumentParser(add_help = False)):
+    def __init__(
+        self, parserDQFilterPPTask = argparse.ArgumentParser(
+            formatter_class = argparse.ArgumentDefaultsHelpFormatter,
+            description = "Example Usage: ./runFilterPP.py <yourConfig.json> --arg value",
+            ), eventSelection = EventSelectionTask(), multiplicityTable = MultiplicityTable(), tofEventTime = TofEventTime(),
+        tofPidBeta = TofPidBeta(), tpcTofPidFull = TpcTofPidFull(), trackPropagation = TrackPropagation(),
+        trackSelection = TrackSelectionTask(), helperOptions = HelperOptions(), o2Converters = O2Converters(), dplAodReader = DplAodReader()
+        ):
         super(DQFilterPPTask, self).__init__()
         self.parserDQFilterPPTask = parserDQFilterPPTask
+        self.eventSelection = eventSelection
+        self.multiplicityTable = multiplicityTable
+        self.tofEventTime = tofEventTime
+        self.tofPidBeta = tofPidBeta
+        self.tpcTofPidFull = tpcTofPidFull
+        self.trackPropagation = trackPropagation
+        self.trackSelection = trackSelection
+        self.helperOptions = helperOptions
+        self.o2Converters = o2Converters
+        self.dplAodReader = dplAodReader
+        self.parserDQFilterPPTask.register("action", "none", NoAction)
+        self.parserDQFilterPPTask.register("action", "store_choice", ChoicesAction)
     
     def addArguments(self):
         """
@@ -207,5 +241,42 @@ class DQFilterPPTask(object):
         Returns:
             Namespace: returns parse_args()
         """
-        
+        argcomplete.autocomplete(self.parserDQFilterPPTask, always_complete_options = False)
         return self.parserDQFilterPPTask.parse_args()
+    
+    def mergeArgs(self):
+        """
+        This function allows to merge parser_args argument information from different classes
+        """
+        
+        self.eventSelection.parserEventSelectionTask = self.parserDQFilterPPTask
+        self.eventSelection.addArguments()
+        
+        self.multiplicityTable.parserMultiplicityTable = self.parserDQFilterPPTask
+        self.multiplicityTable.addArguments()
+        
+        self.tofEventTime.parserTofEventTime = self.parserDQFilterPPTask
+        self.tofEventTime.addArguments()
+        
+        self.tofPidBeta.parserTofPidBeta = self.parserDQFilterPPTask
+        self.tofPidBeta.addArguments()
+        
+        self.tpcTofPidFull.parserTpcTofPidFull = self.parserDQFilterPPTask
+        self.tpcTofPidFull.addArguments()
+        
+        self.trackPropagation.parserTrackPropagation = self.parserDQFilterPPTask
+        self.trackPropagation.addArguments()
+        
+        self.trackSelection.parserTrackSelectionTask = self.parserDQFilterPPTask
+        self.trackSelection.addArguments()
+        
+        self.helperOptions.parserHelperOptions = self.parserDQFilterPPTask
+        self.helperOptions.addArguments()
+        
+        self.o2Converters.parserO2Converters = self.parserDQFilterPPTask
+        self.o2Converters.addArguments()
+        
+        self.dplAodReader.parserDplAodReader = self.parserDQFilterPPTask
+        self.dplAodReader.addArguments()
+        
+        self.addArguments()
