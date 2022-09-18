@@ -22,35 +22,20 @@ import json
 import sys
 import logging
 import logging.config
-from logging import handlers
 import os
-import argparse
+from extramodules.configGetter import configGetter
+from extramodules.debugSettings import debugSettings
 
-from extramodules.actionHandler import NoAction
-from extramodules.actionHandler import ChoicesAction
-from extramodules.helperOptions import HelperOptions
-from extramodules.dqOperations import listToString, stringToList, multiConfigurableSet
-from extramodules.dqOperations import (CfgInvalidFormatError, ForgettedArgsError, NotInAlienvError, runPycacheRemover)
+from extramodules.monitoring import dispArgs
+from extramodules.dqTranscations import aodFileChecker, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker
+from extramodules.configSetter import multiConfigurableSet
+from extramodules.pycacheRemover import runPycacheRemover
 
 from dqtasks.tableReader import TableReader
-"""
-argcomplete - Bash tab completion for argparse
-Documentation https://kislyuk.github.io/argcomplete/
-Instalation Steps
-pip install argcomplete
-sudo activate-global-python-argcomplete
-Only Works On Local not in O2
-Activate libraries in below and activate #argcomplete.autocomplete(parser) line
-"""
-import argcomplete
-from argcomplete.completers import ChoicesCompleter
 
 ###################################
 # Interface Predefined Selections #
 ###################################
-
-readerPath = "configs/readerConfiguration_reducedEvent.json"
-writerPath = "configs/writerConfiguration_dileptons.json"
 
 isAnalysisEventSelected = True
 isAnalysisTrackSelected = True
@@ -60,8 +45,6 @@ isAnalysisDileptonHadronSelected = True
 
 booleanSelections = ["true", "false"]
 
-threeSelectedList = []
-# control list for type control
 # List for Selected skimmed process functions for dummy automizer
 skimmedListEventSelection = []
 skimmedListTrackSelection = []
@@ -70,211 +53,40 @@ skimmedListEventMixing = []
 skimmedListSEP = []
 skimmedListDileptonHadron = []
 
-# Get system variables in alienv.
-O2DPG_ROOT = os.environ.get("O2DPG_ROOT")
-QUALITYCONTROL_ROOT = os.environ.get("QUALITYCONTROL_ROOT")
-O2_ROOT = os.environ.get("O2_ROOT")
-O2PHYSICS_ROOT = os.environ.get("O2PHYSICS_ROOT")
-
 #################
 # Init Workflow #
 #################
 
-
-class RunTableReader(object):
-    
-    """
-    This class is for managing the workflow by using the interface arguments from
-    all other Common dependencies and the tableReader Task's own arguments in a combined structure.
-
-    Args:
-      object (parser_args() object): runTableReader.py workflow
-    """
-    
-    def __init__(
-            self, parserRunTableReader = argparse.ArgumentParser(
-                formatter_class = argparse.ArgumentDefaultsHelpFormatter,
-                description = "Example Usage: ./runTableReader.py <yourConfig.json> --arg value",
-                ), tableReader = TableReader(), helperOptions = HelperOptions(),
-        ):
-        super(RunTableReader, self).__init__()
-        self.parserRunTableReader = parserRunTableReader
-        self.tableReader = tableReader
-        self.helperOptions = helperOptions
-        self.parserRunTableReader.register("action", "none", NoAction)
-        self.parserRunTableReader.register("action", "store_choice", ChoicesAction)
-    
-    def addArguments(self):
-        """
-        This function allows to add arguments for parser_args() function
-        """
-        
-        # Core Part
-        groupCoreSelections = self.parserRunTableReader.add_argument_group(title = "Core configurations that must be configured")
-        groupCoreSelections.add_argument("cfgFileName", metavar = "Config.json", default = "config.json", help = "config JSON file name",)
-        
-        # aod
-        groupDPLReader = self.parserRunTableReader.add_argument_group(title = "Data processor options: internal-dpl-aod-reader")
-        groupDPLReader.add_argument("--aod", help = "Add your AOD File with path", action = "store", type = str)
-        groupDPLReader.add_argument(
-            "--reader",
-            help = "Reader config JSON with path. For Standart Analysis use as default, for dilepton analysis change to dilepton JSON config file",
-            action = "store", default = readerPath, type = str,
-            )
-        groupDPLReader.add_argument(
-            "--writer", help = "Argument for producing dileptonAOD.root. Set false for disable", action = "store", default = writerPath,
-            type = str,
-            )
-        
-        
-        # helper lister commands
-        # groupAdditionalHelperCommands = self.parserRunTableReader.add_argument_group(title="Additional Helper Command Options")
-        # groupAdditionalHelperCommands.add_argument("--cutLister", help="List all of the analysis cuts from CutsLibrary.h", action="store_true")
-        # groupAdditionalHelperCommands.add_argument("--mixingLister", help="List all of the event mixing selections from MixingLibrary.h", action="store_true")
-    
-    def parseArgs(self):
-        """
-        This function allows to save the obtained arguments to the parser_args() function
-
-        Returns:
-            Namespace: returns parse_args()
-        """
-        
-        argcomplete.autocomplete(self.parserRunTableReader, always_complete_options = False)
-        return self.parserRunTableReader.parse_args()
-    
-    def mergeArgs(self):
-        """
-        This function allows to merge parser_args argument information from different classes
-        """
-        
-        self.helperOptions.parserHelperOptions = self.parserRunTableReader
-        self.helperOptions.addArguments()
-        
-        self.tableReader.parserTableReader = self.parserRunTableReader
-        self.tableReader.addArguments()
-        
-        self.addArguments()
-
-
 # init args manually
-initArgs = RunTableReader()
+initArgs = TableReader()
 initArgs.mergeArgs()
 initArgs.parseArgs()
 
 args = initArgs.parseArgs()
 configuredCommands = vars(args) # for get args
 
-# Debug Settings
-if args.debug and (not args.logFile):
-    DEBUG_SELECTION = args.debug
-    numeric_level = getattr(logging, DEBUG_SELECTION.upper(), None)
-    if not isinstance(numeric_level, int):
-        raise ValueError("Invalid log level: %s" % DEBUG_SELECTION)
-    logging.basicConfig(format = "[%(levelname)s] %(message)s", level = DEBUG_SELECTION)
+# Debug settings
+debugSettings(args.debug, args.logFile, fileName = "tableReader.log")
 
-if args.logFile and args.debug:
-    log = logging.getLogger("")
-    level = logging.getLevelName(args.debug)
-    log.setLevel(level)
-    format = logging.Formatter("%(asctime)s - [%(levelname)s] %(message)s")
-    
-    ch = logging.StreamHandler(sys.stdout)
-    ch.setFormatter(format)
-    log.addHandler(ch)
-    
-    loggerFile = "tableReader.log"
-    if os.path.isfile(loggerFile):
-        os.remove(loggerFile)
-    
-    fh = handlers.RotatingFileHandler(loggerFile, maxBytes = (1048576 * 5), backupCount = 7, mode = "w")
-    fh.setFormatter(format)
-    log.addHandler(fh)
-
-# Transcation management for forgettining assign a value to parameters
-forgetParams = []
-for key, value in configuredCommands.items():
-    if value is not None:
-        if (isinstance(value, str) or isinstance(value, list)) and len(value) == 0:
-            forgetParams.append(key)
-try:
-    if len(forgetParams) > 0:
-        raise ForgettedArgsError(forgetParams)
-except ForgettedArgsError as e:
-    logging.exception(e)
-    sys.exit()
+# Transcation management
+forgettedArgsChecker(configuredCommands)
 
 # Get Some cfg values provided from --param
-for keyCfg, valueCfg in configuredCommands.items():
-    if valueCfg is not None: # Skipped None types, because can"t iterate in None type
-        if keyCfg == "analysis":
-            if isinstance(valueCfg, str):
-                valueCfg = stringToList(valueCfg)
-            analysisCfg = valueCfg
-        if keyCfg == "mixing":
-            if isinstance(valueCfg, str):
-                valueCfg = stringToList(valueCfg)
-            mixingCfg = valueCfg
-        if keyCfg == "process":
-            if isinstance(valueCfg, str):
-                valueCfg = stringToList(valueCfg)
-            processCfg = valueCfg
-
-# Make some checks on provided arguments
-# if len(sys.argv) < 2:
-# logging.error("Invalid syntax! The command line should look like this:")
-# logging.info("  ./runTableReader.py <yourConfig.json> --param value ...")
-# sys.exit()
+analysisCfg = configGetter(configuredCommands, "analysis")
+mixingCfg = configGetter(configuredCommands, "mixing")
+processCfg = configGetter(configuredCommands, "process")
 
 # Load the configuration file provided as the first parameter
-cfgControl = sys.argv[1] == args.cfgFileName
-isConfigJson = sys.argv[1].endswith(".json")
 config = {}
-
-try:
-    if cfgControl:
-        if not isConfigJson:
-            raise CfgInvalidFormatError(sys.argv[1])
-        else:
-            logging.info("%s is valid json config file", args.cfgFileName)
-
-except CfgInvalidFormatError as e:
-    logging.exception(e)
-    sys.exit()
-
-with open(sys.argv[1]) as configFile:
+with open(args.cfgFileName) as configFile:
     config = json.load(configFile)
-"""
-try:
-    if cfgControl:
-        with open(args.cfgFileName) as configFile:
-            config = json.load(configFile)
-    else:
-        logging.error("Invalid syntax! After the script you must define your json configuration file!!! The command line should look like this:")
-        logging.info("  ./runTableReader.py <yourConfig.json> <-runData|-runMC> --param value ...")
-        sys.exit()
 
-except FileNotFoundError:
-    isConfigJson = sys.argv[1].endswith(".json")
-    if not isConfigJson:
-            logging.error("Invalid syntax! After the script you must define your json configuration file!!! The command line should look like this:")
-            logging.info(" ./runTableReader.py <yourConfig.json> --param value ...")
-            sys.exit()
-    logging.error("Your JSON Config File found in path!!!")
-    sys.exit()
-"""
+jsonTypeChecker(args.cfgFileName)
 
 taskNameInCommandLine = "o2-analysis-dq-table-reader"
+taskNameInConfig = "analysis-event-selection"
 
-# Check alienv
-try:
-    if O2PHYSICS_ROOT is None:
-        raise NotInAlienvError
-    else:
-        logging.info("You are in %s alienv", O2PHYSICS_ROOT)
-except NotInAlienvError as e:
-    logging.exception(e)
-    sys.exit()
+mainTaskChecker(config, taskNameInConfig)
 
 #############################
 # Start Interface Processes #
@@ -757,40 +569,7 @@ for key, value in config.items():
                     else:
                         config[key]["processDummy"] = "true"
 
-# AOD File and Reader-Writer Checker
-if args.aod is not None:
-    argProvidedAod = args.aod
-    textAodList = argProvidedAod.startswith("@")
-    endsWithRoot = argProvidedAod.endswith(".root")
-    endsWithTxt = argProvidedAod.endswith("txt") or argProvidedAod.endswith("text")
-    if textAodList and endsWithTxt:
-        argProvidedAod = argProvidedAod.replace("@", "")
-        logging.info("You provided AO2D list as text file : %s", argProvidedAod)
-        try:
-            open(argProvidedAod, "r")
-            logging.info("%s has valid File Format and Path, File Found", argProvidedAod)
-        
-        except FileNotFoundError:
-            logging.exception("%s AO2D file text list not found in path!!!", argProvidedAod)
-            sys.exit()
-    
-    elif endsWithRoot:
-        logging.info("You provided single AO2D root file : %s", argProvidedAod)
-        try:
-            open(argProvidedAod, "r")
-            logging.info("%s has valid File Format and Path, File Found", argProvidedAod)
-        
-        except FileNotFoundError:
-            logging.exception("%s AO2D single root file not found in path!!!", argProvidedAod)
-            sys.exit()
-    else:
-        try:
-            open(argProvidedAod, "r")
-            logging.info("%s has valid File Format and Path, File Found", argProvidedAod)
-        
-        except FileNotFoundError:
-            logging.exception("%s Wrong formatted File, check your file extension!", argProvidedAod)
-            sys.exit()
+aodFileChecker(args.aod)
 
 if args.reader is not None:
     if not os.path.isfile(args.reader):
@@ -822,13 +601,7 @@ logging.info(commandToRun)
 print("====================================================================================================================")
 
 # Listing Added Commands
-logging.info("Args provided configurations List")
-print("====================================================================================================================")
-for key, value in configuredCommands.items():
-    if value is not None:
-        if isinstance(value, list):
-            listToString(value)
-        logging.info("--%s : %s ", key, value)
+dispArgs(configuredCommands)
 
 os.system(commandToRun)
 

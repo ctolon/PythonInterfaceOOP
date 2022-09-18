@@ -19,17 +19,19 @@
 # Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/TableProducer/tableMaker.cxx
 
 import json
-import sys
 import logging
 import logging.config
-from logging import handlers
 import os
 
-from extramodules.dqOperations import listToString, multiConfigurableSet
-from extramodules.dqOperations import (
-    aodFileChecker, centTranscation, filterSelsTranscation, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, trackPropTransaction,
-    runPycacheRemover
-    )
+# sys.path.append("/extramodules/sub")
+
+# from extramodules.getTTrees import getTTrees # activate when we have no performance issue
+from extramodules.debugSettings import debugSettings
+from extramodules.monitoring import dispArgs
+from extramodules.descriptor import inputDescriptors, outputDescriptors
+from extramodules.dqTranscations import aodFileChecker, centTranscation, forgettedArgsChecker, jsonTypeChecker, filterSelsTranscation, mainTaskChecker, trackPropTransaction
+from extramodules.configSetter import multiConfigurableSet
+from extramodules.pycacheRemover import runPycacheRemover
 
 from dqtasks.tableMaker import TableMaker
 
@@ -47,6 +49,8 @@ ft0Parameters = ["processFT0", "processNoFT0", "processOnlyFT0", "processRun2"]
 pidParameters = ["pid-el", "pid-mu", "pid-pi", "pid-ka", "pid-pr", "pid-de", "pid-tr", "pid-he", "pid-al"]
 
 booleanSelections = ["true", "false"]
+
+ttreeList = []
 
 # Predefined Search Lists
 fullSearch = []
@@ -72,7 +76,7 @@ specificDeps = {
     "processFullWithCent": ["o2-analysis-centrality-table"],
     "processBarrelOnly": [],
     "processBarrelOnlyWithCov": [],
-    "processBarrelOnlyWithV0Bits": ["o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices"],
+    "processBarrelOnlyWithV0Bits": ["o2-analysis-dq-v0-selector"],
     "processBarrelOnlyWithEventFilter": ["o2-analysis-dq-filter-pp"],
     "processBarrelOnlyWithQvector": ["o2-analysis-centrality-table", "o2-analysis-dq-flow"],
     "processBarrelOnlyWithCent": ["o2-analysis-centrality-table"],
@@ -188,30 +192,7 @@ args = initArgs.parseArgs()
 configuredCommands = vars(args) # for get args
 
 # Debug Settings
-if args.debug and (not args.logFile):
-    DEBUG_SELECTION = args.debug
-    numeric_level = getattr(logging, DEBUG_SELECTION.upper(), None)
-    if not isinstance(numeric_level, int):
-        raise ValueError("Invalid log level: %s" % DEBUG_SELECTION)
-    logging.basicConfig(format = "[%(levelname)s] %(message)s", level = DEBUG_SELECTION)
-
-if args.logFile and args.debug:
-    log = logging.getLogger("")
-    level = logging.getLevelName(args.debug)
-    log.setLevel(level)
-    format = logging.Formatter("%(asctime)s - [%(levelname)s] %(message)s")
-    
-    ch = logging.StreamHandler(sys.stdout)
-    ch.setFormatter(format)
-    log.addHandler(ch)
-    
-    loggerFile = "tableMaker.log"
-    if os.path.isfile(loggerFile):
-        os.remove(loggerFile)
-    
-    fh = handlers.RotatingFileHandler(loggerFile, maxBytes = (1048576 * 5), backupCount = 7, mode = "w")
-    fh.setFormatter(format)
-    log.addHandler(fh)
+debugSettings(args.debug, args.logFile, fileName = "tableMaker.log")
 
 # Transcation management
 forgettedArgsChecker(configuredCommands)
@@ -535,6 +516,16 @@ centTranscation(config, args.process, args.syst, centSearch)
 filterSelsTranscation(args.cfgBarrelSels, args.cfgMuonSels, args.cfgBarrelTrackCuts, args.cfgMuonsCuts, configuredCommands)
 aodFileChecker(args.aod)
 trackPropTransaction(args.add_track_prop, barrelDeps)
+"""
+# Converter Management
+if args.aod is not None:
+    ttreeList = getTTrees(args.aod)
+else:
+    ttreeList = config["internal-dpl-aod-reader"]["aod-file"]
+
+converterManager(ttreeList, commonDeps)
+trackPropChecker(commonDeps, barrelDeps)
+"""
 
 ###########################
 # End Interface Processes #
@@ -597,42 +588,12 @@ for processFunc in specificDeps.keys():
             logging.info("%s", table)
             tablesToProduce[table] = 1
 
-# Generate the aod-writer output descriptor json file
-writerConfig = {}
-writerConfig["OutputDirector"] = {
-    "debugmode": True,
-    "resfile": "reducedAod",
-    "resfilemode": "RECREATE",
-    "ntfmerge": 1,
-    "OutputDescriptors": [],
-    }
-
-# Generate the aod-reader output descriptor json file
-readerConfig = {}
-readerConfig["InputDirector"] = {
-    "debugmode": True,
-    "InputDescriptors": []
-    }
-
-iTable = 0
-for table in tablesToProduce.keys():
-    writerConfig["OutputDirector"]["OutputDescriptors"].insert(iTable, tables[table])
-    readerConfig["InputDirector"]["InputDescriptors"].insert(iTable, tables[table])
-    iTable += 1
-
-writerConfigFileName = "aodWriterTempConfig.json"
-with open(writerConfigFileName, "w") as writerConfigFile:
-    json.dump(writerConfig, writerConfigFile, indent = 2)
-
 readerConfigFileName = "aodReaderTempConfig.json"
-with open(readerConfigFileName, "w") as readerConfigFile:
-    json.dump(readerConfig, readerConfigFile, indent = 2)
+writerConfigFileName = "aodWriterTempConfig.json"
 
-logging.info("aodWriterTempConfig==========")
-print(writerConfig)
-
-logging.info("aodReaderTempConfig==========")
-print(readerConfig)
+# Generate the aod-writer output descriptor json file
+outputDescriptors(tablesToProduce, tables)
+inputDescriptors(tablesToProduce, tables)
 
 commandToRun = (
     taskNameInCommandLine + " --configuration json://" + updatedConfigFileName +
@@ -671,13 +632,7 @@ logging.info(tablesToProduce.keys())
 print("====================================================================================================================")
 
 # Listing Added Commands
-logging.info("Args provided configurations List")
-print("====================================================================================================================")
-for key, value in configuredCommands.items():
-    if value is not None:
-        if isinstance(value, list):
-            listToString(value)
-        logging.info("--%s : %s ", key, value)
+dispArgs(configuredCommands)
 
 os.system(commandToRun)
 
