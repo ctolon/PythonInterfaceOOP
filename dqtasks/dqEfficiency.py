@@ -24,8 +24,14 @@ import re
 from urllib.request import Request, urlopen
 import ssl
 
+import argcomplete
 from argcomplete.completers import ChoicesCompleter
+from commondeps.dplAodReader import DplAodReader
 from extramodules.choicesCompleterList import ChoicesCompleterList
+
+from extramodules.actionHandler import NoAction
+from extramodules.actionHandler import ChoicesAction
+from extramodules.helperOptions import HelperOptions
 
 
 class DQEfficiency(object):
@@ -37,9 +43,18 @@ class DQEfficiency(object):
         object (parser_args object): dqEfficiency.cxx Interface
     """
     
-    def __init__(self, parserDQEfficiency = argparse.ArgumentParser(add_help = False)):
+    def __init__(
+        self, parserDQEfficiency = argparse.ArgumentParser(
+            formatter_class = argparse.ArgumentDefaultsHelpFormatter,
+            description = "Example Usage: ./runDQEfficiency.py <yourConfig.json> --arg value "
+            ), helperOptions = HelperOptions(), dplAodReader = DplAodReader()
+        ):
         super(DQEfficiency, self).__init__()
         self.parserDQEfficiency = parserDQEfficiency
+        self.dplAodReader = dplAodReader
+        self.helperOptions = helperOptions
+        self.parserDQEfficiency.register("action", "none", NoAction)
+        self.parserDQEfficiency.register("action", "store_choice", ChoicesAction)
     
     def addArguments(self):
         """
@@ -47,6 +62,10 @@ class DQEfficiency(object):
         """
         
         # Predefined Selections
+        
+        readerPath = "configs/readerConfiguration_reducedEventMC.json"
+        writerPath = "configs/writerConfiguration_dileptonMC.json"
+        
         analysisSelections = {
             "eventSelection": "Run event selection on DQ skimmed events",
             "muonSelection": "Run muon selection on DQ skimmed muons",
@@ -227,6 +246,20 @@ class DQEfficiency(object):
             "--cfgBarrelDileptonMCGenSignals", help = "Space separated list of MC signals (generated)", nargs = "*", action = "store",
             type = str, metavar = "CFGBARRELDILEPTONMCRECSIGNALS", choices = allMCSignals,
             ).completer = ChoicesCompleterList(allMCSignals)
+        
+        # Aod Writer - Reader configs
+        groupDPLReader = self.parserDQEfficiency.add_argument_group(
+            title = "Data processor options: internal-dpl-aod-reader, internal-dpl-aod-writer"
+            )
+        groupDPLReader.add_argument(
+            "--reader",
+            help = "Reader config JSON with path. For Standart Analysis use as default, for dilepton analysis change to dilepton JSON config file",
+            action = "store", default = readerPath, type = str
+            )
+        groupDPLReader.add_argument(
+            "--writer", help = "Argument for producing dileptonAOD.root. Set false for disable", action = "store", default = writerPath,
+            type = str
+            )
     
     def parseArgs(self):
         """
@@ -236,4 +269,18 @@ class DQEfficiency(object):
             Namespace: returns parse_args()
         """
         
+        argcomplete.autocomplete(self.parserDQEfficiency, always_complete_options = False)
         return self.parserDQEfficiency.parse_args()
+    
+    def mergeArgs(self):
+        """
+        This function allows to merge parser_args argument information from different classes
+        """
+        
+        self.helperOptions.parserHelperOptions = self.parserDQEfficiency
+        self.helperOptions.addArguments()
+        
+        self.dplAodReader.parserDplAodReader = self.parserDQEfficiency
+        self.dplAodReader.addArguments()
+        
+        self.addArguments()

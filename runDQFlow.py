@@ -24,11 +24,12 @@ import logging
 import logging.config
 from logging import handlers
 import os
+from extramodules.debugSettings import debugSettings
 
-from extramodules.dqOperations import listToString, multiConfigurableSet
-from extramodules.dqOperations import (
-    runPycacheRemover, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, aodFileChecker, trackPropTransaction
-    )
+from extramodules.monitoring import dispArgs
+from extramodules.dqTranscations import aodFileChecker, forgettedArgsChecker, jsonTypeChecker, filterSelsTranscation, mainTaskChecker, trackPropChecker, trackPropTransaction
+from extramodules.configSetter import multiConfigurableSet
+from extramodules.pycacheRemover import runPycacheRemover
 
 from dqtasks.dqFlow import AnalysisQvector
 """
@@ -82,30 +83,7 @@ args = initArgs.parseArgs()
 configuredCommands = vars(args) # for get args
 
 # Debug Settings
-if args.debug and (not args.logFile):
-    DEBUG_SELECTION = args.debug
-    numeric_level = getattr(logging, DEBUG_SELECTION.upper(), None)
-    if not isinstance(numeric_level, int):
-        raise ValueError("Invalid log level: %s" % DEBUG_SELECTION)
-    logging.basicConfig(format = "[%(levelname)s] %(message)s", level = DEBUG_SELECTION)
-
-if args.logFile and args.debug:
-    log = logging.getLogger("")
-    level = logging.getLevelName(args.debug)
-    log.setLevel(level)
-    format = logging.Formatter("%(asctime)s - [%(levelname)s] %(message)s")
-    
-    ch = logging.StreamHandler(sys.stdout)
-    ch.setFormatter(format)
-    log.addHandler(ch)
-    
-    loggerFile = "dqFlow.log"
-    if os.path.isfile(loggerFile):
-        os.remove(loggerFile)
-    
-    fh = handlers.RotatingFileHandler(loggerFile, maxBytes = (1048576 * 5), backupCount = 7, mode = "w")
-    fh.setFormatter(format)
-    log.addHandler(fh)
+debugSettings(args.debug, args.logFile, fileName = "dqFlow.log")
 
 forgettedArgsChecker(configuredCommands)
 
@@ -318,13 +296,7 @@ logging.info(commandToRun)
 print("====================================================================================================================")
 
 # Listing Added Commands
-logging.info("Args provided configurations List")
-print("====================================================================================================================")
-for key, value in configuredCommands.items():
-    if value is not None:
-        if isinstance(value, list):
-            listToString(value)
-        logging.info("--%s : %s ", key, value)
+dispArgs(configuredCommands)
 
 os.system(commandToRun)
 

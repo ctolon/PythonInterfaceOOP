@@ -24,8 +24,15 @@ import re
 from urllib.request import Request, urlopen
 import ssl
 
+import argcomplete
 from argcomplete.completers import ChoicesCompleter
+from commondeps.dplAodReader import DplAodReader
 from extramodules.choicesCompleterList import ChoicesCompleterList
+from extramodules.helperOptions import HelperOptions
+
+from extramodules.actionHandler import NoAction
+from extramodules.actionHandler import ChoicesAction
+from extramodules.helperOptions import HelperOptions
 
 
 class TableReader(object):
@@ -37,14 +44,26 @@ class TableReader(object):
         object (parser_args() object): tableReader.cxx Interface
     """
     
-    def __init__(self, parserTableReader = argparse.ArgumentParser(add_help = False)):
+    def __init__(
+        self, parserTableReader = argparse.ArgumentParser(
+            formatter_class = argparse.ArgumentDefaultsHelpFormatter,
+            description = "Example Usage: ./runTableReader.py <yourConfig.json> --arg value",
+            ), helperOptions = HelperOptions(), dplAodReader = DplAodReader()
+        ):
         super(TableReader, self).__init__()
         self.parserTableReader = parserTableReader
+        self.helperOptions = helperOptions
+        self.dplAodReader = dplAodReader
+        self.parserTableReader.register("action", "none", NoAction)
+        self.parserTableReader.register("action", "store_choice", ChoicesAction)
     
     def addArguments(self):
         """
         This function allows to add arguments for parser_args() function
         """
+        
+        readerPath = "configs/readerConfiguration_reducedEvent.json"
+        writerPath = "configs/writerConfiguration_dileptons.json"
         
         # Predefined Selections
         analysisSelections = {
@@ -219,6 +238,20 @@ class TableReader(object):
             "--cfgLeptonCuts", help = "Space separated list of barrel track cuts", nargs = "*", action = "store", type = str,
             metavar = "CFGLEPTONCUTS", choices = allAnalysisCuts,
             ).completer = ChoicesCompleterList(allAnalysisCuts)
+        
+        # Aod Writer - Reader configs
+        groupDPLReader = self.parserTableReader.add_argument_group(
+            title = "Data processor options: internal-dpl-aod-reader, internal-dpl-aod-writer"
+            )
+        groupDPLReader.add_argument(
+            "--reader",
+            help = "Reader config JSON with path. For Standart Analysis use as default, for dilepton analysis change to dilepton JSON config file",
+            action = "store", default = readerPath, type = str
+            )
+        groupDPLReader.add_argument(
+            "--writer", help = "Argument for producing dileptonAOD.root. Set false for disable", action = "store", default = writerPath,
+            type = str
+            )
     
     def parseArgs(self):
         """
@@ -227,5 +260,18 @@ class TableReader(object):
         Returns:
             Namespace: returns parse_args()
         """
-        
+        argcomplete.autocomplete(self.parserTableReader, always_complete_options = False)
         return self.parserTableReader.parse_args()
+    
+    def mergeArgs(self):
+        """
+        This function allows to merge parser_args argument information from different classes
+        """
+        
+        self.helperOptions.parserHelperOptions = self.parserTableReader
+        self.helperOptions.addArguments()
+        
+        self.dplAodReader.parserDplAodReader = self.parserTableReader
+        self.dplAodReader.addArguments()
+        
+        self.addArguments()
