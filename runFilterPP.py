@@ -324,7 +324,7 @@ for key, value in config.items():
                     config["d-q-filter-p-p-task"]["processDummy"] = "true"
 
 # Transactions
-# filterSelsTranscation(args.cfgBarrelSels, args.cfgMuonSels, args.cfgBarrelTrackCuts, args.cfgMuonsCuts, configuredCommands)
+filterSelsTranscation(args.cfgBarrelSels, args.cfgMuonSels, args.cfgBarrelTrackCuts, args.cfgMuonsCuts, configuredCommands)
 aodFileChecker(args.aod)
 trackPropTransaction(args.add_track_prop, commonDeps)
 

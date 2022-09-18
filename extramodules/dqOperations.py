@@ -166,6 +166,17 @@ class MuonsCutsNotInMuonSelsError(Exception):
         return f"--cfgMuonsCuts <value>: {self.muonsCuts} not in --cfgMuonSels {self.muonSels}"
 
 
+class SelsAndCutsNotHaveSameNumberError(Exception):
+    
+    """Exception raised if Filter Selections and analysis cuts not in same order and same number"""
+    
+    def __init__(self):
+        super().__init__()
+    
+    def __str__(self):
+        return f"Event Filter selections and analysis cuts not in same order and same number"
+
+
 class MandatoryArgNotFoundError(Exception):
     
     """Exception raised for if mandatory arg not found
@@ -181,7 +192,7 @@ class MandatoryArgNotFoundError(Exception):
         return f"Mandatory args not found: {self.arg}"
 
 
-def listToString(s = list):
+def listToString(s: list):
     """
     ListToString provides converts lists to strings with commas.
     This function is written to save as string type instead of list
@@ -205,7 +216,7 @@ def listToString(s = list):
         return str1.join(s)
 
 
-def stringToList(string = str):
+def stringToList(string: str):
     """
     stringToList provides converts strings to list with commas.
     This function is written to save as list type instead of string
@@ -221,7 +232,7 @@ def stringToList(string = str):
 
 
 # AOD File Checker
-def aodFileChecker(aod):
+def aodFileChecker(aod: str):
     """This function checks path for AO2D (both for .root and .txt)
 
     Args:
@@ -263,7 +274,7 @@ def aodFileChecker(aod):
                 sys.exit()
 
 
-def trackPropTransaction(trackProp = bool, deps = list):
+def trackPropTransaction(trackProp: bool, deps: list):
     """This method automatically deletes the o2-analysis-trackextension(for run2) task from your workflow
     when you add the o2-analysis-track-propagation (for run3)
     task to your workflow. Two tasks are not compatible at the same time
@@ -278,7 +289,7 @@ def trackPropTransaction(trackProp = bool, deps = list):
         logging.info("o2-analysis-trackextension is not valid dep for run 3, It will deleted from your workflow.")
 
 
-def mainTaskChecker(config, taskNameInConfig = str):
+def mainTaskChecker(config: dict, taskNameInConfig: str):
     """1. Checks whether the workflow you want to run in your JSON file has a main task.
     
        2. Checks If you are running the O2Physics environment
@@ -313,7 +324,7 @@ def mainTaskChecker(config, taskNameInConfig = str):
         #sys.exit()
 
 
-def jsonTypeChecker(cfgFileName):
+def jsonTypeChecker(cfgFileName: str):
     """Checks if the JSON config file assigned by the CLI is in the correct format
 
     Args:
@@ -337,7 +348,7 @@ def jsonTypeChecker(cfgFileName):
 
 
 # Transcation management for forgettining assign a value to parameters
-def forgettedArgsChecker(configuredCommands):
+def forgettedArgsChecker(configuredCommands: dict):
     """Checks for any arguments forgot to assign a value which you provided to command line
     
     E.x. --process --syst PbPb (It will raise)
@@ -361,7 +372,7 @@ def forgettedArgsChecker(configuredCommands):
         sys.exit()
 
 
-def centTranscation(config, process, syst, centSearch):
+def centTranscation(config: dict, process, syst, centSearch):
     """If you assign a centrality-related process function for the pp collision
     system while trying to skim the data, an error will return.
 
@@ -389,7 +400,7 @@ def centTranscation(config, process, syst, centSearch):
                 sys.exit()
 
 
-def filterSelsTranscation(argBarrelSels, argMuonSels, argBarrelTrackCuts, argMuonsCuts, configuredCommands):
+def filterSelsTranscation(argBarrelSels: list, argMuonSels: list, argBarrelTrackCuts: list, argMuonsCuts: list, configuredCommands: dict):
     """It checks whether the event filter selections and analysis cuts in the
     Filter PP task are in the same number and order
 
@@ -409,24 +420,10 @@ def filterSelsTranscation(argBarrelSels, argMuonSels, argBarrelTrackCuts, argMuo
         BarrelTrackCutsNotInBarrelSelsError: Analysis cuts and event filter arguments for barrel do not match in numbers and orders
     """
     
-    muonCutList = []
-    barrelTrackCutList = []
-    barrelSelsList = []
-    muonSelsList = []
-    
-    for key, value in configuredCommands.items():
-        if value is not None:
-            if key == "cfgMuonsCuts":
-                muonCutList.append(value)
-            if key == "cfgBarrelTrackCuts":
-                barrelTrackCutList.append(value)
-            if key == "cfgBarrelSels":
-                barrelSelsList.append(value)
-            if key == "cfgMuonSels":
-                muonSelsList.append(value)
+    argMuonSelsClean = []
+    argBarrelSelsClean = []
     
     if argMuonSels:
-        
         try:
             if argMuonsCuts is None:
                 raise MandatoryArgNotFoundError(argMuonsCuts)
@@ -438,29 +435,27 @@ def filterSelsTranscation(argBarrelSels, argMuonSels, argBarrelTrackCuts, argMuo
             logging.error("For configure to cfgMuonSels (For DQ Filter PP Task), you must also configure cfgMuonsCuts!!!")
             sys.exit()
         
-        # Convert List Muon Cuts
-        for muonCut in muonCutList:
-            muonCut = stringToList(muonCut)
-        
-        # seperate string values to list with comma
-        for muonSels in muonSelsList:
-            muonSels = muonSels.split(",")
-        
         # remove string values after :
-        for i in muonSels:
+        for i in argMuonSels:
             i = i[0 : i.index(":")]
-            muonSelsListAfterSplit.append(i)
+            argMuonSelsClean.append(i)
         
-        # Remove duplicated values with set convertion
-        muonSelsListAfterSplit = set(muonSelsListAfterSplit)
-        muonSelsListAfterSplit = list(muonSelsListAfterSplit)
+        try:
+            if argMuonSelsClean == argMuonsCuts:
+                pass
+            else:
+                raise SelsAndCutsNotHaveSameNumberError
         
-        for i in muonSelsListAfterSplit:
+        except SelsAndCutsNotHaveSameNumberError as e:
+            logging.exception(e)
+            sys.exit()
+        
+        for i in argMuonSelsClean:
             try:
-                if i in muonCut:
+                if i in argMuonsCuts:
                     pass
                 else:
-                    raise MuonSelsNotInMuonsCutsError(i, muonCut)
+                    raise MuonSelsNotInMuonsCutsError(i, argMuonsCuts)
             
             except MuonSelsNotInMuonsCutsError as e:
                 logging.exception(e)
@@ -472,12 +467,12 @@ def filterSelsTranscation(argBarrelSels, argMuonSels, argBarrelTrackCuts, argMuo
                     )
                 sys.exit()
         
-        for i in muonCut:
+        for i in argMuonsCuts:
             try:
-                if i in muonSelsListAfterSplit:
+                if i in argMuonSelsClean:
                     pass
                 else:
-                    raise MuonsCutsNotInMuonSelsError(i, muonSelsListAfterSplit)
+                    raise MuonsCutsNotInMuonSelsError(i, argMuonSels)
             
             except MuonsCutsNotInMuonSelsError as e:
                 logging.exception(e)
@@ -488,6 +483,8 @@ def filterSelsTranscation(argBarrelSels, argMuonSels, argBarrelTrackCuts, argMuo
                     "For example, if cfgMuonCuts is muonLowPt,muonHighPt,muonLowPt then the cfgMuonSels has to be something like: muonLowPt::1,muonHighPt::1,muonLowPt:pairNoCut:1"
                     )
                 sys.exit()
+        
+        logging.info("Event filter configuration is valid for muons")
     
     if argBarrelSels:
         
@@ -502,29 +499,27 @@ def filterSelsTranscation(argBarrelSels, argMuonSels, argBarrelTrackCuts, argMuo
             logging.error("For configure to cfgBarrelSels (For DQ Filter PP Task), you must also configure cfgBarrelTrackCuts!!!")
             sys.exit()
         
-        # Convert List Barrel Track Cuts
-        for barrelTrackCut in barrelTrackCutList:
-            barrelTrackCut = stringToList(barrelTrackCut)
-        
-        # seperate string values to list with comma
-        for barrelSels in barrelSelsList:
-            barrelSels = barrelSels.split(",")
-        
         # remove string values after :
-        for i in barrelSels:
+        for i in argBarrelSels:
             i = i[0 : i.index(":")]
-            barrelSelsListAfterSplit.append(i)
+            argBarrelSelsClean.append(i)
         
-        # Remove duplicated values with set convertion
-        barrelSelsListAfterSplit = set(barrelSelsListAfterSplit)
-        barrelSelsListAfterSplit = list(barrelSelsListAfterSplit)
+        try:
+            if argBarrelSelsClean == argBarrelTrackCuts:
+                pass
+            else:
+                raise SelsAndCutsNotHaveSameNumberError
         
-        for i in barrelSelsListAfterSplit:
+        except SelsAndCutsNotHaveSameNumberError as e:
+            logging.exception(e)
+            sys.exit()
+        
+        for i in argBarrelSelsClean:
             try:
-                if i in barrelTrackCut:
+                if i in argBarrelTrackCuts:
                     pass
                 else:
-                    raise BarrelSelsNotInBarrelTrackCutsError(i, barrelTrackCut)
+                    raise BarrelSelsNotInBarrelTrackCutsError(i, argBarrelTrackCuts)
             
             except BarrelSelsNotInBarrelTrackCutsError as e:
                 logging.exception(e)
@@ -536,12 +531,12 @@ def filterSelsTranscation(argBarrelSels, argMuonSels, argBarrelTrackCuts, argMuo
                     )
                 sys.exit()
         
-        for i in barrelTrackCut:
+        for i in argBarrelTrackCuts:
             try:
-                if i in barrelSelsListAfterSplit:
+                if i in argBarrelSelsClean:
                     pass
                 else:
-                    raise BarrelTrackCutsNotInBarrelSelsError(i, barrelSelsListAfterSplit)
+                    raise BarrelTrackCutsNotInBarrelSelsError(i, argBarrelSels)
             
             except BarrelTrackCutsNotInBarrelSelsError as e:
                 logging.exception(e)
@@ -552,10 +547,12 @@ def filterSelsTranscation(argBarrelSels, argMuonSels, argBarrelTrackCuts, argMuo
                     "For example, if cfgBarrelTrackCuts is jpsiO2MCdebugCuts,jpsiO2MCdebugCuts2,jpsiO2MCdebugCuts then the cfgBarrelSels has to be something like: jpsiO2MCdebugCuts::1,jpsiO2MCdebugCuts2::1,jpsiO2MCdebugCuts:pairNoCut:1"
                     )
                 sys.exit()
+        
+        logging.info("Event filter configuration is valid for barrel")
 
 
 # We don't need this. config[key][value] = args.<arg> has less verbosity
-def singleConfigurableSet(config = dict, key = str, value = str, arg = str):
+def singleConfigurableSet(config: dict, key: str, value: str, arg: str):
     """
     singleConfigurableSet method allows to assign value
     to single configurable value arguments in JSON with overriding.
@@ -580,7 +577,7 @@ def singleConfigurableSet(config = dict, key = str, value = str, arg = str):
 
 
 # For multiple configurables in JSON, always use this method for less verbosity
-def multiConfigurableSet(config = dict, key = str, value = str, arg = list, onlySelect = bool):
+def multiConfigurableSet(config: dict, key: str, value: str, arg: list, onlySelect):
     """
     multiConfigurableSet method allows to assign values
     for multiple configurable value arguments in JSON with/without overriding
@@ -647,8 +644,7 @@ def runPycacheRemover():
     
     try:
         parentPath = os.getcwd()
-        print(parentPath)
-        if os.path.exists(parentPath) and os.path.isfile(parentPath + "/pycacheRemover.py"):
+        if os.path.exists(parentPath):
             logging.info("Inserting inside for pycache remove: %s", os.getcwd())
             pycacheRemover.__init__()
             logging.info("pycaches removed succesfully")

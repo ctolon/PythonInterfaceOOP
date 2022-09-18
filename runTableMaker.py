@@ -532,7 +532,7 @@ for key, value in config.items():
 
 # Transactions
 centTranscation(config, args.process, args.syst, centSearch)
-# filterSelsTranscation(args.cfgBarrelSels, args.cfgMuonSels, args.cfgBarrelTrackCuts, args.cfgMuonsCuts, configuredCommands)
+filterSelsTranscation(args.cfgBarrelSels, args.cfgMuonSels, args.cfgBarrelTrackCuts, args.cfgMuonsCuts, configuredCommands)
 aodFileChecker(args.aod)
 trackPropTransaction(args.add_track_prop, barrelDeps)
 

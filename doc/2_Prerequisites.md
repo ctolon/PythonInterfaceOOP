@@ -218,7 +218,7 @@ pip3 install argcomplete
 And go your Folder which includes your run scripts with cd commands (e.g.):
 
 ```ruby
-cd ~/NewAllWorkFlows
+cd ~/PythonInterfaceOOP
 ```
 
 And then, source your argcomplete script for autocomplete:

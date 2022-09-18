@@ -98,7 +98,6 @@ Since the interface is constantly updated for stability, it is recommended to up
 
 ## TODO LIST
 
-- Add Troubleshoot chapter
 - Add Contributing guide chapter
 - Maintaince need for available configs part
 - Python Scripts And JSON Configs need update
@@ -111,4 +110,3 @@ Since the interface is constantly updated for stability, it is recommended to up
 - interface logic part needs refactor
 - github downloader util should be integrated
 - Clean the code
-- fix filter pp transaction
