@@ -141,7 +141,11 @@
     },
     "track-selection": {
         "isRun3": "false",
-        "itsMatching": "0"
+        "itsMatching": "0",
+        "ptMin": "0.1",
+        "ptMax": "1e+10",
+        "etaMin": "-0.8",
+        "etaMax": "0.8"
     },
     "weak-decay-indices-cascades": "",
     "v0-selector": {

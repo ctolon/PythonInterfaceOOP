@@ -95,7 +95,7 @@ Now converter tasks are added automatically according to the content of the data
   - [Feedbacks, Suggestions and User Acceptance Test List](doc/7_DesignNotes.md#feedbacks-suggestions-and-user-acceptance-test-list)
   - [Updates](doc/7_DesignNotes.md#design-notes)
   - [Naming Conventions](doc/7_DesignNotes.md#naming-conventions)
-- [8_TroubleshootingTreeNotFound](doc/8_TroubleshootingTreeNotFound.md)
+- [TroubleshootingTreeNotFound](doc/8_TroubleshootingTreeNotFound.md)
   - [Converters](doc/8_TroubleshootingTreeNotFound.md#converters-special-additional-tasks-for-workflows)
   - [add_track_prop](doc/8_TroubleshootingTreeNotFound.md#addtrackprop)
 
@@ -107,10 +107,7 @@ Now converter tasks are added automatically according to the content of the data
 - Python Scripts And JSON Configs need update
 - Need more details for arguments for user guide
 - Needed to explain O2-DQ Data Model and Workflow
-- Doxygen doc should be updated
 - More tutorials needed for users
 - On tutorial side, we need explain all arguments one by one
-- TableReader and dqEfficiency should be refactored
 - interface logic part needs refactor
-- github downloader util should be integrated
-- Clean the code
+
