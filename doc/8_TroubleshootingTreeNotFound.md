@@ -1,3 +1,5 @@
+IMPORTANT!!! Converters are no longer part of the interface, because functionality that adds them automatically is provided
+
 # Converters (Special Additional Tasks For Workflows)
 
 @tableofcontents

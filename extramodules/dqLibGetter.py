@@ -16,17 +16,14 @@
 # \Author: ionut.cristian.arsene@cern.ch
 # \Interface:  cevat.batuhan.tolon@cern.ch
 
-# NOTE NOT INTEGRATED YET
-# TODO Needs to be integrated
-
-import argparse
 import os
 import re
 from urllib.request import Request, urlopen
 import ssl
 
 
-class DQLibDownloader(object):
+class DQLibGetter(object):
+    
     """
     Class for Downloading DQ Libraries Github and It gets analysis selections 
     like analysis cuts, MC signals and event mixing variables
@@ -36,11 +33,13 @@ class DQLibDownloader(object):
     """
     
     def __init__(self):
-        super(DQLibDownloader, self).__init__()
+        super(DQLibGetter, self).__init__()
     
     def getAnalysisSelections(self):
-        """
-        This function allows to Download DQ Libraries From Github
+        """This function allows to get all analysis selections from DQ libraries
+
+        Returns:
+            allAnalysisCuts, allMCSignals, allSels, allMixing: All analysis selections with order
         """
         
         allAnalysisCuts = [] # all analysis cuts
@@ -52,6 +51,7 @@ class DQLibDownloader(object):
         oneColon = ":" # Namespace reference
         doubleColon = "::" # Namespace reference
         allMCSignals = [] # Get MC Signals
+        allMixing = [] # Get Event Mixing vars
         
         headers = {
             "User-Agent":
@@ -96,17 +96,24 @@ class DQLibDownloader(object):
                 for i in stringIfSearch:
                     getSignals = re.findall('"([^"]*)"', i)
                     allMCSignals = allMCSignals + getSignals
-        # Read Cuts, Signals, Mixing vars from downloaded files
+        
+        with open("tempMixingLibrary.h") as f:
+            for line in f:
+                stringIfSearch = [x for x in f if "if" in x]
+                for i in stringIfSearch:
+                    getMixing = re.findall('"([^"]*)"', i)
+                    allMixing = allMixing + getMixing
+        
         with open("tempCutsLibrary.h") as f:
             for line in f:
                 stringIfSearch = [x for x in f if "if" in x] # get lines only includes if string
                 for i in stringIfSearch:
-                    getAnalysisCuts = re.findall('"([^"]*)"', i) # get in double quotes string value with regex exp.
-                    getPairCuts = [y for y in getAnalysisCuts if "pair" in y] # get pair cuts
+                    getCuts = re.findall('"([^"]*)"', i) # get in double quotes string value with regex exp.
+                    getPairCuts = [y for y in getCuts if "pair" in y] # get pair cuts
                     if getPairCuts: # if pair cut list is not empty
                         allPairCuts = (allPairCuts + getPairCuts) # Get Only pair cuts from CutsLibrary.h
                         namespacedPairCuts = [x + oneColon for x in allPairCuts] # paircut:
-                    allAnalysisCuts = (allAnalysisCuts + getAnalysisCuts) # Get all Cuts from CutsLibrary.h
+                    allAnalysisCuts = (allAnalysisCuts + getCuts) # Get all Cuts from CutsLibrary.h
                     nameSpacedallAnalysisCuts = [x + oneColon for x in allAnalysisCuts] # cut:
                     nameSpacedallAnalysisCutsTwoDots = [x + doubleColon for x in allAnalysisCuts] # cut::
         
@@ -127,5 +134,5 @@ class DQLibDownloader(object):
         # Merge All possible styles for Sels (cfgBarrelSels and cfgMuonSels) in FilterPP Task
         allSels = selsWithOneColon + nAddedallAnalysisCutsList
         
-        
-
+        # TODO : should be flaged
+        return allAnalysisCuts, allMCSignals, allSels, allMixing

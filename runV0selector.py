@@ -19,20 +19,17 @@
 # Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/v0selector.cxx
 
 import json
-import sys
 import logging
 import logging.config
-from logging import handlers
 import os
+from extramodules.converterManager import converterManager
 from extramodules.debugSettings import debugSettings
-#from extramodules.converterManager import converterManager
 
 from extramodules.monitoring import dispArgs
-from extramodules.dqTranscations import aodFileChecker, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, trackPropChecker, trackPropTransaction
+from extramodules.dqTranscations import aodFileChecker, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, trackPropChecker
 from extramodules.pycacheRemover import runPycacheRemover
 
 from dqtasks.v0selector import V0selector
-# from extramodules.getTTrees import getTTrees # activate when we have no performance issue
 
 ###################################
 # Interface Predefined Selections #
@@ -46,6 +43,8 @@ centralityTableParameters = [
 ft0Parameters = ["processFT0", "processNoFT0", "processOnlyFT0", "processRun2"]
 
 pidParameters = ["pid-el", "pid-mu", "pid-pi", "pid-ka", "pid-pr", "pid-de", "pid-tr", "pid-he", "pid-al"]
+
+ttreeList = []
 
 ################
 # Dependencies #
@@ -231,16 +230,19 @@ for key, value in config.items():
                 logging.debug(" - [%s] %s : %s", key, value, args.itsMatching)
 
 aodFileChecker(args.aod)
-trackPropTransaction(args.add_track_prop, commonDeps)
-"""
+# trackPropTransaction(args.add_track_prop, commonDeps)
+
+# Regarding to perfomance issues in argcomplete package, we should import later
+from extramodules.getTTrees import getTTrees
+
+# Converter Management
 if args.aod is not None:
     ttreeList = getTTrees(args.aod)
 else:
     ttreeList = config["internal-dpl-aod-reader"]["aod-file"]
 
-#converterManager(ttreeList, commonDeps)
+converterManager(ttreeList, commonDeps)
 trackPropChecker(commonDeps, commonDeps)
-"""
 
 ###########################
 # End Interface Processes #
@@ -263,7 +265,7 @@ commandToRun = (
 for dep in depsToRun.keys():
     commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"
     logging.debug("%s added your workflow", dep)
-
+"""
 if args.add_mc_conv:
     logging.debug("o2-analysis-mc-converter added your workflow")
     commandToRun += (" | o2-analysis-mc-converter --configuration json://" + updatedConfigFileName + " -b")
@@ -279,6 +281,7 @@ if args.add_track_prop:
 if args.add_weakdecay_ind:
     commandToRun += (" | o2-analysis-weak-decay-indices --configuration json://" + updatedConfigFileName + " -b")
     logging.debug("o2-analysis-weak-decay-indices added your workflow")
+"""
 
 print("====================================================================================================================")
 logging.info("Command to run:")

@@ -19,13 +19,6 @@
 import ROOT
 import logging
 
-# TODO resolve the perfomance issue or prepare seperate string
-# NOT MAINTAINED YET
-
-
-class GetOutOfLoop(Exception):
-    pass
-
 
 def Map(tf, browsable_to, tpath = None):
     """
@@ -41,12 +34,16 @@ def Map(tf, browsable_to, tpath = None):
     return m
 
 
-def ExpandDeepTDirs(tf, to_map, tpath = None):
+def ExpandDeepTDirs(tf, to_map):
     """
-    A recursive deep-mapping function that expands into TDirectory(ies)
+    A deep-mapping function for one TDirectory
     """
+    
+    tpath = None # dummy param
     names = sorted(to_map.keys())
+    # print("names = ",names)
     for n in names:
+        # print("n =", n)
         if len(to_map[n]) != 1:
             continue
         if tpath == None:
@@ -57,32 +54,34 @@ def ExpandDeepTDirs(tf, to_map, tpath = None):
         tobject = to_map[n][0]
         if type(tobject) is ROOT.TDirectoryFile:
             m = Map(tf, tobject, tpath_)
+            #print(m)
             to_map[n].append(m)
-            ExpandDeepTDirs(tf, m, tpath_)
+            # print("TO MAP = ", to_map[n])
+            return to_map[n] #
 
 
-def MappingTFile(filename, deep_maps = None):
+def MappingTFile(filename):
     """
-    Maps an input file as TFile into a dictionary(ies) of objects and names.
-    Structure: dict[name][0] == object, dict[name][1] == deeper dict.
+    Get TTree names from one Data Frame
     """
-    if deep_maps == None:
-        deep_maps = {}
-    if not type(deep_maps) is dict:
-        return deep_maps
+    if filename.endswith("txt") or filename.endswith("text"):
+        with open(filename) as f:
+            for line in f:
+                line = line.strip()
+                if line.endswith(".root"):
+                    logging.info("Converter manager will use this file from text list : %s", line)
+                    filename = line
+                    break
     
     f = ROOT.TFile(filename)
     m = Map(f, f)
-    ExpandDeepTDirs(f, m)
-    
-    deep_maps[filename] = [f]
-    deep_maps[filename].append(m)
-    
-    return deep_maps
+    # print("MAP = ",m)
+    # print("FİLE = ",f)
+    return ExpandDeepTDirs(f, m)
 
 
 def getTTrees(aod: str):
-    """TODO: add desc
+    """ Get TTrees from one DF
 
     Args:
         aod (CLI Argument): CLI Argument for AO2D.root File 
@@ -92,7 +91,7 @@ def getTTrees(aod: str):
     """
     textAodList = aod.startswith("@")
     endsWithTxt = aod.endswith("txt") or aod.endswith("text")
-    oneTimeLoop = False # For looping DF Folders only one time when founded for optimizing performance
+    ttreeList = []
     
     # Management for text aod list files
     if textAodList and endsWithTxt:
@@ -105,40 +104,8 @@ def getTTrees(aod: str):
                     break
     
     tFile = (MappingTFile(aod)) # Input as aod
-    ttreeList = []
-    
-    try:
-        for v in tFile.values():
-            if oneTimeLoop == True:
-                raise GetOutOfLoop
-            print("Level 1", v, end = '\n') # k: AOD file name v: All objects
-            for i in v:
-                if oneTimeLoop == True:
-                    raise GetOutOfLoop
-                print(v)
-                if isinstance(i, dict):
-                    if oneTimeLoop == True:
-                        raise GetOutOfLoop
-                    #print(i.keys()) # all DF Folder names
-                    for k2, v2 in i.items():
-                        if oneTimeLoop == True:
-                            raise GetOutOfLoop
-                        elif k2.startswith("DF"):
-                            # print(k2) # get one DF Folder name
-                            for j in v2:
-                                if oneTimeLoop == True:
-                                    raise GetOutOfLoop
-                                #print(j) # get dict for ttres : obj
-                                if isinstance(j, dict):
-                                    oneTimeLoop = True
-                                    ttreeList = j.keys()
-                                    raise GetOutOfLoop
-                            
-                            #raise GetOutOfLoop
-                        #raise GetOutOfLoop
-                    #raise GetOutOfLoop
-                #raise GetOutOfLoop
-    except GetOutOfLoop:
-        print("ÇIKTI")
-        return ttreeList
-
+    for i in tFile:
+        if isinstance(i, dict):
+            for key in i.keys():
+                ttreeList.append(key)
+    return ttreeList

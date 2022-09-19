@@ -76,3 +76,20 @@ def multiConfigurableSet(config: dict, key: str, value: str, arg: list, onlySele
         actualConfig = config[key][value]
         arg = actualConfig + "," + arg
     config[key][value] = arg
+
+
+# TODO: refactor it it should be work in also loop. Only works for tableReader and dqEfficiency
+# when key have no process Dummy function, this method will crashes.
+def processDummySet(config: dict):
+    
+    for k, v in config.items(): # loop over number of keys
+        if isinstance(v, dict): # iterate only possible items in dict keys
+            for v, v2 in v.items():
+                if (not v.endswith("Dummy")) and (v.startswith("process")):
+                    if config[k][v] == "true":
+                        config[k]["processDummy"] = "false"
+                        print(k, "dummy converted false")
+                        break
+                    else:
+                        config[k]["processDummy"] = "true"
+                        print(k, "dummy converted true")

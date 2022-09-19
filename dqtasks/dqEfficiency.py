@@ -31,6 +31,7 @@ from extramodules.choicesCompleterList import ChoicesCompleterList
 
 from extramodules.actionHandler import NoAction
 from extramodules.actionHandler import ChoicesAction
+from extramodules.dqLibGetter import DQLibGetter
 from extramodules.helperOptions import HelperOptions
 
 
@@ -89,66 +90,8 @@ class DQEfficiency(object):
         
         booleanSelections = ["true", "false"]
         
-        allAnalysisCuts = []
-        allMCSignals = []
-        
-        ################################
-        # Download DQ Libs From Github #
-        ################################
-        
-        # It works on for only master branch
-        
-        # header for github download
-        headers = {
-            "User-Agent":
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36"
-            }
-        
-        URL_CUTS_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/CutsLibrary.h?raw=true"
-        URL_MCSIGNALS_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MCSignalLibrary.h?raw=true"
-        URL_MIXING_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MixingLibrary.h?raw=true"
-        
-        # Github Links for CutsLibrary and MCSignalsLibrary from PWG-DQ --> download from github
-        # This condition solves performance issues
-        if not (os.path.isfile("tempCutsLibrary.h") or os.path.isfile("tempMCSignalsLibrary.h") or os.path.isfile("tempMixingLibrary.h")):
-            print("[INFO] Some Libs are Missing. They will download.")
-            
-            # Dummy SSL Adder
-            context = ssl._create_unverified_context() # prevent ssl problems
-            # request = urllib.request.urlopen(URL_CUTS_LIBRARY, context=context)
-            
-            # HTTP Request
-            requestCutsLibrary = Request(URL_CUTS_LIBRARY, headers = headers)
-            requestMCSignalsLibrary = Request(URL_MCSIGNALS_LIBRARY, headers = headers)
-            requestMixingLibrary = Request(URL_MIXING_LIBRARY, headers = headers)
-            
-            # Get Files With Http Requests
-            htmlCutsLibrary = urlopen(requestCutsLibrary, context = context).read()
-            htmlMCSignalsLibrary = urlopen(requestMCSignalsLibrary, context = context).read()
-            htmlMixingLibrary = urlopen(requestMixingLibrary, context = context).read()
-            
-            # Save Disk to temp DQ libs
-            with open("tempCutsLibrary.h", "wb") as f:
-                f.write(htmlCutsLibrary)
-            with open("tempMCSignalsLibrary.h", "wb") as f:
-                f.write(htmlMCSignalsLibrary)
-            with open("tempMixingLibrary.h", "wb") as f:
-                f.write(htmlMixingLibrary)
-        
-        # Read Cuts, Signals, Mixing vars from downloaded files
-        with open("tempMCSignalsLibrary.h") as f:
-            for line in f:
-                stringIfSearch = [x for x in f if "if" in x]
-                for i in stringIfSearch:
-                    getSignals = re.findall('"([^"]*)"', i)
-                    allMCSignals = allMCSignals + getSignals
-        
-        with open("tempCutsLibrary.h") as f:
-            for line in f:
-                stringIfSearch = [x for x in f if "if" in x]
-                for i in stringIfSearch:
-                    getAnalysisCuts = re.findall('"([^"]*)"', i)
-                    allAnalysisCuts = allAnalysisCuts + getAnalysisCuts
+        # init for get DQ libraries
+        allAnalysisCuts, allMCSignals, allSels, allMixing = DQLibGetter.getAnalysisSelections(self)
         
         # Interface
         

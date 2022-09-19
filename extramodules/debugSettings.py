@@ -42,7 +42,7 @@ def debugSettings(argDebug: bool, argLogFile: bool, fileName: str):
         log = logging.getLogger("")
         level = logging.getLevelName(argDebug)
         log.setLevel(level)
-        format = logging.Formatter("%(asctime)s - [%(levelname)s] %(message)s")
+        format = logging.Formatter("[%(levelname)s] %(message)s")
         
         ch = logging.StreamHandler(sys.stdout)
         ch.setFormatter(format)

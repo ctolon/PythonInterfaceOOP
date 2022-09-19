@@ -88,8 +88,8 @@ def trackPropChecker(commonDeps: list, barrelDeps: list):
     task to your workflow. Two tasks are not compatible at the same time
 
     Args:
-        trackProp (CLI argument): CLI argument to add the o2-analysis-track-propagation task
-        deps (list): Defined dependency list
+        commonDeps (list): Common Dependency list for run to task
+        barrelDeps (list): The dependency list where the trackextension task is defined
     """
     
     if "o2-analysis-track-propagation" in commonDeps:
@@ -129,7 +129,7 @@ def mainTaskChecker(config: dict, taskNameInConfig: str):
             logging.info("You are in %s alienv", O2PHYSICS_ROOT)
     except NotInAlienvError as e:
         logging.exception(e)
-        sys.exit()
+        #sys.exit()
 
 
 def jsonTypeChecker(cfgFileName: str):
@@ -297,3 +297,35 @@ def filterSelsTranscation(argBarrelSels: list, argMuonSels: list, argBarrelTrack
             sys.exit()
         
         logging.info("Event filter configuration is valid for barrel")
+
+
+"""   
+def tableReaderDepsChecker(analysisCfg,processCfg,mixingCfg):
+    
+    sameEventPairingDeps = {
+    ["JpsiToEE"]: ["trackSelection"],
+    ["JpsiToMuMu"]: ["muonSelection"],
+    ["JpsiToMuMuVertexing"]: ["muonSelection"],
+    ["VnJpsiToEE"]: ["trackSelection"],
+    ["JpsiToMuMu"]: ["muonSelection"],
+    ["ElectronMuon"] : ["trackSelection","muonSelection"],
+    ["All"] : ["trackSelection","muonSelection"]
+    }
+
+    eventMixingDeps = {
+        "Barrel": "trackSelection",
+        "Muon": "muonSelection",
+        "BarrelMuon": ["trackSelection","muonSelection"],
+        "BarrelVn": "trackSelection",
+        "MuonVn": "muonSelection"
+    }
+
+    
+    for k,v in sameEventPairingDeps.items():
+        if (k in processCfg) and v not in analysisCfg:
+            raise
+        
+    for k,v in eventMixingDeps.items():
+        if (k in mixingCfg) and v not in analysisCfg:
+            raise
+"""

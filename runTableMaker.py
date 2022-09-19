@@ -22,14 +22,12 @@ import json
 import logging
 import logging.config
 import os
+from extramodules.converterManager import converterManager
 
-# sys.path.append("/extramodules/sub")
-
-# from extramodules.getTTrees import getTTrees # activate when we have no performance issue
 from extramodules.debugSettings import debugSettings
 from extramodules.monitoring import dispArgs
 from extramodules.descriptor import inputDescriptors, outputDescriptors
-from extramodules.dqTranscations import aodFileChecker, centTranscation, forgettedArgsChecker, jsonTypeChecker, filterSelsTranscation, mainTaskChecker, trackPropTransaction
+from extramodules.dqTranscations import aodFileChecker, centTranscation, forgettedArgsChecker, jsonTypeChecker, filterSelsTranscation, mainTaskChecker, trackPropChecker, trackPropTransaction
 from extramodules.configSetter import multiConfigurableSet
 from extramodules.pycacheRemover import runPycacheRemover
 
@@ -515,8 +513,11 @@ for key, value in config.items():
 centTranscation(config, args.process, args.syst, centSearch)
 filterSelsTranscation(args.cfgBarrelSels, args.cfgMuonSels, args.cfgBarrelTrackCuts, args.cfgMuonsCuts, configuredCommands)
 aodFileChecker(args.aod)
-trackPropTransaction(args.add_track_prop, barrelDeps)
-"""
+# trackPropTransaction(args.add_track_prop, barrelDeps)
+
+# Regarding to perfomance issues in argcomplete package, we should import later
+from extramodules.getTTrees import getTTrees
+
 # Converter Management
 if args.aod is not None:
     ttreeList = getTTrees(args.aod)
@@ -525,7 +526,6 @@ else:
 
 converterManager(ttreeList, commonDeps)
 trackPropChecker(commonDeps, barrelDeps)
-"""
 
 ###########################
 # End Interface Processes #
@@ -609,8 +609,7 @@ if args.aod_memory_rate_limit:
 for dep in depsToRun.keys():
     commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"
     logging.debug("%s added your workflow", dep)
-
-# TODO: Append ile ekle
+"""
 if args.add_mc_conv:
     logging.debug("o2-analysis-mc-converter added your workflow")
     commandToRun += (" | o2-analysis-mc-converter --configuration json://" + updatedConfigFileName + " -b")
@@ -622,6 +621,7 @@ if args.add_fdd_conv:
 if args.add_track_prop:
     commandToRun += (" | o2-analysis-track-propagation --configuration json://" + updatedConfigFileName + " -b")
     logging.debug("o2-analysis-track-propagation added your workflow")
+"""
 
 print("====================================================================================================================")
 logging.info("Command to run:")

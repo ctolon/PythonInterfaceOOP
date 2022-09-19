@@ -28,7 +28,7 @@ def converterManager(ttreeList: list, deps: list):
     """
     
     logging.info("Converter Manager initialize")
-    ttreeList = list(ttreeList)
+    ttreeList = list(ttreeList) # checking
     
     if ("O2track_iu" in ttreeList):
         logging.info("o2-analysis-track-propagation will added your workflow")
