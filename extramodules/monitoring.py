@@ -33,3 +33,4 @@ def dispArgs(configuredCommands: dict):
             if isinstance(value, list):
                 listToString(value)
             logging.info("--%s : %s ", key, value)
+    print("====================================================================================================================")

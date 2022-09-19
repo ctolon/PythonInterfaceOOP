@@ -15,6 +15,10 @@ Cevat Batuhan Tolon (Author Of Interface)
 
 Since the interface is constantly updated for stability, it is recommended to update it with `git pull --rebase` command
 
+## Big Update!!!
+
+Now converter tasks are added automatically according to the content of the data. Arguments like --add_track_prop are no longer needed. Accordingly, the tutorials have been updated and the details will be added over time.
+
 ## Table Of Contents
 - [Python Scripts And JSON Configs](doc/1_ScriptsAndConfigs.md)
   - [Main Python Scripts](doc/1_ScriptsAndConfigs.md#main-python-scripts)

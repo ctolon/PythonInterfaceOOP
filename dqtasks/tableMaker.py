@@ -19,10 +19,6 @@
 # Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/TableProducer/tableMaker.cxx
 
 import argparse
-import os
-import re
-from urllib.request import Request, urlopen
-import ssl
 
 from extramodules.actionHandler import NoAction
 from extramodules.actionHandler import ChoicesAction
@@ -44,6 +40,8 @@ from commondeps.trackselection import TrackSelectionTask
 from commondeps.dplAodReader import DplAodReader
 
 from dqtasks.v0selector import V0selector
+
+from extramodules.dqLibGetter import DQLibGetter
 
 # Special configurations for filterPP are combined to avoid conflicts in the tableMaker interface
 
@@ -111,89 +109,10 @@ class TableMaker(object):
         for k, v in tableMakerProcessSelections.items():
             tableMakerProcessSelectionsList.append(k)
         
-        allAnalysisCuts = [] # all analysis cuts
-        allPairCuts = [] # only pair cuts
-        nAddedallAnalysisCutsList = [] # e.g. muonQualityCuts:2
-        nAddedPairCutsList = [] # e.g paircutMass:3
-        selsWithOneColon = [] # track/muon cut:paircut:n
-        allSels = [] # track/muon cut::n
-        oneColon = ":" # Namespace reference
-        doubleColon = "::" # Namespace reference
-        
         booleanSelections = ["true", "false"]
         
-        ################################
-        # Download DQ Libs From Github #
-        ################################
-        
-        # It works on for only master branch
-        
-        # header for github download
-        headers = {
-            "User-Agent":
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36"
-            }
-        
-        URL_CUTS_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/CutsLibrary.h?raw=true"
-        URL_MCSIGNALS_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MCSignalLibrary.h?raw=true"
-        URL_MIXING_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MixingLibrary.h?raw=true"
-        
-        # Github Links for CutsLibrary and MCSignalsLibrary from PWG-DQ --> download from github
-        # This condition solves performance issues
-        if not (os.path.isfile("tempCutsLibrary.h") or os.path.isfile("tempMCSignalsLibrary.h") or os.path.isfile("tempMixingLibrary.h")):
-            print("[INFO] Some Libs are Missing. They will download.")
-            
-            # Dummy SSL Adder
-            context = ssl._create_unverified_context() # prevent ssl problems
-            
-            # HTTP Request
-            requestCutsLibrary = Request(URL_CUTS_LIBRARY, headers = headers)
-            requestMCSignalsLibrary = Request(URL_MCSIGNALS_LIBRARY, headers = headers)
-            requestMixingLibrary = Request(URL_MIXING_LIBRARY, headers = headers)
-            
-            # Get Files With Http Requests
-            htmlCutsLibrary = urlopen(requestCutsLibrary, context = context).read()
-            htmlMCSignalsLibrary = urlopen(requestMCSignalsLibrary, context = context).read()
-            htmlMixingLibrary = urlopen(requestMixingLibrary, context = context).read()
-            
-            # Save Disk to temp DQ libs
-            with open("tempCutsLibrary.h", "wb") as f:
-                f.write(htmlCutsLibrary)
-            with open("tempMCSignalsLibrary.h", "wb") as f:
-                f.write(htmlMCSignalsLibrary)
-            with open("tempMixingLibrary.h", "wb") as f:
-                f.write(htmlMixingLibrary)
-        
-        # Read Cuts, Signals, Mixing vars from downloaded files
-        with open("tempCutsLibrary.h") as f:
-            for line in f:
-                stringIfSearch = [x for x in f if "if" in x] # get lines only includes if string
-                for i in stringIfSearch:
-                    getAnalysisCuts = re.findall('"([^"]*)"', i) # get in double quotes string value with regex exp.
-                    getPairCuts = [y for y in getAnalysisCuts if "pair" in y] # get pair cuts
-                    if getPairCuts: # if pair cut list is not empty
-                        allPairCuts = (allPairCuts + getPairCuts) # Get Only pair cuts from CutsLibrary.h
-                        namespacedPairCuts = [x + oneColon for x in allPairCuts] # paircut:
-                    allAnalysisCuts = (allAnalysisCuts + getAnalysisCuts) # Get all Cuts from CutsLibrary.h
-                    nameSpacedallAnalysisCuts = [x + oneColon for x in allAnalysisCuts] # cut:
-                    nameSpacedallAnalysisCutsTwoDots = [x + doubleColon for x in allAnalysisCuts] # cut::
-        
-        # in Filter PP Task, sels options for barrel and muon uses namespaces e.g. "<track-cut>:[<pair-cut>]:<n> and <track-cut>::<n> For Manage this issue:
-        for k in range(1, 10):
-            nAddedallAnalysisCuts = [x + str(k) for x in nameSpacedallAnalysisCutsTwoDots]
-            nAddedallAnalysisCutsList = nAddedallAnalysisCutsList + nAddedallAnalysisCuts
-            nAddedPairCuts = [x + str(k) for x in namespacedPairCuts]
-            nAddedPairCutsList = nAddedPairCutsList + nAddedPairCuts
-        
-        # Style 1 <track-cut>:[<pair-cut>]:<n>:
-        for i in nAddedPairCutsList:
-            Style1 = [x + i for x in nameSpacedallAnalysisCuts]
-            selsWithOneColon = selsWithOneColon + Style1
-        
-        # Style 2 <track-cut>:<n> --> nAddedallAnalysisCutsList
-        
-        # Merge All possible styles for Sels (cfgBarrelSels and cfgMuonSels) in FilterPP Task
-        allSels = selsWithOneColon + nAddedallAnalysisCutsList
+        # init for get DQ libraries
+        allAnalysisCuts, allMCSignals, allSels, allMixing = DQLibGetter.getAnalysisSelections(self)
         
         # Interface
         
@@ -341,8 +260,8 @@ class TableMaker(object):
         self.helperOptions.parserHelperOptions = self.parserTableMaker
         self.helperOptions.addArguments()
         
-        self.o2Converters.parserO2Converters = self.parserTableMaker
-        self.o2Converters.addArguments()
+        # self.o2Converters.parserO2Converters = self.parserTableMaker
+        # self.o2Converters.addArguments()
         
         self.dplAodReader.parserDplAodReader = self.parserTableMaker
         self.dplAodReader.addArguments()

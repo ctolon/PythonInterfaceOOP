@@ -20,7 +20,7 @@ import logging
 
 
 def inputDescriptors(tablesToProduce: dict, tables: dict, readerConfigFileName = "aodReaderTempConfig.json"):
-    """_summary_
+    """Generates Input Descriptors for Reading Tables from AO2D with json config file
 
     Args:
         tablesToProduce (dict): Tables are required in the output
@@ -50,7 +50,7 @@ def inputDescriptors(tablesToProduce: dict, tables: dict, readerConfigFileName =
 
 
 def outputDescriptors(tablesToProduce: dict, tables: dict, writerConfigFileName = "aodWriterTempConfig.json"):
-    """_summary_
+    """Generates Output Descriptors for Reading Tables from AO2D with json config file
 
     Args:
         tablesToProduce (dict): Tables are required in the output

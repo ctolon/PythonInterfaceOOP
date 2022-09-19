@@ -22,15 +22,15 @@ import json
 import logging
 import logging.config
 import os
+from extramodules.converterManager import converterManager
 from extramodules.debugSettings import debugSettings
 
 from extramodules.monitoring import dispArgs
-from extramodules.dqTranscations import aodFileChecker, forgettedArgsChecker, jsonTypeChecker, filterSelsTranscation, mainTaskChecker, trackPropTransaction
+from extramodules.dqTranscations import aodFileChecker, forgettedArgsChecker, jsonTypeChecker, filterSelsTranscation, mainTaskChecker, trackPropChecker, trackPropTransaction
 from extramodules.configSetter import multiConfigurableSet
 from extramodules.pycacheRemover import runPycacheRemover
 
 from dqtasks.filterPP import DQFilterPPTask
-# from extramodules.getTTrees import getTTrees # activate when we have no performance issue
 
 ###################################
 # Interface Predefined Selections #
@@ -43,7 +43,9 @@ centralityTableParameters = [
 
 ft0Parameters = ["processFT0", "processNoFT0", "processOnlyFT0", "processRun2"]
 
-pidParameters = ["pid-el", "pid-mu", "pid-pi", "pid-ka", "pid-pr", "pid-de", "pid-tr", "pid-he", "pid-al",]
+pidParameters = ["pid-el", "pid-mu", "pid-pi", "pid-ka", "pid-pr", "pid-de", "pid-tr", "pid-he", "pid-al"]
+
+ttreeList = []
 
 ################
 # Dependencies #
@@ -303,8 +305,11 @@ for key, value in config.items():
 # Transactions
 filterSelsTranscation(args.cfgBarrelSels, args.cfgMuonSels, args.cfgBarrelTrackCuts, args.cfgMuonsCuts, configuredCommands)
 aodFileChecker(args.aod)
-trackPropTransaction(args.add_track_prop, commonDeps)
-"""
+# trackPropTransaction(args.add_track_prop, commonDeps)
+
+# Regarding to perfomance issues in argcomplete package, we should import later
+from extramodules.getTTrees import getTTrees
+
 # Converter Management
 if args.aod is not None:
     ttreeList = getTTrees(args.aod)
@@ -313,7 +318,6 @@ else:
 
 converterManager(ttreeList, commonDeps)
 trackPropChecker(commonDeps, commonDeps)
-"""
 
 ###########################
 # End Interface Processes #

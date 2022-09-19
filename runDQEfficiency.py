@@ -28,7 +28,7 @@ from extramodules.debugSettings import debugSettings
 
 from extramodules.monitoring import dispArgs
 from extramodules.dqTranscations import aodFileChecker, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker
-from extramodules.configSetter import multiConfigurableSet
+from extramodules.configSetter import multiConfigurableSet, processDummySet
 from extramodules.pycacheRemover import runPycacheRemover
 
 from dqtasks.dqEfficiency import DQEfficiency
@@ -43,17 +43,6 @@ isAnalysisEventSelected = True
 isAnalysisTrackSelected = True
 isAnalysisMuonSelected = True
 isAnalysisSameEventPairingSelected = True
-
-# List for Selected skimmed process functions for dummy automizer
-skimmedListEventSelection = []
-skimmedListTrackSelection = []
-skimmedListMuonSelection = []
-skimmedListSEP = []
-skimmedListDileptonTrack = []
-
-#################
-# Init Workflow #
-#################
 
 # init args manually
 initArgs = DQEfficiency()
@@ -261,7 +250,6 @@ for key, value in config.items():
             if key == "analysis-dilepton-track":
                 if value == "cfgBarrelMCRecSignals" and args.cfgBarrelDileptonMCRecSignals:
                     multiConfigurableSet(config, key, value, args.cfgBarrelDileptonMCRecSignals, args.onlySelect)
-                    config[key][value] = args.cfgBarrelDileptonMCRecSignals
                     logging.debug(" - [%s] %s : %s", key, value, args.cfgBarrelDileptonMCRecSignals)
                 
                 if value == "cfgBarrelMCGenSignals" and args.cfgBarrelDileptonMCGenSignals:
@@ -274,69 +262,8 @@ for key, value in config.items():
                 if value == "cfgFillCandidateTable" and args.cfgFillCandidateTable:
                     config[key][value] = args.cfgFillCandidateTable
                     logging.debug(" - [%s] %s : %s", key, value, args.cfgFillCandidateTable)
-            
-            # Dummy automizer
-            if args.autoDummy:
-                """
-                value.endswith("Skimmed") --> get all skimmed process functions without dummy
-                if "true" in skimmedListEventSelection ... else ... --> # if no skimmed process true, processDummy true else processDummy false
-                """
-                
-                if key == "analysis-event-selection":
-                    if value.endswith("Skimmed"):
-                        if config[key][value] == "true":
-                            skimmedListEventSelection.append("true")
-                        if config[key][value] == "false":
-                            skimmedListEventSelection.append("false")
-                    if "true" in skimmedListEventSelection:
-                        config[key]["processDummy"] = "false"
-                    else:
-                        config[key]["processDummy"] = "true"
-                
-                if key == "analysis-muon-selection":
-                    if value.endswith("Skimmed"):
-                        if config[key][value] == "true":
-                            skimmedListMuonSelection.append("true")
-                        if config[key][value] == "false":
-                            skimmedListMuonSelection.append("false")
-                    if "true" in skimmedListMuonSelection:
-                        config[key]["processDummy"] = "false"
-                    else:
-                        config[key]["processDummy"] = "true"
-                
-                if key == "analysis-track-selection":
-                    if value.endswith("Skimmed"):
-                        if config[key][value] == "true":
-                            skimmedListTrackSelection.append("true")
-                        if config[key][value] == "false":
-                            skimmedListTrackSelection.append("false")
-                    if "true" in skimmedListTrackSelection:
-                        config[key]["processDummy"] = "false"
-                    else:
-                        config[key]["processDummy"] = "true"
-                
-                if key == "analysis-same-event-pairing":
-                    if value.endswith("Skimmed"):
-                        if config[key][value] == "true":
-                            skimmedListSEP.append("true")
-                        if config[key][value] == "false":
-                            skimmedListSEP.append("false")
-                    if "true" in skimmedListSEP:
-                        config[key]["processDummy"] = "false"
-                    else:
-                        config[key]["processDummy"] = "true"
-                
-                if key == "analysis-dilepton-track":
-                    if value.endswith("Skimmed"):
-                        if config[key][value] == "true":
-                            skimmedListDileptonTrack.append("true")
-                        if config[key][value] == "false":
-                            skimmedListDileptonTrack.append("false")
-                    if "true" in skimmedListDileptonTrack:
-                        config[key]["processDummy"] = "false"
-                    else:
-                        config[key]["processDummy"] = "true"
 
+processDummySet(config) # dummy automizer
 aodFileChecker(args.aod)
 
 if args.reader is not None:

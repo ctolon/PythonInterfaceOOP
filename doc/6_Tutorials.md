@@ -176,7 +176,7 @@ P.S. Root files are inputs for JSON configs
 Command To Run:
 
 ```ruby
-python3 runTableMakerMC.py configs/configTableMakerMCRun3.json -runMC --aod Datas/AO2D_ppMCRun3_LHC21i3d2.root --process MuonOnlyWithCov OnlyBCs --syst pp --cfgMCsignals muFromJpsi Jpsi muon --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --add_track_prop --debug debug --logFile
+python3 runTableMakerMC.py configs/configTableMakerMCRun3.json -runMC --aod Datas/AO2D_ppMCRun3_LHC21i3d2.root --process MuonOnlyWithCov OnlyBCs --syst pp --cfgMCsignals muFromJpsi Jpsi muon --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --debug debug --logFile
 ```
 
  ### Run dqEfficiency on MC (LHC21i3d2 pp Run3Simulation)
@@ -233,7 +233,7 @@ python3 runDQEfficiency.py configs/configAnalysisMC.json --aod reducedAod.root -
 Command To Run:
 
 ```ruby
-python3 runTableMaker.py configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs BarrelOnlyWithCent --syst PbPb --cfgWithQA true --est Run2V0M --cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --add_fdd_conv --debug debug --logFile
+python3 runTableMaker.py configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs BarrelOnlyWithCent --syst PbPb --cfgWithQA true --est Run2V0M --cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --debug debug --logFile
 ```
 
 ### Run tableReader on LHC15o (LHC15o PbPb Run2Data)
@@ -251,7 +251,7 @@ python3 runTableReader.py configs/configAnalysisData.json --aod reducedAod.root 
 Command To Run:
 
 ```ruby
-python3 runTableMaker.py configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs FullWithCent BarrelOnlyWithQvector --syst PbPb --cfgWithQA true --est Run2V0M --cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --add_fdd_conv --debug debug --logFile
+python3 runTableMaker.py configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs FullWithCent BarrelOnlyWithQvector --syst PbPb --cfgWithQA true --est Run2V0M --cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --debug debug --logFile
 ```
 
 ### Run tableReader on LHC15o with Generic Flow Analysis (LHC15o PbPb Run2Data)
@@ -269,14 +269,14 @@ python3 runTableReader.py configs/configAnalysisData.json --aod reducedAod.root 
 Command To Run:
 
 ```ruby
-python3 runDQFlow.py configs/configFlowDataRun2.json --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --syst PbPb --cfgWithQA true --est Run2V0M --FT0 Run2 --cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --isVertexZeq false --add_fdd_conv --debug debug --logFile
+python3 runDQFlow.py configs/configFlowDataRun2.json --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --syst PbPb --cfgWithQA true --est Run2V0M --FT0 Run2 --cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --isVertexZeq false --debug debug --logFile
 ```
 ### Run v0Selector on LHC15o (LHC15o PbPb Run2Data)
 
 Command To Run:
 
 ```ruby
-python3 runV0selector.py configs/configV0SelectorDataRun2.json --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --add_fdd_conv --add_weakdecay_ind --isVertexZeq false
+python3 runV0selector.py configs/configV0SelectorDataRun2.json --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --isVertexZeq false
 ```
 
 ### Run tableMaker on LHC22c (LHC22c pp Run3Data)
@@ -284,7 +284,7 @@ python3 runV0selector.py configs/configV0SelectorDataRun2.json --aod Datas/AO2D_
 Command To Run:
 
 ```ruby
-python3 runTableMaker.py configs/configTableMakerDataRun3.json -runData --aod Datas/AO2D_ppDataRun3_LHC22c.root --process OnlyBCs MuonOnlyWithCov --syst pp --cfgWithQA true --cfgMuonsCuts muonQualityCuts --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --add_track_prop --isVertexZeq false --debug debug --logFile
+python3 runTableMaker.py configs/configTableMakerDataRun3.json -runData --aod Datas/AO2D_ppDataRun3_LHC22c.root --process OnlyBCs MuonOnlyWithCov --syst pp --cfgWithQA true --cfgMuonsCuts muonQualityCuts --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --isVertexZeq false --debug debug --logFile
 ```
 
 ### Run tableReader on Data (LHC22c pp Run3Data)
@@ -341,7 +341,7 @@ python3 runDQEfficiency.py configs/configAnalysisMC.json --aod dileptonAOD.root 
 First Command To Run:
 
 ```ruby
-python3 runTableMaker.py configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs BarrelOnly --syst PbPb --cfgWithQA true --est Run2V0M --cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --add_fdd_conv --debug debug --logFile
+python3 runTableMaker.py configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs BarrelOnly --syst PbPb --cfgWithQA true --est Run2V0M --cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --debug debug --logFile
 ```
 
 Second Command To Run:
