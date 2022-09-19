@@ -37,13 +37,13 @@ from dqtasks.dqFlow import AnalysisQvector
 ###################################
 
 centralityTableParameters = [
-    "estRun2V0M", "estRun2SPDtks", "estRun2SPDcls", "estRun2CL0", "estRun2CL1", "estFV0A", "estFT0M", "estFDDM", "estNTPV",
+    "estRun2V0M", "estRun2SPDtks", "estRun2SPDcls", "estRun2CL0", "estRun2CL1", "estFV0A", "estFT0M", "estFDDM", "estNTPV"
     ]
 # TODO: Add genname parameter
 
 ft0Parameters = ["processFT0", "processNoFT0", "processOnlyFT0", "processRun2"]
 
-pidParameters = ["pid-el", "pid-mu", "pid-pi", "pid-ka", "pid-pr", "pid-de", "pid-tr", "pid-he", "pid-al",]
+pidParameters = ["pid-el", "pid-mu", "pid-pi", "pid-ka", "pid-pr", "pid-de", "pid-tr", "pid-he", "pid-al"]
 
 booleanSelections = ["true", "false"]
 
@@ -56,7 +56,7 @@ ttreeList = []
 commonDeps = [
     "o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table", "o2-analysis-centrality-table",
     "o2-analysis-trackselection", "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof-full",
-    "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full",
+    "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full"
     ]
 
 # init args manually
@@ -252,8 +252,9 @@ for key, value in config.items():
                 logging.debug(" - [%s] %s : %s", key, value, args.etaMax)
 
 aodFileChecker(args.aod)
-# trackPropTransaction(args.add_track_prop, commonDeps)
+trackPropTransaction(args.add_track_prop, commonDeps)
 
+"""
 # Regarding to perfomance issues in argcomplete package, we should import later
 from extramodules.getTTrees import getTTrees
 
@@ -265,6 +266,7 @@ else:
 
 converterManager(ttreeList, commonDeps)
 trackPropChecker(commonDeps, commonDeps)
+"""
 
 ###########################
 # End Interface Processes #
@@ -286,7 +288,7 @@ commandToRun = (
 for dep in depsToRun.keys():
     commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"
     logging.debug("%s added your workflow", dep)
-"""
+
 if args.add_mc_conv:
     logging.debug("o2-analysis-mc-converter added your workflow")
     commandToRun += (" | o2-analysis-mc-converter --configuration json://" + updatedConfigFileName + " -b")
@@ -298,7 +300,11 @@ if args.add_fdd_conv:
 if args.add_track_prop:
     commandToRun += (" | o2-analysis-track-propagation --configuration json://" + updatedConfigFileName + " -b")
     logging.debug("o2-analysis-track-propagation added your workflow")
-"""
+    
+if args.add_weakdecay_ind:
+    commandToRun += (" | o2-analysis-weak-decay-indices --configuration json://" + updatedConfigFileName + " -b")
+    logging.debug("o2-analysis-weak-decay-indices added your workflow")
+
 
 print("====================================================================================================================")
 logging.info("Command to run:")

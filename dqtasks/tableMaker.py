@@ -260,8 +260,8 @@ class TableMaker(object):
         self.helperOptions.parserHelperOptions = self.parserTableMaker
         self.helperOptions.addArguments()
         
-        # self.o2Converters.parserO2Converters = self.parserTableMaker
-        # self.o2Converters.addArguments()
+        self.o2Converters.parserO2Converters = self.parserTableMaker
+        self.o2Converters.addArguments()
         
         self.dplAodReader.parserDplAodReader = self.parserTableMaker
         self.dplAodReader.addArguments()

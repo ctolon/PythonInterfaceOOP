@@ -195,8 +195,8 @@ class DQFilterPPTask(object):
         self.helperOptions.parserHelperOptions = self.parserDQFilterPPTask
         self.helperOptions.addArguments()
         
-        # self.o2Converters.parserO2Converters = self.parserDQFilterPPTask
-        # self.o2Converters.addArguments()
+        self.o2Converters.parserO2Converters = self.parserDQFilterPPTask
+        self.o2Converters.addArguments()
         
         self.dplAodReader.parserDplAodReader = self.parserDQFilterPPTask
         self.dplAodReader.addArguments()

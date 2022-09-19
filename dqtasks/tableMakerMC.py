@@ -184,8 +184,8 @@ class TableMakerMC(object):
         self.helperOptions.parserHelperOptions = self.parserTableMakerMC
         self.helperOptions.addArguments()
         
-        # self.o2Converters.parserO2Converters = self.parserTableMakerMC
-        # self.o2Converters.addArguments()
+        self.o2Converters.parserO2Converters = self.parserTableMakerMC
+        self.o2Converters.addArguments()
         
         self.dplAodReader.parserDplAodReader = self.parserTableMakerMC
         self.dplAodReader.addArguments()

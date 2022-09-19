@@ -131,8 +131,8 @@ class V0selector(object):
         self.helperOptions.parserHelperOptions = self.parserV0selector
         self.helperOptions.addArguments()
         
-        # self.o2Converters.parserO2Converters = self.parserV0selector
-        # self.o2Converters.addArguments()
+        self.o2Converters.parserO2Converters = self.parserV0selector
+        self.o2Converters.addArguments()
         
         self.dplAodReader.parserDplAodReader = self.parserV0selector
         self.dplAodReader.addArguments()

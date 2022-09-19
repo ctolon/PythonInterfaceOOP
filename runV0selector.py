@@ -26,7 +26,7 @@ from extramodules.converterManager import converterManager
 from extramodules.debugSettings import debugSettings
 
 from extramodules.monitoring import dispArgs
-from extramodules.dqTranscations import aodFileChecker, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, trackPropChecker
+from extramodules.dqTranscations import aodFileChecker, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, trackPropChecker, trackPropTransaction
 from extramodules.pycacheRemover import runPycacheRemover
 
 from dqtasks.v0selector import V0selector
@@ -242,8 +242,9 @@ for key, value in config.items():
                 logging.debug(" - [%s] %s : %s", key, value, args.etaMax)
 
 aodFileChecker(args.aod)
-# trackPropTransaction(args.add_track_prop, commonDeps)
+trackPropTransaction(args.add_track_prop, commonDeps)
 
+"""
 # Regarding to perfomance issues in argcomplete package, we should import later
 from extramodules.getTTrees import getTTrees
 
@@ -255,6 +256,7 @@ else:
 
 converterManager(ttreeList, commonDeps)
 trackPropChecker(commonDeps, commonDeps)
+"""
 
 ###########################
 # End Interface Processes #
@@ -277,7 +279,7 @@ commandToRun = (
 for dep in depsToRun.keys():
     commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"
     logging.debug("%s added your workflow", dep)
-"""
+
 if args.add_mc_conv:
     logging.debug("o2-analysis-mc-converter added your workflow")
     commandToRun += (" | o2-analysis-mc-converter --configuration json://" + updatedConfigFileName + " -b")
@@ -293,7 +295,6 @@ if args.add_track_prop:
 if args.add_weakdecay_ind:
     commandToRun += (" | o2-analysis-weak-decay-indices --configuration json://" + updatedConfigFileName + " -b")
     logging.debug("o2-analysis-weak-decay-indices added your workflow")
-"""
 
 print("====================================================================================================================")
 logging.info("Command to run:")

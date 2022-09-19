@@ -165,8 +165,8 @@ class AnalysisQvector(object):
         self.helperOptions.parserHelperOptions = self.parserAnalysisQvector
         self.helperOptions.addArguments()
         
-        # self.o2Converters.parserO2Converters = self.parserAnalysisQvector
-        # self.o2Converters.addArguments()
+        self.o2Converters.parserO2Converters = self.parserAnalysisQvector
+        self.o2Converters.addArguments()
         
         self.dplAodReader.parserDplAodReader = self.parserAnalysisQvector
         self.dplAodReader.addArguments()

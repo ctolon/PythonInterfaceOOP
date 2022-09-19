@@ -525,8 +525,9 @@ for key, value in config.items():
 centTranscation(config, args.process, args.syst, centSearch)
 filterSelsTranscation(args.cfgBarrelSels, args.cfgMuonSels, args.cfgBarrelTrackCuts, args.cfgMuonsCuts, configuredCommands)
 aodFileChecker(args.aod)
-# trackPropTransaction(args.add_track_prop, barrelDeps)
+trackPropTransaction(args.add_track_prop, barrelDeps)
 
+"""
 # Regarding to perfomance issues in argcomplete package, we should import later
 from extramodules.getTTrees import getTTrees
 
@@ -538,7 +539,7 @@ else:
 
 converterManager(ttreeList, commonDeps)
 trackPropChecker(commonDeps, barrelDeps)
-
+"""
 ###########################
 # End Interface Processes #
 ###########################
@@ -621,7 +622,7 @@ if args.aod_memory_rate_limit:
 for dep in depsToRun.keys():
     commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"
     logging.debug("%s added your workflow", dep)
-"""
+
 if args.add_mc_conv:
     logging.debug("o2-analysis-mc-converter added your workflow")
     commandToRun += (" | o2-analysis-mc-converter --configuration json://" + updatedConfigFileName + " -b")
@@ -633,7 +634,11 @@ if args.add_fdd_conv:
 if args.add_track_prop:
     commandToRun += (" | o2-analysis-track-propagation --configuration json://" + updatedConfigFileName + " -b")
     logging.debug("o2-analysis-track-propagation added your workflow")
-"""
+    
+if args.add_weakdecay_ind:
+    commandToRun += (" | o2-analysis-weak-decay-indices --configuration json://" + updatedConfigFileName + " -b")
+    logging.debug("o2-analysis-weak-decay-indices added your workflow")
+
 
 print("====================================================================================================================")
 logging.info("Command to run:")

@@ -317,8 +317,9 @@ for key, value in config.items():
 # Transactions
 filterSelsTranscation(args.cfgBarrelSels, args.cfgMuonSels, args.cfgBarrelTrackCuts, args.cfgMuonsCuts, configuredCommands)
 aodFileChecker(args.aod)
-# trackPropTransaction(args.add_track_prop, commonDeps)
+trackPropTransaction(args.add_track_prop, commonDeps)
 
+"""
 # Regarding to perfomance issues in argcomplete package, we should import later
 from extramodules.getTTrees import getTTrees
 
@@ -330,6 +331,7 @@ else:
 
 converterManager(ttreeList, commonDeps)
 trackPropChecker(commonDeps, commonDeps)
+"""
 
 ###########################
 # End Interface Processes #
@@ -364,6 +366,10 @@ if args.add_fdd_conv:
 if args.add_track_prop:
     commandToRun += (" | o2-analysis-track-propagation --configuration json://" + updatedConfigFileName + " -b")
     logging.debug("o2-analysis-track-propagation added your workflow")
+    
+if args.add_weakdecay_ind:
+    commandToRun += (" | o2-analysis-weak-decay-indices --configuration json://" + updatedConfigFileName + " -b")
+    logging.debug("o2-analysis-weak-decay-indices added your workflow")
 
 print("====================================================================================================================")
 logging.info("Command to run:")
