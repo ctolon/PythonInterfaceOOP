@@ -22,7 +22,7 @@ import logging
 import sys
 import os
 
-from .dqExceptions import CentFilterError, CfgInvalidFormatError, ForgettedArgsError, MandatoryArgNotFoundError, NotInAlienvError, SelsAndCutsNotHaveSameNumberError, TasknameNotFoundInConfigFileError
+from .dqExceptions import CentFilterError, CfgInvalidFormatError, ForgettedArgsError, MandatoryArgNotFoundError, NotInAlienvError, SelsAndCutsNotHaveSameNumberError, TasknameNotFoundInConfigFileError, textListNotStartsWithAtError
 
 
 def aodFileChecker(aod: str):
@@ -57,6 +57,16 @@ def aodFileChecker(aod: str):
             except FileNotFoundError:
                 logging.exception("%s AO2D single root file not found in path!!!", argProvidedAod)
                 sys.exit()
+                
+        elif endsWithTxt and not textAodList:
+            try:
+                raise textListNotStartsWithAtError(argProvidedAod)
+            
+            except textListNotStartsWithAtError as e:
+                logging.exception(e)
+                logging.info("Example usage: --aod @%s",argProvidedAod)
+                sys.exit()
+                
         else:
             try:
                 open(argProvidedAod, "r")

@@ -228,6 +228,18 @@ for key, value in config.items():
             if args.itsMatching:
                 config[key][value] = args.itsMatching
                 logging.debug(" - [%s] %s : %s", key, value, args.itsMatching)
+            if args.ptMin:
+                config[key][value] = args.ptMin
+                logging.debug(" - [%s] %s : %s", key, value, args.ptMin)
+            if args.ptMax:
+                config[key][value] = args.ptMax
+                logging.debug(" - [%s] %s : %s", key, value, args.ptMax)
+            if args.etaMin:
+                config[key][value] = args.etaMin
+                logging.debug(" - [%s] %s : %s", key, value, args.etaMin)
+            if args.etaMin:
+                config[key][value] = args.etaMin
+                logging.debug(" - [%s] %s : %s", key, value, args.etaMax)
 
 aodFileChecker(args.aod)
 # trackPropTransaction(args.add_track_prop, commonDeps)

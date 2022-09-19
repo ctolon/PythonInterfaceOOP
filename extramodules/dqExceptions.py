@@ -113,3 +113,17 @@ class MandatoryArgNotFoundError(Exception):
     
     def __str__(self):
         return f"Mandatory args not found: {self.arg}"
+    
+class textListNotStartsWithAtError(Exception):
+    
+    """Exception raised for if mandatory arg not found
+
+    Attributes:
+        arg: mandatory argument
+    """
+    
+    def __init__(self, arg):
+        self.arg = arg
+    
+    def __str__(self):
+        return f"{self.arg} AO2D text lists have to start with @ symbol"
