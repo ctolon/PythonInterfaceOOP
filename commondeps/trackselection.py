@@ -61,8 +61,8 @@ class TrackSelectionTask(object):
             help = "Lower cut on eta for the track selected",
             action = "store", type = str)
         groupTrackSelectionTask.add_argument(
-            "--etaMin",
-            help = "Lower cut on eta for the track selected",
+            "--etaMax",
+            help = "Upper cut on eta for the track selected",
             action = "store", type = str)
     
     
