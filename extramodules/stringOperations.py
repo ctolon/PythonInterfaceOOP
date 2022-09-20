@@ -53,3 +53,18 @@ def stringToList(string: str):
     """
     li = list(string.split(","))
     return li
+
+
+def stringToListWithSlash(string: str):
+    """
+    stringToListWithSlash provides converts strings to list with Slashes.
+    This function is written to save as list type instead of string
+
+    Args:
+        string (string): Input as String
+
+    Returns:
+        list: merge string elements with slash
+    """
+    li = list(string.split("/"))
+    return li

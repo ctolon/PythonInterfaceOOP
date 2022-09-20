@@ -20,15 +20,15 @@ import logging
 from .stringOperations import listToString
 
 
-def dispArgs(configuredCommands: dict):
+def dispArgs(allArgs: dict):
     """Display all configured commands you provided in CLI
 
     Args:
-        configuredCommands (dict): configured commands in CLI
+        allArgs (dict): configured commands in CLI
     """
     logging.info("Args provided configurations List")
     print("====================================================================================================================")
-    for key, value in configuredCommands.items():
+    for key, value in allArgs.items():
         if value is not None:
             if isinstance(value, list):
                 listToString(value)

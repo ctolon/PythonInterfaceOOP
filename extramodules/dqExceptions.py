@@ -113,7 +113,8 @@ class MandatoryArgNotFoundError(Exception):
     
     def __str__(self):
         return f"Mandatory args not found: {self.arg}"
-    
+
+
 class textListNotStartsWithAtError(Exception):
     
     """Exception raised for if mandatory arg not found

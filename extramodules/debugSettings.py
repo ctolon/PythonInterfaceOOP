@@ -48,7 +48,7 @@ def debugSettings(argDebug: bool, argLogFile: bool, fileName: str):
         ch.setFormatter(format)
         log.addHandler(ch)
         
-        loggerFile = "tableReader.log"
+        loggerFile = fileName
         if os.path.isfile(loggerFile):
             os.remove(loggerFile)
         

@@ -22,13 +22,12 @@ import json
 import logging
 import logging.config
 import os
-from extramodules.converterManager import converterManager
 
 from extramodules.debugSettings import debugSettings
 from extramodules.monitoring import dispArgs
 from extramodules.descriptor import inputDescriptors, outputDescriptors
-from extramodules.dqTranscations import aodFileChecker, centTranscation, forgettedArgsChecker, jsonTypeChecker, filterSelsTranscation, mainTaskChecker, trackPropChecker, trackPropTransaction
-from extramodules.configSetter import multiConfigurableSet
+from extramodules.dqTranscations import aodFileChecker, centTranscation, forgettedArgsChecker, jsonTypeChecker, filterSelsTranscation, mainTaskChecker, trackPropTransaction
+from extramodules.configSetter import PROCESS_SWITCH, converterSet, CONFIG_SET, tableProducer
 from extramodules.pycacheRemover import runPycacheRemover
 
 from dqtasks.tableMaker import TableMaker
@@ -38,23 +37,26 @@ from dqtasks.tableMaker import TableMaker
 ###################################
 
 centralityTableParameters = [
-    "estRun2V0M", "estRun2SPDtks", "estRun2SPDcls", "estRun2CL0", "estRun2CL1", "estFV0A", "estFT0M", "estFDDM", "estNTPV"
+    "estRun2V0M", "estRun2SPDtks", "estRun2SPDcls", "estRun2CL0", "estRun2CL1", "estFV0A", "estFT0M", "estFDDM", "estNTPV",
     ]
-# TODO Add genname parameter
+# TODO: Add genname parameter
 
 ft0Parameters = ["processFT0", "processNoFT0", "processOnlyFT0", "processRun2"]
 
-pidParameters = ["pid-el", "pid-mu", "pid-pi", "pid-ka", "pid-pr", "pid-de", "pid-tr", "pid-he", "pid-al"]
+pidParameters = ["pid-el", "pid-mu", "pid-pi", "pid-ka", "pid-pr", "pid-de", "pid-tr", "pid-he", "pid-al",]
 
 booleanSelections = ["true", "false"]
 
-ttreeList = []
+covParameters = ["processStandard", "processCovariance"]
+
+sliceParameters = ["processWoSlice", "processWSlice"]
+
+vertexParameters = ["doVertexZeq", "doDummyZeq"]
 
 # Predefined Search Lists
 fullSearch = []
 barrelSearch = []
 muonSearch = []
-covSearch = []
 centSearch = []
 filterSearch = []
 
@@ -187,13 +189,16 @@ initArgs.mergeArgs()
 initArgs.parseArgs()
 
 args = initArgs.parseArgs()
-configuredCommands = vars(args) # for get args
+allArgs = vars(args) # for get args
 
 # Debug Settings
 debugSettings(args.debug, args.logFile, fileName = "tableMaker.log")
 
+# if cliMode true, Overrider mode else additional mode
+cliMode = args.onlySelect
+
 # Transcation management
-forgettedArgsChecker(configuredCommands)
+forgettedArgsChecker(allArgs)
 
 ######################
 # PREFIX ADDING PART #
@@ -236,14 +241,21 @@ taskNameInCommandLine = "o2-analysis-dq-table-maker"
 
 mainTaskChecker(config, taskNameInConfig)
 
+if args.process:
+    fullSearch = [s for s in args.process if "Full" in s]
+    barrelSearch = [s for s in args.process if "Barrel" in s]
+    muonSearch = [s for s in args.process if "Muon" in s]
+    filterSearch = [s for s in args.process if "Filter" in s]
+    centSearch = [s for s in args.process if "Cent" in s]
+
 # ===========================
 # Start Interface Processes =
 # ===========================
 
-logging.info("Only Select Configured as %s", args.onlySelect)
-if args.onlySelect == "true":
+logging.info("Only Select Configured as %s", cliMode)
+if cliMode == "true":
     logging.info("INTERFACE MODE : JSON Overrider")
-if args.onlySelect == "false":
+if cliMode == "false":
     logging.info("INTERFACE MODE : JSON Additional")
 
 # For adding a process function from TableMaker and all process should be added only once so set type used
@@ -258,275 +270,50 @@ for key, value in config.items():
                 config[key][value] = args.aod
                 logging.debug(" - [%s] %s : %s", key, value, args.aod)
             
-            # table-maker/table-maker-m-c process selections
-            # TODO Refactor
-            if (value in specificDeps.keys()) and args.process:
-                if value in args.process:
-                    
-                    # processOnlyBCs have to always be true
-                    if "processOnlyBCs" not in args.process:
-                        args.process.append("processOnlyBCs")
-                        logging.warning("You forget to add OnlyBCs value in --process parameter! It will automaticaly added.")
-                    value2 = "true"
-                    config[key][value] = value2
-                    logging.debug(" - [%s] %s : %s", key, value, value2)
-                    
-                    for s in config[key].keys():
-                        if s in specificDeps.keys():
-                            tableMakerProcessSearch.add(s)
-                    
-                    fullSearch = [s for s in args.process if "Full" in s]
-                    barrelSearch = [s for s in args.process if "Barrel" in s]
-                    muonSearch = [s for s in args.process if "Muon" in s]
-                    filterSearch = [s for s in args.process if "Filter" in s]
-                    centSearch = [s for s in args.process if "Cent" in s]
-                    
-                    if len(barrelSearch) > 0 or len(fullSearch) > 0:
-                        if args.isBarrelSelectionTiny == "true":
-                            config["d-q-barrel-track-selection-task"]["processSelection"] = "false"
-                            config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = args.isBarrelSelectionTiny
-                    
-                    if (len(barrelSearch) == 0 and len(fullSearch) == 0 and args.runData and args.onlySelect == "true"):
-                        config["d-q-barrel-track-selection-task"]["processSelection"] = "false"
-                        config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = "false"
-                        config["d-q-barrel-track-selection-task"]["processDummy"] = "true"
-                    
-                    if (len(muonSearch) == 0 and len(fullSearch) == 0 and args.runData and args.onlySelect == "true"):
-                        config["d-q-muons-selection"]["processSelection"] = "false"
-                        config["d-q-muons-selection"]["processDummy"] = "true"
-                    
-                    if len(filterSearch) > 0 and args.runData:
-                        config["d-q-filter-p-p-task"]["processFilterPP"] = "true"
-                        config["d-q-filter-p-p-task"]["processFilterPPTiny"] = "false"
-                        
-                        if args.isFilterPPTiny == "true":
-                            config["d-q-filter-p-p-task"]["processFilterPP"] = "false"
-                            config["d-q-filter-p-p-task"]["processFilterPPTiny"] = "true"
-                    
-                    if len(filterSearch) == 0 and args.runData and args.onlySelect == "true":
-                        config["d-q-filter-p-p-task"]["processFilterPP"] = "false"
-                        config["d-q-filter-p-p-task"]["processFilterPPTiny"] = "false"
-                        config["d-q-filter-p-p-task"]["processDummy"] = "false"
+            if len(barrelSearch) > 0 or len(fullSearch) > 0:
+                if args.isBarrelSelectionTiny == "true":
+                    config["d-q-barrel-track-selection-task"]["processSelection"] = "false"
+                    config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = args.isBarrelSelectionTiny
+            
+            if (len(barrelSearch) == 0 and len(fullSearch) == 0 and args.runData and cliMode == "true"):
+                config["d-q-barrel-track-selection-task"]["processSelection"] = "false"
+                config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = "false"
+                config["d-q-barrel-track-selection-task"]["processDummy"] = "true"
+            
+            if (len(muonSearch) == 0 and len(fullSearch) == 0 and args.runData and cliMode == "true"):
+                config["d-q-muons-selection"]["processSelection"] = "false"
+                config["d-q-muons-selection"]["processDummy"] = "true"
+            
+            if len(filterSearch) > 0 and args.runData:
+                config["d-q-filter-p-p-task"]["processFilterPP"] = "true"
+                config["d-q-filter-p-p-task"]["processFilterPPTiny"] = "false"
                 
-                elif args.onlySelect == "true":
-                    if value == "processOnlyBCs":
-                        config[key][value] = "true"
-                        logging.debug(" - [%s] %s : true", key, value)
-                    else:
-                        value2 = "false"
-                        config[key][value] = value2
-                        logging.debug(" - [%s] %s : %s", key, value, value2)
+                if args.isFilterPPTiny == "true":
+                    config["d-q-filter-p-p-task"]["processFilterPP"] = "false"
+                    config["d-q-filter-p-p-task"]["processFilterPPTiny"] = "true"
             
-            # filterPP Selections
-            if value == "cfgBarrelSels" and args.cfgBarrelSels:
-                multiConfigurableSet(config, key, value, args.cfgBarrelSels, args.onlySelect)
-                logging.debug(" - [%s] %s : %s", key, value, args.cfgBarrelSels)
-            if value == "cfgMuonSels" and args.cfgMuonSels:
-                multiConfigurableSet(config, key, value, args.cfgMuonSels, args.onlySelect)
-                logging.debug(" - [%s] %s : %s", key, value, args.cfgMuonSels)
+            if len(filterSearch) == 0 and args.runData and cliMode == "true":
+                config["d-q-filter-p-p-task"]["processFilterPP"] = "false"
+                config["d-q-filter-p-p-task"]["processFilterPPTiny"] = "false"
+                config["d-q-filter-p-p-task"]["processDummy"] = "false"
             
-            # PID Selections
-            if (value in pidParameters) and args.pid and key != "tof-pid":
-                if value in args.pid:
-                    value2 = "1"
-                    config[key][value] = value2
-                    logging.debug(" - [%s] %s : %s", key, value, value2)
-                elif args.onlySelect == "true":
-                    value2 = "-1"
-                    config[key][value] = value2
-                    logging.debug(" - [%s] %s : %s", key, value, value2)
-            
-            # analysis-qvector selections
-            if value == "cfgCutPtMin" and args.cfgCutPtMin:
-                config[key][value] = args.cfgCutPtMin
-                logging.debug(" - [%s] %s : %s", key, value, args.cfgCutPtMin)
-            if value == "cfgCutPtMax" and args.cfgCutPtMax:
-                config[key][value] = args.cfgCutPtMax
-                logging.debug(" - [%s] %s : %s", key, value, args.cfgCutPtMax)
-            if value == "cfgCutEta" and args.cfgCutEta:
-                config[key][value] = args.cfgCutEta
-                logging.debug(" - [%s] %s : %s", key, value, args.cfgCutEta)
-            if value == "cfgEtaLimit" and args.cfgEtaLimit:
-                config[key][value] = args.cfgEtaLimit
-                logging.debug(" - [%s] %s : %s", key, value, args.cfgEtaLimit)
-            if value == "cfgNPow" and args.cfgNPow:
-                config[key][value] = args.cfgNPow
-                logging.debug(" - [%s] %s : %s", key, value, args.cfgNPow)
-            if value == "cfgEfficiency" and args.cfgEfficiency:
-                config[key][value] = args.cfgEfficiency
-                logging.debug(" - [%s] %s : %s", key, value, args.cfgEfficiency)
-            if value == "cfgAcceptance" and args.cfgAcceptance:
-                config[key][value] = args.cfgAcceptance
-                logging.debug(" - [%s] %s : %s", key, value, args.cfgAcceptance)
-            
-            # v0-selector
-            if value == "d_bz_input" and args.d_bz_input:
-                config[key][value] = args.d_bz_input
-                logging.debug(" - [%s] %s : %s", key, value, args.d_bz_input)
-            if value == "v0cospa" and args.v0cospa:
-                config[key][value] = args.v0cospa
-                logging.debug(" - [%s] %s : %s", key, value, args.v0cospa)
-            if value == "dcav0dau" and args.dcav0dau:
-                config[key][value] = args.dcav0dau
-                logging.debug(" - [%s] %s : %s", key, value, args.dcav0dau)
-            if value == "v0Rmin" and args.v0Rmin:
-                config[key][value] = args.v0Rmin
-                logging.debug(" - [%s] %s : %s", key, value, args.v0Rmin)
-            if value == "v0Rmax" and args.v0Rmax:
-                config[key][value] = args.v0Rmax
-                logging.debug(" - [%s] %s : %s", key, value, args.v0Rmax)
-            if value == "dcamin" and args.dcamin:
-                config[key][value] = args.dcamin
-                logging.debug(" - [%s] %s : %s", key, value, args.dcamin)
-            if value == "dcamax" and args.dcamax:
-                config[key][value] = args.dcamax
-                logging.debug(" - [%s] %s : %s", key, value, args.dcamax)
-            if value == "mincrossedrows" and args.mincrossedrows:
-                config[key][value] = args.mincrossedrows
-                logging.debug(" - [%s] %s : %s", key, value, args.mincrossedrows)
-            if value == "maxchi2tpc" and args.maxchi2tpc:
-                config[key][value] = args.maxchi2tpc
-                logging.debug(" - [%s] %s : %s", key, value, args.maxchi2tpc)
-            
-            # centrality-table
-            if (value in centralityTableParameters) and args.est:
-                if value in args.est:
-                    value2 = "1"
-                    config[key][value] = value2
-                    logging.debug(" - [%s] %s : %s", key, value, value2)
-                elif args.onlySelect == "true":
-                    value2 = "-1"
-                    config[key][value] = value2
-                    logging.debug(" - [%s] %s : %s", key, value, value2)
-            
-            # table-maker/table-maker-m-c cfg selections
-            if value == "cfgEventCuts" and args.cfgEventCuts:
-                multiConfigurableSet(config, key, value, args.cfgEventCuts, args.onlySelect)
-                logging.debug(" - [%s] %s : %s", key, value, args.cfgEventCuts)
-            if value == "cfgBarrelTrackCuts" and args.cfgBarrelTrackCuts:
-                multiConfigurableSet(config, key, value, args.cfgBarrelTrackCuts, args.onlySelect)
-                logging.debug(" - [%s] %s : %s", key, value, args.cfgBarrelTrackCuts)
-            if value == "cfgMuonCuts" and args.cfgMuonCuts:
-                multiConfigurableSet(config, key, value, args.cfgMuonCuts, args.onlySelect)
-                logging.debug(" - [%s] %s : %s", key, value, args.cfgMuonCuts)
-            if value == "cfgBarrelLowPt" and args.cfgBarrelLowPt:
-                config[key][value] = args.cfgBarrelLowPt
-                logging.debug(" - [%s] %s : %s", key, value, args.cfgBarrelLowPt)
-            if value == "cfgMuonLowPt" and args.cfgMuonLowPt:
-                config[key][value] = args.cfgMuonLowPt
-                logging.debug(" - [%s] %s : %s", key, value, args.cfgMuonLowPt)
-            if value == "cfgNoQA" and args.cfgNoQA:
-                config[key][value] = args.cfgNoQA
-                logging.debug(" - [%s] %s : %s", key, value, args.cfgNoQA)
-            if value == "cfgDetailedQA" and args.cfgDetailedQA:
-                config[key][value] = args.cfgDetailedQA
-                logging.debug(" - [%s] %s : %s", key, value, args.cfgDetailedQA)
-            if value == "cfgMinTpcSignal" and args.cfgMinTpcSignal:
-                config[key][value] = args.cfgMinTpcSignal
-                logging.debug(" - [%s] %s : %s", key, value, args.cfgMinTpcSignal)
-            if value == "cfgMaxTpcSignal" and args.cfgMaxTpcSignal:
-                config[key][value] = args.cfgMaxTpcSignal
-                logging.debug(" - [%s] %s : %s", key, value, args.cfgMaxTpcSignal)
-            
-            # d-q-muons-selection
-            if value == "cfgMuonsCuts" and args.cfgMuonsCuts:
-                multiConfigurableSet(config, key, value, args.cfgMuonsCuts, args.onlySelect)
-                logging.debug(" - [%s] %s : %s", key, value, args.cfgMuonsCuts)
-            
-            # event-selection-task
-            if value == "syst" and args.syst:
-                config[key][value] = args.syst
-                logging.debug(" - [%s] %s : %s", key, value, args.syst)
-            if value == "muonSelection" and args.muonSelection:
-                config[key][value] = args.muonSelection
-                logging.debug(" - [%s] %s : %s", key, value, args.muonSelection)
-            if value == "customDeltaBC" and args.customDeltaBC:
-                config[key][value] = args.customDeltaBC
-                logging.debug(" - [%s] %s : %s", key, value, args.customDeltaBC)
-            
-            # multiplicity-table
-            if value == "doVertexZeq" and args.isVertexZeq:
-                if args.isVertexZeq == "true":
-                    config[key][value] = "1"
-                    config[key]["doDummyZeq"] = "0"
-                    logging.debug(" - %s %s : 1", key, value)
-                    logging.debug(" - [%s] doDummyZeq : 0", key)
-                if args.isVertexZeq == "false":
-                    config[key][value] = "0"
-                    config[key]["doDummyZeq"] = "1"
-                    logging.debug(" - %s %s : 0", key, value)
-                    logging.debug(" - [%s] doDummyZeq : 1", key)
-            
-            # tof-pid, tof-pid-full
-            if value == "processWSlice" and args.isWSlice:
-                if args.isWSlice == "true":
-                    config[key][value] = "true"
-                    config[key]["processWoSlice"] = "false"
-                    logging.debug(" - %s %s : true", key, value)
-                    logging.debug(" - [%s] processWoSlice : false", key)
-                if args.isWSlice == "false":
-                    config[key][value] = "false"
-                    config[key]["processWoSlice"] = "true"
-                    logging.debug(" - %s %s : false", key, value)
-                    logging.debug(" - [%s] processWoSlice : true", key)
-            
-            # tof-pid-beta
-            if value == "tof-expreso" and args.tof_expreso:
-                config[key][value] = args.tof_expreso
-                logging.debug(" - [%s] %s : %s", key, value, args.tof_expreso)
-            
-            # tof-event-time
-            if (value in ft0Parameters) and args.FT0 and key == "tof-event-time":
-                if value == args.FT0:
-                    value2 = "true"
-                    config[key][value] = value2
-                    logging.debug(" - [%s] %s : %s", key, value, value2)
-                elif value != args.FT0:
-                    value2 = "false"
-                    config[key][value] = value2
-                    logging.debug(" - [%s] %s : %s", key, value, value2)
-            
-            # all d-q tasks and selections
-            if (value == "cfgWithQA" or value == "cfgQA") and args.cfgWithQA:
-                config[key][value] = args.cfgWithQA
-                logging.debug(" - [%s] %s : %s", key, value, args.cfgWithQA)
-            
-            # track-propagation
-            if args.isCovariance:
-                if (value == "processStandard" or value == "processCovariance") and args.isCovariance == "false":
-                    config[key]["processStandard"] = "true"
-                    config[key]["processCovariance"] = "false"
-                    logging.debug(" - [%s] processStandart : true", key)
-                    logging.debug(" - [%s] processCovariance : false", key)
-                if (value == "processStandard" or value == "processCovariance") and args.isCovariance == "true":
-                    config[key]["processStandard"] = "false"
-                    config[key]["processCovariance"] = "true"
-                    logging.debug(" - [%s] processStandart : false", key)
-                    logging.debug(" - [%s] processCovariance : true", key)
-            
-            # track-selection
-            if args.itsMatching:
-                config[key][value] = args.itsMatching
-                logging.debug(" - [%s] %s : %s", key, value, args.itsMatching)
-            if args.ptMin:
-                config[key][value] = args.ptMin
-                logging.debug(" - [%s] %s : %s", key, value, args.ptMin)
-            if args.ptMax:
-                config[key][value] = args.ptMax
-                logging.debug(" - [%s] %s : %s", key, value, args.ptMax)
-            if args.etaMin:
-                config[key][value] = args.etaMin
-                logging.debug(" - [%s] %s : %s", key, value, args.etaMin)
-            if args.etaMin:
-                config[key][value] = args.etaMin
-                logging.debug(" - [%s] %s : %s", key, value, args.etaMax)
+            CONFIG_SET(config, key, value, allArgs, cliMode)
+            PROCESS_SWITCH(config, key, value, allArgs, cliMode, "est", centralityTableParameters, "1/-1")
+            PROCESS_SWITCH(config, key, value, allArgs, cliMode, "pid", pidParameters, "1/-1")
+            PROCESS_SWITCH(config, key, value, allArgs, cliMode, "process", specificDeps.keys(), "true/false")
+            PROCESS_SWITCH(config, key, value, allArgs, cliMode, "isCovariance", covParameters, "true/false", True)
+            PROCESS_SWITCH(config, key, value, allArgs, cliMode, "isWSlice", sliceParameters, "true/false", True)
+            PROCESS_SWITCH(
+                config, key = "tof-event-time", value = value, allArgs = allArgs, onlySelect = "true", argument = "FT0",
+                parameters = ft0Parameters, switchType = "true/false"
+                ) # TODO Refactor for FT0
+            PROCESS_SWITCH(config, key, value, allArgs, cliMode, "isVertexZeq", vertexParameters, "1/0", True)
 
 # Transactions
 centTranscation(config, args.process, args.syst, centSearch)
-filterSelsTranscation(args.cfgBarrelSels, args.cfgMuonSels, args.cfgBarrelTrackCuts, args.cfgMuonsCuts, configuredCommands)
+filterSelsTranscation(args.cfgBarrelSels, args.cfgMuonSels, args.cfgBarrelTrackCuts, args.cfgMuonsCuts, allArgs)
 aodFileChecker(args.aod)
 trackPropTransaction(args.add_track_prop, barrelDeps)
-
 """
 # Regarding to perfomance issues in argcomplete package, we should import later
 from extramodules.getTTrees import getTTrees
@@ -567,39 +354,9 @@ for processFunc in specificDeps.keys():
 
 # Check which tables are required in the output
 tablesToProduce = {}
-for table in commonTables:
-    tablesToProduce[table] = 1
-
-if runOverMC:
-    tablesToProduce["ReducedMCEvents"] = 1
-    tablesToProduce["ReducedMCEventLabels"] = 1
-
-for processFunc in specificDeps.keys():
-    if processFunc not in config[taskNameInConfig].keys():
-        continue
-    if config[taskNameInConfig][processFunc] == "true":
-        logging.info("processFunc ========")
-        logging.info("%s", processFunc)
-        if "processFull" in processFunc or "processBarrel" in processFunc:
-            logging.info("common barrel tables==========")
-            for table in barrelCommonTables:
-                logging.info("%s", table)
-                tablesToProduce[table] = 1
-            if runOverMC:
-                tablesToProduce["ReducedTracksBarrelLabels"] = 1
-        if "processFull" in processFunc or "processMuon" in processFunc:
-            logging.info("common muon tables==========")
-            for table in muonCommonTables:
-                logging.info("%s", table)
-                tablesToProduce[table] = 1
-            if runOverMC:
-                tablesToProduce["ReducedMuonsLabels"] = 1
-        if runOverMC:
-            tablesToProduce["ReducedMCTracks"] = 1
-        logging.info("specific tables==========")
-        for table in specificTables[processFunc]:
-            logging.info("%s", table)
-            tablesToProduce[table] = 1
+tableProducer(
+    config, taskNameInConfig, tablesToProduce, commonTables, barrelCommonTables, muonCommonTables, specificTables, specificDeps, runOverMC
+    )
 
 readerConfigFileName = "aodReaderTempConfig.json"
 writerConfigFileName = "aodWriterTempConfig.json"
@@ -623,22 +380,9 @@ for dep in depsToRun.keys():
     commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"
     logging.debug("%s added your workflow", dep)
 
-if args.add_mc_conv:
-    logging.debug("o2-analysis-mc-converter added your workflow")
-    commandToRun += (" | o2-analysis-mc-converter --configuration json://" + updatedConfigFileName + " -b")
-
-if args.add_fdd_conv:
-    commandToRun += (" | o2-analysis-fdd-converter --configuration json://" + updatedConfigFileName + " -b")
-    logging.debug("o2-analysis-fdd-converter added your workflow")
-
-if args.add_track_prop:
-    commandToRun += (" | o2-analysis-track-propagation --configuration json://" + updatedConfigFileName + " -b")
-    logging.debug("o2-analysis-track-propagation added your workflow")
-    
-if args.add_weakdecay_ind:
-    commandToRun += (" | o2-analysis-weak-decay-indices --configuration json://" + updatedConfigFileName + " -b")
-    logging.debug("o2-analysis-weak-decay-indices added your workflow")
-
+commandToRun = converterSet(
+    args.add_mc_conv, args.add_fdd_conv, args.add_track_prop, args.add_weakdecay_ind, updatedConfigFileName, commandToRun
+    )
 
 print("====================================================================================================================")
 logging.info("Command to run:")
@@ -649,7 +393,7 @@ logging.info(tablesToProduce.keys())
 print("====================================================================================================================")
 
 # Listing Added Commands
-dispArgs(configuredCommands)
+dispArgs(allArgs)
 
 os.system(commandToRun)
 

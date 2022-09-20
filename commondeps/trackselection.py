@@ -48,24 +48,10 @@ class TrackSelectionTask(object):
             help = "condition for ITS matching (0: Run2 SPD kAny, 1: Run3ITSibAny, 2: Run3ITSallAny, 3: Run3ITSall7Layers)",
             action = "store", type = str, choices = (itsMatchingSelections),
             ).completer = ChoicesCompleter(itsMatchingSelections)
-        groupTrackSelectionTask.add_argument(
-            "--ptMin",
-            help = "Lower cut on pt for the track selected",
-            action = "store", type = str)
-        groupTrackSelectionTask.add_argument(
-            "--ptMax",
-            help = "Upper cut on pt for the track selected",
-            action = "store", type = str)
-        groupTrackSelectionTask.add_argument(
-            "--etaMin",
-            help = "Lower cut on eta for the track selected",
-            action = "store", type = str)
-        groupTrackSelectionTask.add_argument(
-            "--etaMax",
-            help = "Upper cut on eta for the track selected",
-            action = "store", type = str)
-    
-    
+        groupTrackSelectionTask.add_argument("--ptMin", help = "Lower cut on pt for the track selected", action = "store", type = str)
+        groupTrackSelectionTask.add_argument("--ptMax", help = "Upper cut on pt for the track selected", action = "store", type = str)
+        groupTrackSelectionTask.add_argument("--etaMin", help = "Lower cut on eta for the track selected", action = "store", type = str)
+        groupTrackSelectionTask.add_argument("--etaMax", help = "Upper cut on eta for the track selected", action = "store", type = str)
     
     def parseArgs(self):
         """

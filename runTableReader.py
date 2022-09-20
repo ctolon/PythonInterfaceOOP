@@ -55,18 +55,18 @@ initArgs.mergeArgs()
 initArgs.parseArgs()
 
 args = initArgs.parseArgs()
-configuredCommands = vars(args) # for get args
+allArgs = vars(args) # for get args
 
 # Debug settings
 debugSettings(args.debug, args.logFile, fileName = "tableReader.log")
 
 # Transcation management
-forgettedArgsChecker(configuredCommands)
+forgettedArgsChecker(allArgs)
 
 # Get Some cfg values provided from --param
-analysisCfg = configGetter(configuredCommands, "analysis")
-mixingCfg = configGetter(configuredCommands, "mixing")
-processCfg = configGetter(configuredCommands, "process")
+analysisCfg = configGetter(allArgs, "analysis")
+mixingCfg = configGetter(allArgs, "mixing")
+processCfg = configGetter(allArgs, "process")
 
 # Load the configuration file provided as the first parameter
 config = {}
@@ -522,7 +522,7 @@ logging.info(commandToRun)
 print("====================================================================================================================")
 
 # Listing Added Commands
-dispArgs(configuredCommands)
+dispArgs(allArgs)
 
 os.system(commandToRun)
 

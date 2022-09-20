@@ -57,16 +57,16 @@ def aodFileChecker(aod: str):
             except FileNotFoundError:
                 logging.exception("%s AO2D single root file not found in path!!!", argProvidedAod)
                 sys.exit()
-                
+        
         elif endsWithTxt and not textAodList:
             try:
                 raise textListNotStartsWithAtError(argProvidedAod)
             
             except textListNotStartsWithAtError as e:
                 logging.exception(e)
-                logging.info("Example usage: --aod @%s",argProvidedAod)
+                logging.info("Example usage: --aod @%s", argProvidedAod)
                 sys.exit()
-                
+        
         else:
             try:
                 open(argProvidedAod, "r")
@@ -166,19 +166,19 @@ def jsonTypeChecker(cfgFileName: str):
 
 
 # Transcation management for forgettining assign a value to parameters
-def forgettedArgsChecker(configuredCommands: dict):
+def forgettedArgsChecker(allArgs: dict):
     """Checks for any arguments forgot to assign a value which you provided to command line
     
     E.x. --process --syst PbPb (It will raise)
 
     Args:
-        configuredCommands (dict): Dictionary of arguments entered from the CLI
+        allArgs (dict): Dictionary of arguments entered from the CLI
 
     Raises:
         ForgettedArgsError: if there is an argument you forgot to configure
     """
     forgetParams = []
-    for key, value in configuredCommands.items():
+    for key, value in allArgs.items():
         if value is not None:
             if (isinstance(value, str) or isinstance(value, list)) and len(value) == 0:
                 forgetParams.append(key)
@@ -218,7 +218,7 @@ def centTranscation(config: dict, process, syst, centSearch):
                 sys.exit()
 
 
-def filterSelsTranscation(argBarrelSels: list, argMuonSels: list, argBarrelTrackCuts: list, argMuonsCuts: list, configuredCommands: dict):
+def filterSelsTranscation(argBarrelSels: list, argMuonSels: list, argBarrelTrackCuts: list, argMuonsCuts: list, allArgs: dict):
     """It checks whether the event filter selections and analysis cuts in the
     Filter PP task are in the same number and order
 
@@ -227,7 +227,7 @@ def filterSelsTranscation(argBarrelSels: list, argMuonSels: list, argBarrelTrack
         argMuonSels (CLI Argument): Event filter argument for muons
         argBarrelTrackCuts (CLI Argument): Analysis cut argument for barrel
         argMuonsCuts (CLI Argument): Analysis cuts argument for muons
-        configuredCommands (dict): Dictionary of all arguments provided by the CLI
+        allArgs (dict): Dictionary of all arguments provided by the CLI
 
     Raises:
         MandatoryArgNotFoundError: If the required argument is not found

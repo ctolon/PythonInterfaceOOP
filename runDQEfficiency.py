@@ -50,17 +50,17 @@ initArgs.mergeArgs()
 initArgs.parseArgs()
 
 args = initArgs.parseArgs()
-configuredCommands = vars(args) # for get args
+allArgs = vars(args) # for get args
 
 # Debug Settings
 debugSettings(args.debug, args.logFile, fileName = "dqEfficiency.log")
 
 # Transcation management
-forgettedArgsChecker(configuredCommands)
+forgettedArgsChecker(allArgs)
 
 # Get Some cfg values provided from --param
-analysisCfg = configGetter(configuredCommands, "analysis")
-processCfg = configGetter(configuredCommands, "process")
+analysisCfg = configGetter(allArgs, "analysis")
+processCfg = configGetter(allArgs, "process")
 
 # Load the configuration file provided as the first parameter
 config = {}
@@ -294,7 +294,7 @@ logging.info(commandToRun)
 print("====================================================================================================================")
 
 # Listing Added Commands
-dispArgs(configuredCommands)
+dispArgs(allArgs)
 
 os.system(commandToRun)
 
