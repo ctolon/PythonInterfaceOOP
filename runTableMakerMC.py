@@ -23,11 +23,10 @@ import logging
 import logging.config
 import os
 
-from extramodules.debugSettings import debugSettings
 from extramodules.monitoring import dispArgs
 from extramodules.descriptor import inputDescriptors, outputDescriptors
-from extramodules.dqTranscations import aodFileChecker, centTranscation, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, trackPropTransaction
-from extramodules.configSetter import PROCESS_SWITCH, converterSet, CONFIG_SET, tableProducer
+from extramodules.dqTranscations import MandatoryArgAdder, aodFileChecker, centTranscation, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, trackPropTransaction
+from extramodules.configSetter import PROCESS_SWITCH, converterSet, CONFIG_SET, debugSettings, tableProducer
 from extramodules.pycacheRemover import runPycacheRemover
 
 from dqtasks.tableMakerMC import TableMakerMC
@@ -253,9 +252,6 @@ if cliMode == "false":
 if args.process:
     centSearch = [s for s in args.process if "Cent" in s]
 
-# For adding a process function from TableMaker and all process should be added only once so set type used
-tableMakerProcessSearch = set()
-
 for key, value in config.items():
     if isinstance(value, dict):
         for value, value2 in value.items():
@@ -264,6 +260,10 @@ for key, value in config.items():
             if value == "aod-file" and args.aod:
                 config[key][value] = args.aod
                 logging.debug(" - [%s] %s : %s", key, value, args.aod)
+                
+            # For don't override tof-pid. We use instead of tof-pid-full and tpc-pid-full for pid tables    
+            if key == "tof-pid":
+                continue
             
             CONFIG_SET(config, key, value, allArgs, cliMode)
             PROCESS_SWITCH(config, key, value, allArgs, cliMode, "est", centralityTableParameters, "1/-1")
@@ -271,11 +271,10 @@ for key, value in config.items():
             PROCESS_SWITCH(config, key, value, allArgs, cliMode, "process", specificDeps.keys(), "true/false")
             PROCESS_SWITCH(config, key, value, allArgs, cliMode, "isCovariance", covParameters, "true/false", True)
             PROCESS_SWITCH(config, key, value, allArgs, cliMode, "isWSlice", sliceParameters, "true/false", True)
-            PROCESS_SWITCH(
-                config, key = "tof-event-time", value = value, allArgs = allArgs, onlySelect = "true", argument = "FT0",
-                parameters = ft0Parameters, switchType = "true/false"
-                ) # TODO Refactor for FT0
+            if key == "tof-event-time": # we have processRun2 option in tof-event-time and for not overriding it other processRun2 options, we have to specifiy key
+                PROCESS_SWITCH(config, key, value, allArgs, "true", "FT0", ft0Parameters, "true/false")
             PROCESS_SWITCH(config, key, value, allArgs, cliMode, "isVertexZeq", vertexParameters, "1/0", True)
+            MandatoryArgAdder(config, key, value, taskNameInConfig, "processOnlyBCs")
 
 # Transactions
 centTranscation(config, args.process, args.syst, centSearch)

@@ -22,7 +22,7 @@ import logging
 import sys
 import os
 
-from .dqExceptions import CentFilterError, CfgInvalidFormatError, ForgettedArgsError, MandatoryArgNotFoundError, NotInAlienvError, SelsAndCutsNotHaveSameNumberError, TasknameNotFoundInConfigFileError, textListNotStartsWithAtError
+from .dqExceptions import CentFilterError, CfgInvalidFormatError, DependencyNotFoundError, ForgettedArgsError, MandatoryArgNotFoundError, NotInAlienvError, SelsAndCutsNotHaveSameNumberError, TasknameNotFoundInConfigFileError, textListNotStartsWithAtError
 
 
 def aodFileChecker(aod: str):
@@ -309,33 +309,60 @@ def filterSelsTranscation(argBarrelSels: list, argMuonSels: list, argBarrelTrack
         logging.info("Event filter configuration is valid for barrel")
 
 
-"""   
-def tableReaderDepsChecker(analysisCfg,processCfg,mixingCfg):
-    
-    sameEventPairingDeps = {
-    ["JpsiToEE"]: ["trackSelection"],
-    ["JpsiToMuMu"]: ["muonSelection"],
-    ["JpsiToMuMuVertexing"]: ["muonSelection"],
-    ["VnJpsiToEE"]: ["trackSelection"],
-    ["JpsiToMuMu"]: ["muonSelection"],
-    ["ElectronMuon"] : ["trackSelection","muonSelection"],
-    ["All"] : ["trackSelection","muonSelection"]
-    }
+def depsChecker(config: dict, deps: dict, key: str):
+    """This function written to check dependencies
 
-    eventMixingDeps = {
-        "Barrel": "trackSelection",
-        "Muon": "muonSelection",
-        "BarrelMuon": ["trackSelection","muonSelection"],
-        "BarrelVn": "trackSelection",
-        "MuonVn": "muonSelection"
-    }
+    Args:
+        config (dict): Input as JSON config file
+        deps (dict): Dependency dict
+        key (str): Task name has dependencies
 
-    
-    for k,v in sameEventPairingDeps.items():
-        if (k in processCfg) and v not in analysisCfg:
-            raise
+    Raises:
+        DependencyNotFoundError: If dependency is not found
+    """
+    for k, v in deps.items():
+        if config[key][k] == "false":
+            continue
+        elif config[key][k] == "true" and config[v[0]][v[1]] == "false":
+            raise DependencyNotFoundError(k, v[0], v[1])
         
-    for k,v in eventMixingDeps.items():
-        if (k in mixingCfg) and v not in analysisCfg:
-            raise
-"""
+def oneToMultiDepsChecker(argument : list, mandatoryArg : str, targetCfg : dict, argName: str):
+    """To configure many arguments in a task to check if a value needs to be defined in another argument
+
+    Args:
+        argument (list): Have an dependency CLI argument parameters
+        mandatoryArg (str): Needed argument name from another CLI argument
+        targetCfg (_type_): mandatoryArg targetCfg
+        argName (str): argument name of have an dependency argument 
+
+    Raises:
+        MandatoryArgNotFoundError: _description_
+    """
+    
+    try:
+        if argument is not None and mandatoryArg not in targetCfg:
+            raise MandatoryArgNotFoundError(mandatoryArg)
+            
+    except MandatoryArgNotFoundError as e:
+        logging.exception(e)
+        logging.info("For configuring %s you have to specify %s value in --%s argument", argument, mandatoryArg,argName)
+        sys.exit()
+        
+
+
+def MandatoryArgAdder(config:dict, key:str, value:str, selectedKey:str, selectedValue:str):
+    """The process function, which must be included in the workflow, if it is missing, the transaction function to include it
+
+    Args:
+        config (dict): Input as JSON config file
+        key (str): key
+        value (str): value
+        selectedKey (str): Taskname for mandatory process function
+        selectedValue (str): Mandatory process function
+    """
+    
+    if config[key][value] == "false" and key == selectedKey and value == selectedValue:
+        logging.warning("You forget the configure an Mandatory -> [%s] %s must always true for this workflow. This will automaticaly converted true.", key, value)
+        logging.info(" - [%s] %s : true", key, value)            
+    else:
+        pass

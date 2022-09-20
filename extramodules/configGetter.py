@@ -16,12 +16,13 @@
 from .stringOperations import stringToList
 
 
-def configGetter(allArgs: dict, selectedArg: str):
+def configGetter(allArgs: dict, selectedArg: str, getKey = None):
     """This function get parameters from configured argument in CLI
 
     Args:
         allArgs (dict): All configured arguments in CLI
         selectedArg (str): Selected argument as args
+        getKey(bool, optional): If true, get argument name instead of parameters
 
     Returns:
         list or str: Get parameters for selected argument
@@ -29,7 +30,11 @@ def configGetter(allArgs: dict, selectedArg: str):
     for keyCfg, valueCfg in allArgs.items():
         if valueCfg is not None: # Skipped None types, because can"t iterate in None type
             if keyCfg == selectedArg:
-                if isinstance(valueCfg, str):
-                    return stringToList(valueCfg)
-                else:
-                    return valueCfg
+                 if getKey is None:
+                     if isinstance(valueCfg, str):
+                        return stringToList(valueCfg)
+                     else:
+                        return valueCfg
+                 elif getKey is True:
+                     return keyCfg
+                     

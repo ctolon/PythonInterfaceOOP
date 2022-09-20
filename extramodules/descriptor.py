@@ -45,8 +45,8 @@ def inputDescriptors(tablesToProduce: dict, tables: dict, readerConfigFileName =
     with open(readerConfigFileName, "w") as readerConfigFile:
         json.dump(readerConfig, readerConfigFile, indent = 2)
     
-    logging.info("aodReaderTempConfig==========")
-    print(readerConfig)
+    #logging.info("aodReaderTempConfig==========")
+    #print(readerConfig)
 
 
 def outputDescriptors(tablesToProduce: dict, tables: dict, writerConfigFileName = "aodWriterTempConfig.json"):

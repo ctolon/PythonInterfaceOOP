@@ -128,3 +128,20 @@ class textListNotStartsWithAtError(Exception):
     
     def __str__(self):
         return f"{self.arg} AO2D text lists have to start with @ symbol"
+
+
+class DependencyNotFoundError(Exception):
+    
+    """Exception raised for if mandatory arg not found
+
+    Attributes:
+        arg: mandatory argument
+    """
+    
+    def __init__(self, checkedDep, key, value):
+        self.checkedDep = checkedDep
+        self.key = key
+        self.value = value
+    
+    def __str__(self):
+        return f"For configuring {self.checkedDep}, you have to specify [{self.key}] {self.value} as true"

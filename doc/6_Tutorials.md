@@ -276,7 +276,7 @@ python3 runDQFlow.py configs/configFlowDataRun2.json --aod Datas/AO2D_PbPbDataRu
 Command To Run:
 
 ```ruby
-python3 runV0selector.py configs/configV0SelectorDataRun2.json --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --add_fdd_conv --add_weakdecay_ind --isVertexZeq false --isVertexZeq false
+python3 runV0selector.py configs/configV0SelectorDataRun2.json --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --add_fdd_conv --add_weakdecay_ind --isVertexZeq false
 ```
 
 ### Run tableMaker on LHC22c (LHC22c pp Run3Data)

@@ -18,56 +18,21 @@
 #from extramodules.dqOperations import listToString
 from .stringOperations import listToString, stringToListWithSlash
 import logging
+from logging import handlers
+import sys
+import os
 
 
-# We don't need this. config[key][value] = args.<arg> has less verbosity
-def singleConfigurableSet(config: dict, key: str, value: str, arg: str):
-    """
-    singleConfigurableSet method allows to assign value
-    to single configurable value arguments in JSON with overriding.
-    This method is used for single value arguments
-    as JSONs will be assigned only by overriding for single value arguments.
-
-
-    Args:
-        config (dict): Input as JSON config file
-        key (string): Sub key from upper key in provided JSON config file
-        value (string): Value from key in provided JSON config file (sub-level)
-        arg (any): Argument from parserargs or manual for some situations ("-1" or "true" or "false" etc.)
-        
-        
-    Assignment:
-        string: Assigned as a direct string
-
-    """
-    
-    config[key][value] = arg
-    #logging.debug(" - [%s] %s : %s", key, value, args.v0Rmax)
-
-
-# For multiple configurables in JSON, always use this method for less verbosity
 def multiConfigurableSet(config: dict, key: str, value: str, arg: list, onlySelect):
     """
     multiConfigurableSet method allows to assign values
     for multiple configurable value arguments in JSON with/without overriding
-    depending on interface mode. The onlySelect parameter decides for
-    interface mode.if the argument contains more than one value, it is saved as list type by default 
-    and this method converts them to comma separated string, otherwise assigns them as string value directly
-
-
     Args:
         config (dict): Input as JSON config file
-        key (string): Sub key from upper key in provided config JSON config file
-        value (string): Value from key in provided JSON config file (sub-level)
-        arg (any): Argument from parserargs
-        onlySelect (boolean): Input as args.onlySelect for selecting interface mode.
-        true for Overrider Mode and false for Additional mode
-        
-        
-    Assignment :
-        string or comma seperated string: If the argument is of list type, 
-        it assign as a comma separated string,
-        otherwise it assign directly as a string.
+        key (string): Key
+        value (string): Value 
+        arg (any): CLI Argument
+        onlySelect (boolean): cliMode
 
     """
     
@@ -79,42 +44,42 @@ def multiConfigurableSet(config: dict, key: str, value: str, arg: list, onlySele
     config[key][value] = arg
 
 
-def processDummySet(config: dict, dummyHasTasks = None):
-    """Dummy Automizer for dqEfficiency and tableReader
+def debugSettings(argDebug: bool, argLogFile: bool, fileName: str):
+    """Debug settings for CLI
 
     Args:
-        config (dict): json config dict
-        dummyHasTasks (list, optional): Define dummy task list, if you don't define it, all task will checked
+        argDebug (bool): Debug Level
+        argLogFile (bool): CLI argument as logFile
+        fileName (str): Output name of log file
+
+    Raises:
+        ValueError: If selected invalid log level
     """
-    processFuncFound = ''
     
-    for k, v in config.items(): # loop over number of keys
-        if isinstance(v, dict): # iterate only possible items in dict keys
-            for v, v2 in v.items():
-                if dummyHasTasks is None:
-                    if (not v.endswith("Dummy")) and (v.startswith("process")):
-                        if config[k][v] == "true":
-                            config[k]["processDummy"] = "false"
-                            logging.debug(" - [%s] processDummy : false", k)
-                            break
-                        else:
-                            config[k]["processDummy"] = "true"
-                            logging.debug(" - [%s] processDummy : true", k)
-                if dummyHasTasks is not None:
-                    for task in dummyHasTasks:
-                        if processFuncFound == k:
-                            continue
-                        if task not in dummyHasTasks:
-                            continue
-                        if (not v.endswith("Dummy")) and (v.startswith("process")) and (task == k):
-                            if config[k][v] == "true":
-                                config[k]["processDummy"] = "false"
-                                logging.debug(" - [%s] processDummy : false", k)
-                                processFuncFound = k # save the task and not check in iteration
-                                break
-                            else:
-                                config[k]["processDummy"] = "true"
-                                logging.debug(" - [%s] processDummy : true", k)
+    if argDebug and (not argLogFile):
+        DEBUG_SELECTION = argDebug
+        numeric_level = getattr(logging, DEBUG_SELECTION.upper(), None)
+        if not isinstance(numeric_level, int):
+            raise ValueError("Invalid log level: %s" % DEBUG_SELECTION)
+        logging.basicConfig(format = "[%(levelname)s] %(message)s", level = DEBUG_SELECTION)
+    
+    if argLogFile and argDebug:
+        log = logging.getLogger("")
+        level = logging.getLevelName(argDebug)
+        log.setLevel(level)
+        format = logging.Formatter("[%(levelname)s] %(message)s")
+        
+        ch = logging.StreamHandler(sys.stdout)
+        ch.setFormatter(format)
+        log.addHandler(ch)
+        
+        loggerFile = fileName
+        if os.path.isfile(loggerFile):
+            os.remove(loggerFile)
+        
+        fh = handlers.RotatingFileHandler(loggerFile, maxBytes = (1048576 * 5), backupCount = 7, mode = "w")
+        fh.setFormatter(format)
+        log.addHandler(fh)
 
 
 def converterSet(
@@ -157,7 +122,7 @@ def tableProducer(
     """Table producer function for tableMaker/tableMakerMC
 
     Args:
-        config (dict): json config file
+        config (dict): Input as JSON config file
         taskNameInConfig (string): Taskname in config file (table-maker/table-maker-m-c)
         tablesToProduce (dict): Input as which tables are needed
         commonTables (list): Common tables which are always be created
@@ -203,8 +168,27 @@ def tableProducer(
                 tablesToProduce[table] = 1
 
 
+def SELECTION_SET(config :dict, deps : dict, targetCfg : list, cliMode : bool):
+    """If the arguments are set with very different naming conventions and they are for selection, this function is used to set the values
+
+    Args:
+        config (dict): Input as JSON config file
+        deps (dict): Dependency list
+        targetCfg (list): parameters argument name
+        cliMode (bool): CLI mode
+    """
+    
+    for k, v in deps.items():
+        if k in targetCfg:
+            config[v[0]][v[1]] = "true"
+            logging.debug(" - [%s] %s : true", v[0], v[1])
+        elif cliMode == "true":
+            config[v[0]][v[1]] = "false"
+            logging.debug(" - [%s] %s : false", v[0], v[1])
+
+
 def CONFIG_SET(config, key, value, allArgs, onlySelect):
-    """This function provides directly set to argument parameter, if argument naming and json key naming equals
+    """This function provides directly set to argument parameter, if argument naming and json value naming equals
 
     Args:
         config (_type_): _description_
@@ -232,15 +216,20 @@ def PROCESS_SWITCH(
 
     Args:
         config (dict): JSON config file as input
-        key (str): key in JSON config
-        value (str): value in JSON Config
+        key (str): Key
+        value (str): Value
         allArgs (dict): Configured args in CLI
-        onlySelect (bool): cliMode
+        onlySelect (bool): CLI mde
         argument (str): Selected argument from configured args
         parameters (list): All available parameters for argument
         switchType (str): Switch type usage in string --> "SWITCH_ON/SWITCHOFF"
-        kFlag (bool): This parameter for only one PROCESS_SWITCH activation. If true, only one process function will be true, the others will be converted false
+        kFlag (bool): If True Key prefix-suffix based PROCESS_SWITCH (Default value based)
     """
+    
+    possibleSwitchTypes = ["1/-1", "1/0", "true/false"] # you have to add new switch type here if you need
+    if switchType not in possibleSwitchTypes:
+        logging.error("%s is invalid argument for PROCESS_SWITCH", switchType)
+        raise ValueError("Invalid switchType. Expected one of: %s" % possibleSwitchTypes)
     
     switchType = stringToListWithSlash(switchType)
     
@@ -277,6 +266,8 @@ def PROCESS_SWITCH(
                         if param != valueCfg and param == value: # param should equals value for getting key info
                             config[key][param] = SWITCH_OFF
                             logging.debug(" - [%s] %s : %s", key, param, SWITCH_OFF)
+                            
+        # NOTE can be deleted when we have better naming conventions
         if kFlag is True:
             
             if keyCfg.startswith("isVertexZeq") and keyCfg == argument: # TODO REfactor is --> do
@@ -311,3 +302,69 @@ def PROCESS_SWITCH(
                     if param != keyCfgFixed and value == param and keyCfg == argument:
                         config[key][value] = SWITCH_ON
                         logging.debug(" - [%s] %s : %s", key, value, SWITCH_ON)
+
+
+def PROCESS_DUMMY(config: dict, dummyHasTasks = None):
+    """Dummy Automizer
+
+    Args:
+        config (dict): json config dict
+        dummyHasTasks (list, optional): Define dummy task list, if you don't define it, all task will checked
+        
+    Note:
+        For dummyHasTasks: If other tasks do not have the processDummy function, the workflow will fire. So if you don't have processDummy in each of your tasks, give them a list.
+    """
+    processFuncFound = ''
+    
+    for k, v in config.items(): # loop over number of keys
+        if isinstance(v, dict): # iterate only possible items in dict keys
+            for v, v2 in v.items():
+                if dummyHasTasks is None:
+                    if (not v.endswith("Dummy")) and (v.startswith("process")):
+                        if config[k][v] == "true":
+                            config[k]["processDummy"] = "false"
+                            #logging.debug(" - [%s] processDummy : false", k)
+                            break
+                        else:
+                            config[k]["processDummy"] = "true"
+                            #logging.debug(" - [%s] processDummy : true", k)
+                if dummyHasTasks is not None:
+                    for task in dummyHasTasks:
+                        if processFuncFound == k:
+                            continue
+                        if task not in dummyHasTasks:
+                            continue
+                        if (not v.endswith("Dummy")) and (v.startswith("process")) and (task == k):
+                            if config[k][v] == "true":
+                                config[k]["processDummy"] = "false"
+                                #logging.debug(" - [%s] processDummy : false", k)
+                                processFuncFound = k # save the task and not check in iteration
+                                break
+                            else:
+                                config[k]["processDummy"] = "true"
+                                #logging.debug(" - [%s] processDummy : true", k)
+
+
+def NOT_CONFIGURED_SET_FALSE(config: dict, key: str, value: str, argument: list, parameters: list, cliMode: bool, selectedKey = None):
+    """function to pull all process function values false when the argument with dependencies is not configured. Otherwise, the process will crash due to dependencies.
+
+    Args:
+        config (dict): Input as JSON config file
+        key (str): Config Key
+        value (str): Config value
+        argument (list): CLI Argument
+        parameters (list): Your parameter list
+        cliMode (bool): CLI mode
+        selectedKey (str, optional): If you wish, you can define one selected key for more control (in string)
+    """
+    
+    if argument is None and cliMode == "true":
+        for process in parameters:
+            if value == process and selectedKey is None: # for getting key info from json
+                config[key][value] = "false"
+                logging.info(" - [%s] %s : false", key, value)
+            elif value == process and key == selectedKey: # also with selected key for more control
+                config[key][value] = "false"
+                logging.info(" - [%s] %s : false", key, value)
+            else:
+                continue

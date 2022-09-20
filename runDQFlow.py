@@ -23,10 +23,9 @@ import logging
 import logging.config
 import os
 
-from extramodules.debugSettings import debugSettings
 from extramodules.monitoring import dispArgs
 from extramodules.dqTranscations import aodFileChecker, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, trackPropTransaction
-from extramodules.configSetter import PROCESS_SWITCH, converterSet, CONFIG_SET
+from extramodules.configSetter import PROCESS_SWITCH, converterSet, CONFIG_SET, debugSettings
 from extramodules.pycacheRemover import runPycacheRemover
 
 from dqtasks.dqFlow import AnalysisQvector
@@ -51,8 +50,6 @@ covParameters = ["processStandard", "processCovariance"]
 sliceParameters = ["processWoSlice", "processWSlice"]
 
 vertexParameters = ["doVertexZeq", "doDummyZeq"]
-
-ttreeList = []
 
 ################
 # Dependencies #
@@ -131,16 +128,18 @@ for key, value in config.items():
             if value == "aod-file" and args.aod:
                 config[key][value] = args.aod
                 logging.debug(" - [%s] %s : %s", key, value, args.aod)
+                
+            # For don't override tof-pid. We use instead of tof-pid-full and tpc-pid-full for pid tables    
+            if key == "tof-pid":
+                continue
             
             CONFIG_SET(config, key, value, allArgs, cliMode)
             PROCESS_SWITCH(config, key, value, allArgs, cliMode, "est", centralityTableParameters, "1/-1")
             PROCESS_SWITCH(config, key, value, allArgs, cliMode, "pid", pidParameters, "1/-1")
             PROCESS_SWITCH(config, key, value, allArgs, cliMode, "isCovariance", covParameters, "true/false", True)
             PROCESS_SWITCH(config, key, value, allArgs, cliMode, "isWSlice", sliceParameters, "true/false", True)
-            PROCESS_SWITCH(
-                config, key = "tof-event-time", value = value, allArgs = allArgs, onlySelect = "true", argument = "FT0",
-                parameters = ft0Parameters, switchType = "true/false"
-                ) # TODO Refactor for FT0
+            if key == "tof-event-time": # we have processRun2 option in tof-event-time and for not overriding it other processRun2 options, we have to specifiy key
+                PROCESS_SWITCH(config, key, value, allArgs, "true", "FT0", ft0Parameters, "true/false")
             PROCESS_SWITCH(config, key, value, allArgs, cliMode, "isVertexZeq", vertexParameters, "1/0", True)
 
 aodFileChecker(args.aod)

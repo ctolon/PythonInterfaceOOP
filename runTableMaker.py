@@ -23,11 +23,10 @@ import logging
 import logging.config
 import os
 
-from extramodules.debugSettings import debugSettings
 from extramodules.monitoring import dispArgs
 from extramodules.descriptor import inputDescriptors, outputDescriptors
-from extramodules.dqTranscations import aodFileChecker, centTranscation, forgettedArgsChecker, jsonTypeChecker, filterSelsTranscation, mainTaskChecker, trackPropTransaction
-from extramodules.configSetter import PROCESS_SWITCH, converterSet, CONFIG_SET, tableProducer
+from extramodules.dqTranscations import MandatoryArgAdder, aodFileChecker, centTranscation, forgettedArgsChecker, jsonTypeChecker, filterSelsTranscation, mainTaskChecker, trackPropTransaction
+from extramodules.configSetter import PROCESS_DUMMY, PROCESS_SWITCH, converterSet, CONFIG_SET, debugSettings, tableProducer
 from extramodules.pycacheRemover import runPycacheRemover
 
 from dqtasks.tableMaker import TableMaker
@@ -88,6 +87,8 @@ specificDeps = {
     # "processFullWithCentWithV0Bits": ["o2-analysis-centrality-table","o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices"],
     # "processFullWithEventFilterWithV0Bits": ["o2-analysis-dq-filter-pp","o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices"],
     }
+
+dummyHasTasks = ["d-q-barrel-track-selection", "d-q-muons-selection", "d-q-filter-p-p-task"]
 
 #############################
 # Skimming Table Selections #
@@ -258,9 +259,6 @@ if cliMode == "true":
 if cliMode == "false":
     logging.info("INTERFACE MODE : JSON Additional")
 
-# For adding a process function from TableMaker and all process should be added only once so set type used
-tableMakerProcessSearch = set()
-
 for key, value in config.items():
     if isinstance(value, dict):
         for value, value2 in value.items():
@@ -269,6 +267,10 @@ for key, value in config.items():
             if value == "aod-file" and args.aod:
                 config[key][value] = args.aod
                 logging.debug(" - [%s] %s : %s", key, value, args.aod)
+                
+            # For don't override tof-pid. We use instead of tof-pid-full and tpc-pid-full for pid tables    
+            if key == "tof-pid":
+                continue
             
             if len(barrelSearch) > 0 or len(fullSearch) > 0:
                 if args.isBarrelSelectionTiny == "true":
@@ -303,17 +305,17 @@ for key, value in config.items():
             PROCESS_SWITCH(config, key, value, allArgs, cliMode, "process", specificDeps.keys(), "true/false")
             PROCESS_SWITCH(config, key, value, allArgs, cliMode, "isCovariance", covParameters, "true/false", True)
             PROCESS_SWITCH(config, key, value, allArgs, cliMode, "isWSlice", sliceParameters, "true/false", True)
-            PROCESS_SWITCH(
-                config, key = "tof-event-time", value = value, allArgs = allArgs, onlySelect = "true", argument = "FT0",
-                parameters = ft0Parameters, switchType = "true/false"
-                ) # TODO Refactor for FT0
+            if key == "tof-event-time": # we have processRun2 option in tof-event-time and for not overriding it other processRun2 options, we have to specifiy key
+                PROCESS_SWITCH(config, key, value, allArgs, "true", "FT0", ft0Parameters, "true/false")
             PROCESS_SWITCH(config, key, value, allArgs, cliMode, "isVertexZeq", vertexParameters, "1/0", True)
+            MandatoryArgAdder(config, key, value, taskNameInConfig, "processOnlyBCs")
 
 # Transactions
 centTranscation(config, args.process, args.syst, centSearch)
 filterSelsTranscation(args.cfgBarrelSels, args.cfgMuonSels, args.cfgBarrelTrackCuts, args.cfgMuonsCuts, allArgs)
 aodFileChecker(args.aod)
 trackPropTransaction(args.add_track_prop, barrelDeps)
+PROCESS_DUMMY(config, dummyHasTasks)
 """
 # Regarding to perfomance issues in argcomplete package, we should import later
 from extramodules.getTTrees import getTTrees

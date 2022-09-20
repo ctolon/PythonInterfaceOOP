@@ -24,11 +24,10 @@ import logging
 import logging.config
 import os
 from extramodules.configGetter import configGetter
-from extramodules.debugSettings import debugSettings
 
 from extramodules.monitoring import dispArgs
-from extramodules.dqTranscations import aodFileChecker, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker
-from extramodules.configSetter import multiConfigurableSet, processDummySet
+from extramodules.dqTranscations import MandatoryArgAdder, aodFileChecker, depsChecker, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, oneToMultiDepsChecker
+from extramodules.configSetter import CONFIG_SET, NOT_CONFIGURED_SET_FALSE, PROCESS_SWITCH, SELECTION_SET, debugSettings, PROCESS_DUMMY, multiConfigurableSet
 from extramodules.pycacheRemover import runPycacheRemover
 
 from dqtasks.dqEfficiency import DQEfficiency
@@ -37,12 +36,33 @@ from dqtasks.dqEfficiency import DQEfficiency
 # Interface Predefined Selections #
 ###################################
 
+sepParameters = ["processJpsiToEESkimmed", "processJpsiToMuMuSkimmed", "processJpsiToMuMuVertexingSkimmed"]
+
 booleanSelections = ["true", "false"]
 
-isAnalysisEventSelected = True
-isAnalysisTrackSelected = True
-isAnalysisMuonSelected = True
-isAnalysisSameEventPairingSelected = True
+################
+# Dependencies #
+################
+
+analysisSelectionDeps = {
+    "trackSelection": ["analysis-track-selection", "processSkimmed"],
+    "eventSelection": ["analysis-event-selection", "processSkimmed"],
+    "muonSelection": ["analysis-muon-selection", "processSkimmed"],
+    "dileptonTrackDimuonMuonSelection": ["analysis-dilepton-track", "processDimuonMuonSkimmed"],
+    "dileptonTrackDielectronKaonSelection": ["analysis-dilepton-track", "processDielectronKaonSkimmed"],
+    }
+
+sepKey = "analysis-same-event-pairing"
+sepDeps = {
+    "processJpsiToEESkimmed": ["analysis-track-selection", "processSkimmed"],
+    "processJpsiToMuMuSkimmed": ["analysis-muon-selection", "processSkimmed"],
+    "processJpsiToMuMuVertexingSkimmed": ["analysis-muon-selection", "processSkimmed"]
+    }
+dileptonTrackKey = "analysis-dilepton-track"
+dileptonTrackDeps = {
+    "processDimuonMuonSkimmed": ["analysis-muon-selection", "processSkimmed"],
+    "processDielectronKaonSkimmed": ["analysis-track-selection", "processSkimmed"]
+    }
 
 # init args manually
 initArgs = DQEfficiency()
@@ -55,12 +75,30 @@ allArgs = vars(args) # for get args
 # Debug Settings
 debugSettings(args.debug, args.logFile, fileName = "dqEfficiency.log")
 
+# if cliMode true, Overrider mode else additional mode
+cliMode = args.onlySelect
+
 # Transcation management
 forgettedArgsChecker(allArgs)
 
-# Get Some cfg values provided from --param
+######################
+# PREFIX ADDING PART #
+######################
+
+# available prefixes
+prefix_process = "process"
+suffix_skimmed = "Skimmed"
+
+# add prefix and suffix for args.process
+if args.process is not None:
+    args.process = [prefix_process + sub for sub in args.process]
+    args.process = [sub + suffix_skimmed for sub in args.process]
+
+# Config parameters getter from argument
 analysisCfg = configGetter(allArgs, "analysis")
+analysisArgName = configGetter(allArgs, "analysis",True)
 processCfg = configGetter(allArgs, "process")
+processArgName = configGetter(allArgs, "process",True)
 
 # Load the configuration file provided as the first parameter
 config = {}
@@ -78,11 +116,14 @@ mainTaskChecker(config, taskNameInConfig)
 # Start Interface Processes #
 #############################
 
-logging.info("Only Select Configured as %s", args.onlySelect)
-if args.onlySelect == "true":
+logging.info("Only Select Configured as %s", cliMode)
+if cliMode == "true":
     logging.info("INTERFACE MODE : JSON Overrider")
-if args.onlySelect == "false":
+if cliMode == "false":
     logging.info("INTERFACE MODE : JSON Additional")
+
+# Interface Logic
+SELECTION_SET(config, analysisSelectionDeps, analysisCfg, cliMode)
 
 for key, value in config.items():
     if type(value) == type(config):
@@ -97,174 +138,29 @@ for key, value in config.items():
                 config[key][value] = args.reader
                 logging.debug(" - [%s] %s : %s", key, value, args.reader)
             
-            # analysis-skimmed-selections
-            if value == "processSkimmed" and args.analysis:
-                
-                if key == "analysis-event-selection":
-                    if "eventSelection" in analysisCfg:
-                        config[key][value] = "true"
-                        logging.debug(" - [%s] %s : true", key, value)
-                        isAnalysisEventSelected = True
-                    if "eventSelection" not in analysisCfg:
-                        logging.warning(
-                            "YOU MUST ALWAYS CONFIGURE eventSelection value in --analysis parameter!! It is Missing and this issue will fixed by CLI"
-                            )
-                        config[key][value] = "true"
-                        logging.debug(" - [%s] %s : true", key, value)
-                
-                if key == "analysis-track-selection":
-                    if "trackSelection" in analysisCfg:
-                        config[key][value] = "true"
-                        logging.debug(" - [%s] %s : true", key, value)
-                        isAnalysisTrackSelected = True
-                    if "trackSelection" not in analysisCfg and args.onlySelect == "true":
-                        config[key][value] = "false"
-                        logging.debug(" - [%s] %s : false", key, value)
-                
-                if key == "analysis-muon-selection":
-                    if "muonSelection" in analysisCfg:
-                        config[key][value] = "true"
-                        logging.debug(" - [%s] %s : true", key, value)
-                        isAnalysisMuonSelected = True
-                    if "muonSelection" not in analysisCfg and args.onlySelect == "true":
-                        config[key][value] = "false"
-                        logging.debug(" - [%s] %s : false", key, value)
-                
-                if "sameEventPairing" in analysisCfg:
-                    isAnalysisSameEventPairingSelected = True
-                if "sameEventPairing" not in analysisCfg:
-                    isAnalysisSameEventPairingSelected = False
-            
-            if value == "processDimuonMuonSkimmed" and args.analysis:
-                
-                if key == "analysis-dilepton-track":
-                    if "dileptonTrackDimuonMuonSelection" in analysisCfg:
-                        config[key][value] = "true"
-                        logging.debug(" - [%s] %s : true", key, value)
-                    if ("dileptonTrackDimuonMuonSelection" not in analysisCfg and args.onlySelect == "true"):
-                        config[key][value] = "false"
-                        logging.debug(" - [%s] %s : false", key, value)
-            
-            if value == "processDielectronKaonSkimmed" and args.analysis:
-                
-                if key == "analysis-dilepton-track":
-                    if "dileptonTrackDielectronKaonSelection" in analysisCfg:
-                        config[key][value] = "true"
-                        logging.debug(" - [%s] %s : true", key, value)
-                    if ("dileptonTrackDielectronKaonSelection" not in analysisCfg and args.onlySelect == "true"):
-                        config[key][value] = "false"
-                        logging.debug(" - [%s] %s : false", key, value)
-            
-            # QA selections
-            if value == "cfgQA" and args.cfgQA:
-                config[key][value] = args.cfgQA
-                logging.debug(" - [%s] %s : %s", key, value, args.cfgQA)
-            
-            # analysis-event-selection
-            if value == "cfgEventCuts" and args.cfgEventCuts:
-                multiConfigurableSet(config, key, value, args.cfgEventCuts, args.onlySelect)
-                logging.debug(" - [%s] %s : %s", key, value, args.cfgEventCuts)
-            
-            # analysis-track-selection
-            if value == "cfgTrackCuts" and args.cfgTrackCuts:
-                multiConfigurableSet(config, key, value, args.cfgTrackCuts, args.onlySelect)
-                logging.debug(" - [%s] %s : %s", key, value, args.cfgTrackCuts)
-            if value == "cfgTrackMCSignals" and args.cfgTrackMCSignals:
-                multiConfigurableSet(config, key, value, args.cfgTrackMCSignals, args.onlySelect)
-                logging.debug(" - [%s] %s : %s", key, value, args.cfgTrackMCSignals)
-            
-            # analysis-muon-selection
-            if value == "cfgMuonCuts" and args.cfgMuonCuts:
-                multiConfigurableSet(config, key, value, args.cfgMuonCuts, args.onlySelect)
-                logging.debug(" - [%s] %s : %s", key, value, args.cfgMuonCuts)
-            if value == "cfgMuonMCSignals" and args.cfgMuonMCSignals:
-                multiConfigurableSet(config, key, value, args.cfgMuonMCSignals, args.onlySelect)
-                logging.debug(" - [%s] %s : %s", key, value, args.cfgMuonMCSignals)
-            
-            # analysis-same-event-pairing
-            if key == "analysis-same-event-pairing" and args.process:
-                
-                if not isAnalysisSameEventPairingSelected:
-                    logging.warning("You forget to add sameEventPairing option to analysis for Workflow. It Automatically added by CLI.")
-                    isAnalysisSameEventPairingSelected = True
-                
-                if "JpsiToEE" in processCfg and value == "processJpsiToEESkimmed":
-                    if isAnalysisTrackSelected:
-                        config[key]["processJpsiToEESkimmed"] = "true"
-                        logging.debug(" - [%s] %s : true", key, value)
-                    if not isAnalysisTrackSelected:
-                        logging.error("trackSelection not found in analysis for processJpsiToEESkimmed -> analysis-same-event-pairing")
-                        sys.exit()
-                if ("JpsiToEE" not in processCfg and value == "processJpsiToEESkimmed" and args.onlySelect == "true"):
-                    config[key]["processJpsiToEESkimmed"] = "false"
-                    logging.debug(" - [%s] %s : false", key, value)
-                
-                if "JpsiToMuMu" in processCfg and value == "processJpsiToMuMuSkimmed":
-                    if isAnalysisMuonSelected:
-                        config[key]["processJpsiToMuMuSkimmed"] = "true"
-                        logging.debug(" - [%s] %s : true", key, value)
-                    if not isAnalysisMuonSelected:
-                        logging.error("muonSelection not found in analysis for processJpsiToMuMuSkimmed -> analysis-same-event-pairing")
-                        sys.exit()
-                if ("JpsiToMuMu" not in processCfg and value == "processJpsiToMuMuSkimmed" and args.onlySelect == "true"):
-                    config[key]["processJpsiToMuMuSkimmed"] = "false"
-                    logging.debug(" - [%s] %s : false", key, value)
-                
-                if ("JpsiToMuMuVertexing" in processCfg and value == "processJpsiToMuMuVertexingSkimmed"):
-                    if isAnalysisMuonSelected:
-                        config[key]["processJpsiToMuMuVertexingSkimmed"] = "true"
-                        logging.debug(" - [%s] %s : true", key, value)
-                    if not isAnalysisMuonSelected:
-                        logging.error(
-                            "muonSelection not found in analysis for processJpsiToMuMuVertexingSkimmed -> analysis-same-event-pairing"
-                            )
-                        sys.exit()
-                if ("JpsiToMuMuVertexing" not in processCfg and value == "processJpsiToMuMuVertexingSkimmed" and args.onlySelect == "true"):
-                    config[key]["processJpsiToMuMuVertexingSkimmed"] = "false"
-                    logging.debug(" - [%s] %s : false", key, value)
-            
-            # If no process function is provided, all SEP process functions are pulled false (for JSON Overrider mode)
-            if (
-                key == "analysis-same-event-pairing" and args.process is None and not isAnalysisSameEventPairingSelected and
-                args.onlySelect == "true"
-                ):
-                config[key]["processJpsiToEESkimmed"] = "false"
-                config[key]["processJpsiToMuMuSkimmed"] = "false"
-                config[key]["processJpsiToMuMuVertexingSkimmed"] = "false"
-            
-            # analysis-same-event-pairing
-            if key == "analysis-same-event-pairing":
-                if value == "cfgBarrelMCRecSignals" and args.cfgBarrelMCRecSignals:
-                    multiConfigurableSet(config, key, value, args.cfgBarrelMCRecSignals, args.onlySelect)
-                    logging.debug(" - [%s] %s : %s", key, value, args.cfgBarrelMCRecSignals)
-                
-                if value == "cfgBarrelMCGenSignals" and args.cfgBarrelMCGenSignals:
-                    multiConfigurableSet(config, key, value, args.cfgBarrelMCGenSignals, args.onlySelect)
-                    logging.debug(" - [%s] %s : %s", key, value, args.cfgBarrelMCGenSignals)
-                
-                if value == "cfgFlatTables" and args.cfgFlatTables:
-                    config[key][value] = args.cfgFlatTables
-                    logging.debug(" - [%s] %s : %s", key, value, args.cfgFlatTables)
-            
-            # analysis-dilepton-track
+            # analysis-dilepton-track # TODO Discuss naming conventions regarding to string conflicts
             if key == "analysis-dilepton-track":
                 if value == "cfgBarrelMCRecSignals" and args.cfgBarrelDileptonMCRecSignals:
-                    multiConfigurableSet(config, key, value, args.cfgBarrelDileptonMCRecSignals, args.onlySelect)
+                    multiConfigurableSet(config, key, value, args.cfgBarrelDileptonMCRecSignals, cliMode)
                     logging.debug(" - [%s] %s : %s", key, value, args.cfgBarrelDileptonMCRecSignals)
                 
                 if value == "cfgBarrelMCGenSignals" and args.cfgBarrelDileptonMCGenSignals:
-                    multiConfigurableSet(config, key, value, args.cfgBarrelDileptonMCGenSignals, args.onlySelect)
+                    multiConfigurableSet(config, key, value, args.cfgBarrelDileptonMCGenSignals, cliMode)
                     logging.debug(" - [%s] %s : %s", key, value, args.cfgBarrelDileptonMCGenSignals)
-                if value == "cfgLeptonCuts" and args.cfgLeptonCuts:
-                    multiConfigurableSet(config, key, value, args.cfgLeptonCuts, args.onlySelect)
-                    logging.debug(" - [%s] %s : %s", key, value, args.cfgLeptonCuts)
-                
-                if value == "cfgFillCandidateTable" and args.cfgFillCandidateTable:
-                    config[key][value] = args.cfgFillCandidateTable
-                    logging.debug(" - [%s] %s : %s", key, value, args.cfgFillCandidateTable)
+            
+            # Interface Logic
+            CONFIG_SET(config, key, value, allArgs, cliMode)
+            PROCESS_SWITCH(config, key, value, allArgs, cliMode, "process", sepParameters, "true/false")
+            NOT_CONFIGURED_SET_FALSE(config, key, value, args.process, sepParameters, cliMode)
+            MandatoryArgAdder(config, key, value, "analysis-event-selection", "processSkimmed")
 
-processDummySet(config) # dummy automizer
+PROCESS_DUMMY(config) # dummy automizer
+
+# Transactions
 aodFileChecker(args.aod)
+oneToMultiDepsChecker(args.process,"sameEventPairing",analysisCfg,analysisArgName)
+depsChecker(config, sepDeps, sepKey)
+depsChecker(config, dileptonTrackDeps, dileptonTrackKey)
 
 if args.reader is not None:
     if not os.path.isfile(args.reader):
