@@ -12,6 +12,7 @@
 # In applying this license CERN does not waive the privileges and immunities
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
+
 # \Author: ionut.cristian.arsene@cern.ch
 # \Interface:  cevat.batuhan.tolon@cern.ch
 
@@ -24,15 +25,6 @@ import ssl
 import logging
 import logging.config
 import shutil
-"""
-argcomplete - Bash tab completion for argparse
-Documentation https://kislyuk.github.io/argcomplete/
-Instalation Steps
-pip install argcomplete
-sudo activate-global-python-argcomplete
-Only Works On Local not in O2
-Activate libraries in below and activate #argcomplete.autocomplete(parser) line
-"""
 import argcomplete
 
 # This script provides download to DQ libraries from O2Physics-DQ Manually with/without Production tag or get DQ libraries from alice-software in local machine

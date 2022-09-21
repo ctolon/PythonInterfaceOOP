@@ -19,7 +19,6 @@
 # Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/TableProducer/tableMakerMC.cxx
 
 import argparse
-
 from argcomplete.completers import ChoicesCompleter
 import argcomplete
 from extramodules.choicesCompleterList import ChoicesCompleterList
@@ -27,7 +26,6 @@ from extramodules.helperOptions import HelperOptions
 from extramodules.actionHandler import NoAction
 from extramodules.actionHandler import ChoicesAction
 from extramodules.converters import O2Converters
-
 from commondeps.centralityTable import CentralityTable
 from commondeps.eventSelection import EventSelectionTask
 from commondeps.multiplicityTable import MultiplicityTable
@@ -37,7 +35,6 @@ from commondeps.pidTPCTOFFull import TpcTofPidFull
 from commondeps.trackPropagation import TrackPropagation
 from commondeps.trackselection import TrackSelectionTask
 from commondeps.dplAodReader import DplAodReader
-
 from extramodules.dqLibGetter import DQLibGetter
 
 

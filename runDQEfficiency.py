@@ -24,26 +24,16 @@ import logging
 import logging.config
 import os
 from extramodules.configGetter import configGetter
-
 from extramodules.monitoring import dispArgs
 from extramodules.dqTranscations import MandatoryArgAdder, aodFileChecker, depsChecker, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, oneToMultiDepsChecker
 from extramodules.configSetter import CONFIG_SET, NOT_CONFIGURED_SET_FALSE, PROCESS_SWITCH, SELECTION_SET, debugSettings, PROCESS_DUMMY, multiConfigurableSet
 from extramodules.pycacheRemover import runPycacheRemover
-
 from dqtasks.dqEfficiency import DQEfficiency
 
-###################################
-# Interface Predefined Selections #
-###################################
-
+# Predefined selections for PROCESS_SWITCH function
 sepParameters = ["processJpsiToEESkimmed", "processJpsiToMuMuSkimmed", "processJpsiToMuMuVertexingSkimmed"]
 
-booleanSelections = ["true", "false"]
-
-################
-# Dependencies #
-################
-
+# All Dependencies
 analysisSelectionDeps = {
     "trackSelection": ["analysis-track-selection", "processSkimmed"],
     "eventSelection": ["analysis-event-selection", "processSkimmed"],
@@ -51,7 +41,6 @@ analysisSelectionDeps = {
     "dileptonTrackDimuonMuonSelection": ["analysis-dilepton-track", "processDimuonMuonSkimmed"],
     "dileptonTrackDielectronKaonSelection": ["analysis-dilepton-track", "processDielectronKaonSkimmed"],
     }
-
 sepKey = "analysis-same-event-pairing"
 sepDeps = {
     "processJpsiToEESkimmed": ["analysis-track-selection", "processSkimmed"],
@@ -68,7 +57,6 @@ dileptonTrackDeps = {
 initArgs = DQEfficiency()
 initArgs.mergeArgs()
 initArgs.parseArgs()
-
 args = initArgs.parseArgs()
 allArgs = vars(args) # for get args
 
@@ -78,27 +66,19 @@ debugSettings(args.debug, args.logFile, fileName = "dqEfficiency.log")
 # if cliMode true, Overrider mode else additional mode
 cliMode = args.onlySelect
 
-# Transcation management
-forgettedArgsChecker(allArgs)
+forgettedArgsChecker(allArgs) # Transcation management
 
-######################
-# PREFIX ADDING PART #
-######################
-
-# available prefixes
 prefix_process = "process"
 suffix_skimmed = "Skimmed"
-
-# add prefix and suffix for args.process
+# adding prefix for PROCESS_SWITCH function (for no kFlag True situations)
 if args.process is not None:
     args.process = [prefix_process + sub for sub in args.process]
     args.process = [sub + suffix_skimmed for sub in args.process]
 
-# Config parameters getter from argument
-analysisCfg = configGetter(allArgs, "analysis")
-analysisArgName = configGetter(allArgs, "analysis",True)
-processCfg = configGetter(allArgs, "process")
-processArgName = configGetter(allArgs, "process",True)
+analysisCfg = configGetter(allArgs, "analysis") # get all analysis parameters
+analysisArgName = configGetter(allArgs, "analysis", True) # get analysis arg name
+processCfg = configGetter(allArgs, "process") # get all process parameters
+processArgName = configGetter(allArgs, "process", True) # get process arg name
 
 # Load the configuration file provided as the first parameter
 config = {}
@@ -112,19 +92,16 @@ taskNameInConfig = "analysis-event-selection"
 
 mainTaskChecker(config, taskNameInConfig)
 
-#############################
-# Start Interface Processes #
-#############################
-
+# Interface Process
 logging.info("Only Select Configured as %s", cliMode)
 if cliMode == "true":
     logging.info("INTERFACE MODE : JSON Overrider")
 if cliMode == "false":
     logging.info("INTERFACE MODE : JSON Additional")
 
-# Interface Logic
-SELECTION_SET(config, analysisSelectionDeps, analysisCfg, cliMode)
+SELECTION_SET(config, analysisSelectionDeps, analysisCfg, cliMode) # Set selections
 
+# Iterating in JSON config file
 for key, value in config.items():
     if type(value) == type(config):
         for value, value2 in value.items():
@@ -158,21 +135,9 @@ PROCESS_DUMMY(config) # dummy automizer
 
 # Transactions
 aodFileChecker(args.aod)
-oneToMultiDepsChecker(args.process,"sameEventPairing",analysisCfg,analysisArgName)
+oneToMultiDepsChecker(args.process, "sameEventPairing", analysisCfg, analysisArgName)
 depsChecker(config, sepDeps, sepKey)
 depsChecker(config, dileptonTrackDeps, dileptonTrackKey)
-
-if args.reader is not None:
-    if not os.path.isfile(args.reader):
-        logging.error("%s File not found in path!!!", args.reader)
-        sys.exit()
-elif not os.path.isfile((config["internal-dpl-aod-reader"]["aod-reader-json"])):
-    logging.error(" %s File not found in path!!!", config["internal-dpl-aod-reader"]["aod-reader-json"])
-    sys.exit()
-
-###########################
-# End Interface Processes #
-###########################
 
 # Write the updated configuration file into a temporary file
 updatedConfigFileName = "tempConfigDQEfficiency.json"
@@ -188,10 +153,6 @@ print("=========================================================================
 logging.info("Command to run:")
 logging.info(commandToRun)
 print("====================================================================================================================")
-
-# Listing Added Commands
-dispArgs(allArgs)
-
-os.system(commandToRun)
-
-runPycacheRemover()
+dispArgs(allArgs) # Display all args
+os.system(commandToRun) # Execute O2 generated commands
+runPycacheRemover() # Run pycacheRemover

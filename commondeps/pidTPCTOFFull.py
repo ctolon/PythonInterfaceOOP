@@ -17,7 +17,6 @@
 # Orginal Task For pidTOFFull.cxx: https://github.com/AliceO2Group/O2Physics/blob/master/Common/TableProducer/PID/pidTOFFull.cxx
 
 import argparse
-
 from extramodules.choicesCompleterList import ChoicesCompleterList
 from argcomplete.completers import ChoicesCompleter
 

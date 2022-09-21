@@ -19,14 +19,12 @@
 # Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/tableReader.cxx
 
 import argparse
-
 import argcomplete
 from argcomplete.completers import ChoicesCompleter
 from commondeps.dplAodReader import DplAodReader
 from extramodules.dqLibGetter import DQLibGetter
 from extramodules.choicesCompleterList import ChoicesCompleterList
 from extramodules.helperOptions import HelperOptions
-
 from extramodules.actionHandler import NoAction
 from extramodules.actionHandler import ChoicesAction
 from extramodules.helperOptions import HelperOptions

@@ -22,60 +22,41 @@ import json
 import logging
 import logging.config
 import os
-
 from extramodules.configGetter import configGetter
 from extramodules.monitoring import dispArgs
 from extramodules.dqTranscations import aodFileChecker, forgettedArgsChecker, jsonTypeChecker, filterSelsTranscation, mainTaskChecker, trackPropTransaction
 from extramodules.configSetter import PROCESS_SWITCH, SELECTION_SET, converterSet, CONFIG_SET, PROCESS_DUMMY, debugSettings
 from extramodules.pycacheRemover import runPycacheRemover
-
 from dqtasks.filterPP import DQFilterPPTask
 
-###################################
-# Interface Predefined Selections #
-###################################
-
+# Predefined selections for PROCESS_SWITCH function
 centralityTableParameters = [
     "estRun2V0M", "estRun2SPDtks", "estRun2SPDcls", "estRun2CL0", "estRun2CL1", "estFV0A", "estFT0M", "estFDDM", "estNTPV",
     ]
-# TODO: Add genname parameter
-
 ft0Parameters = ["processFT0", "processNoFT0", "processOnlyFT0", "processRun2"]
-
 pidParameters = ["pid-el", "pid-mu", "pid-pi", "pid-ka", "pid-pr", "pid-de", "pid-tr", "pid-he", "pid-al",]
-
-booleanSelections = ["true", "false"]
-
 covParameters = ["processStandard", "processCovariance"]
-
 sliceParameters = ["processWoSlice", "processWSlice"]
-
 vertexParameters = ["doVertexZeq", "doDummyZeq"]
 
-################
-# Dependencies #
-################
-
+# All Dependencies
 commonDeps = [
     "o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table", "o2-analysis-trackselection",
     "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta",
     "o2-analysis-pid-tpc-full",
     ]
-
 selectionDeps = {
     "barrelTrackSelection": ["d-q-barrel-track-selection", "processSelection"],
     "barrelTrackSelectionTiny": ["d-q-barrel-track-selection", "processSelectionTiny"],
     "muonSelection": ["d-q-muons-selection", "processSelection"],
     "filterPPSelectionTiny": ["d-q-filter-p-p-task", "processFilterPPTiny"]
     }
-
 dummyHasTasks = ["d-q-barrel-track-selection", "d-q-muons-selection", "d-q-filter-p-p-task"]
 
 # init args manually
 initArgs = DQFilterPPTask()
 initArgs.mergeArgs()
 initArgs.parseArgs()
-
 args = initArgs.parseArgs()
 allArgs = vars(args) # for get args
 
@@ -85,25 +66,18 @@ cliMode = args.onlySelect
 # Debug Settings
 debugSettings(args.debug, args.logFile, fileName = "filterPP.log")
 
-forgettedArgsChecker(allArgs)
+forgettedArgsChecker(allArgs) # Transaction management
 
-processCfg = configGetter(allArgs, "process")
+processCfg = configGetter(allArgs, "process") # get all process parameters
 
-######################
-# PREFIX ADDING PART #
-######################
-
-# add prefix for args.pid for pid selection
+# adding prefix for PROCESS_SWITCH function (for no kFlag True situations)
 if args.pid is not None:
     prefix_pid = "pid-"
     args.pid = [prefix_pid + sub for sub in args.pid]
 
-# add prefix for args.FT0 for tof-event-time
 if args.FT0 is not None:
     prefix_process = "process"
     args.FT0 = prefix_process + args.FT0
-
-######################################################################################
 
 # Load the configuration file provided as the first parameter
 config = {}
@@ -117,10 +91,7 @@ taskNameInCommandLine = "o2-analysis-dq-filter-pp"
 
 mainTaskChecker(config, taskNameInConfig)
 
-#############################
-# Start Interface Processes #
-#############################
-
+# Interface Process
 logging.info("Only Select Configured as %s", args.onlySelect)
 if args.onlySelect == "true":
     logging.info("INTERFACE MODE : JSON Overrider")
@@ -129,6 +100,7 @@ if args.onlySelect == "false":
 
 SELECTION_SET(config, selectionDeps, processCfg, cliMode)
 
+# Iterating in JSON config file
 for key, value in config.items():
     if isinstance(value, dict):
         for value, value2 in value.items():
@@ -137,8 +109,8 @@ for key, value in config.items():
             if value == "aod-file" and args.aod:
                 config[key][value] = args.aod
                 logging.debug(" - [%s] %s : %s", key, value, args.aod)
-             
-            # For don't override tof-pid. We use instead of tof-pid-full and tpc-pid-full for pid tables    
+            
+            # For don't override tof-pid. We use instead of tof-pid-full and tpc-pid-full for pid tables
             if key == "tof-pid":
                 continue
             
@@ -150,28 +122,12 @@ for key, value in config.items():
                 PROCESS_SWITCH(config, key, value, allArgs, "true", "FT0", ft0Parameters, "true/false")
             PROCESS_SWITCH(config, key, value, allArgs, cliMode, "isVertexZeq", vertexParameters, "1/0", True)
 
-PROCESS_DUMMY(config, dummyHasTasks)
+PROCESS_DUMMY(config, dummyHasTasks) # dummy automizer
+
 # Transactions
 filterSelsTranscation(args.cfgBarrelSels, args.cfgMuonSels, args.cfgBarrelTrackCuts, args.cfgMuonsCuts, allArgs)
 aodFileChecker(args.aod)
 trackPropTransaction(args.add_track_prop, commonDeps)
-"""
-# Regarding to perfomance issues in argcomplete package, we should import later
-from extramodules.getTTrees import getTTrees
-
-# Converter Management
-if args.aod is not None:
-    ttreeList = getTTrees(args.aod)
-else:
-    ttreeList = config["internal-dpl-aod-reader"]["aod-file"]
-
-converterManager(ttreeList, commonDeps)
-trackPropChecker(commonDeps, commonDeps)
-"""
-
-###########################
-# End Interface Processes #
-###########################
 
 # Write the updated configuration file into a temporary file
 updatedConfigFileName = "tempConfigFilterPP.json"
@@ -199,10 +155,6 @@ print("=========================================================================
 logging.info("Command to run:")
 logging.info(commandToRun)
 print("====================================================================================================================")
-
-# Listing Added Commands
-dispArgs(allArgs)
-
-os.system(commandToRun)
-
-runPycacheRemover()
+dispArgs(allArgs) # Display all args
+os.system(commandToRun) # Execute O2 generated commands
+runPycacheRemover() # Run pycacheRemover

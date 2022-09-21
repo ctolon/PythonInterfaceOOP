@@ -16,7 +16,6 @@
 # Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/Common/TableProducer/multiplicityTable.cxx
 
 import argparse
-
 from argcomplete.completers import ChoicesCompleter
 
 

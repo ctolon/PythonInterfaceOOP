@@ -92,21 +92,6 @@ def trackPropTransaction(trackProp: bool, deps: list):
         logging.info("o2-analysis-trackextension is not valid dep for run 3, It will deleted from your workflow.")
 
 
-def trackPropChecker(commonDeps: list, barrelDeps: list):
-    """This method automatically deletes the o2-analysis-trackextension(for run2) task from your workflow
-    when you add the o2-analysis-track-propagation (for run3)
-    task to your workflow. Two tasks are not compatible at the same time
-
-    Args:
-        commonDeps (list): Common Dependency list for run to task
-        barrelDeps (list): The dependency list where the trackextension task is defined
-    """
-    
-    if "o2-analysis-track-propagation" in commonDeps:
-        barrelDeps.remove("o2-analysis-trackextension")
-        logging.info("o2-analysis-trackextension is not valid dep for run 3, It will deleted from your workflow.")
-
-
 def mainTaskChecker(config: dict, taskNameInConfig: str):
     """1. Checks whether the workflow you want to run in your JSON file has a main task.
     
@@ -325,8 +310,9 @@ def depsChecker(config: dict, deps: dict, key: str):
             continue
         elif config[key][k] == "true" and config[v[0]][v[1]] == "false":
             raise DependencyNotFoundError(k, v[0], v[1])
-        
-def oneToMultiDepsChecker(argument : list, mandatoryArg : str, targetCfg : dict, argName: str):
+
+
+def oneToMultiDepsChecker(argument: list, mandatoryArg: str, targetCfg: dict, argName: str):
     """To configure many arguments in a task to check if a value needs to be defined in another argument
 
     Args:
@@ -342,15 +328,14 @@ def oneToMultiDepsChecker(argument : list, mandatoryArg : str, targetCfg : dict,
     try:
         if argument is not None and mandatoryArg not in targetCfg:
             raise MandatoryArgNotFoundError(mandatoryArg)
-            
+    
     except MandatoryArgNotFoundError as e:
         logging.exception(e)
-        logging.info("For configuring %s you have to specify %s value in --%s argument", argument, mandatoryArg,argName)
+        logging.info("For configuring %s you have to specify %s value in --%s argument", argument, mandatoryArg, argName)
         sys.exit()
-        
 
 
-def MandatoryArgAdder(config:dict, key:str, value:str, selectedKey:str, selectedValue:str):
+def MandatoryArgAdder(config: dict, key: str, value: str, selectedKey: str, selectedValue: str):
     """The process function, which must be included in the workflow, if it is missing, the transaction function to include it
 
     Args:
@@ -362,7 +347,10 @@ def MandatoryArgAdder(config:dict, key:str, value:str, selectedKey:str, selected
     """
     
     if config[key][value] == "false" and key == selectedKey and value == selectedValue:
-        logging.warning("You forget the configure an Mandatory -> [%s] %s must always true for this workflow. This will automaticaly converted true.", key, value)
-        logging.info(" - [%s] %s : true", key, value)            
+        logging.warning(
+            "You forget the configure an Mandatory -> [%s] %s must always true for this workflow. This will automaticaly converted true.",
+            key, value
+            )
+        logging.info(" - [%s] %s : true", key, value)
     else:
         pass

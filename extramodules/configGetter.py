@@ -30,11 +30,10 @@ def configGetter(allArgs: dict, selectedArg: str, getKey = None):
     for keyCfg, valueCfg in allArgs.items():
         if valueCfg is not None: # Skipped None types, because can"t iterate in None type
             if keyCfg == selectedArg:
-                 if getKey is None:
-                     if isinstance(valueCfg, str):
+                if getKey is None:
+                    if isinstance(valueCfg, str):
                         return stringToList(valueCfg)
-                     else:
+                    else:
                         return valueCfg
-                 elif getKey is True:
-                     return keyCfg
-                     
+                elif getKey is True:
+                    return keyCfg

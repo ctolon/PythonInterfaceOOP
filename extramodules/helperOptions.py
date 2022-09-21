@@ -14,7 +14,6 @@
 # or submit itself to any jurisdiction.
 
 import argparse
-
 from extramodules.choicesCompleterList import ChoicesCompleterList
 from argcomplete.completers import ChoicesCompleter
 

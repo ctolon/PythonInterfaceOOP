@@ -23,18 +23,8 @@ import sys
 import os
 
 
+# NOTE This will removed when we have unique name for dilepton-track signals
 def multiConfigurableSet(config: dict, key: str, value: str, arg: list, onlySelect):
-    """
-    multiConfigurableSet method allows to assign values
-    for multiple configurable value arguments in JSON with/without overriding
-    Args:
-        config (dict): Input as JSON config file
-        key (string): Key
-        value (string): Value 
-        arg (any): CLI Argument
-        onlySelect (boolean): cliMode
-
-    """
     
     if isinstance(arg, list):
         arg = listToString(arg)
@@ -168,7 +158,7 @@ def tableProducer(
                 tablesToProduce[table] = 1
 
 
-def SELECTION_SET(config :dict, deps : dict, targetCfg : list, cliMode : bool):
+def SELECTION_SET(config: dict, deps: dict, targetCfg: list, cliMode: bool):
     """If the arguments are set with very different naming conventions and they are for selection, this function is used to set the values
 
     Args:
@@ -219,11 +209,11 @@ def PROCESS_SWITCH(
         key (str): Key
         value (str): Value
         allArgs (dict): Configured args in CLI
-        onlySelect (bool): CLI mde
+        onlySelect (bool): CLI mode
         argument (str): Selected argument from configured args
         parameters (list): All available parameters for argument
         switchType (str): Switch type usage in string --> "SWITCH_ON/SWITCHOFF"
-        kFlag (bool): If True Key prefix-suffix based PROCESS_SWITCH (Default value based)
+        kFlag (bool): If True -> Key prefix-suffix based instead of value prefix-suffix based PROCESS_SWITCH (Default is value based)
     """
     
     possibleSwitchTypes = ["1/-1", "1/0", "true/false"] # you have to add new switch type here if you need
@@ -249,7 +239,7 @@ def PROCESS_SWITCH(
                         config[key][value] = SWITCH_ON
                         logging.debug(" - [%s] %s : %s", key, value, SWITCH_ON)
                 
-                if (onlySelect == "true"): # TODO bir indent TAB kadar sag kaydırılabilir test edilmesi lazım.
+                if (onlySelect == "true"):
                     for param in parameters:
                         if param not in valueCfg and param == value: # param should equals value for getting key info
                             config[key][value] = SWITCH_OFF
@@ -266,7 +256,7 @@ def PROCESS_SWITCH(
                         if param != valueCfg and param == value: # param should equals value for getting key info
                             config[key][param] = SWITCH_OFF
                             logging.debug(" - [%s] %s : %s", key, param, SWITCH_OFF)
-                            
+        
         # NOTE can be deleted when we have better naming conventions
         if kFlag is True:
             
@@ -355,7 +345,7 @@ def NOT_CONFIGURED_SET_FALSE(config: dict, key: str, value: str, argument: list,
         argument (list): CLI Argument
         parameters (list): Your parameter list
         cliMode (bool): CLI mode
-        selectedKey (str, optional): If you wish, you can define one selected key for more control (in string)
+        selectedKey (str, optional): If you wish, you can define one selected key for more control
     """
     
     if argument is None and cliMode == "true":

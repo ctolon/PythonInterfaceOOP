@@ -23,16 +23,13 @@ import os
 import re
 from urllib.request import Request, urlopen
 import ssl
-
 from argcomplete.completers import ChoicesCompleter
 import argcomplete
 from extramodules.choicesCompleterList import ChoicesCompleterList
-
 from extramodules.actionHandler import NoAction
 from extramodules.actionHandler import ChoicesAction
 from extramodules.helperOptions import HelperOptions
 from extramodules.converters import O2Converters
-
 from commondeps.eventSelection import EventSelectionTask
 from commondeps.multiplicityTable import MultiplicityTable
 from commondeps.pidTOFBase import TofEventTime
@@ -41,7 +38,6 @@ from commondeps.pidTPCTOFFull import TpcTofPidFull
 from commondeps.trackPropagation import TrackPropagation
 from commondeps.trackselection import TrackSelectionTask
 from commondeps.dplAodReader import DplAodReader
-
 from extramodules.dqLibGetter import DQLibGetter
 
 

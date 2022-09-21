@@ -19,16 +19,13 @@
 # Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/TableProducer/tableMaker.cxx
 
 import argparse
-
 from extramodules.actionHandler import NoAction
 from extramodules.actionHandler import ChoicesAction
 from extramodules.helperOptions import HelperOptions
 from extramodules.converters import O2Converters
-
 import argcomplete
 from argcomplete.completers import ChoicesCompleter
 from extramodules.choicesCompleterList import ChoicesCompleterList
-
 from commondeps.centralityTable import CentralityTable
 from commondeps.eventSelection import EventSelectionTask
 from commondeps.multiplicityTable import MultiplicityTable
@@ -38,9 +35,7 @@ from commondeps.pidTPCTOFFull import TpcTofPidFull
 from commondeps.trackPropagation import TrackPropagation
 from commondeps.trackselection import TrackSelectionTask
 from commondeps.dplAodReader import DplAodReader
-
 from dqtasks.v0selector import V0selector
-
 from extramodules.dqLibGetter import DQLibGetter
 
 # Special configurations for filterPP are combined to avoid conflicts in the tableMaker interface

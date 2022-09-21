@@ -22,43 +22,25 @@ import json
 import logging
 import logging.config
 import os
-
 from extramodules.monitoring import dispArgs
 from extramodules.descriptor import inputDescriptors, outputDescriptors
 from extramodules.dqTranscations import MandatoryArgAdder, aodFileChecker, centTranscation, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, trackPropTransaction
 from extramodules.configSetter import PROCESS_SWITCH, converterSet, CONFIG_SET, debugSettings, tableProducer
 from extramodules.pycacheRemover import runPycacheRemover
-
 from dqtasks.tableMakerMC import TableMakerMC
 
-###################################
-# Interface Predefined Selections #
-###################################
-
+# Predefined selections for PROCESS_SWITCH function
 centralityTableParameters = [
     "estRun2V0M", "estRun2SPDtks", "estRun2SPDcls", "estRun2CL0", "estRun2CL1", "estFV0A", "estFT0M", "estFDDM", "estNTPV",
     ]
-# TODO: Add genname parameter
-
 ft0Parameters = ["processFT0", "processNoFT0", "processOnlyFT0", "processRun2"]
-
 pidParameters = ["pid-el", "pid-mu", "pid-pi", "pid-ka", "pid-pr", "pid-de", "pid-tr", "pid-he", "pid-al",]
-
-booleanSelections = ["true", "false"]
-
 covParameters = ["processStandard", "processCovariance"]
-
 sliceParameters = ["processWoSlice", "processWSlice"]
-
 vertexParameters = ["doVertexZeq", "doDummyZeq"]
+centSearch = [] # for centrality transaction
 
-# Predefined Search Lists
-centSearch = []
-
-################
-# Dependencies #
-################
-
+# All Dependencies
 commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table",]
 barrelDeps = [
     "o2-analysis-trackselection", "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof",
@@ -84,77 +66,27 @@ specificDeps = {
     # "processFullWithEventFilterWithV0Bits": ["o2-analysis-dq-filter-pp","o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices"],
     }
 
-#############################
-# Skimming Table Selections #
-#############################
-
+# yapf: disable
 # Definition of all the tables we may write
 tables = {
-    "ReducedEvents": {
-        "table": "AOD/REDUCEDEVENT/0",
-        "treename": "ReducedEvents"
-        },
-    "ReducedEventsExtended": {
-        "table": "AOD/REEXTENDED/0",
-        "treename": "ReducedEventsExtended",
-        },
-    "ReducedEventsVtxCov": {
-        "table": "AOD/REVTXCOV/0",
-        "treename": "ReducedEventsVtxCov",
-        },
-    "ReducedEventsQvector": {
-        "table": "AOD/REQVECTOR/0",
-        "treename": "ReducedEventsQvector",
-        },
-    "ReducedMCEventLabels": {
-        "table": "AOD/REMCCOLLBL/0",
-        "treename": "ReducedMCEventLabels",
-        },
-    "ReducedMCEvents": {
-        "table": "AOD/REMC/0",
-        "treename": "ReducedMCEvents"
-        },
-    "ReducedTracks": {
-        "table": "AOD/REDUCEDTRACK/0",
-        "treename": "ReducedTracks"
-        },
-    "ReducedTracksBarrel": {
-        "table": "AOD/RTBARREL/0",
-        "treename": "ReducedTracksBarrel",
-        },
-    "ReducedTracksBarrelCov": {
-        "table": "AOD/RTBARRELCOV/0",
-        "treename": "ReducedTracksBarrelCov",
-        },
-    "ReducedTracksBarrelPID": {
-        "table": "AOD/RTBARRELPID/0",
-        "treename": "ReducedTracksBarrelPID",
-        },
-    "ReducedTracksBarrelLabels": {
-        "table": "AOD/RTBARRELLABELS/0",
-        "treename": "ReducedTracksBarrelLabels",
-        },
-    "ReducedMCTracks": {
-        "table": "AOD/RTMC/0",
-        "treename": "ReducedMCTracks"
-        },
-    "ReducedMuons": {
-        "table": "AOD/RTMUON/0",
-        "treename": "ReducedMuons"
-        },
-    "ReducedMuonsExtra": {
-        "table": "AOD/RTMUONEXTRA/0",
-        "treename": "ReducedMuonsExtra",
-        },
-    "ReducedMuonsCov": {
-        "table": "AOD/RTMUONCOV/0",
-        "treename": "ReducedMuonsCov"
-        },
-    "ReducedMuonsLabels": {
-        "table": "AOD/RTMUONSLABELS/0",
-        "treename": "ReducedMuonsLabels",
-        },
-    }
+          "ReducedEvents": {"table": "AOD/REDUCEDEVENT/0","treename": "ReducedEvents"},
+          "ReducedEventsExtended": {"table": "AOD/REEXTENDED/0","treename": "ReducedEventsExtended"},
+          "ReducedEventsVtxCov": {"table": "AOD/REVTXCOV/0","treename": "ReducedEventsVtxCov"},
+          "ReducedEventsQvector": {"table": "AOD/REQVECTOR/0","treename": "ReducedEventsQvector"},
+          "ReducedMCEventLabels": {"table": "AOD/REMCCOLLBL/0","treename": "ReducedMCEventLabels"},
+          "ReducedMCEvents": {"table": "AOD/REMC/0","treename": "ReducedMCEvents"},
+          "ReducedTracks": {"table": "AOD/REDUCEDTRACK/0","treename": "ReducedTracks"},
+          "ReducedTracksBarrel": {"table": "AOD/RTBARREL/0","treename": "ReducedTracksBarrel"},
+          "ReducedTracksBarrelCov": {"table": "AOD/RTBARRELCOV/0","treename": "ReducedTracksBarrelCov"},
+          "ReducedTracksBarrelPID": {"table": "AOD/RTBARRELPID/0","treename": "ReducedTracksBarrelPID"},
+          "ReducedTracksBarrelLabels": {"table": "AOD/RTBARRELLABELS/0","treename": "ReducedTracksBarrelLabels"},
+          "ReducedMCTracks": {"table": "AOD/RTMC/0","treename": "ReducedMCTracks"},
+          "ReducedMuons": {"table": "AOD/RTMUON/0","treename": "ReducedMuons"},
+          "ReducedMuonsExtra": {"table": "AOD/RTMUONEXTRA/0","treename": "ReducedMuonsExtra"},
+          "ReducedMuonsCov": {"table": "AOD/RTMUONCOV/0","treename": "ReducedMuonsCov"},
+          "ReducedMuonsLabels": {"table": "AOD/RTMUONSLABELS/0","treename": "ReducedMuonsLabels"}
+          }
+# yapf: enable
 # Tables to be written, per process function
 commonTables = ["ReducedEvents", "ReducedEventsExtended", "ReducedEventsVtxCov"]
 barrelCommonTables = ["ReducedTracks", "ReducedTracksBarrel", "ReducedTracksBarrelPID"]
@@ -177,15 +109,10 @@ specificTables = {
     "processMuonOnlyWithFilter": [],
     }
 
-#################
-# Init Workflow #
-#################
-
 # init args manually
 initArgs = TableMakerMC()
 initArgs.mergeArgs()
 initArgs.parseArgs()
-
 args = initArgs.parseArgs()
 allArgs = vars(args) # for get args
 
@@ -195,24 +122,17 @@ debugSettings(args.debug, args.logFile, fileName = "tableMakerMC.log")
 # if cliMode true, Overrider mode else additional mode
 cliMode = args.onlySelect
 
-# Transcation management
-forgettedArgsChecker(allArgs)
+forgettedArgsChecker(allArgs) # Transaction management
 
-######################
-# PREFIX ADDING PART #
-######################
-
-# add prefix for args.process for table-maker/table-maker-m-c and d-q-filter-p-p
+# adding prefix for PROCESS_SWITCH function (for no kFlag True situations)
 if args.process is not None:
     prefix_process = "process"
     args.process = [prefix_process + sub for sub in args.process]
 
-# add prefix for args.pid for pid selection
 if args.pid is not None:
     prefix_pid = "pid-"
     args.pid = [prefix_pid + sub for sub in args.pid]
 
-# add prefix for args.est for centrality-table
 if args.est is not None:
     prefix_est = "est"
     args.est = [prefix_est + sub for sub in args.est]
@@ -221,8 +141,6 @@ if args.est is not None:
 if args.FT0 is not None:
     prefix_process = "process"
     args.FT0 = prefix_process + args.FT0
-
-######################################################################################
 
 # Load the configuration file provided as the first parameter
 config = {}
@@ -239,10 +157,7 @@ taskNameInCommandLine = "o2-analysis-dq-table-maker-mc"
 
 mainTaskChecker(config, taskNameInConfig)
 
-#############################
-# Start Interface Processes #
-#############################
-
+# Interface Process
 logging.info("Only Select Configured as %s", cliMode)
 if cliMode == "true":
     logging.info("INTERFACE MODE : JSON Overrider")
@@ -252,6 +167,7 @@ if cliMode == "false":
 if args.process:
     centSearch = [s for s in args.process if "Cent" in s]
 
+# Iterating in JSON config file
 for key, value in config.items():
     if isinstance(value, dict):
         for value, value2 in value.items():
@@ -260,8 +176,8 @@ for key, value in config.items():
             if value == "aod-file" and args.aod:
                 config[key][value] = args.aod
                 logging.debug(" - [%s] %s : %s", key, value, args.aod)
-                
-            # For don't override tof-pid. We use instead of tof-pid-full and tpc-pid-full for pid tables    
+            
+            # For don't override tof-pid. We use instead of tof-pid-full and tpc-pid-full for pid tables
             if key == "tof-pid":
                 continue
             
@@ -280,23 +196,6 @@ for key, value in config.items():
 centTranscation(config, args.process, args.syst, centSearch)
 aodFileChecker(args.aod)
 trackPropTransaction(args.add_track_prop, barrelDeps)
-"""
-# Regarding to perfomance issues in argcomplete package, we should import later
-from extramodules.getTTrees import getTTrees
-
-# Converter Management
-if args.aod is not None:
-    ttreeList = getTTrees(args.aod)
-else:
-    ttreeList = config["internal-dpl-aod-reader"]["aod-file"]
-
-converterManager(ttreeList, commonDeps)
-trackPropChecker(commonDeps, barrelDeps)
-"""
-
-###########################
-# End Interface Processes #
-###########################
 
 # Write the updated configuration file into a temporary file
 updatedConfigFileName = "tempConfigTableMakerMC.json"
@@ -358,10 +257,6 @@ print("=========================================================================
 logging.info("Tables to produce:")
 logging.info(tablesToProduce.keys())
 print("====================================================================================================================")
-
-# Listing Added Commands
-dispArgs(allArgs)
-
-os.system(commandToRun)
-
-runPycacheRemover()
+dispArgs(allArgs) # Display all args
+os.system(commandToRun) # Execute O2 generated commands
+runPycacheRemover() # Run pycacheRemover

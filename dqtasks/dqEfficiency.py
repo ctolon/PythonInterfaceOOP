@@ -23,17 +23,14 @@ import os
 import re
 from urllib.request import Request, urlopen
 import ssl
-
 import argcomplete
 from argcomplete.completers import ChoicesCompleter
 from commondeps.dplAodReader import DplAodReader
 from extramodules.choicesCompleterList import ChoicesCompleterList
-
 from extramodules.actionHandler import NoAction
 from extramodules.actionHandler import ChoicesAction
 from extramodules.dqLibGetter import DQLibGetter
 from extramodules.helperOptions import HelperOptions
-
 
 class DQEfficiency(object):
     

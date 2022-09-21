@@ -24,7 +24,6 @@ import re
 from urllib.request import Request, urlopen
 import ssl
 import argcomplete
-
 from argcomplete.completers import ChoicesCompleter
 from extramodules.choicesCompleterList import ChoicesCompleterList
 from extramodules.actionHandler import NoAction
@@ -32,7 +31,6 @@ from extramodules.actionHandler import ChoicesAction
 from extramodules.dqLibGetter import DQLibGetter
 from extramodules.helperOptions import HelperOptions
 from extramodules.converters import O2Converters
-
 from commondeps.centralityTable import CentralityTable
 from commondeps.eventSelection import EventSelectionTask
 from commondeps.multiplicityTable import MultiplicityTable

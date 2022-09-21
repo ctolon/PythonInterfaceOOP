@@ -17,7 +17,6 @@
 # Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/Common/TableProducer/eventSelection.cxx
 
 import argparse
-
 from argcomplete.completers import ChoicesCompleter
 
 
