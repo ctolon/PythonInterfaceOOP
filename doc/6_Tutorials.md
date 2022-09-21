@@ -261,7 +261,7 @@ You need to produce reducedAod.root file with tableMaker in previous step.
 Command To Run:
 
 ```ruby
-python3 runTableReader.py configs/configAnalysisData.json --aod reducedAod.root --analysis eventSelection trackSelection eventMixingVn sameEventPairing --process VnJpsiToEE --cfgQA true --cfgTrackCuts jpsiPID1 jpsiPID2 --debug debug --logFile
+python3 runTableReader.py configs/configAnalysisData.json --aod reducedAod.root --analysis eventSelection trackSelection sameEventPairing --process VnJpsiToEE --cfgQA true --cfgTrackCuts jpsiPID1 jpsiPID2 --debug debug --logFile
 ```
 
 ### Run dqFlow on LHC15o (LHC15o PbPb Run2Data)

@@ -13,25 +13,41 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-# This script includes setter functions for configurables
+# This script includes setter functions for configurables (Developer package)
 
-#from extramodules.dqOperations import listToString
 from .stringOperations import listToString, stringToListWithSlash
 import logging
 from logging import handlers
 import sys
 import os
+import json
 
 
 # NOTE This will removed when we have unique name for dilepton-track signals
-def multiConfigurableSet(config: dict, key: str, value: str, arg: list, onlySelect):
+def multiConfigurableSet(config: dict, key: str, value: str, arg: list, cliMode):
     
     if isinstance(arg, list):
         arg = listToString(arg)
-    if onlySelect == "false":
+    if cliMode == "false":
         actualConfig = config[key][value]
         arg = actualConfig + "," + arg
     config[key][value] = arg
+
+
+def dispArgs(allArgs: dict):
+    """Display all configured commands you provided in CLI
+
+    Args:
+        allArgs (dict): configured commands in CLI
+    """
+    logging.info("Args provided configurations List")
+    print("====================================================================================================================")
+    for key, value in allArgs.items():
+        if value is not None:
+            if isinstance(value, list):
+                listToString(value)
+            logging.info("--%s : %s ", key, value)
+    print("====================================================================================================================")
 
 
 def debugSettings(argDebug: bool, argLogFile: bool, fileName: str):
@@ -105,6 +121,58 @@ def converterSet(
     return commandToRun
 
 
+def generateDescriptors(
+        tablesToProduce: dict, tables: dict, writerConfigFileName = "aodWriterTempConfig.json",
+        readerConfigFileName = "aodReaderTempConfig.json", kFlag = False
+    ):
+    """Generates Descriptors for Writing/Reading Tables from AO2D with json config file (input descriptor is optional)
+
+    Args:
+        tablesToProduce (dict): Tables are required in the output
+        tables (dict): Definition of all the tables can be produced
+        writerConfigFileName (str, optional): Output name of writer config. Defaults to "aodWriterTempConfig.json".
+        readerConfigFileName (str, optional): Output name of reader config. Defaults to "aodReaderTempConfig.json".
+        kFlag (bool, optional): if True also generates input descriptors. Defaults to False.
+    """
+    
+    iTable = 0
+    iTableReader = 0
+    # Generate the aod-reader output descriptor json file
+    readerConfig = {}
+    readerConfig["InputDirector"] = {
+        "debugmode": True,
+        "InputDescriptors": []
+        }
+    # Generate the aod-writer output descriptor json file
+    writerConfig = {}
+    writerConfig["OutputDirector"] = {
+        "debugmode": True,
+        "resfile": "reducedAod",
+        "resfilemode": "RECREATE",
+        "ntfmerge": 1,
+        "OutputDescriptors": [],
+        }
+    
+    for table in tablesToProduce.keys():
+        writerConfig["OutputDirector"]["OutputDescriptors"].insert(iTable, tables[table])
+        iTable += 1
+    if kFlag is True:
+        for table in tablesToProduce.keys():
+            readerConfig["InputDirector"]["InputDescriptors"].insert(iTableReader, tables[table])
+            iTableReader += 1
+    
+    writerConfigFileName = "aodWriterTempConfig.json"
+    with open(writerConfigFileName, "w") as writerConfigFile:
+        json.dump(writerConfig, writerConfigFile, indent = 2)
+    
+    if kFlag is True:
+        readerConfigFileName = "aodReaderTempConfig.json"
+        with open(readerConfigFileName, "w") as readerConfigFile:
+            json.dump(readerConfig, readerConfigFile, indent = 2)
+    logging.info("aodWriterTempConfig==========")
+    print(writerConfig)
+
+
 def tableProducer(
         config, taskNameInConfig, tablesToProduce, commonTables, barrelCommonTables, muonCommonTables, specificTables, specificDeps,
         runOverMC
@@ -168,31 +236,36 @@ def SELECTION_SET(config: dict, deps: dict, targetCfg: list, cliMode: bool):
         cliMode (bool): CLI mode
     """
     
-    for k, v in deps.items():
-        if k in targetCfg:
-            config[v[0]][v[1]] = "true"
-            logging.debug(" - [%s] %s : true", v[0], v[1])
-        elif cliMode == "true":
-            config[v[0]][v[1]] = "false"
-            logging.debug(" - [%s] %s : false", v[0], v[1])
+    for selection, taskNameProcessFuncPair in deps.items():
+        if isinstance(taskNameProcessFuncPair, dict):
+            for taskName, processFunc in taskNameProcessFuncPair.items():
+                if selection in targetCfg:
+                    config[taskName][processFunc] = "true"
+                    logging.debug(" - [%s] %s : true", taskName, processFunc)
+                
+                elif cliMode == "true":
+                    config[taskName][processFunc] = "false"
+                    logging.debug(" - [%s] %s : false", taskName, processFunc)
+        else:
+            raise TypeError("Taskname - Process Function pair should be a dictionary type")
 
 
-def CONFIG_SET(config, key, value, allArgs, onlySelect):
+def CONFIG_SET(config: dict, key: str, value: str, allArgs: dict, cliMode: bool):
     """This function provides directly set to argument parameter, if argument naming and json value naming equals
 
     Args:
-        config (_type_): _description_
-        key (_type_): _description_
-        value (_type_): _description_
-        allArgs (_type_): _description_
-        onlySelect (_type_): _description_
+        config (dict): Input as JSON config file
+        key (str): Key as argument
+        value (str): Value as parameter
+        allArgs (dict): Configured args in CLI
+        cliMode (bool): CLI mode
     """
     
     for keyCfg, valueCfg in allArgs.items():
         if (value == keyCfg) and (valueCfg is not None):
             if isinstance(valueCfg, list):
                 valueCfg = listToString(valueCfg)
-            if onlySelect == "false":
+            if cliMode == "false":
                 actualConfig = config[key][value]
                 valueCfg = actualConfig + "," + valueCfg
             config[key][value] = valueCfg
@@ -200,7 +273,7 @@ def CONFIG_SET(config, key, value, allArgs, onlySelect):
 
 
 def PROCESS_SWITCH(
-        config: dict, key: str, value: str, allArgs: dict, onlySelect: str, argument: str, parameters: list, switchType: str, kFlag = False
+        config: dict, key: str, value: str, allArgs: dict, cliMode: str, argument: str, parameters: list, switchType: str, kFlag = False
     ):
     """This method provides configure parameters with SWITCH_ON/SWITCH_OFF (both for configurables and process functions)
 
@@ -209,7 +282,7 @@ def PROCESS_SWITCH(
         key (str): Key
         value (str): Value
         allArgs (dict): Configured args in CLI
-        onlySelect (bool): CLI mode
+        cliMode (bool): CLI mode
         argument (str): Selected argument from configured args
         parameters (list): All available parameters for argument
         switchType (str): Switch type usage in string --> "SWITCH_ON/SWITCHOFF"
@@ -239,7 +312,7 @@ def PROCESS_SWITCH(
                         config[key][value] = SWITCH_ON
                         logging.debug(" - [%s] %s : %s", key, value, SWITCH_ON)
                 
-                if (onlySelect == "true"):
+                if (cliMode == "true"):
                     for param in parameters:
                         if param not in valueCfg and param == value: # param should equals value for getting key info
                             config[key][value] = SWITCH_OFF
@@ -251,7 +324,7 @@ def PROCESS_SWITCH(
                     config[key][value] = SWITCH_ON
                     logging.debug(" - [%s] %s : %s", key, value, SWITCH_ON)
                 
-                if (onlySelect == "true"):
+                if (cliMode == "true"):
                     for param in parameters:
                         if param != valueCfg and param == value: # param should equals value for getting key info
                             config[key][param] = SWITCH_OFF
@@ -358,3 +431,29 @@ def NOT_CONFIGURED_SET_FALSE(config: dict, key: str, value: str, argument: list,
                 logging.info(" - [%s] %s : false", key, value)
             else:
                 continue
+
+
+def prefixSuffixSet(argument, prefix = None, suffix = None, kFlagPrefix = None, kFlagSuffix = None):
+    """Prefix and/or suffix setter function
+
+    Args:
+        argument (str or list): CLI argument
+        prefix (str, optional): Prefix as string. Defaults to None.
+        suffix (str, optional): Suffix as string. Defaults to None
+        kFlagPrefix (bool, optional): Flag for activating prefix setter. Defaults to None.
+        kFlagSuffix (bool, optional): Flag for activating suffix setter. Defaults to None.
+    """
+    
+    if argument is not None:
+        if kFlagPrefix is True:
+            if isinstance(argument, list):
+                argument = [prefix + sub for sub in argument]
+            else:
+                argument = prefix + argument
+        if kFlagSuffix is True:
+            if isinstance(argument, list):
+                argument = [sub + suffix for sub in argument]
+            else:
+                argument = argument + suffix
+        print(argument)
+        return argument

@@ -22,8 +22,7 @@ import json
 import logging
 import logging.config
 import os
-from extramodules.configSetter import PROCESS_SWITCH, converterSet, CONFIG_SET, debugSettings
-from extramodules.monitoring import dispArgs
+from extramodules.configSetter import PROCESS_SWITCH, converterSet, CONFIG_SET, debugSettings, dispArgs, prefixSuffixSet
 from extramodules.dqTranscations import aodFileChecker, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, trackPropTransaction
 from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.v0selector import V0selector
@@ -62,13 +61,9 @@ cliMode = args.onlySelect
 forgettedArgsChecker(allArgs) # Transaction management
 
 # adding prefix for PROCESS_SWITCH function (for no kFlag True situations)
-if args.pid is not None:
-    prefix_pid = "pid-"
-    args.pid = [prefix_pid + sub for sub in args.pid]
-
-if args.FT0 is not None:
-    prefix_process = "process"
-    args.FT0 = prefix_process + args.FT0
+args.pid = prefixSuffixSet(args.pid, "pid-", '', True, False)
+args.est = prefixSuffixSet(args.est, "est", '', True, False)
+args.FTO = prefixSuffixSet(args.FT0, "process", '', True, False)
 
 # Load the configuration file provided as the first parameter
 config = {}

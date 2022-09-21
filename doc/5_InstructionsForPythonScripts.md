@@ -70,15 +70,21 @@ Arg | Ref Type| Desc | Default | Real Type
 
 
 # Instructions for runTableMaker/runTableMakerMC.py
+TODO: Seperate interfaces
 
 Add extrac tables and converters with:
 1. **--add_mc_conv**: conversion from o2mcparticle to o2mcparticle_001
+   * If you get error like this, you should added it in your workflow 
+   * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2mcparticle" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.`
 2. **--add_fdd_conv**: conversion o2fdd from o2fdd_001
    * If you get error like this, you should added it in your workflow 
    * `[ERROR] Exception caught: Couldn't get TTree "DF_2571958947001/O2fdd_001" from "YOURAOD.root". Please check https://aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfound.html for more information.` 
 3. **--add_track_prop**: conversion from o2track to o2track_iu ([link](https://aliceo2group.github.io/analysis-framework/docs/basics-usage/HelperTasks.html#track-propagation))
    * If you get error like this, you should added it in your workflow 
    * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2track" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.` 
+4. **--add_weakdecay_ind**: Converts V0 and cascade version 000 to 001
+   * If you get error like this, you should added it in your workflow 
+   * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2v0_001" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.`
 
 * Minimum Required Parameter List:
   * `python3`
@@ -123,7 +129,6 @@ Arg | Opt | Task | nargs |
 `--aod` | all | `internal-dpl-aod-reader` | 1 |
 `--aod-memory-rate-limit` | all | `internal-dpl-aod-reader` | 1 |
 `--onlySelect` | `true`<br> `false`<br>  | Special Option | 1 |
-`--autoDummy` | `true`<br> `false`<br>  | Special Option | 1 |
 `--process` | `Full` <br> `FullTiny`<br>  `FullWithCov`<br>  `FullWithCent`<br>  `BarrelOnlyWithV0Bits`<br>  `BarrelOnlyWithEventFilter`<br> `BarrelOnlyWithQvector` <br>  `BarrelOnlyWithCent`<br>  `BarrelOnlyWithCov`<br>  `BarrelOnly`<br>  `MuonOnlyWithCent`<br>  `MuonOnlyWithCov`<br>  `MuonOnly`<br>  `MuonOnlyWithFilter`<br> `MuonOnlyWithQvector` <br>  `OnlyBCs`<br>  | `table-maker` | * |
 `--run` | `2`<br> `3`<br> | Special Option | 1 |
 `-runData` | No Param | `event-selection-task`<br> Special Option | 0 |
@@ -184,7 +189,6 @@ Arg | Ref Type| Desc | Default | Real Type
 `--aod` | String | Add your aod file with path  |  | str |
 `--aod-memory-rate-limit` | String | Rate limit AOD processing based on memory |  |  str
 `--onlySelect` | Boolean | An Automate parameter for keep options for only selection in process, pid and centrality table (true is highly recomended for automation) | `false` | str.lower |
-`--autoDummy` | Boolean | Dummy automize parameter (if your selection true, it automatically activate dummy process and viceversa) | `true` | str.lower |
 `--process` | String | process selection for skimmed data model in tablemaker |  | str |
 `--run` | Integer | Data run option for ALICE 2/3 |  | str
 `-runData` | no Param |  Data Selection instead of MC |   | str
@@ -265,10 +269,9 @@ Arg | Opt | Task | nargs |
 --- | --- | --- | --- |
 `-h` | No Param | all | 0 |
 `--aod` | all | `internal-dpl-aod-reader` | 1 |
-`--autoDummy` | `true`<br> `false`<br>  | Special Option | 1 |
 `--reader` | all | Special Option | 1 |
 `--writer` | all | Special Option | 1 |
-`--analysis` | `eventSelection`<br>`trackSelection`<br>`muonSelection`<br>`eventMixing`<br>`eventMixingVn`<br> `sameEventPairing`<br> `dileptonHadron`  | `analysis-event-selection`<br>`analysis-track-selection`<br>`analysis-muon-selection`<br>`analysis-event-mixing`<br>`analysis-same-event-pairing`<br>`analysis-dilepton-hadron`  | * |
+`--analysis` | `eventSelection`<br>`trackSelection`<br>`muonSelection`<br>`eventMixing`<br>`sameEventPairing`<br> `dileptonHadron`  | `analysis-event-selection`<br>`analysis-track-selection`<br>`analysis-muon-selection`<br>`analysis-event-mixing`<br>`analysis-same-event-pairing`<br>`analysis-dilepton-hadron`  | * |
 `--mixing` | `Barrel`<br>`Muon`<br>`BarrelMuon`<br>`BarrelVn`<br>`MuonVn` | `analysis-same-event-pairing` | * |
 `--process` | `JpsiToEE`<br>`JpsiToMuMu`<br>`JpsiToMuMuVertexing`<br>`VnJpsiToEE`<br>`VnJpsiToMuMu`<br>`ElectronMuon`<br> `All`  | `analysis-same-event-pairing` | * |
 `--syst` | `pp`<br> `PbPb`<br> `pPb`<br> `Pbp`<br> `XeXe`<br> | `event-selection-task` | 1 |
@@ -287,7 +290,6 @@ Arg | Ref Type| Desc | Default | Real Type
 --- | --- | --- | --- | --- |
 `-h` | No Param | list all helper messages for configurable command |  | *
 `--aod` | String | Add your AOD File with path | - | str
-`--autoDummy` | Boolean | Dummy automize parameter (if process skimmed false, it automatically activate dummy process and viceversa) | `true` | str.lower
 `--reader` | String | Add your AOD Reader JSON with path | `configs/readerConfiguration_reducedEvent.json` | str
 `--writer` | String | Add your AOD Writer JSON with path | `configs/writerConfiguration_dileptons.json` | str
 `--analysis` | String | Skimmed process selections for analysis | - | str
@@ -330,7 +332,6 @@ Arg | Opt | Task | nargs |
 --- | --- | --- | --- |
 `-h` | No Param | all | 0 |
 `--aod` | all | `internal-dpl-aod-reader` | 1 |
-`--autoDummy` | `true`<br> `false`<br>  | Special Option | 1 |
 `--reader` | all | Special Option | 1 |
 `--writer` | all | Special Option | 1 |
 `--analysis` | `eventSelection`<br>`trackSelection`<br>`muonSelection`<br>`sameEventPairing`<br>`dileptonTrackDimuonMuonSelection`<br> `dileptonTrackDielectronKaonSelection`<br> | `analysis-event-selection`<br>`analysis-track-selection`<br>`analysis-muon-selection`<br>`analysis-same-event-pairing`<br>`analysis-dilepton-track` | * |
@@ -357,7 +358,6 @@ Arg | Ref Type| Desc | Default | Real Type
 --- | --- | --- | --- | --- |
 `-h` | No Param | list all helper messages for configurable command |  | *
 `--aod` | String | Add your AOD File with path | - | str
-`--autoDummy` | Boolean | Dummy automize parameter (if process skimmed false, it automatically activate dummy process and viceversa) | `true` | str.lower
 `--reader` | String | Add your AOD Reader JSON with path | `configs/readerConfiguration_reducedEventMC.json` | str
 `--writer` | String | Add your AOD Writer JSON with path | `configs/writerConfiguration_dileptonMC.json` | str
 `--analysis` | String | Skimmed process selections for analysis | - | str
@@ -379,12 +379,17 @@ Arg | Ref Type| Desc | Default | Real Type
 
 Add extrac tables and converters with:
 1. **--add_mc_conv**: conversion from o2mcparticle to o2mcparticle_001
+   * If you get error like this, you should added it in your workflow 
+   * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2mcparticle" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.`
 2. **--add_fdd_conv**: conversion o2fdd from o2fdd_001
    * If you get error like this, you should added it in your workflow 
    * `[ERROR] Exception caught: Couldn't get TTree "DF_2571958947001/O2fdd_001" from "YOURAOD.root". Please check https://aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfound.html for more information.` 
 3. **--add_track_prop**: conversion from o2track to o2track_iu ([link](https://aliceo2group.github.io/analysis-framework/docs/basics-usage/HelperTasks.html#track-propagation))
    * If you get error like this, you should added it in your workflow 
    * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2track" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.`
+4. **--add_weakdecay_ind**: Converts V0 and cascade version 000 to 001
+   * If you get error like this, you should added it in your workflow 
+   * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2v0_001" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.`
 
 * Minimum Required Parameter List:
   * `python3`
@@ -416,7 +421,6 @@ Arg | Opt | Task | nargs |
 --- | --- | --- | --- |
 `-h` | No Param | all | 0 |
 `--aod` | all | `internal-dpl-aod-reader` | 1 |
-`--autoDummy` | `true`<br> `false`<br>  | Special Option | 1 |
 `--process` | `barrelTrackSelection`<br>`eventSelection`<br>`muonSelection`<br>`barrelTrackSelectionTiny`<br>`filterPPSelectionTiny`| `d-q-barrel-track-selection`<br>`d-q-event-selection-task`<br>`d-q-muons-selection`| * |
 `--add_mc_conv` | No Param  | `o2-analysis-mc-converter`<br> Special Option | 0 |
 `--add_fdd_conv` | No Param | `o2-analysis-fdd-converter`<br> Special Option | 0 |
@@ -445,7 +449,6 @@ Arg | Ref Type| Desc | Default | Real Type
 --- | --- | --- | --- | --- |
 `-h` | No Param | list all helper messages for configurable command |  | *
 `--aod` | String | Add your aod file with path  |  | str |
-`--autoDummy` | Boolean | Dummy automize parameter (if process skimmed false, it automatically activate dummy process and viceversa) | `true` | str.lower
 `--process` | `barrelTrackSelection`<br>`eventSelection`<br>`muonSelection`<br>`barrelTrackSelectionTiny`<br>`filterPPSelectionTiny`| dq task selection| * | str
 `--add_mc_conv` | No Param  | Conversion from o2mcparticle to o2mcparticle_001< |  | -
 `--add_fdd_conv` | No Param | Conversion o2fdd from o2fdd_001 |  | -
@@ -496,12 +499,17 @@ python3 runDQFlow.py configs/configFilterPPDataRun3.json --aod AO2D.root --syst 
 
 Add extrac tables and converters with:
 1. **--add_mc_conv**: conversion from o2mcparticle to o2mcparticle_001
+   * If you get error like this, you should added it in your workflow 
+   * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2mcparticle" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.`
 2. **--add_fdd_conv**: conversion o2fdd from o2fdd_001
    * If you get error like this, you should added it in your workflow 
    * `[ERROR] Exception caught: Couldn't get TTree "DF_2571958947001/O2fdd_001" from "YOURAOD.root". Please check https://aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfound.html for more information.` 
 3. **--add_track_prop**: conversion from o2track to o2track_iu ([link](https://aliceo2group.github.io/analysis-framework/docs/basics-usage/HelperTasks.html#track-propagation))
    * If you get error like this, you should added it in your workflow 
    * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2track" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.`
+4. **--add_weakdecay_ind**: Converts V0 and cascade version 000 to 001
+   * If you get error like this, you should added it in your workflow 
+   * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2v0_001" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.`
 
 * For `runDQFlow.py` Selections
 

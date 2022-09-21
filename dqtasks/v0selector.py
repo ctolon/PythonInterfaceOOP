@@ -19,12 +19,11 @@
 # Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/v0selector.cxx
 
 import argparse
-from extramodules.actionHandler import NoAction
-from extramodules.actionHandler import ChoicesAction
+from extramodules.choicesHandler import NoAction
+from extramodules.choicesHandler import ChoicesAction
 from extramodules.helperOptions import HelperOptions
 from extramodules.converters import O2Converters
 import argcomplete
-from argcomplete.completers import ChoicesCompleter
 from commondeps.centralityTable import CentralityTable
 from commondeps.eventSelection import EventSelectionTask
 from commondeps.multiplicityTable import MultiplicityTable

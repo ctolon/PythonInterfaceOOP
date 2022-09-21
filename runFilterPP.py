@@ -22,10 +22,8 @@ import json
 import logging
 import logging.config
 import os
-from extramodules.configGetter import configGetter
-from extramodules.monitoring import dispArgs
 from extramodules.dqTranscations import aodFileChecker, forgettedArgsChecker, jsonTypeChecker, filterSelsTranscation, mainTaskChecker, trackPropTransaction
-from extramodules.configSetter import PROCESS_SWITCH, SELECTION_SET, converterSet, CONFIG_SET, PROCESS_DUMMY, debugSettings
+from extramodules.configSetter import PROCESS_SWITCH, SELECTION_SET, converterSet, CONFIG_SET, PROCESS_DUMMY, debugSettings, dispArgs, prefixSuffixSet
 from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.filterPP import DQFilterPPTask
 
@@ -38,7 +36,7 @@ pidParameters = ["pid-el", "pid-mu", "pid-pi", "pid-ka", "pid-pr", "pid-de", "pi
 covParameters = ["processStandard", "processCovariance"]
 sliceParameters = ["processWoSlice", "processWSlice"]
 vertexParameters = ["doVertexZeq", "doDummyZeq"]
-
+# yapf: disable
 # All Dependencies
 commonDeps = [
     "o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table", "o2-analysis-trackselection",
@@ -46,13 +44,13 @@ commonDeps = [
     "o2-analysis-pid-tpc-full",
     ]
 selectionDeps = {
-    "barrelTrackSelection": ["d-q-barrel-track-selection", "processSelection"],
-    "barrelTrackSelectionTiny": ["d-q-barrel-track-selection", "processSelectionTiny"],
-    "muonSelection": ["d-q-muons-selection", "processSelection"],
-    "filterPPSelectionTiny": ["d-q-filter-p-p-task", "processFilterPPTiny"]
+    "barrelTrackSelection": {"d-q-barrel-track-selection": "processSelection"},
+    "barrelTrackSelectionTiny": {"d-q-barrel-track-selection": "processSelectionTiny"},
+    "muonSelection": {"d-q-muons-selection": "processSelection"},
+    "filterPPSelectionTiny": {"d-q-filter-p-p-task": "processFilterPPTiny"}
     }
 dummyHasTasks = ["d-q-barrel-track-selection", "d-q-muons-selection", "d-q-filter-p-p-task"]
-
+# yapf: enable
 # init args manually
 initArgs = DQFilterPPTask()
 initArgs.mergeArgs()
@@ -68,16 +66,9 @@ debugSettings(args.debug, args.logFile, fileName = "filterPP.log")
 
 forgettedArgsChecker(allArgs) # Transaction management
 
-processCfg = configGetter(allArgs, "process") # get all process parameters
-
 # adding prefix for PROCESS_SWITCH function (for no kFlag True situations)
-if args.pid is not None:
-    prefix_pid = "pid-"
-    args.pid = [prefix_pid + sub for sub in args.pid]
-
-if args.FT0 is not None:
-    prefix_process = "process"
-    args.FT0 = prefix_process + args.FT0
+args.pid = prefixSuffixSet(args.pid, "pid-", '', True, False)
+args.FTO = prefixSuffixSet(args.FT0, "process", '', True, False)
 
 # Load the configuration file provided as the first parameter
 config = {}
@@ -98,7 +89,7 @@ if args.onlySelect == "true":
 if args.onlySelect == "false":
     logging.info("INTERFACE MODE : JSON Additional")
 
-SELECTION_SET(config, selectionDeps, processCfg, cliMode)
+SELECTION_SET(config, selectionDeps, args.process, cliMode)
 
 # Iterating in JSON config file
 for key, value in config.items():

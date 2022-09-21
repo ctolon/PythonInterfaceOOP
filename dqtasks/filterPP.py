@@ -25,9 +25,9 @@ from urllib.request import Request, urlopen
 import ssl
 from argcomplete.completers import ChoicesCompleter
 import argcomplete
-from extramodules.choicesCompleterList import ChoicesCompleterList
-from extramodules.actionHandler import NoAction
-from extramodules.actionHandler import ChoicesAction
+from extramodules.choicesHandler import ChoicesCompleterList
+from extramodules.choicesHandler import NoAction
+from extramodules.choicesHandler import ChoicesAction
 from extramodules.helperOptions import HelperOptions
 from extramodules.converters import O2Converters
 from commondeps.eventSelection import EventSelectionTask

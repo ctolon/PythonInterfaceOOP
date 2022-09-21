@@ -22,10 +22,8 @@ import json
 import logging
 import logging.config
 import os
-from extramodules.monitoring import dispArgs
-from extramodules.descriptor import inputDescriptors, outputDescriptors
 from extramodules.dqTranscations import MandatoryArgAdder, aodFileChecker, centTranscation, forgettedArgsChecker, jsonTypeChecker, filterSelsTranscation, mainTaskChecker, trackPropTransaction
-from extramodules.configSetter import PROCESS_DUMMY, PROCESS_SWITCH, converterSet, CONFIG_SET, debugSettings, tableProducer
+from extramodules.configSetter import PROCESS_DUMMY, PROCESS_SWITCH, converterSet, CONFIG_SET, debugSettings, dispArgs, generateDescriptors, prefixSuffixSet, tableProducer
 from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.tableMaker import TableMaker
 
@@ -75,23 +73,23 @@ dummyHasTasks = ["d-q-barrel-track-selection", "d-q-muons-selection", "d-q-filte
 # yapf: disable
 # Definition of all the tables we may write
 tables = {
-          "ReducedEvents": {"table": "AOD/REDUCEDEVENT/0","treename": "ReducedEvents"},
-          "ReducedEventsExtended": {"table": "AOD/REEXTENDED/0","treename": "ReducedEventsExtended"},
-          "ReducedEventsVtxCov": {"table": "AOD/REVTXCOV/0","treename": "ReducedEventsVtxCov"},
-          "ReducedEventsQvector": {"table": "AOD/REQVECTOR/0","treename": "ReducedEventsQvector"},
-          "ReducedMCEventLabels": {"table": "AOD/REMCCOLLBL/0","treename": "ReducedMCEventLabels"},
-          "ReducedMCEvents": {"table": "AOD/REMC/0","treename": "ReducedMCEvents"},
-          "ReducedTracks": {"table": "AOD/REDUCEDTRACK/0","treename": "ReducedTracks"},
-          "ReducedTracksBarrel": {"table": "AOD/RTBARREL/0","treename": "ReducedTracksBarrel"},
-          "ReducedTracksBarrelCov": {"table": "AOD/RTBARRELCOV/0","treename": "ReducedTracksBarrelCov"},
-          "ReducedTracksBarrelPID": {"table": "AOD/RTBARRELPID/0","treename": "ReducedTracksBarrelPID"},
-          "ReducedTracksBarrelLabels": {"table": "AOD/RTBARRELLABELS/0","treename": "ReducedTracksBarrelLabels"},
-          "ReducedMCTracks": {"table": "AOD/RTMC/0","treename": "ReducedMCTracks"},
-          "ReducedMuons": {"table": "AOD/RTMUON/0","treename": "ReducedMuons"},
-          "ReducedMuonsExtra": {"table": "AOD/RTMUONEXTRA/0","treename": "ReducedMuonsExtra"},
-          "ReducedMuonsCov": {"table": "AOD/RTMUONCOV/0","treename": "ReducedMuonsCov"},
-          "ReducedMuonsLabels": {"table": "AOD/RTMUONSLABELS/0","treename": "ReducedMuonsLabels"}
-          }
+    "ReducedEvents": {"table": "AOD/REDUCEDEVENT/0","treename": "ReducedEvents"},
+    "ReducedEventsExtended": {"table": "AOD/REEXTENDED/0","treename": "ReducedEventsExtended"},
+    "ReducedEventsVtxCov": {"table": "AOD/REVTXCOV/0","treename": "ReducedEventsVtxCov"},
+    "ReducedEventsQvector": {"table": "AOD/REQVECTOR/0","treename": "ReducedEventsQvector"},
+    "ReducedMCEventLabels": {"table": "AOD/REMCCOLLBL/0","treename": "ReducedMCEventLabels"},
+    "ReducedMCEvents": {"table": "AOD/REMC/0","treename": "ReducedMCEvents"},
+    "ReducedTracks": {"table": "AOD/REDUCEDTRACK/0","treename": "ReducedTracks"},
+    "ReducedTracksBarrel": {"table": "AOD/RTBARREL/0","treename": "ReducedTracksBarrel"},
+    "ReducedTracksBarrelCov": {"table": "AOD/RTBARRELCOV/0","treename": "ReducedTracksBarrelCov"},
+    "ReducedTracksBarrelPID": {"table": "AOD/RTBARRELPID/0","treename": "ReducedTracksBarrelPID"},
+    "ReducedTracksBarrelLabels": {"table": "AOD/RTBARRELLABELS/0","treename": "ReducedTracksBarrelLabels"},
+    "ReducedMCTracks": {"table": "AOD/RTMC/0","treename": "ReducedMCTracks"},
+    "ReducedMuons": {"table": "AOD/RTMUON/0","treename": "ReducedMuons"},
+    "ReducedMuonsExtra": {"table": "AOD/RTMUONEXTRA/0","treename": "ReducedMuonsExtra"},
+    "ReducedMuonsCov": {"table": "AOD/RTMUONCOV/0","treename": "ReducedMuonsCov"},
+    "ReducedMuonsLabels": {"table": "AOD/RTMUONSLABELS/0","treename": "ReducedMuonsLabels"}
+    }
 # yapf: enable
 # Tables to be written, per process function
 commonTables = ["ReducedEvents", "ReducedEventsExtended", "ReducedEventsVtxCov"]
@@ -132,21 +130,10 @@ cliMode = args.onlySelect
 forgettedArgsChecker(allArgs)
 
 # adding prefix for PROCESS_SWITCH function (for no kFlag True situations)
-if args.process is not None:
-    prefix_process = "process"
-    args.process = [prefix_process + sub for sub in args.process]
-
-if args.pid is not None:
-    prefix_pid = "pid-"
-    args.pid = [prefix_pid + sub for sub in args.pid]
-
-if args.est is not None:
-    prefix_est = "est"
-    args.est = [prefix_est + sub for sub in args.est]
-
-if args.FT0 is not None:
-    prefix_process = "process"
-    args.FT0 = prefix_process + args.FT0
+args.process = prefixSuffixSet(args.process, "process", '', True, False)
+args.pid = prefixSuffixSet(args.pid, "pid-", '', True, False)
+args.est = prefixSuffixSet(args.est, "est", '', True, False)
+args.FTO = prefixSuffixSet(args.FT0, "process", '', True, False)
 
 # Load the configuration file provided as the first parameter
 config = {}
@@ -263,12 +250,10 @@ tableProducer(
     config, taskNameInConfig, tablesToProduce, commonTables, barrelCommonTables, muonCommonTables, specificTables, specificDeps, runOverMC
     )
 
-readerConfigFileName = "aodReaderTempConfig.json"
 writerConfigFileName = "aodWriterTempConfig.json"
 
 # Generate the aod-writer output descriptor json file
-outputDescriptors(tablesToProduce, tables)
-inputDescriptors(tablesToProduce, tables)
+generateDescriptors(tablesToProduce, tables, writerConfigFileName, kFlag = False)
 
 commandToRun = (
     taskNameInCommandLine + " --configuration json://" + updatedConfigFileName +

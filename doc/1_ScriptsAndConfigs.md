@@ -70,8 +70,6 @@ Main File | Data Model | Description
 [`writerConfiguration_dileptons.json`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/configs/writerConfiguration_dileptons.json) | DQ Skimmed Data Model | For Data
 [`writerConfiguration_dileptonMC.json`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/configs/writerConfiguration_dileptonMC.json) | DQ Skimmed Data Model | For MC
 
-[↑ Go to the Table of Content ↑](../README.md) | [Continue to Prerequisites →](2_Prerequisites.md)
-
 
 ## DQ Interface Scripts
 
@@ -97,37 +95,37 @@ Interface Script | Workflow Script
 These scripts are interface scripts with arguments provided by parser_args to configure DQ tasks common side.
 
 * Contains DQ Interface Scripts
-[`commondeps`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/configs)
+[`commondeps`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/commondeps)
 
 Interface Script | Used in
 --- | --- 
-`centralityTable.py`      | `runTableMaker.py` <br> `runV0selector.py` <br> `runDQFlow.py`
+`centralityTable.py`      | `runTablemakerMC.py` <br> `runTableMaker.py` <br>  `runV0selector.py` <br> `runDQFlow.py`
+`dplAodReader.py`      | `runTablemakerMC.py` <br> `runTableMaker.py` <br>  `runV0selector.py` <br> `runDQFlow.py` <br> `tableReader.py`  <br>  `dqEfficiency.py` 
 `eventSelection.py`    | `runTablemakerMC.py` <br> `runTableMaker.py`  <br> `filterPP.py`  <br> `runDQFlow.py`  <br> `runV0selector.py`  
 `multiplicityTable.py`     | `runTablemakerMC.py` <br> `runTableMaker.py`  <br> `filterPP.py`  <br> `runDQFlow.py`  <br> `runV0selector.py`
 `pidTOFBase.py`    |  `runTablemakerMC.py` <br> `runTableMaker.py`  <br> `filterPP.py`  <br> `runDQFlow.py`  <br> `runV0selector.py`
 `pidTOFBeta.py`        | `runTablemakerMC.py` <br> `runTableMaker.py`  <br> `filterPP.py`  <br> `runDQFlow.py`  <br> `runV0selector.py`
 `pidTPCTOFFull.py`         | `runTablemakerMC.py` <br> `runTableMaker.py`  <br> `filterPP.py`  <br> `runDQFlow.py`  <br> `runV0selector.py`
 `trackPropagation.py`      |  `runTablemakerMC.py` <br> `runTableMaker.py`  <br> `filterPP.py`  <br> `runDQFlow.py`  <br> `runV0selector.py`
+`trackselection.py`      |  `runTablemakerMC.py` <br> `runTableMaker.py`  <br> `filterPP.py`  <br> `runDQFlow.py`  <br> `runV0selector.py`
 
 ## Extra Modules
 
-Extra modules include some external scripts not related to O2, which are prepared as an aid for configuring the workflow and interface
+Extra modules include some external scripts not related to O2, which are prepared as an support for configuring the workflow and interface
 
 * Contains Extra Modules
-[`extramodules`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/configs)
+[`extramodules`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/extramodules)
 
 Extra Script | Desc
 --- | --- 
-`actionHandler.py`      | Includes some classes for printing sub helper messages to the screen
-`choicesCompleterList.py`    | To complete autocompletion for parameters that can take multiple arguments
-`debugOptions.py`     | To manage debug options
+`ChoicesHandler.py`      | Contains some classes for printing sub helper messages to the screen and autocompletion class for which argument can multiple configurable
+`configSetter.py`    | Contains methods that manage JSON configurations via interfaces and helper setter methods (developer package)
+`converters.py`     | Contains Interface arguments for O2 converters (ex. o2-analysis-trackpropagation)
+`dqExceptions.py`     | Contains some customized exceptions for transaction managements
+`dqLibGetter.py`     | To automatically download python libraries in run scripts
+`dqTranscations.py`     | To manage dependencies and misconfigurations in the DQ workflow
+`helperOptions.py`     | Includes Interface arguments for debug and interface mode options
+`pycacheRemover.py`        | For automatically removing pycache files when workflow is finished
 `stringOperations.py`        | For managing string operations of multiple arguments in workflows
 
-
-
-
-
-
-
-
-
+[↑ Go to the Table of Content ↑](../README.md) | [Continue to Prerequisites →](2_Prerequisites.md)

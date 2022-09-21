@@ -23,10 +23,10 @@ import argcomplete
 from argcomplete.completers import ChoicesCompleter
 from commondeps.dplAodReader import DplAodReader
 from extramodules.dqLibGetter import DQLibGetter
-from extramodules.choicesCompleterList import ChoicesCompleterList
+from extramodules.choicesHandler import ChoicesCompleterList
 from extramodules.helperOptions import HelperOptions
-from extramodules.actionHandler import NoAction
-from extramodules.actionHandler import ChoicesAction
+from extramodules.choicesHandler import NoAction
+from extramodules.choicesHandler import ChoicesAction
 from extramodules.helperOptions import HelperOptions
 
 

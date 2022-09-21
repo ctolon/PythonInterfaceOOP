@@ -295,7 +295,7 @@ def filterSelsTranscation(argBarrelSels: list, argMuonSels: list, argBarrelTrack
 
 
 def depsChecker(config: dict, deps: dict, key: str):
-    """This function written to check dependencies
+    """This function written to check dependencies for process function
 
     Args:
         config (dict): Input as JSON config file
@@ -305,11 +305,15 @@ def depsChecker(config: dict, deps: dict, key: str):
     Raises:
         DependencyNotFoundError: If dependency is not found
     """
-    for k, v in deps.items():
-        if config[key][k] == "false":
-            continue
-        elif config[key][k] == "true" and config[v[0]][v[1]] == "false":
-            raise DependencyNotFoundError(k, v[0], v[1])
+    for processFunc, dep in deps.items():
+        if isinstance(dep, dict):
+            for depTaskName, depProcessFunc in dep.items():
+                if config[key][processFunc] == "false":
+                    continue
+                elif config[key][processFunc] == "true" and config[depTaskName][depProcessFunc] == "false":
+                    raise DependencyNotFoundError(processFunc, depTaskName, depProcessFunc)
+        else:
+            raise TypeError("Dependency dict must be dict (right side) :", dep)
 
 
 def oneToMultiDepsChecker(argument: list, mandatoryArg: str, targetCfg: dict, argName: str):

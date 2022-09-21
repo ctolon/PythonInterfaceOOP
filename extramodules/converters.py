@@ -18,8 +18,6 @@
 
 import argparse
 
-from extramodules.choicesCompleterList import ChoicesCompleterList
-
 
 class O2Converters(object):
     

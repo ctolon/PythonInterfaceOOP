@@ -4,7 +4,7 @@
 
 [![doxygen](https://img.shields.io/badge/doxygen-documentation-blue.svg)](https://dquserinterfaceoop.github.io/docs/html/)
 
-This project includes python based user interface development for PWG-DQ Workflows based on nightly-20220915. You can follow the instructions and you can find tutorials in table of contents (For prerequisites, Installation guide for argcomplete and Some Informations good to know).
+This project includes python based user interface development for PWG-DQ Workflows based on nightly-20220916. You can follow the instructions and you can find tutorials in table of contents (For prerequisites, Installation guide for argcomplete and Some Informations good to know).
 
 ## Contact
 Ionut Cristian Arsene (Owner of [`O2DQWorkflows`](https://github.com/iarsene/O2DQworkflows))
@@ -74,7 +74,7 @@ Since the interface is constantly updated for stability, it is recommended to up
     - [Run tablemakerMC on LHC21i3f2 (Non-Prompt jpsi to dielectron pp Run3Simulation)](doc/6_Tutorials.md#run-tablemakermc-on-lhc21i3f2-non-prompt-jpsi-to-dielectron-pp-run3simulation)
     - [Run dqEfficiency on LHC21i3f2 (LHC21i3f2 pp Run3Simulation)](doc/6_Tutorials.md#run-dqefficiency-on-lhc21i3f2-lhc21i3f2-pp-run3simulation)
   - [Data Part](doc/6_Tutorials.md#data-part)
-    - [Run tableMaker on LHC15o (LHC15o PbPb Run2Data)](doc/6_Tutorials.md#tablemaker-on-lhc15o-lhc15o-pbpb-run2data)
+    - [Run tableMaker on LHC15o (LHC15o PbPb Run2Data)](doc/6_Tutorials.md#run-tablemaker-on-lhc15o-lhc15o-pbpb-run2data)
     - [Run tableReader on LHC15o (LHC15o PbPb Run2Data)](doc/6_Tutorials.md#run-tablereader-on-lhc15o-lhc15o-pbpb-run2data)
     - [Run tableMaker on LHC15o With Generic Flow Analysis (LHC15o PbPb Run2Data)](doc/6_Tutorials.md#run-tablemaker-on-lhc15o-with-generic-flow-analysis-lhc15o-pbpb-run2data)
     - [Run tableReader on LHC15o with Generic Flow Analysis (LHC15o PbPb Run2Data)](doc/6_Tutorials.md#run-tablereader-on-lhc15o-with-generic-flow-analysis-lhc15o-pbpb-run2data)
@@ -98,11 +98,6 @@ Since the interface is constantly updated for stability, it is recommended to up
 
 ## TODO LIST
 
-- Add Contributing guide chapter
-- Maintaince need for available configs part
-- Python Scripts And JSON Configs need update
-- Need more details for arguments for user guide
+- Add developer guide (for contributing) chapter
+- Maintaince need for available configs part (v0selector is missing)
 - Needed to explain O2-DQ Data Model and Workflow
-- More tutorials needed for users
-- On tutorial side, we need explain all arguments one by one
-- interface logic part needs refactor

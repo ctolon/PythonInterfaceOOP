@@ -22,6 +22,7 @@ from urllib.request import Request, urlopen
 import ssl
 
 
+# TODO It should check first local path then it should try download
 class DQLibGetter(object):
     
     """

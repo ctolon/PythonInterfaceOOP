@@ -14,8 +14,8 @@
 # or submit itself to any jurisdiction.
 
 import argparse
-from extramodules.choicesCompleterList import ChoicesCompleterList
 from argcomplete.completers import ChoicesCompleter
+from extramodules.choicesHandler import ChoicesCompleterList
 
 
 class HelperOptions(object):
@@ -63,14 +63,10 @@ class HelperOptions(object):
         for key, value in debugLevelSelections.items():
             groupDebug.add_argument(key, help = value, action = "none")
         
-        groupAutomations = self.parserHelperOptions.add_argument_group(title = "Automation Parameters")
+        groupAutomations = self.parserHelperOptions.add_argument_group(title = "Interface Mode Selection Parameters")
         groupAutomations.add_argument(
             "--onlySelect", help = "If false JSON Overrider Interface If true JSON Additional Interface", action = "store",
             default = "true", type = str.lower, choices = booleanSelections,
-            ).completer = ChoicesCompleter(booleanSelections)
-        groupAutomations.add_argument(
-            "--autoDummy", help = "Dummy automize parameter (don't configure it, true is highly recomended for automation)",
-            action = "store", default = "true", type = str.lower, choices = booleanSelections,
             ).completer = ChoicesCompleter(booleanSelections)
     
     def parseArgs(self):
