@@ -22,7 +22,7 @@ import json
 import logging
 import logging.config
 import os
-from extramodules.dqTranscations import MandatoryArgAdder, aodFileChecker, depsChecker, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, oneToMultiDepsChecker
+from extramodules.dqTranscations import MandatoryArgChecker, aodFileChecker, depsChecker, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, oneToMultiDepsChecker
 from extramodules.configSetter import CONFIG_SET, NOT_CONFIGURED_SET_FALSE, PROCESS_SWITCH, SELECTION_SET, debugSettings, PROCESS_DUMMY, dispArgs, multiConfigurableSet, prefixSuffixSet
 from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.dqEfficiency import DQEfficiency
@@ -107,7 +107,7 @@ for key, value in config.items():
             CONFIG_SET(config, key, value, allArgs, cliMode)
             PROCESS_SWITCH(config, key, value, allArgs, cliMode, "process", sepParameters, "true/false")
             NOT_CONFIGURED_SET_FALSE(config, key, value, args.process, sepParameters, cliMode)
-            MandatoryArgAdder(config, key, value, "analysis-event-selection", "processSkimmed")
+            MandatoryArgChecker(config, key, value, taskNameInConfig, "processSkimmed")
             
             # analysis-dilepton-track # TODO Discuss naming conventions regarding to string conflicts, dilepton track signals should have unique name
             if key == "analysis-dilepton-track":

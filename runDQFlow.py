@@ -22,7 +22,7 @@ import json
 import logging
 import logging.config
 import os
-from extramodules.dqTranscations import aodFileChecker, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, trackPropTransaction
+from extramodules.dqTranscations import aodFileChecker, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, trackPropagationChecker
 from extramodules.configSetter import PROCESS_SWITCH, converterSet, CONFIG_SET, debugSettings, dispArgs, prefixSuffixSet
 from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.dqFlow import AnalysisQvector
@@ -108,7 +108,7 @@ for key, value in config.items():
 
 # Transactions
 aodFileChecker(args.aod)
-trackPropTransaction(args.add_track_prop, commonDeps)
+trackPropagationChecker(args.add_track_prop, commonDeps)
 
 # Write the updated configuration file into a temporary file
 updatedConfigFileName = "tempConfigDQFlow.json"

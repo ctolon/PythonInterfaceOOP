@@ -89,7 +89,7 @@ class DQLibGetter(object):
                 f.write(htmlMCSignalsLibrary)
             with open("tempMixingLibrary.h", "wb") as f:
                 f.write(htmlMixingLibrary)
-        
+            print("[INFO] Libs downloaded succesfully.")
         # Read Cuts, Signals, Mixing vars from downloaded files
         with open("tempMCSignalsLibrary.h") as f:
             for line in f:

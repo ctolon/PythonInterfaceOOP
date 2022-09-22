@@ -22,7 +22,7 @@ import json
 import logging
 import logging.config
 import os
-from extramodules.dqTranscations import aodFileChecker, forgettedArgsChecker, jsonTypeChecker, filterSelsTranscation, mainTaskChecker, trackPropTransaction
+from extramodules.dqTranscations import MandatoryArgChecker, aodFileChecker, forgettedArgsChecker, jsonTypeChecker, filterSelsChecker, mainTaskChecker, trackPropagationChecker
 from extramodules.configSetter import PROCESS_SWITCH, SELECTION_SET, converterSet, CONFIG_SET, PROCESS_DUMMY, debugSettings, dispArgs, prefixSuffixSet
 from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.filterPP import DQFilterPPTask
@@ -47,6 +47,7 @@ selectionDeps = {
     "barrelTrackSelection": {"d-q-barrel-track-selection": "processSelection"},
     "barrelTrackSelectionTiny": {"d-q-barrel-track-selection": "processSelectionTiny"},
     "muonSelection": {"d-q-muons-selection": "processSelection"},
+    "filterPPSelection":{"d-q-filter-p-p-task": "processFilterPP"},
     "filterPPSelectionTiny": {"d-q-filter-p-p-task": "processFilterPPTiny"}
     }
 dummyHasTasks = ["d-q-barrel-track-selection", "d-q-muons-selection", "d-q-filter-p-p-task"]
@@ -89,7 +90,7 @@ if args.onlySelect == "true":
 if args.onlySelect == "false":
     logging.info("INTERFACE MODE : JSON Additional")
 
-SELECTION_SET(config, selectionDeps, args.process, cliMode)
+SELECTION_SET(config, selectionDeps, args.process, "true")
 
 # Iterating in JSON config file
 for key, value in config.items():
@@ -112,13 +113,13 @@ for key, value in config.items():
             if key == "tof-event-time": # we have processRun2 option in tof-event-time and for not overriding it other processRun2 options, we have to specifiy key
                 PROCESS_SWITCH(config, key, value, allArgs, "true", "FT0", ft0Parameters, "true/false")
             PROCESS_SWITCH(config, key, value, allArgs, cliMode, "isVertexZeq", vertexParameters, "1/0", True)
-
+            MandatoryArgChecker(config, key, value, "d-q-event-selection-task", "processEventSelection")        
 PROCESS_DUMMY(config, dummyHasTasks) # dummy automizer
 
 # Transactions
-filterSelsTranscation(args.cfgBarrelSels, args.cfgMuonSels, args.cfgBarrelTrackCuts, args.cfgMuonsCuts, allArgs)
+filterSelsChecker(args.cfgBarrelSels, args.cfgMuonSels, args.cfgBarrelTrackCuts, args.cfgMuonsCuts, allArgs)
 aodFileChecker(args.aod)
-trackPropTransaction(args.add_track_prop, commonDeps)
+trackPropagationChecker(args.add_track_prop, commonDeps)
 
 # Write the updated configuration file into a temporary file
 updatedConfigFileName = "tempConfigFilterPP.json"

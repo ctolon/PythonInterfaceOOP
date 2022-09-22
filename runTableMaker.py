@@ -22,7 +22,7 @@ import json
 import logging
 import logging.config
 import os
-from extramodules.dqTranscations import MandatoryArgAdder, aodFileChecker, centTranscation, forgettedArgsChecker, jsonTypeChecker, filterSelsTranscation, mainTaskChecker, trackPropTransaction
+from extramodules.dqTranscations import MandatoryArgChecker, aodFileChecker, centralityChecker, forgettedArgsChecker, jsonTypeChecker, filterSelsChecker, mainTaskChecker, trackPropagationChecker
 from extramodules.configSetter import PROCESS_DUMMY, PROCESS_SWITCH, converterSet, CONFIG_SET, debugSettings, dispArgs, generateDescriptors, prefixSuffixSet, tableProducer
 from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.tableMaker import TableMaker
@@ -213,15 +213,15 @@ for key, value in config.items():
             if key == "tof-event-time": # we have processRun2 option in tof-event-time and for not overriding it other processRun2 options, we have to specifiy key
                 PROCESS_SWITCH(config, key, value, allArgs, "true", "FT0", ft0Parameters, "true/false")
             PROCESS_SWITCH(config, key, value, allArgs, cliMode, "isVertexZeq", vertexParameters, "1/0", True)
-            MandatoryArgAdder(config, key, value, taskNameInConfig, "processOnlyBCs")
+            MandatoryArgChecker(config, key, value, taskNameInConfig, "processOnlyBCs")
 
 PROCESS_DUMMY(config, dummyHasTasks) # dummy automizer
 
 # Transactions
-centTranscation(config, args.process, args.syst, centSearch)
-filterSelsTranscation(args.cfgBarrelSels, args.cfgMuonSels, args.cfgBarrelTrackCuts, args.cfgMuonsCuts, allArgs)
+centralityChecker(config, args.process, args.syst, centSearch)
+filterSelsChecker(args.cfgBarrelSels, args.cfgMuonSels, args.cfgBarrelTrackCuts, args.cfgMuonsCuts, allArgs)
 aodFileChecker(args.aod)
-trackPropTransaction(args.add_track_prop, barrelDeps)
+trackPropagationChecker(args.add_track_prop, barrelDeps)
 
 # Write the updated configuration file into a temporary file
 updatedConfigFileName = "tempConfigTableMaker.json"

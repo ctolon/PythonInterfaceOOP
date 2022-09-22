@@ -84,7 +84,8 @@ class DQFilterPPTask(object):
             "barrelTrackSelection": "Run DQ barrel track selection",
             "muonSelection": "Run DQ muon selection",
             "barrelTrackSelectionTiny": "Run DQ barrel track selection tiny",
-            "filterPPSelectionTiny": "Run filter task tiny",
+            "filterPPSelection": "Run filter task",
+            "filterPPSelectionTiny": "Run filter task tiny"
             }
         dqSelectionsList = []
         for k, v in dqSelections.items():

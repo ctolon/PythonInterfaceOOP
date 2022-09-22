@@ -22,7 +22,7 @@ import logging
 import sys
 import os
 
-from .dqExceptions import CentFilterError, CfgInvalidFormatError, DependencyNotFoundError, ForgettedArgsError, MandatoryArgNotFoundError, NotInAlienvError, SelsAndCutsNotHaveSameNumberError, TasknameNotFoundInConfigFileError, textListNotStartsWithAtError
+from .dqExceptions import CentFilterError, CfgInvalidFormatError, DependencyNotFoundError, ForgettedArgsError, MandatoryArgNotFoundError, NotInAlienvError, EventFilterSelectionsError, TasknameNotFoundInConfigFileError, TextListNotStartsWithAtError
 
 
 def aodFileChecker(aod: str):
@@ -60,9 +60,9 @@ def aodFileChecker(aod: str):
         
         elif endsWithTxt and not textAodList:
             try:
-                raise textListNotStartsWithAtError(argProvidedAod)
+                raise TextListNotStartsWithAtError(argProvidedAod)
             
-            except textListNotStartsWithAtError as e:
+            except TextListNotStartsWithAtError as e:
                 logging.exception(e)
                 logging.info("Example usage: --aod @%s", argProvidedAod)
                 sys.exit()
@@ -77,7 +77,7 @@ def aodFileChecker(aod: str):
                 sys.exit()
 
 
-def trackPropTransaction(trackProp: bool, deps: list):
+def trackPropagationChecker(trackProp: bool, deps: list):
     """This method automatically deletes the o2-analysis-trackextension(for run2) task from your workflow
     when you add the o2-analysis-track-propagation (for run3)
     task to your workflow. Two tasks are not compatible at the same time
@@ -175,7 +175,7 @@ def forgettedArgsChecker(allArgs: dict):
         sys.exit()
 
 
-def centTranscation(config: dict, process, syst, centSearch):
+def centralityChecker(config: dict, process, syst, centSearch):
     """If you assign a centrality-related process function for the pp collision
     system while trying to skim the data, an error will return.
 
@@ -203,7 +203,7 @@ def centTranscation(config: dict, process, syst, centSearch):
                 sys.exit()
 
 
-def filterSelsTranscation(argBarrelSels: list, argMuonSels: list, argBarrelTrackCuts: list, argMuonsCuts: list, allArgs: dict):
+def filterSelsChecker(argBarrelSels: list, argMuonSels: list, argBarrelTrackCuts: list, argMuonsCuts: list, allArgs: dict):
     """It checks whether the event filter selections and analysis cuts in the
     Filter PP task are in the same number and order
 
@@ -216,7 +216,7 @@ def filterSelsTranscation(argBarrelSels: list, argMuonSels: list, argBarrelTrack
 
     Raises:
         MandatoryArgNotFoundError: If the required argument is not found
-        SelsAndCutsNotHaveSameNumberError : If Filter Selections and analysis cuts not in same number and order
+        EventFilterSelectionsError : If Filter Selections and analysis cuts not in same number and order
     """
     
     argMuonSelsClean = []
@@ -243,9 +243,9 @@ def filterSelsTranscation(argBarrelSels: list, argMuonSels: list, argBarrelTrack
             if argMuonSelsClean == argMuonsCuts:
                 pass
             else:
-                raise SelsAndCutsNotHaveSameNumberError
+                raise EventFilterSelectionsError
         
-        except SelsAndCutsNotHaveSameNumberError as e:
+        except EventFilterSelectionsError as e:
             logging.exception(e)
             logging.info(
                 "[INFO] For fixing this issue, you should have the same number of cuts (and in the same order) provided to the cfgMuonsCuts from dq-selection as those provided to the cfgMuonSels in the DQFilterPPTask."
@@ -279,9 +279,9 @@ def filterSelsTranscation(argBarrelSels: list, argMuonSels: list, argBarrelTrack
             if argBarrelSelsClean == argBarrelTrackCuts:
                 pass
             else:
-                raise SelsAndCutsNotHaveSameNumberError
+                raise EventFilterSelectionsError
         
-        except SelsAndCutsNotHaveSameNumberError as e:
+        except EventFilterSelectionsError as e:
             logging.exception(e)
             logging.info(
                 "For fixing this issue, you should have the same number of cuts (and in the same order) provided to the cfgBarrelTrackCuts from dq-selection as those provided to the cfgBarrelSels in the DQFilterPPTask."
@@ -339,7 +339,7 @@ def oneToMultiDepsChecker(argument: list, mandatoryArg: str, targetCfg: dict, ar
         sys.exit()
 
 
-def MandatoryArgAdder(config: dict, key: str, value: str, selectedKey: str, selectedValue: str):
+def MandatoryArgChecker(config: dict, key: str, value: str, selectedKey: str, selectedValue: str):
     """The process function, which must be included in the workflow, if it is missing, the transaction function to include it
 
     Args:

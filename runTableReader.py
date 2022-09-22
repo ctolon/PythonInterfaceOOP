@@ -22,7 +22,7 @@ import json
 import logging
 import logging.config
 import os
-from extramodules.dqTranscations import MandatoryArgAdder, aodFileChecker, depsChecker, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, oneToMultiDepsChecker
+from extramodules.dqTranscations import MandatoryArgChecker, aodFileChecker, depsChecker, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, oneToMultiDepsChecker
 from extramodules.configSetter import CONFIG_SET, NOT_CONFIGURED_SET_FALSE, PROCESS_SWITCH, SELECTION_SET, PROCESS_DUMMY, debugSettings, dispArgs, prefixSuffixSet
 from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.tableReader import TableReader
@@ -127,7 +127,7 @@ for key, value in config.items():
             PROCESS_SWITCH(config, key, value, allArgs, cliMode, "mixing", mixingParameters, "true/false")
             NOT_CONFIGURED_SET_FALSE(config, key, value, args.process, sepParameters, cliMode)
             NOT_CONFIGURED_SET_FALSE(config, key, value, args.mixing, mixingParameters, cliMode)
-            MandatoryArgAdder(config, key, value, "analysis-event-selection", "processSkimmed")
+            MandatoryArgChecker(config, key, value, taskNameInConfig, "processSkimmed")
 
 PROCESS_DUMMY(config) # dummy automizer
 

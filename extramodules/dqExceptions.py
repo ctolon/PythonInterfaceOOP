@@ -45,8 +45,7 @@ class CfgInvalidFormatError(Exception):
         super().__init__()
     
     def __str__(self):
-        return f"Invalid Format for json config file! Your JSON config input: {self.configjson} After the script, you must define your json configuration file \
-            The command line should look like this:"
+        return f"Invalid Format for json config file! Your JSON config input: {self.configjson} After the script, you must define your json configuration file"
 
 
 class NotInAlienvError(Exception):
@@ -89,7 +88,7 @@ class CentFilterError(Exception):
         return f"Collision System pp can't be include related task and process function about Centrality. misconfigure for process function in tableMaker/tableMakerMC!"
 
 
-class SelsAndCutsNotHaveSameNumberError(Exception):
+class EventFilterSelectionsError(Exception):
     
     """Exception raised if Filter Selections and analysis cuts not in same order and same number"""
     
@@ -115,7 +114,7 @@ class MandatoryArgNotFoundError(Exception):
         return f"Mandatory args not found: {self.arg}"
 
 
-class textListNotStartsWithAtError(Exception):
+class TextListNotStartsWithAtError(Exception):
     
     """Exception raised for if mandatory arg not found
 
@@ -144,4 +143,4 @@ class DependencyNotFoundError(Exception):
         self.value = value
     
     def __str__(self):
-        return f"For configuring {self.checkedDep}, you have to specify [{self.key}] {self.value} as true"
+        return f"For configuring {self.checkedDep}, you have to specify [{self.key}] {self.value} function as true"
