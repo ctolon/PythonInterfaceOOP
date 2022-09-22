@@ -22,7 +22,7 @@ import json
 import logging
 import logging.config
 import os
-from extramodules.dqTranscations import MandatoryArgChecker, aodFileChecker, forgettedArgsChecker, jsonTypeChecker, filterSelsChecker, mainTaskChecker, trackPropagationChecker
+from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, forgettedArgsChecker, jsonTypeChecker, filterSelsChecker, mainTaskChecker, trackPropagationChecker
 from extramodules.configSetter import PROCESS_SWITCH, SELECTION_SET, converterSet, CONFIG_SET, PROCESS_DUMMY, debugSettings, dispArgs, prefixSuffixSet
 from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.filterPP import DQFilterPPTask
@@ -113,7 +113,7 @@ for key, value in config.items():
             if key == "tof-event-time": # we have processRun2 option in tof-event-time and for not overriding it other processRun2 options, we have to specifiy key
                 PROCESS_SWITCH(config, key, value, allArgs, "true", "FT0", ft0Parameters, "true/false")
             PROCESS_SWITCH(config, key, value, allArgs, cliMode, "isVertexZeq", vertexParameters, "1/0", True)
-            MandatoryArgChecker(config, key, value, "d-q-event-selection-task", "processEventSelection")        
+            mandatoryArgChecker(config, key, value, "d-q-event-selection-task", "processEventSelection")        
 PROCESS_DUMMY(config, dummyHasTasks) # dummy automizer
 
 # Transactions

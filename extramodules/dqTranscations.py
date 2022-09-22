@@ -339,7 +339,7 @@ def oneToMultiDepsChecker(argument: list, mandatoryArg: str, targetCfg: dict, ar
         sys.exit()
 
 
-def MandatoryArgChecker(config: dict, key: str, value: str, selectedKey: str, selectedValue: str):
+def mandatoryArgChecker(config: dict, key: str, value: str, selectedKey: str, selectedValue: str):
     """The process function, which must be included in the workflow, if it is missing, the transaction function to include it
 
     Args:
