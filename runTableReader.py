@@ -45,7 +45,7 @@ analysisSelectionDeps = {
     "dileptonHadron": {"analysis-dilepton-hadron": "processSkimmed"}
     }
 sameEventTaskName = "analysis-same-event-pairing"
-SameEventPairingDeps = {
+sameEventPairingDeps = {
     "processJpsiToEESkimmed": {"analysis-track-selection": "processSkimmed"},
     "processJpsiToMuMuSkimmed": {"analysis-muon-selection": "processSkimmed"},
     "processJpsiToMuMuVertexingSkimmed": {"analysis-muon-selection": "processSkimmed"},
@@ -135,7 +135,7 @@ setProcessDummy(config) # dummy automizer
 aodFileChecker(args.aod)
 oneToMultiDepsChecker(args.mixing, "eventMixing", args.analysis, "analysis")
 oneToMultiDepsChecker(args.process, "sameEventPairing", args.analysis, "analysis")
-depsChecker(config, SameEventPairingDeps, sameEventTaskName)
+depsChecker(config, sameEventPairingDeps, sameEventTaskName)
 depsChecker(config, eventMixingDeps, eventMixingTaskName)
 
 # Write the updated configuration file into a temporary file

@@ -28,7 +28,7 @@ from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.dqEfficiency import DQEfficiency
 
 # Predefined selections for setSwitch function
-SameEventPairingParameters = ["processJpsiToEESkimmed", "processJpsiToMuMuSkimmed", "processJpsiToMuMuVertexingSkimmed"]
+sameEventPairingParameters = ["processJpsiToEESkimmed", "processJpsiToMuMuSkimmed", "processJpsiToMuMuVertexingSkimmed"]
 # yapf: disable
 # All Dependencies
 analysisSelectionDeps = {
@@ -39,7 +39,7 @@ analysisSelectionDeps = {
     "dileptonTrackDielectronKaonSelection": {"analysis-dilepton-track": "processDielectronKaonSkimmed"}
     }
 sameEventPairingTaskName = "analysis-same-event-pairing"
-SameEventPairingDeps = {
+sameEventPairingDeps = {
     "processJpsiToEESkimmed": {"analysis-track-selection": "processSkimmed"},
     "processJpsiToMuMuSkimmed": {"analysis-muon-selection": "processSkimmed"},
     "processJpsiToMuMuVertexingSkimmed": {"analysis-muon-selection": "processSkimmed"}
@@ -105,8 +105,8 @@ for task, cfgValuePair in config.items():
             
             # Interface Logic
             setConfig(config, task, cfg, allArgs, cliMode)
-            setSwitch(config, task, cfg, allArgs, cliMode, "process", SameEventPairingParameters, "true/false")
-            setFalseHasDeps(config, task, cfg, args.process, SameEventPairingParameters, cliMode)
+            setSwitch(config, task, cfg, allArgs, cliMode, "process", sameEventPairingParameters, "true/false")
+            setFalseHasDeps(config, task, cfg, args.process, sameEventPairingParameters, cliMode)
             mandatoryArgChecker(config, task, cfg, taskNameInConfig, "processSkimmed")
             
             # analysis-dilepton-track # TODO Discuss naming conventions regarding to string conflicts, dilepton track signals should have unique name
@@ -124,7 +124,7 @@ setProcessDummy(config) # dummy automizer
 # Transactions
 aodFileChecker(args.aod)
 oneToMultiDepsChecker(args.process, "sameEventPairing", args.analysis, "analysis")
-depsChecker(config, SameEventPairingDeps, sameEventPairingTaskName)
+depsChecker(config, sameEventPairingDeps, sameEventPairingTaskName)
 depsChecker(config, dileptonTrackDeps, dileptonTrackTaskName)
 
 # Write the updated configuration file into a temporary file
