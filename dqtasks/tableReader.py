@@ -119,11 +119,11 @@ class TableReader(object):
         # same event pairing process function selection
         groupProcessSEPSelections = self.parserTableReader.add_argument_group(title = "Data processor options: analysis-same-event-pairing")
         groupProcessSEPSelections.add_argument(
-            "--process", help = "Skimmed process selections for analysis-same-event-pairing task", action = "store", nargs = "*",
-            type = str, metavar = "PROCESS", choices = sameEventPairingProcessSelectionsList,
+            "--process", help = "analysis-same-event-pairing: PROCESS_SWITCH options", action = "store", nargs = "*", type = str,
+            metavar = "PROCESS", choices = sameEventPairingProcessSelectionsList,
             ).completer = ChoicesCompleterList(sameEventPairingProcessSelectionsList)
         groupProcess = self.parserTableReader.add_argument_group(
-            title = "Choice List for analysis-same-event-pairing task Process options (when a value added to parameter, processSkimmed value is converted from false to true)"
+            title = "Choice List for analysis-same-event-pairing PROCESS_SWITCH options"
             )
         
         for key, value in sameEventPairingProcessSelections.items():
@@ -132,9 +132,12 @@ class TableReader(object):
         # analysis-event-mixing
         groupAnalysisEventMixing = self.parserTableReader.add_argument_group(title = "Data processor options: analysis-event-mixing")
         groupAnalysisEventMixing.add_argument(
-            "--mixing", help = "Skimmed process selections for Event Mixing manually", nargs = "*", action = "store", type = str,
-            choices = mixingSelectionsList,
+            "--mixing", help = "analysis-event-mixing: PROCESS_SWITCH options", nargs = "*", action = "store", metavar = "MIXING",
+            type = str, choices = mixingSelectionsList,
             ).completer = ChoicesCompleterList(mixingSelectionsList)
+        groupMixing = self.parserTableReader.add_argument_group(title = "Choice List for analysis-event-mixing PROCESS_SWITCH options")
+        for key, value in mixingSelections.items():
+            groupMixing.add_argument(key, help = value, action = "none")
         
         # cfg for QA
         groupQASelections = self.parserTableReader.add_argument_group(

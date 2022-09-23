@@ -38,7 +38,7 @@ class O2Converters(object):
         """
         
         # Interface
-        groupO2Converters = self.parserO2Converters.add_argument_group(title = "Additional Task Adding Options")
+        groupO2Converters = self.parserO2Converters.add_argument_group(title = "Converter task adding options:")
         groupO2Converters.add_argument(
             "--add_mc_conv",
             help = "Add the converter from mcparticle to mcparticle+001 (Adds your workflow o2-analysis-mc-converter task)",

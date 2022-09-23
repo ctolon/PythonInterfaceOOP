@@ -23,17 +23,17 @@ import logging
 import logging.config
 import os
 from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, depsChecker, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, oneToMultiDepsChecker
-from extramodules.configSetter import CONFIG_SET, NOT_CONFIGURED_SET_FALSE, PROCESS_SWITCH, SELECTION_SET, PROCESS_DUMMY, debugSettings, dispArgs, prefixSuffixSet
+from extramodules.configSetter import setConfig, setFalseHasDeps, setSwitch, setSelection, setProcessDummy, debugSettings, dispArgs, setPrefixSuffix
 from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.tableReader import TableReader
 
-# Predefined selections for PROCESS_SWITCH function
-sepParameters = [
+# Predefined selections for setSwitch function
+sameEventPairingParameters = [
     "processJpsiToEESkimmed", "processJpsiToMuMuSkimmed", "processJpsiToMuMuVertexingSkimmed", "processVnJpsiToEESkimmed",
     "processVnJpsiToMuMuSkimmed", "processElectronMuonSkimmed", "processAllSkimmed"
     ]
 
-mixingParameters = [
+eventMixingParameters = [
     "processBarrelSkimmed", "processMuonSkimmed", "processBarrelMuonSkimmed", "processBarrelVnSkimmed", "processMuonVnSkimmed"
     ]
 # yapf: disable
@@ -44,8 +44,8 @@ analysisSelectionDeps = {
     "muonSelection": {"analysis-muon-selection": "processSkimmed"},
     "dileptonHadron": {"analysis-dilepton-hadron": "processSkimmed"}
     }
-sepKey = "analysis-same-event-pairing"
-sepDeps = {
+sameEventTaskName = "analysis-same-event-pairing"
+SameEventPairingDeps = {
     "processJpsiToEESkimmed": {"analysis-track-selection": "processSkimmed"},
     "processJpsiToMuMuSkimmed": {"analysis-muon-selection": "processSkimmed"},
     "processJpsiToMuMuVertexingSkimmed": {"analysis-muon-selection": "processSkimmed"},
@@ -54,8 +54,8 @@ sepDeps = {
     "processElectronMuonSkimmed": {"analysis-track-selection": "processSkimmed","analysis-muon-selection": "processSkimmed"},
     "processAllSkimmed": {"analysis-track-selection": "processSkimmed","analysis-muon-selection": "processSkimmed"},
     }
-mixingKey = "analysis-event-mixing"
-mixingDeps = {
+eventMixingTaskName = "analysis-event-mixing"
+eventMixingDeps = {
     "processBarrelSkimmed": {"analysis-track-selection": "processSkimmed"},
     "processMuonSkimmed": {"analysis-muon-selection": "processSkimmed"},
     "processBarrelMuonSkimmed": {"analysis-track-selection": "processSkimmed","analysis-muon-selection": "processSkimmed"},
@@ -80,9 +80,9 @@ cliMode = args.onlySelect
 # Transaction
 forgettedArgsChecker(allArgs) # Transaction Management
 
-# adding prefix for PROCESS_SWITCH function (for no kFlag True situations)
-args.process = prefixSuffixSet(args.process, "process", 'Skimmed', True, True)
-args.mixing = prefixSuffixSet(args.mixing, "process", 'Skimmed', True, True)
+# adding prefix for setSwitch function (for no kFlag True situations)
+args.process = setPrefixSuffix(args.process, "process", 'Skimmed', True, True)
+args.mixing = setPrefixSuffix(args.mixing, "process", 'Skimmed', True, True)
 
 # Load the configuration file provided as the first parameter
 config = {}
@@ -105,38 +105,38 @@ if args.onlySelect == "true":
 if args.onlySelect == "false":
     logging.info("INTERFACE MODE : JSON Additional")
 
-SELECTION_SET(config, analysisSelectionDeps, args.analysis, cliMode) # Set selections
+setSelection(config, analysisSelectionDeps, args.analysis, cliMode) # Set selections
 
 # Iterating in JSON config file
-for key, value in config.items():
-    if isinstance(value, dict):
-        for value, value2 in value.items():
+for task, cfgValuePair in config.items():
+    if isinstance(cfgValuePair, dict):
+        for cfg, value in cfgValuePair.items():
             
             # aod
-            if value == "aod-file" and args.aod:
-                config[key][value] = args.aod
-                logging.debug(" - [%s] %s : %s", key, value, args.aod)
+            if cfg == "aod-file" and args.aod:
+                config[task][cfg] = args.aod
+                logging.debug(" - [%s] %s : %s", task, cfg, args.aod)
             # reader
-            if value == "aod-reader-json" and args.reader:
-                config[key][value] = args.reader
-                logging.debug(" - [%s] %s : %s", key, value, args.reader)
+            if cfg == "aod-reader-json" and args.reader:
+                config[task][cfg] = args.reader
+                logging.debug(" - [%s] %s : %s", task, cfg, args.reader)
             
             # Interface Logic
-            CONFIG_SET(config, key, value, allArgs, cliMode)
-            PROCESS_SWITCH(config, key, value, allArgs, cliMode, "process", sepParameters, "true/false")
-            PROCESS_SWITCH(config, key, value, allArgs, cliMode, "mixing", mixingParameters, "true/false")
-            NOT_CONFIGURED_SET_FALSE(config, key, value, args.process, sepParameters, cliMode)
-            NOT_CONFIGURED_SET_FALSE(config, key, value, args.mixing, mixingParameters, cliMode)
-            mandatoryArgChecker(config, key, value, taskNameInConfig, "processSkimmed")
+            setConfig(config, task, cfg, allArgs, cliMode)
+            setSwitch(config, task, cfg, allArgs, cliMode, "process", sameEventPairingParameters, "true/false")
+            setSwitch(config, task, cfg, allArgs, cliMode, "mixing", eventMixingParameters, "true/false")
+            setFalseHasDeps(config, task, cfg, args.process, sameEventPairingParameters, cliMode)
+            setFalseHasDeps(config, task, cfg, args.mixing, eventMixingParameters, cliMode)
+            mandatoryArgChecker(config, task, cfg, taskNameInConfig, "processSkimmed")
 
-PROCESS_DUMMY(config) # dummy automizer
+setProcessDummy(config) # dummy automizer
 
 # Transacations
 aodFileChecker(args.aod)
 oneToMultiDepsChecker(args.mixing, "eventMixing", args.analysis, "analysis")
 oneToMultiDepsChecker(args.process, "sameEventPairing", args.analysis, "analysis")
-depsChecker(config, sepDeps, sepKey)
-depsChecker(config, mixingDeps, mixingKey)
+depsChecker(config, SameEventPairingDeps, sameEventTaskName)
+depsChecker(config, eventMixingDeps, eventMixingTaskName)
 
 # Write the updated configuration file into a temporary file
 updatedConfigFileName = "tempConfigTableReader.json"

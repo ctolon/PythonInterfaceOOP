@@ -10,6 +10,7 @@
         "aod-file": "AO2D.root"
     },
     "internal-dpl-aod-spawner": "",
+    "internal-dpl-aod-index-builder": "",
     "timestamp-task": {
         "verbose": "false",
         "rct-path": "RCT\/Info\/RunInformation",
@@ -17,20 +18,13 @@
         "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
         "isRun2MC": "false"
     },
-    "track-propagation": {
-        "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
-        "lutPath": "GLO\/Param\/MatLUT",
-        "geoPath": "GLO\/Config\/GeometryAligned",
-        "grpPath": "GLO\/GRP\/GRP",
-        "mVtxPath": "GLO\/Calib\/MeanVertex",
-        "processStandard": "false",
-        "processCovariance": "true"
-    },
-    "internal-dpl-aod-index-builder": "",
-    "tof-signal": "",
-    "track-extension": {
-        "processRun2": "false",
-        "processRun3": "true"
+    "event-selection-task": {
+        "syst": "PbPb",
+        "muonSelection": "0",
+        "customDeltaBC": "300",
+        "isMC": "false",
+        "processRun2": "true",
+        "processRun3": "false"
     },
     "bc-selection-task": {
         "processRun2": "false",
@@ -44,30 +38,24 @@
         "etaMin": "-0.8",
         "etaMax": "0.8"
     },
-    "event-selection-task": {
-        "syst": "PbPb",
-        "muonSelection": "0",
-        "customDeltaBC": "300",
-        "isMC": "false",
-        "processRun2": "true",
-        "processRun3": "false"
+    "track-propagation": {
+        "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
+        "lutPath": "GLO\/Param\/MatLUT",
+        "geoPath": "GLO\/Config\/GeometryAligned",
+        "grpPath": "GLO\/GRP\/GRP",
+        "mVtxPath": "GLO\/Calib\/MeanVertex",
+        "processStandard": "false",
+        "processCovariance": "true"
+    },
+    "track-extension": {
+        "processRun2": "false",
+        "processRun3": "true"
     },
     "multiplicity-table": {
         "doVertexZeq": "0",
         "doDummyZeq": "1",
         "processRun2": "false",
         "processRun3": "true"
-    },
-    "tof-event-time": {
-        "param-file": "",
-        "param-sigma": "TOFReso",
-        "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
-        "ccdbPath": "Analysis\/PID\/TOF",
-        "ccdb-timestamp": "-1",
-        "processRun2": "false",
-        "processNoFT0": "true",
-        "processFT0": "false",
-        "processOnlyFT0": "false"
     },
     "centrality-table": {
         "estRun2V0M": "-1",
@@ -124,6 +112,18 @@
         "pid-he": "-1",
         "pid-al": "-1"
     },
+    "tof-event-time": {
+        "param-file": "",
+        "param-sigma": "TOFReso",
+        "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
+        "ccdbPath": "Analysis\/PID\/TOF",
+        "ccdb-timestamp": "-1",
+        "processRun2": "false",
+        "processNoFT0": "true",
+        "processFT0": "false",
+        "processOnlyFT0": "false"
+    },
+    "tof-signal": "",
     "tof-pid-beta": {
         "tof-expreso": "80"
     },

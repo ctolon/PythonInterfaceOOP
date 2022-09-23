@@ -18,14 +18,14 @@
         "processSkimmed": "true",
         "processDummy": "false"
     },
-    "analysis-muon-selection": {
-        "cfgMuonCuts": "muonQualityCuts",
+    "analysis-track-selection": {
+        "cfgTrackCuts": "jpsiO2MCdebugCuts",
         "cfgQA": "true",
         "processSkimmed": "true",
         "processDummy": "false"
     },
-    "analysis-track-selection": {
-        "cfgTrackCuts": "jpsiO2MCdebugCuts",
+    "analysis-muon-selection": {
+        "cfgMuonCuts": "muonQualityCuts",
         "cfgQA": "true",
         "processSkimmed": "true",
         "processDummy": "false"

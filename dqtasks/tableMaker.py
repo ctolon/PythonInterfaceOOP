@@ -111,43 +111,36 @@ class TableMaker(object):
         
         # Interface
         
-        # table-maker configurables
-        groupTableMakerConfigs = self.parserTableMaker.add_argument_group(title = "Data processor options: table-maker")
-        groupTableMakerConfigs.add_argument(
-            "--cfgEventCuts", help = "Space separated list of event cuts", nargs = "*", action = "store", type = str,
-            metavar = "CFGEVENTCUTS", choices = allAnalysisCuts,
-            ).completer = ChoicesCompleterList(allAnalysisCuts)
-        groupTableMakerConfigs.add_argument(
-            "--cfgBarrelTrackCuts", help = " Space separated list of barrel track cuts", nargs = "*", action = "store", type = str,
-            metavar = "CFGBARRELTRACKCUTS", choices = allAnalysisCuts,
-            ).completer = ChoicesCompleterList(allAnalysisCuts)
-        groupTableMakerConfigs.add_argument(
-            "--cfgMuonCuts", help = "Space separated list of muon cuts in table-maker", action = "store", nargs = "*", type = str,
-            metavar = "CFGMUONCUTS", choices = allAnalysisCuts,
-            ).completer = ChoicesCompleterList(allAnalysisCuts)
-        groupTableMakerConfigs.add_argument("--cfgBarrelLowPt", help = "Low pt cut for tracks in the barrel", action = "store", type = str)
-        groupTableMakerConfigs.add_argument("--cfgMuonLowPt", help = "Low pt cut for muons", action = "store", type = str)
-        groupTableMakerConfigs.add_argument(
-            "--cfgNoQA", help = "If true, no QA histograms", action = "store", type = str.lower, choices = booleanSelections,
-            ).completer = ChoicesCompleter(booleanSelections)
-        groupTableMakerConfigs.add_argument(
-            "--cfgDetailedQA", help = "If true, include more QA histograms (BeforeCuts classes and more)", action = "store",
-            type = str.lower, choices = booleanSelections,
-            ).completer = ChoicesCompleter(booleanSelections)
-        # groupTableMakerConfigs.add_argument("--cfgIsRun2", help="Run selection true or false", action="store", choices=["true","false"], type=str) # no need
-        groupTableMakerConfigs.add_argument("--cfgMinTpcSignal", help = "Minimum TPC signal", action = "store", type = str)
-        groupTableMakerConfigs.add_argument("--cfgMaxTpcSignal", help = "Maximum TPC signal", action = "store", type = str)
+        # analysis-qvector
+        groupAnalysisQvector = self.parserTableMaker.add_argument_group(title = "Data processor options: analysis-qvector")
+        groupAnalysisQvector.add_argument(
+            "--cfgCutPtMin", help = "Minimal pT for tracks", action = "store", type = str, metavar = "CFGCUTPTMIN",
+            )
+        groupAnalysisQvector.add_argument(
+            "--cfgCutPtMax", help = "Maximal pT for tracks", action = "store", type = str, metavar = "CFGCUTPTMAX",
+            )
+        groupAnalysisQvector.add_argument(
+            "--cfgCutEta", help = "Eta range for tracks", action = "store", type = str, metavar = "CFGCUTETA",
+            )
+        groupAnalysisQvector.add_argument(
+            "--cfgEtaLimit", help = "Eta gap separation, only if using subEvents", action = "store", type = str, metavar = "CFGETALIMIT",
+            )
+        groupAnalysisQvector.add_argument(
+            "--cfgNPow", help = "Power of weights for Q vector", action = "store", type = str, metavar = "CFGNPOW",
+            )
+        groupAnalysisQvector.add_argument("--cfgEfficiency", help = "CCDB path to efficiency object", action = "store", type = str)
+        groupAnalysisQvector.add_argument("--cfgAcceptance", help = "CCDB path to acceptance object", action = "store", type = str)
         
-        groupProcessTableMaker = self.parserTableMaker.add_argument_group(title = "Data processor options: table-maker")
-        groupProcessTableMaker.add_argument(
-            "--process", help = "Process Selection options for tableMaker/tableMakerMC Data Processing and Skimming", action = "store",
-            type = str, nargs = "*", metavar = "PROCESS", choices = tableMakerProcessSelectionsList,
-            ).completer = ChoicesCompleterList(tableMakerProcessSelectionsList)
-        for key, value in tableMakerProcessSelections.items():
-            groupProcessTableMaker.add_argument(key, help = value, action = "none")
+        # all d-q tasks and selections
+        groupQASelections = self.parserTableMaker.add_argument_group(
+            title = "Data processor options: d-q-event-selection-task, d-q-barrel-track-selection-task, d-q-muons-selection, d-q-filter-p-p-task, analysis-qvector"
+            )
+        groupQASelections.add_argument(
+            "--cfgWithQA", help = "If true, fill QA histograms", action = "store", type = str.lower, choices = booleanSelections,
+            ).completer = ChoicesCompleter(booleanSelections)
         
         # d-q-track barrel-task
-        groupDQTrackBarrelTask = self.parserTableMaker.add_argument_group(title = "Data processor options: d-q-track barrel-task")
+        groupDQTrackBarrelTask = self.parserTableMaker.add_argument_group(title = "Data processor options: d-q-barrel-track-selection-task")
         groupDQTrackBarrelTask.add_argument(
             "--isBarrelSelectionTiny",
             help = "Run barrel track selection instead of normal(process func. for barrel selection must be true)", action = "store",
@@ -177,33 +170,39 @@ class TableMaker(object):
             type = str.lower, choices = booleanSelections,
             ).completer = ChoicesCompleter(booleanSelections)
         
-        # analysis-qvector
-        groupAnalysisQvector = self.parserTableMaker.add_argument_group(title = "Data processor options: analysis-qvector")
-        groupAnalysisQvector.add_argument(
-            "--cfgCutPtMin", help = "Minimal pT for tracks", action = "store", type = str, metavar = "CFGCUTPTMIN",
-            )
-        groupAnalysisQvector.add_argument(
-            "--cfgCutPtMax", help = "Maximal pT for tracks", action = "store", type = str, metavar = "CFGCUTPTMAX",
-            )
-        groupAnalysisQvector.add_argument(
-            "--cfgCutEta", help = "Eta range for tracks", action = "store", type = str, metavar = "CFGCUTETA",
-            )
-        groupAnalysisQvector.add_argument(
-            "--cfgEtaLimit", help = "Eta gap separation, only if using subEvents", action = "store", type = str, metavar = "CFGETALIMIT",
-            )
-        groupAnalysisQvector.add_argument(
-            "--cfgNPow", help = "Power of weights for Q vector", action = "store", type = str, metavar = "CFGNPOW",
-            )
-        groupAnalysisQvector.add_argument("--cfgEfficiency", help = "CCDB path to efficiency object", action = "store", type = str)
-        groupAnalysisQvector.add_argument("--cfgAcceptance", help = "CCDB path to acceptance object", action = "store", type = str)
-        
-        # all d-q tasks and selections
-        groupQASelections = self.parserTableMaker.add_argument_group(
-            title = "Data processor options: d-q-barrel-track-selection-task, d-q-muons-selection, d-q-event-selection-task, d-q-filter-p-p-task, analysis-qvector"
-            )
-        groupQASelections.add_argument(
-            "--cfgWithQA", help = "If true, fill QA histograms", action = "store", type = str.lower, choices = booleanSelections,
+        # table-maker configurables
+        groupTableMakerConfigs = self.parserTableMaker.add_argument_group(title = "Data processor options: table-maker")
+        groupTableMakerConfigs.add_argument(
+            "--cfgEventCuts", help = "Space separated list of event cuts", nargs = "*", action = "store", type = str,
+            metavar = "CFGEVENTCUTS", choices = allAnalysisCuts,
+            ).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupTableMakerConfigs.add_argument(
+            "--cfgBarrelTrackCuts", help = " Space separated list of barrel track cuts", nargs = "*", action = "store", type = str,
+            metavar = "CFGBARRELTRACKCUTS", choices = allAnalysisCuts,
+            ).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupTableMakerConfigs.add_argument(
+            "--cfgMuonCuts", help = "Space separated list of muon cuts in table-maker", action = "store", nargs = "*", type = str,
+            metavar = "CFGMUONCUTS", choices = allAnalysisCuts,
+            ).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupTableMakerConfigs.add_argument("--cfgBarrelLowPt", help = "Low pt cut for tracks in the barrel", action = "store", type = str)
+        groupTableMakerConfigs.add_argument("--cfgMuonLowPt", help = "Low pt cut for muons", action = "store", type = str)
+        groupTableMakerConfigs.add_argument(
+            "--cfgNoQA", help = "If true, no QA histograms", action = "store", type = str.lower, choices = booleanSelections,
             ).completer = ChoicesCompleter(booleanSelections)
+        groupTableMakerConfigs.add_argument(
+            "--cfgDetailedQA", help = "If true, include more QA histograms (BeforeCuts classes and more)", action = "store",
+            type = str.lower, choices = booleanSelections,
+            ).completer = ChoicesCompleter(booleanSelections)
+        # groupTableMakerConfigs.add_argument("--cfgIsRun2", help="Run selection true or false", action="store", choices=["true","false"], type=str) # no need
+        groupTableMakerConfigs.add_argument("--cfgMinTpcSignal", help = "Minimum TPC signal", action = "store", type = str)
+        groupTableMakerConfigs.add_argument("--cfgMaxTpcSignal", help = "Maximum TPC signal", action = "store", type = str)
+        groupTableMakerConfigs.add_argument(
+            "--process", help = "table-maker: PROCESS_SWITCH options", action = "store", type = str, nargs = "*", metavar = "PROCESS",
+            choices = tableMakerProcessSelectionsList,
+            ).completer = ChoicesCompleterList(tableMakerProcessSelectionsList)
+        groupProcess = self.parserTableMaker.add_argument_group(title = "Choice List for table-maker PROCESS_SWITCH options")
+        for key, value in tableMakerProcessSelections.items():
+            groupProcess.add_argument(key, help = value, action = "none")
         
         # core part
         groupCoreSelections = self.parserTableMaker.add_argument_group(title = "Core configurations that must be configured")
@@ -225,14 +224,32 @@ class TableMaker(object):
         This function allows to merge parser_args argument information from different classes
         """
         
+        self.helperOptions.parserHelperOptions = self.parserTableMaker
+        self.helperOptions.addArguments()
+        
+        self.dplAodReader.parserDplAodReader = self.parserTableMaker
+        self.dplAodReader.addArguments()
+        
         self.eventSelection.parserEventSelectionTask = self.parserTableMaker
         self.eventSelection.addArguments()
+        
+        self.trackSelection.parserTrackSelectionTask = self.parserTableMaker
+        self.trackSelection.addArguments()
+        
+        self.trackPropagation.parserTrackPropagation = self.parserTableMaker
+        self.trackPropagation.addArguments()
+        
+        self.multiplicityTable.parserMultiplicityTable = self.parserTableMaker
+        self.multiplicityTable.addArguments()
         
         self.centralityTable.parserCentralityTable = self.parserTableMaker
         self.centralityTable.addArguments()
         
-        self.multiplicityTable.parserMultiplicityTable = self.parserTableMaker
-        self.multiplicityTable.addArguments()
+        self.v0selector.parserV0selector = self.parserTableMaker
+        self.v0selector.addArguments()
+        
+        self.tpcTofPidFull.parserTpcTofPidFull = self.parserTableMaker
+        self.tpcTofPidFull.addArguments()
         
         self.tofEventTime.parserTofEventTime = self.parserTableMaker
         self.tofEventTime.addArguments()
@@ -240,26 +257,8 @@ class TableMaker(object):
         self.tofPidBeta.parserTofPidBeta = self.parserTableMaker
         self.tofPidBeta.addArguments()
         
-        self.tpcTofPidFull.parserTpcTofPidFull = self.parserTableMaker
-        self.tpcTofPidFull.addArguments()
-        
-        self.trackPropagation.parserTrackPropagation = self.parserTableMaker
-        self.trackPropagation.addArguments()
-        
-        self.trackSelection.parserTrackSelectionTask = self.parserTableMaker
-        self.trackSelection.addArguments()
-        
-        self.v0selector.parserV0selector = self.parserTableMaker
-        self.v0selector.addArguments()
-        
-        self.helperOptions.parserHelperOptions = self.parserTableMaker
-        self.helperOptions.addArguments()
-        
         self.o2Converters.parserO2Converters = self.parserTableMaker
         self.o2Converters.addArguments()
-        
-        self.dplAodReader.parserDplAodReader = self.parserTableMaker
-        self.dplAodReader.addArguments()
         
         self.addArguments()
     

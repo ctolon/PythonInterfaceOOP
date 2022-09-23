@@ -137,10 +137,10 @@ class DependencyNotFoundError(Exception):
         arg: mandatory argument
     """
     
-    def __init__(self, checkedDep, key, value):
+    def __init__(self, checkedDep, task, cfg):
         self.checkedDep = checkedDep
-        self.key = key
-        self.value = value
+        self.task = task
+        self.cfg = cfg
     
     def __str__(self):
-        return f"For configuring {self.checkedDep}, you have to specify [{self.key}] {self.value} function as true"
+        return f"For configuring {self.checkedDep}, you have to specify [{self.task}] {self.cfg} function as true"

@@ -3,7 +3,7 @@
 
 * Folders: All lowercase
 * Class: Upper camelcase
-* Function: lower camelcase (setter functions screaming camelcase)
+* Function: lower camelcase
 * Variables: lower camelcase
 * Constants: Screaming camelcase
 * O2 converter arguments: snake case

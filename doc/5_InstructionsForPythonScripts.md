@@ -140,8 +140,8 @@ Arg | Opt | Task | nargs |
 `--muonSelection` | `0`<br> `1`<br> `2` | `event-selection-task` | 1 |
 `--CustomDeltaBC` | all | `event-selection-task` | 1 |
 `--isVertexZeq` | `true`<br> `false`<br>  | `multiplicity-table` | 1 |
-`--isCovariance` | `true`<br> `false`<br> | `track-propagation` | 1 |
-`--isWSlice` | `true`<br> `false`<br> | `tof-pid-full tof-pid` | 1 |
+`--isCovariance` | `Standard`<br> `Covariance`<br> | `track-propagation` | 1 |
+`--isWSlice` | `Wslice`<br> `WoSlice`<br> | `tof-pid-full tof-pid` | 1 |
 `--FT0` | `FT0`<br> `NOFT0`<br>`OnlyFT0`<br> `Run2` | `tof-event-time` | 1 |
 `--tof-expreso` | all | `tof-pid-beta` | 1 |
 `--isBarrelSelectionTiny` | `true`<br> `false`<br> | `d-q-barrel-track-selection-task` | 1 |
@@ -200,8 +200,8 @@ Arg | Ref Type| Desc | Default | Real Type
 `--muonSelection` | Integer | 0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts |  | str
 `--CustomDeltaBC` | all |custom BC delta for FIT-collision matching |  | str
 `--isVertexZeq` | Boolean  | if true: do vertex Z eq mult table |  | str.lower
-`--isCovariance` | Boolean | If false, Process without covariance, If true Process with covariance related to `track-propagation` |  | str.lower
-`--isWSlice` | Boolean | Process with track slices|  | str.lower
+`--isCovariance` | Boolean | If Standard, Process without covariance, If Covariance, Process with covariance related to `track-propagation` |  | str
+`--isWSlice` | Boolean | if WSlice, Process with track slices, if WoSlice, Process without track slices|  | str
 `--FT0` | Boolean | FT0: Process with FT0, NoFT0: Process without FT0, OnlyFT0: Process only with FT0, Run2: Process with Run2 data |  | str.lower
 `--tof-expreso` | Float | Expected resolution for the computation of the expected beta |  | str
 `--isBarrelSelectionTiny` | Boolean | Run barrel track selection instead of normal(process func. for barrel selection must be true) |  | str.lower

@@ -150,9 +150,9 @@ def jsonTypeChecker(cfgFileName: str):
         sys.exit()
 
 
-# Transcation management for forgettining assign a value to parameters
+# Transcation management for forgettining assign a cfg to parameters
 def forgettedArgsChecker(allArgs: dict):
-    """Checks for any arguments forgot to assign a value which you provided to command line
+    """Checks for any arguments forgot to assign a cfg which you provided to command line
     
     E.x. --process --syst PbPb (It will raise)
 
@@ -163,10 +163,10 @@ def forgettedArgsChecker(allArgs: dict):
         ForgettedArgsError: if there is an argument you forgot to configure
     """
     forgetParams = []
-    for key, value in allArgs.items():
-        if value is not None:
-            if (isinstance(value, str) or isinstance(value, list)) and len(value) == 0:
-                forgetParams.append(key)
+    for task, cfg in allArgs.items():
+        if cfg is not None:
+            if (isinstance(cfg, str) or isinstance(cfg, list)) and len(cfg) == 0:
+                forgetParams.append(task)
     try:
         if len(forgetParams) > 0:
             raise ForgettedArgsError(forgetParams)
@@ -294,13 +294,13 @@ def filterSelsChecker(argBarrelSels: list, argMuonSels: list, argBarrelTrackCuts
         logging.info("Event filter configuration is valid for barrel")
 
 
-def depsChecker(config: dict, deps: dict, key: str):
+def depsChecker(config: dict, deps: dict, task: str):
     """This function written to check dependencies for process function
 
     Args:
         config (dict): Input as JSON config file
         deps (dict): Dependency dict
-        key (str): Task name has dependencies
+        task (str): Task name has dependencies
 
     Raises:
         DependencyNotFoundError: If dependency is not found
@@ -308,25 +308,25 @@ def depsChecker(config: dict, deps: dict, key: str):
     for processFunc, dep in deps.items():
         if isinstance(dep, dict):
             for depTaskName, depProcessFunc in dep.items():
-                if config[key][processFunc] == "false":
+                if config[task][processFunc] == "false":
                     continue
-                elif config[key][processFunc] == "true" and config[depTaskName][depProcessFunc] == "false":
+                elif config[task][processFunc] == "true" and config[depTaskName][depProcessFunc] == "false":
                     raise DependencyNotFoundError(processFunc, depTaskName, depProcessFunc)
         else:
             raise TypeError("Dependency dict must be dict (right side) :", dep)
 
 
-def oneToMultiDepsChecker(argument: list, mandatoryArg: str, targetCfg: dict, argName: str):
-    """To configure many arguments in a task to check if a value needs to be defined in another argument
+def oneToMultiDepsChecker(argument: list, mandatoryArg: str, targetCfg: list, argName: str):
+    """To configure many arguments in a task to check if a cfg needs to be defined in another argument
 
     Args:
         argument (list): Have an dependency CLI argument parameters
         mandatoryArg (str): Needed argument name from another CLI argument
-        targetCfg (_type_): mandatoryArg targetCfg
-        argName (str): argument name of have an dependency argument 
+        targetCfg (list): MandatoryArg target config
+        argName (str): Argument name of have an dependency argument 
 
     Raises:
-        MandatoryArgNotFoundError: _description_
+        MandatoryArgNotFoundError: If mandatory arg not found
     """
     
     try:
@@ -335,26 +335,26 @@ def oneToMultiDepsChecker(argument: list, mandatoryArg: str, targetCfg: dict, ar
     
     except MandatoryArgNotFoundError as e:
         logging.exception(e)
-        logging.info("For configuring %s you have to specify %s value in --%s argument", argument, mandatoryArg, argName)
+        logging.info("For configuring %s you have to specify %s cfg in --%s argument", argument, mandatoryArg, argName)
         sys.exit()
 
 
-def mandatoryArgChecker(config: dict, key: str, value: str, selectedKey: str, selectedValue: str):
+def mandatoryArgChecker(config: dict, task: str, cfg: str, selectedKey: str, selectedValue: str):
     """The process function, which must be included in the workflow, if it is missing, the transaction function to include it
 
     Args:
         config (dict): Input as JSON config file
-        key (str): key
-        value (str): value
+        task (str): task
+        cfg (str): cfg
         selectedKey (str): Taskname for mandatory process function
         selectedValue (str): Mandatory process function
     """
     
-    if config[key][value] == "false" and key == selectedKey and value == selectedValue:
+    if config[task][cfg] == "false" and task == selectedKey and cfg == selectedValue:
         logging.warning(
             "You forget the configure an Mandatory -> [%s] %s must always true for this workflow. This will automaticaly converted true.",
-            key, value
+            task, cfg
             )
-        logging.info(" - [%s] %s : true", key, value)
+        logging.info(" - [%s] %s : true", task, cfg)
     else:
         pass

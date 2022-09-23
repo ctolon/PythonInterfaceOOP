@@ -110,10 +110,6 @@ class DQEfficiency(object):
             title = "Data processor options: analysis-same-event-pairing"
             )
         groupProcessSEPSelections.add_argument(
-            "--process", help = "Skimmed process selections for analysis-same-event-pairing task", action = "store", nargs = "*",
-            type = str, metavar = "PROCESS", choices = sameEventPairingProcessSelectionsList,
-            ).completer = ChoicesCompleterList(sameEventPairingProcessSelectionsList)
-        groupProcessSEPSelections.add_argument(
             "--cfgBarrelMCRecSignals", help = "Space separated list of MC signals (reconstructed)", nargs = "*", action = "store",
             type = str, metavar = "CFGBARRELMCRECSIGNALS", choices = allMCSignals,
             ).completer = ChoicesCompleterList(allMCSignals)
@@ -125,8 +121,12 @@ class DQEfficiency(object):
             "--cfgFlatTables", help = "Produce a single flat tables with all relevant information of the pairs and single tracks",
             action = "store", type = str.lower, choices = booleanSelections,
             ).completer = ChoicesCompleter(booleanSelections)
+        groupProcessSEPSelections.add_argument(
+            "--process", help = "analysis-same-event-pairing: PROCESS_SWITCH options", action = "store", nargs = "*", type = str,
+            metavar = "PROCESS", choices = sameEventPairingProcessSelectionsList,
+            ).completer = ChoicesCompleterList(sameEventPairingProcessSelectionsList)
         groupProcess = self.parserDQEfficiency.add_argument_group(
-            title = "Choice List for analysis-same-event-pairing task Process options"
+            title = "Choice List for analysis-same-event-pairing PROCESS_SWITCH options"
             )
         
         for key, value in sameEventPairingProcessSelections.items():

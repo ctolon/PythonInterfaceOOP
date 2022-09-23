@@ -168,11 +168,26 @@ class DQFilterPPTask(object):
         This function allows to merge parser_args argument information from different classes
         """
         
+        self.helperOptions.parserHelperOptions = self.parserDQFilterPPTask
+        self.helperOptions.addArguments()
+        
+        self.dplAodReader.parserDplAodReader = self.parserDQFilterPPTask
+        self.dplAodReader.addArguments()
+        
         self.eventSelection.parserEventSelectionTask = self.parserDQFilterPPTask
         self.eventSelection.addArguments()
         
+        self.trackSelection.parserTrackSelectionTask = self.parserDQFilterPPTask
+        self.trackSelection.addArguments()
+        
+        self.trackPropagation.parserTrackPropagation = self.parserDQFilterPPTask
+        self.trackPropagation.addArguments()
+        
         self.multiplicityTable.parserMultiplicityTable = self.parserDQFilterPPTask
         self.multiplicityTable.addArguments()
+        
+        self.tpcTofPidFull.parserTpcTofPidFull = self.parserDQFilterPPTask
+        self.tpcTofPidFull.addArguments()
         
         self.tofEventTime.parserTofEventTime = self.parserDQFilterPPTask
         self.tofEventTime.addArguments()
@@ -180,22 +195,7 @@ class DQFilterPPTask(object):
         self.tofPidBeta.parserTofPidBeta = self.parserDQFilterPPTask
         self.tofPidBeta.addArguments()
         
-        self.tpcTofPidFull.parserTpcTofPidFull = self.parserDQFilterPPTask
-        self.tpcTofPidFull.addArguments()
-        
-        self.trackPropagation.parserTrackPropagation = self.parserDQFilterPPTask
-        self.trackPropagation.addArguments()
-        
-        self.trackSelection.parserTrackSelectionTask = self.parserDQFilterPPTask
-        self.trackSelection.addArguments()
-        
-        self.helperOptions.parserHelperOptions = self.parserDQFilterPPTask
-        self.helperOptions.addArguments()
-        
         self.o2Converters.parserO2Converters = self.parserDQFilterPPTask
         self.o2Converters.addArguments()
-        
-        self.dplAodReader.parserDplAodReader = self.parserDQFilterPPTask
-        self.dplAodReader.addArguments()
         
         self.addArguments()

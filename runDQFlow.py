@@ -23,11 +23,11 @@ import logging
 import logging.config
 import os
 from extramodules.dqTranscations import aodFileChecker, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, trackPropagationChecker
-from extramodules.configSetter import PROCESS_SWITCH, converterSet, CONFIG_SET, debugSettings, dispArgs, prefixSuffixSet
+from extramodules.configSetter import setSwitch, setConverters, setConfig, debugSettings, dispArgs, setPrefixSuffix
 from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.dqFlow import AnalysisQvector
 
-# Predefined selections for PROCESS_SWITCH function
+# Predefined selections for setSwitch function
 centralityTableParameters = [
     "estRun2V0M", "estRun2SPDtks", "estRun2SPDcls", "estRun2CL0", "estRun2CL1", "estFV0A", "estFT0M", "estFDDM", "estNTPV",
     ]
@@ -59,10 +59,12 @@ cliMode = args.onlySelect
 
 forgettedArgsChecker(allArgs) # Transaction Management
 
-# adding prefix for PROCESS_SWITCH function (for no kFlag True situations)
-args.pid = prefixSuffixSet(args.pid, "pid-", '', True, False)
-args.est = prefixSuffixSet(args.est, "est", '', True, False)
-args.FTO = prefixSuffixSet(args.FT0, "process", '', True, False)
+# adding prefix for setSwitch function (for no kFlag True situations)
+args.pid = setPrefixSuffix(args.pid, "pid-", '', True, False)
+args.est = setPrefixSuffix(args.est, "est", '', True, False)
+args.FTO = setPrefixSuffix(args.FT0, "process", '', True, False)
+args.isCovariance = setPrefixSuffix(args.isCovariance, "process", '', True, False)
+args.isWSlice = setPrefixSuffix(args.isWSlice, "process", '', True, False)
 
 # Load the configuration file provided as the first parameter
 config = {}
@@ -84,27 +86,27 @@ if args.onlySelect == "false":
     logging.info("INTERFACE MODE : JSON Additional")
 
 # Iterating in JSON config file
-for key, value in config.items():
-    if type(value) == type(config):
-        for value, value2 in value.items():
+for task, cfgValuePair in config.items():
+    if isinstance(cfgValuePair, dict):
+        for cfg, value in cfgValuePair.items():
             
             # aod
-            if value == "aod-file" and args.aod:
-                config[key][value] = args.aod
-                logging.debug(" - [%s] %s : %s", key, value, args.aod)
+            if cfg == "aod-file" and args.aod:
+                config[task][cfg] = args.aod
+                logging.debug(" - [%s] %s : %s", task, cfg, args.aod)
             
-            # For don't override tof-pid. We use instead of tof-pid-full and tpc-pid-full for pid tables
-            if key == "tof-pid":
+            # For don't override tof-pid: pid tables. We use instead of tof-pid-full and tpc-pid-full for pid tables
+            if task == "tof-pid" and cfg.startswith("pid"):
                 continue
             
-            CONFIG_SET(config, key, value, allArgs, cliMode)
-            PROCESS_SWITCH(config, key, value, allArgs, cliMode, "est", centralityTableParameters, "1/-1")
-            PROCESS_SWITCH(config, key, value, allArgs, cliMode, "pid", pidParameters, "1/-1")
-            PROCESS_SWITCH(config, key, value, allArgs, cliMode, "isCovariance", covParameters, "true/false", True)
-            PROCESS_SWITCH(config, key, value, allArgs, cliMode, "isWSlice", sliceParameters, "true/false", True)
-            if key == "tof-event-time": # we have processRun2 option in tof-event-time and for not overriding it other processRun2 options, we have to specifiy key
-                PROCESS_SWITCH(config, key, value, allArgs, "true", "FT0", ft0Parameters, "true/false")
-            PROCESS_SWITCH(config, key, value, allArgs, cliMode, "isVertexZeq", vertexParameters, "1/0", True)
+            setConfig(config, task, cfg, allArgs, cliMode)
+            setSwitch(config, task, cfg, allArgs, cliMode, "est", centralityTableParameters, "1/-1")
+            setSwitch(config, task, cfg, allArgs, cliMode, "pid", pidParameters, "1/-1")
+            setSwitch(config, task, cfg, allArgs, "true", "isCovariance", covParameters, "true/false")
+            setSwitch(config, task, cfg, allArgs, "true", "isWSlice", sliceParameters, "true/false")
+            if task == "tof-event-time": # we have processRun2 option in tof-event-time and for not overriding it other processRun2 options, we have to specifiy task
+                setSwitch(config, task, cfg, allArgs, "true", "FT0", ft0Parameters, "true/false")
+            setSwitch(config, task, cfg, allArgs, cliMode, "isVertexZeq", vertexParameters, "1/0", True)
 
 # Transactions
 aodFileChecker(args.aod)
@@ -127,7 +129,7 @@ for dep in depsToRun.keys():
     commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"
     logging.debug("%s added your workflow", dep)
 
-commandToRun = converterSet(
+commandToRun = setConverters(
     args.add_mc_conv, args.add_fdd_conv, args.add_track_prop, args.add_weakdecay_ind, updatedConfigFileName, commandToRun
     )
 

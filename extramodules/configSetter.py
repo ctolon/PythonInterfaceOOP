@@ -24,14 +24,14 @@ import json
 
 
 # NOTE This will removed when we have unique name for dilepton-track signals
-def multiConfigurableSet(config: dict, key: str, value: str, arg: list, cliMode):
+def multiConfigurableSet(config: dict, task: str, cfg: str, arg: list, cliMode):
     
     if isinstance(arg, list):
         arg = listToString(arg)
     if cliMode == "false":
-        actualConfig = config[key][value]
+        actualConfig = config[task][cfg]
         arg = actualConfig + "," + arg
-    config[key][value] = arg
+    config[task][cfg] = arg
 
 
 def dispArgs(allArgs: dict):
@@ -42,11 +42,11 @@ def dispArgs(allArgs: dict):
     """
     logging.info("Args provided configurations List")
     print("====================================================================================================================")
-    for key, value in allArgs.items():
-        if value is not None:
-            if isinstance(value, list):
-                listToString(value)
-            logging.info("--%s : %s ", key, value)
+    for task, cfg in allArgs.items():
+        if cfg is not None:
+            if isinstance(cfg, list):
+                listToString(cfg)
+            logging.info("--%s : %s ", task, cfg)
     print("====================================================================================================================")
 
 
@@ -88,7 +88,7 @@ def debugSettings(argDebug: bool, argLogFile: bool, fileName: str):
         log.addHandler(fh)
 
 
-def converterSet(
+def setConverters(
         add_mc_conv: bool, add_fdd_conv: bool, add_track_prop: bool, add_weakdecay_ind: bool, updatedConfigFileName: str, commandToRun: str
     ):
     """Converter task setter function
@@ -226,7 +226,7 @@ def tableProducer(
                 tablesToProduce[table] = 1
 
 
-def SELECTION_SET(config: dict, deps: dict, targetCfg: list, cliMode: bool):
+def setSelection(config: dict, deps: dict, targetCfg: list, cliMode: bool):
     """If the arguments are set with very different naming conventions and they are for selection, this function is used to set the values
 
     Args:
@@ -250,48 +250,48 @@ def SELECTION_SET(config: dict, deps: dict, targetCfg: list, cliMode: bool):
             raise TypeError("Taskname - Process Function pair should be a dictionary type")
 
 
-def CONFIG_SET(config: dict, key: str, value: str, allArgs: dict, cliMode: bool):
-    """This function provides directly set to argument parameter, if argument naming and json value naming equals
+def setConfig(config: dict, task: str, cfg: str, allArgs: dict, cliMode: bool):
+    """This function provides directly set to argument parameter, if argument naming and json cfg naming equals
 
     Args:
         config (dict): Input as JSON config file
-        key (str): Key as argument
-        value (str): Value as parameter
+        task (str): Task as argument
+        cfg (str): Configurable or Process Func as parameter
         allArgs (dict): Configured args in CLI
         cliMode (bool): CLI mode
     """
     
     for keyCfg, valueCfg in allArgs.items():
-        if (value == keyCfg) and (valueCfg is not None):
+        if (cfg == keyCfg) and (valueCfg is not None):
             if isinstance(valueCfg, list):
                 valueCfg = listToString(valueCfg)
             if cliMode == "false":
-                actualConfig = config[key][value]
+                actualConfig = config[task][cfg]
                 valueCfg = actualConfig + "," + valueCfg
-            config[key][value] = valueCfg
-            logging.debug(" - [%s] %s : %s", key, value, valueCfg)
+            config[task][cfg] = valueCfg
+            logging.debug(" - [%s] %s : %s", task, cfg, valueCfg)
 
 
-def PROCESS_SWITCH(
-        config: dict, key: str, value: str, allArgs: dict, cliMode: str, argument: str, parameters: list, switchType: str, kFlag = False
+def setSwitch(
+        config: dict, task: str, cfg: str, allArgs: dict, cliMode: str, argument: str, parameters: list, switchType: str, kFlag = False
     ):
     """This method provides configure parameters with SWITCH_ON/SWITCH_OFF (both for configurables and process functions)
 
     Args:
         config (dict): JSON config file as input
-        key (str): Key
-        value (str): Value
+        task (str): Task
+        cfg (str): Configurable or Process Func
         allArgs (dict): Configured args in CLI
         cliMode (bool): CLI mode
         argument (str): Selected argument from configured args
         parameters (list): All available parameters for argument
         switchType (str): Switch type usage in string --> "SWITCH_ON/SWITCHOFF"
-        kFlag (bool): If True -> Key prefix-suffix based instead of value prefix-suffix based PROCESS_SWITCH (Default is value based)
+        kFlag (bool): If True -> Task prefix-suffix based instead of cfg prefix-suffix based setSwitch (Default is cfg based)
     """
     
     possibleSwitchTypes = ["1/-1", "1/0", "true/false"] # you have to add new switch type here if you need
     if switchType not in possibleSwitchTypes:
-        logging.error("%s is invalid argument for PROCESS_SWITCH", switchType)
+        logging.error("%s is invalid argument for setSwitch", switchType)
         raise ValueError("Invalid switchType. Expected one of: %s" % possibleSwitchTypes)
     
     switchType = stringToListWithSlash(switchType)
@@ -308,27 +308,27 @@ def PROCESS_SWITCH(
         if kFlag is False:
             if isinstance(valueCfg, list) and keyCfg == argument:
                 for element in valueCfg:
-                    if (value == element) and (element is not None):
-                        config[key][value] = SWITCH_ON
-                        logging.debug(" - [%s] %s : %s", key, value, SWITCH_ON)
+                    if (cfg == element) and (element is not None):
+                        config[task][cfg] = SWITCH_ON
+                        logging.debug(" - [%s] %s : %s", task, cfg, SWITCH_ON)
                 
                 if (cliMode == "true"):
                     for param in parameters:
-                        if param not in valueCfg and param == value: # param should equals value for getting key info
-                            config[key][value] = SWITCH_OFF
-                            logging.debug(" - [%s] %s : %s", key, value, SWITCH_OFF)
+                        if param not in valueCfg and param == cfg: # param should equals cfg for getting task info
+                            config[task][cfg] = SWITCH_OFF
+                            logging.debug(" - [%s] %s : %s", task, cfg, SWITCH_OFF)
                             # print(param)
             
             elif isinstance(valueCfg, str) and keyCfg == argument:
-                if (value == valueCfg) and (valueCfg is not None):
-                    config[key][value] = SWITCH_ON
-                    logging.debug(" - [%s] %s : %s", key, value, SWITCH_ON)
+                if (cfg == valueCfg) and (valueCfg is not None):
+                    config[task][cfg] = SWITCH_ON
+                    logging.debug(" - [%s] %s : %s", task, cfg, SWITCH_ON)
                 
                 if (cliMode == "true"):
                     for param in parameters:
-                        if param != valueCfg and param == value: # param should equals value for getting key info
-                            config[key][param] = SWITCH_OFF
-                            logging.debug(" - [%s] %s : %s", key, param, SWITCH_OFF)
+                        if param != valueCfg and param == cfg: # param should equals cfg for getting task info
+                            config[task][param] = SWITCH_OFF
+                            logging.debug(" - [%s] %s : %s", task, param, SWITCH_OFF)
         
         # NOTE can be deleted when we have better naming conventions
         if kFlag is True:
@@ -343,31 +343,31 @@ def PROCESS_SWITCH(
             
             elif keyCfg.startswith("FT0") and keyCfg == argument: #TODO Refactor FT0 to --> isFT0
                 keyCfgFixed = "process" + keyCfg
-                key = "tof-event-time"
+                task = "tof-event-time"
             
             if (valueCfg == SWITCH_ON):
                 #print(keyCfg)
-                if value == keyCfgFixed and keyCfg == argument: # json value should be equal prefixed arg and keyCfg from allArgs should equals to arg
-                    config[key][value] = SWITCH_ON
-                    logging.debug(" - [%s] %s : %s", key, value, SWITCH_ON)
+                if cfg == keyCfgFixed and keyCfg == argument: # json cfg should be equal prefixed arg and keyCfg from allArgs should equals to arg
+                    config[task][cfg] = SWITCH_ON
+                    logging.debug(" - [%s] %s : %s", task, cfg, SWITCH_ON)
                 
                 for param in parameters:
-                    if param != keyCfgFixed and value == param and keyCfg == argument: # for converting other values false
-                        config[key][value] = SWITCH_OFF
-                        logging.debug(" - [%s] %s : %s", key, value, SWITCH_OFF)
+                    if param != keyCfgFixed and cfg == param and keyCfg == argument: # for converting other values false
+                        config[task][cfg] = SWITCH_OFF
+                        logging.debug(" - [%s] %s : %s", task, cfg, SWITCH_OFF)
             
             elif (valueCfg == SWITCH_OFF):
-                if value == keyCfgFixed and keyCfg == argument:
-                    config[key][value] = SWITCH_OFF
-                    logging.debug(" - [%s] %s : %s", key, value, SWITCH_OFF)
+                if cfg == keyCfgFixed and keyCfg == argument:
+                    config[task][cfg] = SWITCH_OFF
+                    logging.debug(" - [%s] %s : %s", task, cfg, SWITCH_OFF)
                 
                 for param in parameters:
-                    if param != keyCfgFixed and value == param and keyCfg == argument:
-                        config[key][value] = SWITCH_ON
-                        logging.debug(" - [%s] %s : %s", key, value, SWITCH_ON)
+                    if param != keyCfgFixed and cfg == param and keyCfg == argument:
+                        config[task][cfg] = SWITCH_ON
+                        logging.debug(" - [%s] %s : %s", task, cfg, SWITCH_ON)
 
 
-def PROCESS_DUMMY(config: dict, dummyHasTasks = None):
+def setProcessDummy(config: dict, dummyHasTasks = None):
     """Dummy Automizer
 
     Args:
@@ -408,32 +408,32 @@ def PROCESS_DUMMY(config: dict, dummyHasTasks = None):
                                 #logging.debug(" - [%s] processDummy : true", k)
 
 
-def NOT_CONFIGURED_SET_FALSE(config: dict, key: str, value: str, argument: list, parameters: list, cliMode: bool, selectedKey = None):
+def setFalseHasDeps(config: dict, task: str, cfg: str, argument: list, parameters: list, cliMode: bool, selectedKey = None):
     """function to pull all process function values false when the argument with dependencies is not configured. Otherwise, the process will crash due to dependencies.
 
     Args:
         config (dict): Input as JSON config file
-        key (str): Config Key
-        value (str): Config value
+        task (str): Config Task
+        cfg (str): Config cfg
         argument (list): CLI Argument
         parameters (list): Your parameter list
         cliMode (bool): CLI mode
-        selectedKey (str, optional): If you wish, you can define one selected key for more control
+        selectedKey (str, optional): If you wish, you can define one selected task for more control
     """
     
     if argument is None and cliMode == "true":
         for process in parameters:
-            if value == process and selectedKey is None: # for getting key info from json
-                config[key][value] = "false"
-                logging.info(" - [%s] %s : false", key, value)
-            elif value == process and key == selectedKey: # also with selected key for more control
-                config[key][value] = "false"
-                logging.info(" - [%s] %s : false", key, value)
+            if cfg == process and selectedKey is None: # for getting task info from json
+                config[task][cfg] = "false"
+                logging.info(" - [%s] %s : false", task, cfg)
+            elif cfg == process and task == selectedKey: # also with selected task for more control
+                config[task][cfg] = "false"
+                logging.info(" - [%s] %s : false", task, cfg)
             else:
                 continue
 
 
-def prefixSuffixSet(argument, prefix = None, suffix = None, kFlagPrefix = None, kFlagSuffix = None):
+def setPrefixSuffix(argument, prefix = None, suffix = None, kFlagPrefix = None, kFlagSuffix = None):
     """Prefix and/or suffix setter function
 
     Args:

@@ -126,14 +126,13 @@ class TableMakerMC(object):
             "--cfgMCsignals", help = "Space separated list of MC signals", action = "store", nargs = "*", type = str,
             metavar = "CFGMCSIGNALS", choices = allMCSignals,
             ).completer = ChoicesCompleterList(allMCSignals)
-        
-        groupProcessTableMaker = self.parserTableMakerMC.add_argument_group(title = "Data processor options: table-maker-m-c")
-        groupProcessTableMaker.add_argument(
-            "--process", help = "Process Selection options for tableMaker/tableMakerMC Data Processing and Skimming", action = "store",
-            type = str, nargs = "*", metavar = "PROCESS", choices = tableMakerProcessSelectionsList,
+        groupTableMakerConfigs.add_argument(
+            "--process", help = "table-maker-m-c: PROCESS_SWITCH options", action = "store", type = str, nargs = "*", metavar = "PROCESS",
+            choices = tableMakerProcessSelectionsList,
             ).completer = ChoicesCompleterList(tableMakerProcessSelectionsList)
+        groupProcess = self.parserTableMakerMC.add_argument_group(title = "Choice List for table-maker-m-c PROCESS_SWITCH options")
         for key, value in tableMakerProcessSelections.items():
-            groupProcessTableMaker.add_argument(key, help = value, action = "none")
+            groupProcess.add_argument(key, help = value, action = "none")
         
         # Core Part
         groupCoreSelections = self.parserTableMakerMC.add_argument_group(title = "Core configurations that must be configured")
@@ -154,14 +153,29 @@ class TableMakerMC(object):
         This function allows to merge parser_args argument information from different classes
         """
         
+        self.helperOptions.parserHelperOptions = self.parserTableMakerMC
+        self.helperOptions.addArguments()
+        
+        self.dplAodReader.parserDplAodReader = self.parserTableMakerMC
+        self.dplAodReader.addArguments()
+        
         self.eventSelection.parserEventSelectionTask = self.parserTableMakerMC
         self.eventSelection.addArguments()
+        
+        self.trackSelection.parserTrackSelectionTask = self.parserTableMakerMC
+        self.trackSelection.addArguments()
+        
+        self.trackPropagation.parserTrackPropagation = self.parserTableMakerMC
+        self.trackPropagation.addArguments()
+        
+        self.multiplicityTable.parserMultiplicityTable = self.parserTableMakerMC
+        self.multiplicityTable.addArguments()
         
         self.centralityTable.parserCentralityTable = self.parserTableMakerMC
         self.centralityTable.addArguments()
         
-        self.multiplicityTable.parserMultiplicityTable = self.parserTableMakerMC
-        self.multiplicityTable.addArguments()
+        self.tpcTofPidFull.parserTpcTofPidFull = self.parserTableMakerMC
+        self.tpcTofPidFull.addArguments()
         
         self.tofEventTime.parserTofEventTime = self.parserTableMakerMC
         self.tofEventTime.addArguments()
@@ -169,22 +183,7 @@ class TableMakerMC(object):
         self.tofPidBeta.parserTofPidBeta = self.parserTableMakerMC
         self.tofPidBeta.addArguments()
         
-        self.tpcTofPidFull.parserTpcTofPidFull = self.parserTableMakerMC
-        self.tpcTofPidFull.addArguments()
-        
-        self.trackPropagation.parserTrackPropagation = self.parserTableMakerMC
-        self.trackPropagation.addArguments()
-        
-        self.trackSelection.parserTrackSelectionTask = self.parserTableMakerMC
-        self.trackSelection.addArguments()
-        
-        self.helperOptions.parserHelperOptions = self.parserTableMakerMC
-        self.helperOptions.addArguments()
-        
         self.o2Converters.parserO2Converters = self.parserTableMakerMC
         self.o2Converters.addArguments()
-        
-        self.dplAodReader.parserDplAodReader = self.parserTableMakerMC
-        self.dplAodReader.addArguments()
         
         self.addArguments()

@@ -64,7 +64,13 @@ class TpcTofPidFull(object):
         for k, v in pidSelections.items():
             pidSelectionsList.append(k)
         
-        booleanSelections = ["true", "false"]
+        sliceSelections = {
+            "WSlice": "Process with track slices",
+            "WoSlice": "Process without track slices"
+            }
+        sliceSelectionsList = []
+        for k, v in sliceSelections.items():
+            sliceSelectionsList.append(k)
         
         # Interface
         groupPID = self.parserTpcTofPidFull.add_argument_group(title = "Data processor options: tpc-pid-full, tof-pid-full")
@@ -78,8 +84,12 @@ class TpcTofPidFull(object):
         
         groupTofPid = self.parserTpcTofPidFull.add_argument_group(title = "Data processor options: tof-pid, tof-pid-full")
         groupTofPid.add_argument(
-            "--isWSlice", help = "Process with track slices", action = "store", type = str.lower, choices = booleanSelections,
-            ).completer = ChoicesCompleter(booleanSelections)
+            "--isWSlice", help = "tof-pid, tof-pid-full: PROCESS_SWITCH options", action = "store", metavar = "ISWSLICE", type = str,
+            choices = sliceSelectionsList,
+            ).completer = ChoicesCompleter(sliceSelectionsList)
+        groupProcess = self.parserTpcTofPidFull.add_argument_group(title = "Choice List for tof-pid, tof-pid-full PROCESS_SWITCH options")
+        for key, value in sliceSelections.items():
+            groupProcess.add_argument(key, help = value, action = "none")
     
     def parseArgs(self):
         """

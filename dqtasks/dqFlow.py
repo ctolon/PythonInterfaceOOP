@@ -136,14 +136,29 @@ class AnalysisQvector(object):
         This function allows to merge parser_args argument information from different classes
         """
         
+        self.helperOptions.parserHelperOptions = self.parserAnalysisQvector
+        self.helperOptions.addArguments()
+        
+        self.dplAodReader.parserDplAodReader = self.parserAnalysisQvector
+        self.dplAodReader.addArguments()
+        
         self.eventSelection.parserEventSelectionTask = self.parserAnalysisQvector
         self.eventSelection.addArguments()
+        
+        self.trackSelection.parserTrackSelectionTask = self.parserAnalysisQvector
+        self.trackSelection.addArguments()
+        
+        self.trackPropagation.parserTrackPropagation = self.parserAnalysisQvector
+        self.trackPropagation.addArguments()
+        
+        self.multiplicityTable.parserMultiplicityTable = self.parserAnalysisQvector
+        self.multiplicityTable.addArguments()
         
         self.centralityTable.parserCentralityTable = self.parserAnalysisQvector
         self.centralityTable.addArguments()
         
-        self.multiplicityTable.parserMultiplicityTable = self.parserAnalysisQvector
-        self.multiplicityTable.addArguments()
+        self.tpcTofPidFull.parserTpcTofPidFull = self.parserAnalysisQvector
+        self.tpcTofPidFull.addArguments()
         
         self.tofEventTime.parserTofEventTime = self.parserAnalysisQvector
         self.tofEventTime.addArguments()
@@ -151,22 +166,7 @@ class AnalysisQvector(object):
         self.tofPidBeta.parserTofPidBeta = self.parserAnalysisQvector
         self.tofPidBeta.addArguments()
         
-        self.tpcTofPidFull.parserTpcTofPidFull = self.parserAnalysisQvector
-        self.tpcTofPidFull.addArguments()
-        
-        self.trackPropagation.parserTrackPropagation = self.parserAnalysisQvector
-        self.trackPropagation.addArguments()
-        
-        self.trackSelection.parserTrackSelectionTask = self.parserAnalysisQvector
-        self.trackSelection.addArguments()
-        
-        self.helperOptions.parserHelperOptions = self.parserAnalysisQvector
-        self.helperOptions.addArguments()
-        
         self.o2Converters.parserO2Converters = self.parserAnalysisQvector
         self.o2Converters.addArguments()
-        
-        self.dplAodReader.parserDplAodReader = self.parserAnalysisQvector
-        self.dplAodReader.addArguments()
         
         self.addArguments()

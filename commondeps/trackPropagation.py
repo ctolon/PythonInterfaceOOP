@@ -38,14 +38,23 @@ class TrackPropagation(object):
         """
         
         # Predefined Selections
-        booleanSelections = ["true", "false"]
+        covSelections = {
+            "Standard": "Process without covariance",
+            "Covariance": "Process with covariance"
+            }
+        covSelectionsList = []
+        for k, v in covSelections.items():
+            covSelectionsList.append(k)
         
         # Interface
         groupTrackPropagation = self.parserTrackPropagation.add_argument_group(title = "Data processor options: track-propagation")
         groupTrackPropagation.add_argument(
-            "--isCovariance", help = "track-propagation : If false, Process without covariance, If true Process with covariance",
-            action = "store", type = str.lower, choices = (booleanSelections),
-            ).completer = ChoicesCompleter(booleanSelections)
+            "--isCovariance", help = "track-propagation: PROCESS_SWITCH options", action = "store", metavar = "ISCOVARIANCE", type = str,
+            choices = (covSelectionsList),
+            ).completer = ChoicesCompleter(covSelectionsList)
+        groupProcess = self.parserTrackPropagation.add_argument_group(title = "Choice List for track-propagation PROCESS_SWITCH options")
+        for key, value in covSelections.items():
+            groupProcess.add_argument(key, help = value, action = "none")
     
     def parseArgs(self):
         """

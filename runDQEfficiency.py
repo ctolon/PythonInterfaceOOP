@@ -23,12 +23,12 @@ import logging
 import logging.config
 import os
 from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, depsChecker, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, oneToMultiDepsChecker
-from extramodules.configSetter import CONFIG_SET, NOT_CONFIGURED_SET_FALSE, PROCESS_SWITCH, SELECTION_SET, debugSettings, PROCESS_DUMMY, dispArgs, multiConfigurableSet, prefixSuffixSet
+from extramodules.configSetter import setConfig, setFalseHasDeps, setSwitch, setSelection, debugSettings, setProcessDummy, dispArgs, multiConfigurableSet, setPrefixSuffix
 from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.dqEfficiency import DQEfficiency
 
-# Predefined selections for PROCESS_SWITCH function
-sepParameters = ["processJpsiToEESkimmed", "processJpsiToMuMuSkimmed", "processJpsiToMuMuVertexingSkimmed"]
+# Predefined selections for setSwitch function
+SameEventPairingParameters = ["processJpsiToEESkimmed", "processJpsiToMuMuSkimmed", "processJpsiToMuMuVertexingSkimmed"]
 # yapf: disable
 # All Dependencies
 analysisSelectionDeps = {
@@ -38,13 +38,13 @@ analysisSelectionDeps = {
     "dileptonTrackDimuonMuonSelection": {"analysis-dilepton-track": "processDimuonMuonSkimmed"},
     "dileptonTrackDielectronKaonSelection": {"analysis-dilepton-track": "processDielectronKaonSkimmed"}
     }
-sepKey = "analysis-same-event-pairing"
-sepDeps = {
+sameEventPairingTaskName = "analysis-same-event-pairing"
+SameEventPairingDeps = {
     "processJpsiToEESkimmed": {"analysis-track-selection": "processSkimmed"},
     "processJpsiToMuMuSkimmed": {"analysis-muon-selection": "processSkimmed"},
     "processJpsiToMuMuVertexingSkimmed": {"analysis-muon-selection": "processSkimmed"}
     }
-dileptonTrackKey = "analysis-dilepton-track"
+dileptonTrackTaskName = "analysis-dilepton-track"
 dileptonTrackDeps = {
     "processDimuonMuonSkimmed": {"analysis-muon-selection": "processSkimmed"},
     "processDielectronKaonSkimmed": {"analysis-track-selection": "processSkimmed"}
@@ -65,8 +65,8 @@ cliMode = args.onlySelect
 
 forgettedArgsChecker(allArgs) # Transcation management
 
-# adding prefix for PROCESS_SWITCH function (for no kFlag True situations)
-args.process = prefixSuffixSet(args.process, "process", 'Skimmed', True, True)
+# adding prefix for setSwitch function (for no kFlag True situations)
+args.process = setPrefixSuffix(args.process, "process", 'Skimmed', True, True)
 
 # Load the configuration file provided as the first parameter
 config = {}
@@ -87,45 +87,45 @@ if cliMode == "true":
 if cliMode == "false":
     logging.info("INTERFACE MODE : JSON Additional")
 
-SELECTION_SET(config, analysisSelectionDeps, args.analysis, cliMode) # Set selections
+setSelection(config, analysisSelectionDeps, args.analysis, cliMode) # Set selections
 
 # Iterating in JSON config file
-for key, value in config.items():
-    if type(value) == type(config):
-        for value, value2 in value.items():
+for task, cfgValuePair in config.items():
+    if isinstance(cfgValuePair, dict):
+        for cfg, value in cfgValuePair.items():
             
             # aod
-            if value == "aod-file" and args.aod:
-                config[key][value] = args.aod
-                logging.debug(" - [%s] %s : %s", key, value, args.aod)
+            if cfg == "aod-file" and args.aod:
+                config[task][cfg] = args.aod
+                logging.debug(" - [%s] %s : %s", task, cfg, args.aod)
             # reader
-            if value == "aod-reader-json" and args.reader:
-                config[key][value] = args.reader
-                logging.debug(" - [%s] %s : %s", key, value, args.reader)
-                        
+            if cfg == "aod-reader-json" and args.reader:
+                config[task][cfg] = args.reader
+                logging.debug(" - [%s] %s : %s", task, cfg, args.reader)
+            
             # Interface Logic
-            CONFIG_SET(config, key, value, allArgs, cliMode)
-            PROCESS_SWITCH(config, key, value, allArgs, cliMode, "process", sepParameters, "true/false")
-            NOT_CONFIGURED_SET_FALSE(config, key, value, args.process, sepParameters, cliMode)
-            mandatoryArgChecker(config, key, value, taskNameInConfig, "processSkimmed")
+            setConfig(config, task, cfg, allArgs, cliMode)
+            setSwitch(config, task, cfg, allArgs, cliMode, "process", SameEventPairingParameters, "true/false")
+            setFalseHasDeps(config, task, cfg, args.process, SameEventPairingParameters, cliMode)
+            mandatoryArgChecker(config, task, cfg, taskNameInConfig, "processSkimmed")
             
             # analysis-dilepton-track # TODO Discuss naming conventions regarding to string conflicts, dilepton track signals should have unique name
-            if key == "analysis-dilepton-track":
-                if value == "cfgBarrelMCRecSignals" and args.cfgBarrelDileptonMCRecSignals:
-                    multiConfigurableSet(config, key, value, args.cfgBarrelDileptonMCRecSignals, cliMode)
-                    logging.debug(" - [%s] %s : %s", key, value, args.cfgBarrelDileptonMCRecSignals)
+            if task == "analysis-dilepton-track":
+                if cfg == "cfgBarrelMCRecSignals" and args.cfgBarrelDileptonMCRecSignals:
+                    multiConfigurableSet(config, task, cfg, args.cfgBarrelDileptonMCRecSignals, cliMode)
+                    logging.debug(" - [%s] %s : %s", task, cfg, args.cfgBarrelDileptonMCRecSignals)
                 
-                if value == "cfgBarrelMCGenSignals" and args.cfgBarrelDileptonMCGenSignals:
-                    multiConfigurableSet(config, key, value, args.cfgBarrelDileptonMCGenSignals, cliMode)
-                    logging.debug(" - [%s] %s : %s", key, value, args.cfgBarrelDileptonMCGenSignals)
+                if cfg == "cfgBarrelMCGenSignals" and args.cfgBarrelDileptonMCGenSignals:
+                    multiConfigurableSet(config, task, cfg, args.cfgBarrelDileptonMCGenSignals, cliMode)
+                    logging.debug(" - [%s] %s : %s", task, cfg, args.cfgBarrelDileptonMCGenSignals)
 
-PROCESS_DUMMY(config) # dummy automizer
+setProcessDummy(config) # dummy automizer
 
 # Transactions
 aodFileChecker(args.aod)
 oneToMultiDepsChecker(args.process, "sameEventPairing", args.analysis, "analysis")
-depsChecker(config, sepDeps, sepKey)
-depsChecker(config, dileptonTrackDeps, dileptonTrackKey)
+depsChecker(config, SameEventPairingDeps, sameEventPairingTaskName)
+depsChecker(config, dileptonTrackDeps, dileptonTrackTaskName)
 
 # Write the updated configuration file into a temporary file
 updatedConfigFileName = "tempConfigDQEfficiency.json"

@@ -38,15 +38,25 @@ class TofEventTime(object):
         """
         
         # Predefined Selections
-        ft0Selections = ["FT0", "NoFT0", "OnlyFT0", "Run2"]
+        ft0Selections = {
+            "FT0": "FT0: Process with FT0",
+            "NoFT0": "Process without FT0",
+            "OnlyFT0": "Process only with FT0",
+            "Run2": "Process with Run2 data"
+            }
+        ft0SelectionsList = []
+        for k, v in ft0Selections.items():
+            ft0SelectionsList.append(k)
         
         # Interface
         groupTofEventTime = self.parserTofEventTime.add_argument_group(title = "Data processor options: tof-event-time")
         groupTofEventTime.add_argument(
-            "--FT0",
-            help = "FT0: Process with FT0, NoFT0: Process without FT0, OnlyFT0: Process only with FT0, Run2: Process with Run2 data",
-            action = "store", type = str, choices = ft0Selections,
-            ).completer = ChoicesCompleter(ft0Selections)
+            "--FT0", help = "tof-event-time: PROCESS_SWITCH options", action = "store", metavar = "FT0", type = str,
+            choices = ft0SelectionsList,
+            ).completer = ChoicesCompleter(ft0SelectionsList)
+        groupProcess = self.parserTofEventTime.add_argument_group(title = "Choice List for tof-event-time PROCESS_SWITCH options")
+        for key, value in ft0Selections.items():
+            groupProcess.add_argument(key, help = value, action = "none")
     
     def parseArgs(self):
         """

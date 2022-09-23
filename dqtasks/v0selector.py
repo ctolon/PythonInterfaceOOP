@@ -101,14 +101,29 @@ class V0selector(object):
         This function allows to merge parser_args argument information from different classes
         """
         
+        self.helperOptions.parserHelperOptions = self.parserV0selector
+        self.helperOptions.addArguments()
+        
+        self.dplAodReader.parserDplAodReader = self.parserV0selector
+        self.dplAodReader.addArguments()
+        
         self.eventSelection.parserEventSelectionTask = self.parserV0selector
         self.eventSelection.addArguments()
+        
+        self.trackSelection.parserTrackSelectionTask = self.parserV0selector
+        self.trackSelection.addArguments()
+        
+        self.trackPropagation.parserTrackPropagation = self.parserV0selector
+        self.trackPropagation.addArguments()
+        
+        self.multiplicityTable.parserMultiplicityTable = self.parserV0selector
+        self.multiplicityTable.addArguments()
         
         self.centralityTable.parserCentralityTable = self.parserV0selector
         self.centralityTable.addArguments()
         
-        self.multiplicityTable.parserMultiplicityTable = self.parserV0selector
-        self.multiplicityTable.addArguments()
+        self.tpcTofPidFull.parserTpcTofPidFull = self.parserV0selector
+        self.tpcTofPidFull.addArguments()
         
         self.tofEventTime.parserTofEventTime = self.parserV0selector
         self.tofEventTime.addArguments()
@@ -116,22 +131,7 @@ class V0selector(object):
         self.tofPidBeta.parserTofPidBeta = self.parserV0selector
         self.tofPidBeta.addArguments()
         
-        self.tpcTofPidFull.parserTpcTofPidFull = self.parserV0selector
-        self.tpcTofPidFull.addArguments()
-        
-        self.trackPropagation.parserTrackPropagation = self.parserV0selector
-        self.trackPropagation.addArguments()
-        
-        self.trackSelection.parserTrackSelectionTask = self.parserV0selector
-        self.trackSelection.addArguments()
-        
-        self.helperOptions.parserHelperOptions = self.parserV0selector
-        self.helperOptions.addArguments()
-        
         self.o2Converters.parserO2Converters = self.parserV0selector
         self.o2Converters.addArguments()
-        
-        self.dplAodReader.parserDplAodReader = self.parserV0selector
-        self.dplAodReader.addArguments()
         
         self.addArguments()

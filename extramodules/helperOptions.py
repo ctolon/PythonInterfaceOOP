@@ -54,7 +54,7 @@ class HelperOptions(object):
         # Interface
         groupDebugOptions = self.parserHelperOptions.add_argument_group(title = "Additional Debug Options")
         groupDebugOptions.add_argument(
-            "--debug", help = "execute with debug options", action = "store", type = str.upper, default = "INFO",
+            "--debug", help = "execute with debug options", action = "store", type = str.upper, metavar = "DEBUG", default = "INFO",
             choices = debugLevelSelectionsList,
             ).completer = ChoicesCompleterList(debugLevelSelectionsList)
         groupDebugOptions.add_argument("--logFile", help = "Enable logger for both file and CLI", action = "store_true")
