@@ -69,7 +69,7 @@ forgettedArgsChecker(allArgs) # Transaction management
 
 # adding prefix for setSwitch function (for no kFlag True situations)
 args.pid = setPrefixSuffix(args.pid, "pid-", '', True, False)
-args.FTO = setPrefixSuffix(args.FT0, "process", '', True, False)
+args.FT0 = setPrefixSuffix(args.FT0, "process", '', True, False)
 args.isCovariance = setPrefixSuffix(args.isCovariance, "process", '', True, False)
 args.isWSlice = setPrefixSuffix(args.isWSlice, "process", '', True, False)
 

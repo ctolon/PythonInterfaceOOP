@@ -356,4 +356,4 @@ Third Command To Run:
 python3 runTableReader.py configs/configAnalysisData.json --aod dileptonAOD.root --analysis eventSelection trackSelection sameEventPairing dileptonHadron --process JpsiToEE --cfgQA true --cfgTrackCuts jpsiPID1 jpsiPID2 --debug debug --logFile
 ```
 
-[← Go back to Instructions For Python Scripts](5_InstructionsForPythonScripts.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Design Notes →](7_DesignNotes.md)
+[← Go back to Instructions For Python Scripts](5_InstructionsForPythonScripts.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Developer Guide →](7_DeveloperGuide.md)

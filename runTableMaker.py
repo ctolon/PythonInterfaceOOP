@@ -133,7 +133,7 @@ forgettedArgsChecker(allArgs)
 args.process = setPrefixSuffix(args.process, "process", '', True, False)
 args.pid = setPrefixSuffix(args.pid, "pid-", '', True, False)
 args.est = setPrefixSuffix(args.est, "est", '', True, False)
-args.FTO = setPrefixSuffix(args.FT0, "process", '', True, False)
+args.FT0 = setPrefixSuffix(args.FT0, "process", '', True, False)
 args.isCovariance = setPrefixSuffix(args.isCovariance, "process", '', True, False)
 args.isWSlice = setPrefixSuffix(args.isWSlice, "process", '', True, False)
 
