@@ -59,11 +59,11 @@ specificDeps = {
     "processBarrelOnlyWithEventFilter": ["o2-analysis-dq-filter-pp"],
     "processBarrelOnlyWithQvector": ["o2-analysis-centrality-table", "o2-analysis-dq-flow"],
     "processBarrelOnlyWithCent": ["o2-analysis-centrality-table"],
-    "processMuonOnly": [],
-    "processMuonOnlyWithCov": [],
-    "processMuonOnlyWithCent": ["o2-analysis-centrality-table"],
-    "processMuonOnlyWithQvector": ["o2-analysis-centrality-table", "o2-analysis-dq-flow"],
-    "processMuonOnlyWithFilter": ["o2-analysis-dq-filter-pp"]
+    "processMuonOnly": ["o2-analysis-fwdtrackextension"],
+    "processMuonOnlyWithCov": ["o2-analysis-fwdtrackextension"],
+    "processMuonOnlyWithCent": ["o2-analysis-centrality-table", "o2-analysis-fwdtrackextension"],
+    "processMuonOnlyWithQvector": ["o2-analysis-centrality-table", "o2-analysis-dq-flow", "o2-analysis-fwdtrackextension"],
+    "processMuonOnlyWithFilter": ["o2-analysis-dq-filter-pp", "o2-analysis-fwdtrackextension"]
     # "processFullWithCentWithV0Bits": ["o2-analysis-centrality-table","o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices"],
     # "processFullWithEventFilterWithV0Bits": ["o2-analysis-dq-filter-pp","o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices"],
     }
