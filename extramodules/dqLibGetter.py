@@ -33,26 +33,19 @@ class DQLibGetter(object):
         object (object): self
     """
     
-    def __init__(self):
-        super(DQLibGetter, self).__init__()
-    
-    def getAnalysisSelections(self):
-        """This function allows to get all analysis selections from DQ libraries
-
-        Returns:
-            allAnalysisCuts, allMCSignals, allSels, allMixing: All analysis selections with order
-        """
+    def __init__(self, allAnalysisCuts = [], allMCSignals = [], allSels = [], allMixing = []) -> None:
         
-        allAnalysisCuts = [] # all analysis cuts
+        self.allAnalysisCuts = list(allAnalysisCuts)
+        self.allMCSignals = list(allMCSignals)
+        self.allSels = list(allSels)
+        self.allMixing = list(allMixing)
+        
         allPairCuts = [] # only pair cuts
         nAddedallAnalysisCutsList = [] # e.g. muonQualityCuts:2
         nAddedPairCutsList = [] # e.g paircutMass:3
         selsWithOneColon = [] # track/muon cut:paircut:n
-        allSels = [] # track/muon cut::n
         oneColon = ":" # Namespace reference
         doubleColon = "::" # Namespace reference
-        allMCSignals = [] # Get MC Signals
-        allMixing = [] # Get Event Mixing vars
         
         headers = {
             "User-Agent":
@@ -96,14 +89,14 @@ class DQLibGetter(object):
                 stringIfSearch = [x for x in f if "if" in x]
                 for i in stringIfSearch:
                     getSignals = re.findall('"([^"]*)"', i)
-                    allMCSignals = allMCSignals + getSignals
+                    self.allMCSignals = self.allMCSignals + getSignals
         
         with open("tempMixingLibrary.h") as f:
             for line in f:
                 stringIfSearch = [x for x in f if "if" in x]
                 for i in stringIfSearch:
                     getMixing = re.findall('"([^"]*)"', i)
-                    allMixing = allMixing + getMixing
+                    self.allMixing = self.allMixing + getMixing
         
         with open("tempCutsLibrary.h") as f:
             for line in f:
@@ -114,9 +107,9 @@ class DQLibGetter(object):
                     if getPairCuts: # if pair cut list is not empty
                         allPairCuts = (allPairCuts + getPairCuts) # Get Only pair cuts from CutsLibrary.h
                         namespacedPairCuts = [x + oneColon for x in allPairCuts] # paircut:
-                    allAnalysisCuts = (allAnalysisCuts + getCuts) # Get all Cuts from CutsLibrary.h
-                    nameSpacedallAnalysisCuts = [x + oneColon for x in allAnalysisCuts] # cut:
-                    nameSpacedallAnalysisCutsTwoDots = [x + doubleColon for x in allAnalysisCuts] # cut::
+                    self.allAnalysisCuts = (self.allAnalysisCuts + getCuts) # Get all Cuts from CutsLibrary.h
+                    nameSpacedallAnalysisCuts = [x + oneColon for x in self.allAnalysisCuts] # cut:
+                    nameSpacedallAnalysisCutsTwoDots = [x + doubleColon for x in self.allAnalysisCuts] # cut::
         
         # in Filter PP Task, sels options for barrel and muon uses namespaces e.g. "<track-cut>:[<pair-cut>]:<n> and <track-cut>::<n> For Manage this issue:
         for k in range(1, 10):
@@ -133,7 +126,4 @@ class DQLibGetter(object):
         # Style 2 <track-cut>:<n> --> nAddedallAnalysisCutsList
         
         # Merge All possible styles for Sels (cfgBarrelSels and cfgMuonSels) in FilterPP Task
-        allSels = selsWithOneColon + nAddedallAnalysisCutsList
-        
-        # TODO : should be flaged
-        return allAnalysisCuts, allMCSignals, allSels, allMixing
+        self.allSels = selsWithOneColon + nAddedallAnalysisCutsList

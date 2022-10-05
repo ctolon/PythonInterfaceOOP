@@ -57,7 +57,8 @@ class AnalysisQvector(object):
             description = "Example Usage: ./runDQFlow.py <yourConfig.json> --arg value "
             ), eventSelection = EventSelectionTask(), centralityTable = CentralityTable(), multiplicityTable = MultiplicityTable(),
         tofEventTime = TofEventTime(), tofPidBeta = TofPidBeta(), tpcTofPidFull = TpcTofPidFull(), trackPropagation = TrackPropagation(),
-        trackSelection = TrackSelectionTask(), helperOptions = HelperOptions(), o2Converters = O2Converters(), dplAodReader = DplAodReader()
+        trackSelection = TrackSelectionTask(), helperOptions = HelperOptions(), o2Converters = O2Converters(),
+        dplAodReader = DplAodReader(), dqLibGetter = DQLibGetter()
         ):
         super(AnalysisQvector, self).__init__()
         self.parserAnalysisQvector = parserAnalysisQvector
@@ -72,6 +73,7 @@ class AnalysisQvector(object):
         self.helperOptions = helperOptions
         self.o2Converters = o2Converters
         self.dplAodReader = dplAodReader
+        self.dqLibGetter = dqLibGetter
         self.parserAnalysisQvector.register("action", "none", NoAction)
         self.parserAnalysisQvector.register("action", "store_choice", ChoicesAction)
     
@@ -83,8 +85,8 @@ class AnalysisQvector(object):
         # Predefined Selections
         booleanSelections = ["true", "false"]
         
-        # init for get DQ libraries
-        allAnalysisCuts, allMCSignals, allSels, allMixing = DQLibGetter.getAnalysisSelections(self)
+        # Get DQ Analysis Selections from O2-DQ Framework Header Files
+        allAnalysisCuts = self.dqLibGetter.allAnalysisCuts
         
         # Interface
         groupAnalysisQvector = self.parserAnalysisQvector.add_argument_group(title = "Data processor options: analysis-qvector")

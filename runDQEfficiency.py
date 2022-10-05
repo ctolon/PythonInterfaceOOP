@@ -63,9 +63,9 @@ debugSettings(args.debug, args.logFile, fileName = "dqEfficiency.log")
 # if cliMode true, Overrider mode else additional mode
 cliMode = args.onlySelect
 
-forgettedArgsChecker(allArgs) # Transcation management
+forgettedArgsChecker(allArgs) # Transaction management
 
-# adding prefix for setSwitch function (for no kFlag True situations)
+# adding prefix for setSwitch function
 args.process = setPrefixSuffix(args.process, "process", 'Skimmed', True, True)
 
 # Load the configuration file provided as the first parameter

@@ -53,7 +53,8 @@ class TableMakerMC(object):
             description = "Example Usage: ./runTableMakerMC.py <yourConfig.json> --arg value",
             ), eventSelection = EventSelectionTask(), centralityTable = CentralityTable(), multiplicityTable = MultiplicityTable(),
         tofEventTime = TofEventTime(), tofPidBeta = TofPidBeta(), tpcTofPidFull = TpcTofPidFull(), trackPropagation = TrackPropagation(),
-        trackSelection = TrackSelectionTask(), helperOptions = HelperOptions(), o2Converters = O2Converters(), dplAodReader = DplAodReader()
+        trackSelection = TrackSelectionTask(), helperOptions = HelperOptions(), o2Converters = O2Converters(),
+        dplAodReader = DplAodReader(), dqLibGetter = DQLibGetter()
         ):
         super(TableMakerMC, self).__init__()
         self.parserTableMakerMC = parserTableMakerMC
@@ -68,6 +69,7 @@ class TableMakerMC(object):
         self.helperOptions = helperOptions
         self.o2Converters = o2Converters
         self.dplAodReader = dplAodReader
+        self.dqLibGetter = dqLibGetter
         self.parserTableMakerMC.register("action", "none", NoAction)
         self.parserTableMakerMC.register("action", "store_choice", ChoicesAction)
     
@@ -93,8 +95,9 @@ class TableMakerMC(object):
         
         booleanSelections = ["true", "false"]
         
-        # init for get DQ libraries
-        allAnalysisCuts, allMCSignals, allSels, allMixing = DQLibGetter.getAnalysisSelections(self)
+        # Get DQ Analysis Selections from O2-DQ Framework Header Files
+        allAnalysisCuts = self.dqLibGetter.allAnalysisCuts
+        allMCSignals = self.dqLibGetter.allMCSignals
         
         # Interface
         groupTableMakerConfigs = self.parserTableMakerMC.add_argument_group(title = "Data processor options: table-maker-m-c")

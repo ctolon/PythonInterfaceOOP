@@ -46,12 +46,13 @@ class DQEfficiency(object):
         self, parserDQEfficiency = argparse.ArgumentParser(
             formatter_class = argparse.ArgumentDefaultsHelpFormatter,
             description = "Example Usage: ./runDQEfficiency.py <yourConfig.json> --arg value "
-            ), helperOptions = HelperOptions(), dplAodReader = DplAodReader()
+            ), helperOptions = HelperOptions(), dplAodReader = DplAodReader(), dqLibGetter = DQLibGetter()
         ):
         super(DQEfficiency, self).__init__()
         self.parserDQEfficiency = parserDQEfficiency
         self.dplAodReader = dplAodReader
         self.helperOptions = helperOptions
+        self.dqLibGetter = dqLibGetter
         self.parserDQEfficiency.register("action", "none", NoAction)
         self.parserDQEfficiency.register("action", "store_choice", ChoicesAction)
     
@@ -88,8 +89,9 @@ class DQEfficiency(object):
         
         booleanSelections = ["true", "false"]
         
-        # init for get DQ libraries
-        allAnalysisCuts, allMCSignals, allSels, allMixing = DQLibGetter.getAnalysisSelections(self)
+        # Get DQ Analysis Selections from O2-DQ Framework Header Files
+        allAnalysisCuts = self.dqLibGetter.allAnalysisCuts
+        allMCSignals = self.dqLibGetter.allMCSignals
         
         # Interface
         

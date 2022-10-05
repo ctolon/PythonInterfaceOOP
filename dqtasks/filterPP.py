@@ -56,7 +56,8 @@ class DQFilterPPTask(object):
             description = "Example Usage: ./runFilterPP.py <yourConfig.json> --arg value",
             ), eventSelection = EventSelectionTask(), multiplicityTable = MultiplicityTable(), tofEventTime = TofEventTime(),
         tofPidBeta = TofPidBeta(), tpcTofPidFull = TpcTofPidFull(), trackPropagation = TrackPropagation(),
-        trackSelection = TrackSelectionTask(), helperOptions = HelperOptions(), o2Converters = O2Converters(), dplAodReader = DplAodReader()
+        trackSelection = TrackSelectionTask(), helperOptions = HelperOptions(), o2Converters = O2Converters(),
+        dplAodReader = DplAodReader(), dqLibGetter = DQLibGetter()
         ):
         super(DQFilterPPTask, self).__init__()
         self.parserDQFilterPPTask = parserDQFilterPPTask
@@ -70,6 +71,7 @@ class DQFilterPPTask(object):
         self.helperOptions = helperOptions
         self.o2Converters = o2Converters
         self.dplAodReader = dplAodReader
+        self.dqLibGetter = dqLibGetter
         self.parserDQFilterPPTask.register("action", "none", NoAction)
         self.parserDQFilterPPTask.register("action", "store_choice", ChoicesAction)
     
@@ -93,8 +95,9 @@ class DQFilterPPTask(object):
         
         booleanSelections = ["true", "false"]
         
-        # init for get DQ libraries
-        allAnalysisCuts, allMCSignals, allSels, allMixing = DQLibGetter.getAnalysisSelections(self)
+        # Get DQ Analysis Selections from O2-DQ Framework Header Files
+        allAnalysisCuts = self.dqLibGetter.allAnalysisCuts
+        allSels = self.dqLibGetter.allSels
         
         # Interface
         

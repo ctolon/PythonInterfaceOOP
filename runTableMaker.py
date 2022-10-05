@@ -127,10 +127,9 @@ debugSettings(args.debug, args.logFile, fileName = "tableMaker.log")
 # if cliMode true, Overrider mode else additional mode
 cliMode = args.onlySelect
 
-# Transcation management
-forgettedArgsChecker(allArgs)
+forgettedArgsChecker(allArgs) # Transaction management
 
-# adding prefix for setSwitch function (for no kFlag True situations) #todo add prefix for cov and wslice, trackqa için process hazırla
+# adding prefix for setSwitch function
 args.process = setPrefixSuffix(args.process, "process", '', True, False)
 args.pid = setPrefixSuffix(args.pid, "pid-", '', True, False)
 args.est = setPrefixSuffix(args.est, "est", '', True, False)

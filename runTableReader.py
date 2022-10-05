@@ -80,7 +80,7 @@ cliMode = args.onlySelect
 # Transaction
 forgettedArgsChecker(allArgs) # Transaction Management
 
-# adding prefix for setSwitch function (for no kFlag True situations)
+# adding prefix for setSwitch function
 args.process = setPrefixSuffix(args.process, "process", 'Skimmed', True, True)
 args.mixing = setPrefixSuffix(args.mixing, "process", 'Skimmed', True, True)
 

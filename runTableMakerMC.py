@@ -121,7 +121,7 @@ cliMode = args.onlySelect
 
 forgettedArgsChecker(allArgs) # Transaction management
 
-# adding prefix for setSwitch function (for no kFlag True situations)
+# adding prefix for setSwitch function
 args.process = setPrefixSuffix(args.process, "process", '', True, False)
 args.pid = setPrefixSuffix(args.pid, "pid-", '', True, False)
 args.est = setPrefixSuffix(args.est, "est", '', True, False)

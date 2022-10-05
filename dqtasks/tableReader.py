@@ -43,12 +43,13 @@ class TableReader(object):
         self, parserTableReader = argparse.ArgumentParser(
             formatter_class = argparse.ArgumentDefaultsHelpFormatter,
             description = "Example Usage: ./runTableReader.py <yourConfig.json> --arg value",
-            ), helperOptions = HelperOptions(), dplAodReader = DplAodReader()
+            ), helperOptions = HelperOptions(), dplAodReader = DplAodReader(), dqLibGetter = DQLibGetter()
         ):
         super(TableReader, self).__init__()
         self.parserTableReader = parserTableReader
         self.helperOptions = helperOptions
         self.dplAodReader = dplAodReader
+        self.dqLibGetter = dqLibGetter
         self.parserTableReader.register("action", "none", NoAction)
         self.parserTableReader.register("action", "store_choice", ChoicesAction)
     
@@ -99,8 +100,9 @@ class TableReader(object):
         for k, v in mixingSelections.items():
             mixingSelectionsList.append(k)
         
-        # init for get DQ libraries
-        allAnalysisCuts, allMCSignals, allSels, allMixing = DQLibGetter.getAnalysisSelections(self)
+        # Get DQ Analysis Selections from O2-DQ Framework Header Files
+        allAnalysisCuts = self.dqLibGetter.allAnalysisCuts
+        allMixing = self.dqLibGetter.allMixing
         
         # Interface
         
