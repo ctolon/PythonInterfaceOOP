@@ -88,36 +88,26 @@ def debugSettings(argDebug: bool, argLogFile: bool, fileName: str):
         log.addHandler(fh)
 
 
-def setConverters(
-        add_mc_conv: bool, add_fdd_conv: bool, add_track_prop: bool, add_weakdecay_ind: bool, updatedConfigFileName: str, commandToRun: str
-    ):
+def setConverters(allArgs: dict, updatedConfigFileName: str, commandToRun: str):
     """Converter task setter function
 
     Args:
-        add_mc_conv (bool): o2-analysis-weakdecay-indices CLI argument
-        add_fdd_conv (bool): o2-analysis-weakdecay-indices CLI argument
-        add_track_prop (bool): o2-analysis-weakdecay-indices CLI argument
-        add_weakdecay_ind (bool): o2-analysis-weakdecay-indices CLI argument
+        allArgs (dict): All provided args in CLI
         updatedConfigFileName (str): Overrided json config file
         commandToRun (str): Generated command for running in O2
     """
+    specificTasks = {
+        "add_mc_conv": "o2-analysis-mc-converter",
+        "add_fdd_conv": "o2-analysis-fdd-converter",
+        "add_track_prop": "o2-analysis-track-propagation",
+        "add_weakdecay_ind:": "o2-analysis-weak-decay-indices"
+        }
     
-    if add_mc_conv:
-        logging.debug("o2-analysis-mc-converter added your workflow")
-        commandToRun += (" | o2-analysis-mc-converter --configuration json://" + updatedConfigFileName + " -b")
-    
-    if add_fdd_conv:
-        commandToRun += (" | o2-analysis-fdd-converter --configuration json://" + updatedConfigFileName + " -b")
-        logging.debug("o2-analysis-fdd-converter added your workflow")
-    
-    if add_track_prop:
-        commandToRun += (" | o2-analysis-track-propagation --configuration json://" + updatedConfigFileName + " -b")
-        logging.debug("o2-analysis-track-propagation added your workflow")
-    
-    if add_weakdecay_ind:
-        commandToRun += (" | o2-analysis-weak-decay-indices --configuration json://" + updatedConfigFileName + " -b")
-        logging.debug("o2-analysis-weak-decay-indices added your workflow")
-    
+    for cliArg, cliValue in allArgs.items():
+        for converterArg, taskName in specificTasks.items():
+            if converterArg == cliArg and cliValue is True:
+                logging.debug(taskName + " added your workflow")
+                commandToRun += (" | " + taskName + " --configuration json://" + updatedConfigFileName + " -b")
     return commandToRun
 
 
@@ -298,7 +288,7 @@ def setSwitch(config: dict, task: str, cfg: str, allArgs: dict, cliMode: str, ar
     
     SWITCH_ON = switchType[0]
     SWITCH_OFF = switchType[1]
-        
+    
     for keyCfg, valueCfg in allArgs.items():
         if isinstance(valueCfg, list) and keyCfg == argument:
             for element in valueCfg:
@@ -413,5 +403,4 @@ def setPrefixSuffix(argument, prefix = None, suffix = None, kFlagPrefix = None, 
                 argument = [sub + suffix for sub in argument]
             else:
                 argument = argument + suffix
-        print(argument)
         return argument

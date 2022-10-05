@@ -129,9 +129,7 @@ for dep in depsToRun.keys():
     commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"
     logging.debug("%s added your workflow", dep)
 
-commandToRun = setConverters(
-    args.add_mc_conv, args.add_fdd_conv, args.add_track_prop, args.add_weakdecay_ind, updatedConfigFileName, commandToRun
-    )
+commandToRun = setConverters(allArgs, updatedConfigFileName, commandToRun)
 
 print("====================================================================================================================")
 logging.info("Command to run:")
