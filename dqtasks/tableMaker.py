@@ -194,6 +194,10 @@ class TableMaker(object):
             type = str.lower, choices = booleanSelections,
             ).completer = ChoicesCompleter(booleanSelections)
         # groupTableMakerConfigs.add_argument("--cfgIsRun2", help="Run selection true or false", action="store", choices=["true","false"], type=str) # no need
+        groupTableMakerConfigs.add_argument(
+            "--cfgIsAmbiguous", help = "Whether we enable QA plots for ambiguous tracks", action = "store", choices = booleanSelections,
+            type = str.lower
+            ).completer = ChoicesCompleter(booleanSelections)
         groupTableMakerConfigs.add_argument("--cfgMinTpcSignal", help = "Minimum TPC signal", action = "store", type = str)
         groupTableMakerConfigs.add_argument("--cfgMaxTpcSignal", help = "Maximum TPC signal", action = "store", type = str)
         groupTableMakerConfigs.add_argument(

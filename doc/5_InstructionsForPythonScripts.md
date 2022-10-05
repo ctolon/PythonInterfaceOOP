@@ -139,7 +139,7 @@ Arg | Opt | Task | nargs |
 `--syst` | `pp`<br> `PbPb`<br> `pPb`<br> `Pbp`<br> `XeXe`<br> | `event-selection-task` | 1 |
 `--muonSelection` | `0`<br> `1`<br> `2` | `event-selection-task` | 1 |
 `--CustomDeltaBC` | all | `event-selection-task` | 1 |
-`--isVertexZeq` | `true`<br> `false`<br>  | `multiplicity-table` | 1 |
+`--doVertexZeq` | `1`<br> `0`<br>  | `multiplicity-table` | 1 |
 `--isCovariance` | `Standard`<br> `Covariance`<br> | `track-propagation` | 1 |
 `--isWSlice` | `Wslice`<br> `WoSlice`<br> | `tof-pid-full tof-pid` | 1 |
 `--FT0` | `FT0`<br> `NOFT0`<br>`OnlyFT0`<br> `Run2` | `tof-event-time` | 1 |
@@ -199,7 +199,7 @@ Arg | Ref Type| Desc | Default | Real Type
 `--syst` | String | Collision system selection |  | str
 `--muonSelection` | Integer | 0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts |  | str
 `--CustomDeltaBC` | all |custom BC delta for FIT-collision matching |  | str
-`--isVertexZeq` | Boolean  | if true: do vertex Z eq mult table |  | str.lower
+`--doVertexZeq` | Integer  | if 1: do vertex Z eq mult table |  | str.lower
 `--isCovariance` | Boolean | If Standard, Process without covariance, If Covariance, Process with covariance related to `track-propagation` |  | str
 `--isWSlice` | Boolean | if WSlice, Process with track slices, if WoSlice, Process without track slices|  | str
 `--FT0` | Boolean | FT0: Process with FT0, NoFT0: Process without FT0, OnlyFT0: Process only with FT0, Run2: Process with Run2 data |  | str.lower
@@ -428,7 +428,7 @@ Arg | Opt | Task | nargs |
 `--syst` | `pp`<br> `PbPb`<br> `pPb`<br> `Pbp`<br> `XeXe`<br> | `event-selection-task` | 1 |
 `--muonSelection` | `0`<br> `1`<br> `2` | `event-selection-task` | 1 |
 `--CustomDeltaBC` | all | `event-selection-task` | 1 |
-`--isVertexZeq` | `true`<br> `false`<br>  | `multiplicity-table` | 1 |
+`--doVertexZeq` | `1`<br> `0`<br>  | `multiplicity-table` | 1 |
 `--pid` | `el`<br> `mu`<br> `pi`<br> `ka`<br> `pr`<br> `de`<br> `tr`<br> `he`<br> `al`<br> | `tof-pid tpc-pid` | * |
 `--isWSlice` | `true`<br> `false`<br> | `tof-pid-full tof-pid` | 1 |
 `--tof-expreso` | all | `tof-pid-beta` | 1 |
@@ -456,7 +456,7 @@ Arg | Ref Type| Desc | Default | Real Type
 `--syst` | String | Collision system selection |  | str
 `--muonSelection` | Integer | 0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts |  | str
 `--CustomDeltaBC` | all |custom BC delta for FIT-collision matching |  | str
-`--isVertexZeq` | Boolean  | if true: do vertex Z eq mult table |  | str.lower
+`--doVertexZeq` | Integer  | if 1: do vertex Z eq mult table |  | str.lower
 `--pid` | String | Produce PID information for the particle mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1) |  | str.lower
 `--isWSlice` | Boolean | Process with track slices|  | str.lower
 `--tof-expreso` | Float | Expected resolution for the computation of the expected beta |  | str
@@ -525,7 +525,7 @@ Arg | Opt | Task | nargs |
 `--CustomDeltaBC` | all | `event-selection-task` | 1 |
 `--pid` | `el`<br> `mu`<br> `pi`<br> `ka`<br> `pr`<br> `de`<br> `tr`<br> `he`<br> `al`<br> | `tof-pid tpc-pid` | * |
 `--est` | `Run2V0M`<br> `Run2SPDtks`<br> `Run2SPDcls`<br> `Run2CL0`<br> `Run2CL1`<br> `FV0A`<br> `FT0M`<br> `FDDM`<br> `NTPV`<br>| `centrality-table` | *
-`--isVertexZeq` | `true`<br> `false`<br>  | `multiplicity-table` | 1 |
+`--doVertexZeq` | `1`<br> `0`<br>  | `multiplicity-table` | 1 |
 `--isWSlice` | `true`<br> `false`<br> | `tof-pid-full tof-pid` | 1 |
 `--tof-expreso` | all | `tof-pid-beta` | 1 |
 `--FT0` | `FT0`<br> `NOFT0`<br>`OnlyFT0`<br> `Run2` | `tof-event-time` | 1 |
@@ -557,7 +557,7 @@ Arg | Ref Type| Desc | Default | Real Type
 `--syst` | String | Collision system selection |  | str
 `--muonSelection` | Integer | 0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts |  | str
 `--CustomDeltaBC` | all |custom BC delta for FIT-collision matching |  | str
-`--isVertexZeq` | Boolean  | if true: do vertex Z eq mult table |  | str.lower
+`--doVertexZeq` | Integer  | if 1: do vertex Z eq mult table |  | str.lower
 `--isWSlice` | Boolean | Process with track slices|  | str.lower
 `--est` | String | Produces centrality percentiles parameters | | str
 `--pid` | String | Produce PID information for the particle mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1) |  | str.lower

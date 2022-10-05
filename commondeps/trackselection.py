@@ -38,7 +38,7 @@ class TrackSelectionTask(object):
         """
         
         # Predefined Selections
-        itsMatchingSelections = ["0", "1", "2"]
+        itsMatchingSelections = ["0", "1", "2", "3"]
         
         # Interface
         groupTrackSelectionTask = self.parserTrackSelectionTask.add_argument_group(title = "Data processor options: track-selection")

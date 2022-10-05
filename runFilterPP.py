@@ -35,13 +35,12 @@ ft0Parameters = ["processFT0", "processNoFT0", "processOnlyFT0", "processRun2"]
 pidParameters = ["pid-el", "pid-mu", "pid-pi", "pid-ka", "pid-pr", "pid-de", "pid-tr", "pid-he", "pid-al",]
 covParameters = ["processStandard", "processCovariance"]
 sliceParameters = ["processWoSlice", "processWSlice"]
-vertexParameters = ["doVertexZeq", "doDummyZeq"]
 # yapf: disable
 # All Dependencies
 commonDeps = [
     "o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table", "o2-analysis-trackselection",
     "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta",
-    "o2-analysis-pid-tpc-full",
+    "o2-analysis-pid-tpc-full", "o2-analysis-fwdtrackextension"
     ]
 selectionDeps = {
     "barrelTrackSelection": {"d-q-barrel-track-selection": "processSelection"},
@@ -114,7 +113,6 @@ for task, cfgValuePair in config.items():
             setSwitch(config, task, cfg, allArgs, "true", "isWSlice", sliceParameters, "true/false")
             if task == "tof-event-time": # we have processRun2 option in tof-event-time and for not overriding it other processRun2 options, we have to specifiy task
                 setSwitch(config, task, cfg, allArgs, "true", "FT0", ft0Parameters, "true/false")
-            setSwitch(config, task, cfg, allArgs, cliMode, "isVertexZeq", vertexParameters, "1/0", True)
             mandatoryArgChecker(config, task, cfg, "d-q-event-selection-task", "processEventSelection")
 setProcessDummy(config, dummyHasTasks) # dummy automizer
 

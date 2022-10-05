@@ -54,7 +54,6 @@
     },
     "multiplicity-table": {
         "doVertexZeq": "1",
-        "doDummyZeq": "0",
         "processRun2": "true",
         "processRun3": "false"
     },

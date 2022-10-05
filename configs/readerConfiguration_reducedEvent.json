@@ -41,6 +41,14 @@
       {
         "table": "AOD/RTMUONCOV/0",
         "treename": "ReducedMuonsCov"
+      },
+      {
+        "table": "AOD/AMBIGUOUSTRACK/0",
+        "treename": "AmbiguousTracksMid"
+      },
+      {
+        "table": "AOD/AMBIGUOUSFWDTR/0",
+        "treename": "AmbiguousTracksFwd"
       }
     ]
   }

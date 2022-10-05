@@ -35,7 +35,6 @@ ft0Parameters = ["processFT0", "processNoFT0", "processOnlyFT0", "processRun2"]
 pidParameters = ["pid-el", "pid-mu", "pid-pi", "pid-ka", "pid-pr", "pid-de", "pid-tr", "pid-he", "pid-al",]
 covParameters = ["processStandard", "processCovariance"]
 sliceParameters = ["processWoSlice", "processWSlice"]
-vertexParameters = ["doVertexZeq", "doDummyZeq"]
 fullSearch = []
 barrelSearch = []
 muonSearch = []
@@ -88,13 +87,15 @@ tables = {
     "ReducedMuons": {"table": "AOD/RTMUON/0","treename": "ReducedMuons"},
     "ReducedMuonsExtra": {"table": "AOD/RTMUONEXTRA/0","treename": "ReducedMuonsExtra"},
     "ReducedMuonsCov": {"table": "AOD/RTMUONCOV/0","treename": "ReducedMuonsCov"},
-    "ReducedMuonsLabels": {"table": "AOD/RTMUONSLABELS/0","treename": "ReducedMuonsLabels"}
+    "ReducedMuonsLabels": {"table": "AOD/RTMUONSLABELS/0","treename": "ReducedMuonsLabels"},
+    "AmbiguousTracksMid": {"table": "AOD/AMBIGUOUSTRACK/0","treename": "AmbiguousTracksMid"},
+    "AmbiguousTracksFwd": {"table": "AOD/AMBIGUOUSFWDTR/0","treename": "AmbiguousTracksFwd"}
     }
 # yapf: enable
 # Tables to be written, per process function
 commonTables = ["ReducedEvents", "ReducedEventsExtended", "ReducedEventsVtxCov"]
-barrelCommonTables = ["ReducedTracks", "ReducedTracksBarrel", "ReducedTracksBarrelPID"]
-muonCommonTables = ["ReducedMuons", "ReducedMuonsExtra"]
+barrelCommonTables = ["ReducedTracks", "ReducedTracksBarrel", "ReducedTracksBarrelPID", "AmbiguousTracksMid"]
+muonCommonTables = ["ReducedMuons", "ReducedMuonsExtra", "AmbiguousTracksFwd"]
 specificTables = {
     "processFull": [],
     "processFullTiny": [],
@@ -215,7 +216,6 @@ for task, cfgValuePair in config.items():
             setSwitch(config, task, cfg, allArgs, "true", "isWSlice", sliceParameters, "true/false")
             if task == "tof-event-time": # we have processRun2 option in tof-event-time and for not overriding it other processRun2 options, we have to specifiy task
                 setSwitch(config, task, cfg, allArgs, "true", "FT0", ft0Parameters, "true/false")
-            setSwitch(config, task, cfg, allArgs, cliMode, "isVertexZeq", vertexParameters, "1/0", True)
             mandatoryArgChecker(config, task, cfg, taskNameInConfig, "processOnlyBCs")
 
 setProcessDummy(config, dummyHasTasks) # dummy automizer

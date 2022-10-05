@@ -38,13 +38,13 @@ class MultiplicityTable(object):
         """
         
         # Predefined Selections
-        booleanSelections = ["true", "false"]
+        binarySelections = ["1", "0"]
         
         # Interface
         groupMultiplicityTable = self.parserMultiplicityTable.add_argument_group(title = "Data processor options: multiplicity-table")
         groupMultiplicityTable.add_argument(
-            "--isVertexZeq", help = "if true: do vertex Z eq mult table", action = "store", type = str.lower, choices = (booleanSelections),
-            ).completer = ChoicesCompleter(booleanSelections)
+            "--doVertexZeq", help = "if 1: do vertex Z eq mult table", action = "store", type = str, choices = (binarySelections),
+            ).completer = ChoicesCompleter(binarySelections)
     
     def parseArgs(self):
         """

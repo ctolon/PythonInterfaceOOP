@@ -227,6 +227,7 @@ python3 runDQEfficiency.py configs/configAnalysisMC.json --aod reducedAod.root -
 
 ## Data Part
 
+IMPORTANT: Analyzes are not running for the LHC15o dataset. They give an error because there are no Ambiguous track TTrees in the dataset. You can skip the tutorials about the LHC15o.
 
 ### Run tableMaker on LHC15o (LHC15o PbPb Run2Data)
 
@@ -269,14 +270,14 @@ python3 runTableReader.py configs/configAnalysisData.json --aod reducedAod.root 
 Command To Run:
 
 ```ruby
-python3 runDQFlow.py configs/configFlowDataRun2.json --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --syst PbPb --cfgWithQA true --est Run2V0M --FT0 Run2 --cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --isVertexZeq false --add_fdd_conv --debug debug --logFile
+python3 runDQFlow.py configs/configFlowDataRun2.json --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --syst PbPb --cfgWithQA true --est Run2V0M --FT0 Run2 --cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --add_fdd_conv --debug debug --logFile
 ```
 ### Run v0Selector on LHC15o (LHC15o PbPb Run2Data)
 
 Command To Run:
 
 ```ruby
-python3 runV0selector.py configs/configV0SelectorDataRun2.json --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --add_fdd_conv --add_weakdecay_ind --isVertexZeq false
+python3 runV0selector.py configs/configV0SelectorDataRun2.json --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --add_fdd_conv --add_weakdecay_ind
 ```
 
 ### Run tableMaker on LHC22c (LHC22c pp Run3Data)
@@ -284,7 +285,7 @@ python3 runV0selector.py configs/configV0SelectorDataRun2.json --aod Datas/AO2D_
 Command To Run:
 
 ```ruby
-python3 runTableMaker.py configs/configTableMakerDataRun3.json -runData --aod Datas/AO2D_ppDataRun3_LHC22c.root --process OnlyBCs MuonOnlyWithCov --syst pp --cfgWithQA true --cfgMuonsCuts muonQualityCuts --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --add_track_prop --isVertexZeq false --debug debug --logFile
+python3 runTableMaker.py configs/configTableMakerDataRun3.json -runData --aod Datas/AO2D_ppDataRun3_LHC22c.root --process OnlyBCs MuonOnlyWithCov --syst pp --cfgWithQA true --cfgMuonsCuts muonQualityCuts --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --add_track_prop --debug debug --logFile
 ```
 
 ### Run tableReader on Data (LHC22c pp Run3Data)
@@ -302,7 +303,7 @@ python3 runTableReader.py configs/configAnalysisData.json --aod reducedAod.root 
 Command To Run:
 
 ```ruby
-python3 runFilterPP.py configs/configFilterPPDataRun3.json --aod Datas/AO2D_fwdprompt.root --process barrelTrackSelection eventSelection muonSelection --syst pp --cfgBarrelTrackCuts jpsiO2MCdebugCuts jpsiPID2 --cfgBarrelSels jpsiO2MCdebugCuts:pairNoCut:1 jpsiPID2::1 --cfgMuonsCuts muonLowPt muonHighPt muonLowPt --cfgMuonSels muonLowPt::1 muonHighPt::1 muonLowPt:pairUpsilon:1 --isVertexZeq false --debug debug --logFile
+python3 runFilterPP.py configs/configFilterPPDataRun3.json --aod Datas/AO2D_fwdprompt.root --process barrelTrackSelection eventSelection muonSelection --syst pp --cfgBarrelTrackCuts jpsiO2MCdebugCuts jpsiPID2 --cfgBarrelSels jpsiO2MCdebugCuts:pairNoCut:1 jpsiPID2::1 --cfgMuonsCuts muonLowPt muonHighPt muonLowPt --cfgMuonSels muonLowPt::1 muonHighPt::1 muonLowPt:pairUpsilon:1 --debug debug --logFile
 ```
 
 P.S. Cuts Needs to optimized.

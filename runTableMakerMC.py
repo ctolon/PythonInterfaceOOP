@@ -35,7 +35,6 @@ ft0Parameters = ["processFT0", "processNoFT0", "processOnlyFT0", "processRun2"]
 pidParameters = ["pid-el", "pid-mu", "pid-pi", "pid-ka", "pid-pr", "pid-de", "pid-tr", "pid-he", "pid-al",]
 covParameters = ["processStandard", "processCovariance"]
 sliceParameters = ["processWoSlice", "processWSlice"]
-vertexParameters = ["doVertexZeq", "doDummyZeq"]
 centSearch = [] # for centrality transaction
 
 # All Dependencies
@@ -177,7 +176,6 @@ for task, cfgValuePair in config.items():
             setSwitch(config, task, cfg, allArgs, "true", "isWSlice", sliceParameters, "true/false")
             if task == "tof-event-time": # we have processRun2 option in tof-event-time and for not overriding it other processRun2 options, we have to specifiy task
                 setSwitch(config, task, cfg, allArgs, "true", "FT0", ft0Parameters, "true/false")
-            setSwitch(config, task, cfg, allArgs, cliMode, "isVertexZeq", vertexParameters, "1/0", True)
             mandatoryArgChecker(config, task, cfg, taskNameInConfig, "processOnlyBCs")
 
 # Transactions

@@ -52,8 +52,7 @@
         "processRun3": "true"
     },
     "multiplicity-table": {
-        "doVertexZeq": "0",
-        "doDummyZeq": "1",
+        "doVertexZeq": "1",
         "processRun2": "false",
         "processRun3": "true"
     },
@@ -222,6 +221,7 @@
         "cfgNoQA": "false",
         "cfgDetailedQA": "true",
         "cfgIsRun2": "false",
+        "cfgIsAmbiguous": "false",
         "processFull": "false",
         "processFullWithCov": "false",
         "processFullWithCent": "false",
