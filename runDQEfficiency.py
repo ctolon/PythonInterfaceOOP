@@ -41,6 +41,7 @@ analysisSelectionDeps = {
 sameEventPairingTaskName = "analysis-same-event-pairing"
 sameEventPairingDeps = {
     "processJpsiToEESkimmed": {"analysis-track-selection": "processSkimmed"},
+    "processJpsiToEEVertexingSkimmmed": {"analysis-track-selection": "processSkimmed"},
     "processJpsiToMuMuSkimmed": {"analysis-muon-selection": "processSkimmed"},
     "processJpsiToMuMuVertexingSkimmed": {"analysis-muon-selection": "processSkimmed"}
     }

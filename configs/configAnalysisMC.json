@@ -38,6 +38,7 @@
         "cfgBarrelMCGenSignals": "Jpsi",
         "cfgFlatTables": "false",
         "processJpsiToEESkimmed": "true",
+        "processJpsiToEEVertexingSkimmed": "false",
         "processJpsiToMuMuSkimmed": "false",
         "processJpsiToMuMuVertexingSkimmed": "false",
         "processDummy": "false"

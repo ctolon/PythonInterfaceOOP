@@ -80,6 +80,7 @@ class DQEfficiency(object):
         
         sameEventPairingProcessSelections = {
             "JpsiToEE": "Run electron-electron pairing, with skimmed tracks",
+            "JpsiToEEVertexing": "Run barrel barrel pairing on DQ skimmed tracks including vertexing",
             "JpsiToMuMu": "Run muon-muon pairing, with skimmed muons",
             "JpsiToMuMuVertexing": "Run muon-muon pairing and vertexing, with skimmed muons",
             }
