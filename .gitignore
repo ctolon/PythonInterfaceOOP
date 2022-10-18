@@ -167,6 +167,7 @@ cython_debug/
 !tempCutsLibrary.h
 !tempMCSignalsLibrary.h
 !tempMixingLibrary.h
+!tempHistogramsLibrary.h
 
 cfg
 

@@ -65,10 +65,12 @@ ALICE_SOFTWARE_PATH = os.environ["HOME"] + "/alice"
 localPathCutsLibrary = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/CutsLibrary.h"
 localPathMCSignalsLibrary = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/MCSignalLibrary.h"
 localPathEventMixing = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/MixingLibrary.h"
+localPathHistogramsLibrary = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/HistogramsLibrary.h"
 
 URL_CUTS_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/CutsLibrary.h?raw=true")
 URL_MCSIGNALS_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MCSignalLibrary.h?raw=true")
 URL_MIXING_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MixingLibrary.h?raw=true")
+URL_HISTOGRAMS_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/HistogramsLibrary.h?raw=true"
 
 isLibsExist = True
 
@@ -91,6 +93,7 @@ if extrargs.version and extrargs.local is False:
         "https://github.com/AliceO2Group/O2Physics/blob/" + extrargs.version + "/PWGDQ/Core/MCSignalLibrary.h?raw=true"
         )
     URL_MIXING_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/" + extrargs.version + "/PWGDQ/Core/MixingLibrary.h?raw=true")
+    URL_HISTOGRAMS_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/" + extrargs.version + "/PWGDQ/Core/HistogramsLibrary.h?raw=true")
 
 if extrargs.local and extrargs.version:
     logging.warning(
@@ -128,10 +131,12 @@ if extrargs.local:
     localPathCutsLibrary = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/CutsLibrary.h"
     localPathMCSignalsLibrary = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/MCSignalLibrary.h"
     localPathEventMixing = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/MixingLibrary.h"
+    localPathHistogramsLibrary= ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/HistogramsLibrary.h"
     
     logging.info("Local CutsLibrary.h Path: %s ", localPathCutsLibrary)
     logging.info("Local MCSignalsLibrary.h Path: %s ", localPathMCSignalsLibrary)
     logging.info("Local MixingLibrary.h Path: %s ", localPathEventMixing)
+    logging.info("Local HistogramsLibrary.h Path: %s ", localPathHistogramsLibrary)
     try:
         with open("tempCutsLibrary.h", "wb") as f:
             shutil.copyfile(localPathCutsLibrary, MY_PATH + "/tempCutsLibrary.h")
@@ -167,19 +172,29 @@ if extrargs.local:
     except FileNotFoundError:
         logging.error("%s not found in your provided alice-software path!!! Check your alice software path", localPathEventMixing,)
         sys.exit()
+        
+    try:
+        with open("tempHistogramsLibrary.h", "wb") as f:
+            shutil.copyfile(localPathHistogramsLibrary, MY_PATH + "/tempHistogramsLibrary.h")
+            if os.path.isfile("tempHistogramsLibrary.h") is True:
+                logging.info("tempHistogramsLibrary.h created at %s", MY_PATH)
+            else:
+                logging.error("tempHistogramsLibrary.h not created at %s Fatal Error", MY_PATH)
+                sys.exit()
+    except FileNotFoundError:
+        logging.error("%s not found in your provided alice-software path!!! Check your alice software path", localPathHistogramsLibrary,)
+        sys.exit()
     
     logging.info("DQ Libraries pulled from local alice software successfully!")
     sys.exit()
 
 if extrargs.local is False:
-    if (
-        (os.path.isfile("tempCutsLibrary.h") is False) or (os.path.isfile("tempMCSignalsLibrary.h") is False) or
-        (os.path.isfile("tempMixingLibrary.h")) is False
-        ):
+    if (os.path.isfile("tempCutsLibrary.h") and os.path.isfile("tempMCSignalsLibrary.h") and os.path.isfile("tempMixingLibrary.h") and os.path.isfile("tempHistogramsLibrary.h")) is False:
         logging.info("Some Libs are Missing. All DQ libs will download")
         logging.info("Github CutsLibrary.h Path: %s ", URL_CUTS_LIBRARY)
         logging.info("Github MCSignalsLibrary.h Path: %s ", URL_MCSIGNALS_LIBRARY)
         logging.info("Github MixingLibrary.h Path: %s ", URL_MIXING_LIBRARY)
+        logging.info("Github HistogramsLibrary.h Path: %s ", URL_HISTOGRAMS_LIBRARY)
         isLibsExist = False
         if extrargs.debug:
             try:
@@ -187,6 +202,7 @@ if extrargs.local is False:
                 request = urllib.request.urlopen(URL_CUTS_LIBRARY, context = context)
                 request = urllib.request.urlopen(URL_MCSIGNALS_LIBRARY, context = context)
                 request = urllib.request.urlopen(URL_MIXING_LIBRARY, context = context)
+                request = urllib.request.urlopen(URL_HISTOGRAMS_LIBRARY, context = context)
             except urllib.error.HTTPError as error:
                 logging.error(error)
         else:
@@ -198,11 +214,13 @@ if extrargs.local is False:
         requestCutsLibrary = Request(URL_CUTS_LIBRARY, headers = headers)
         requestMCSignalsLibrary = Request(URL_MCSIGNALS_LIBRARY, headers = headers)
         requestMixingLibrary = Request(URL_MIXING_LIBRARY, headers = headers)
+        requestHistogramsLibrary = Request(URL_HISTOGRAMS_LIBRARY, headers = headers)
         
         # Get Files With Http Requests
         htmlCutsLibrary = urlopen(requestCutsLibrary, context = context).read()
         htmlMCSignalsLibrary = urlopen(requestMCSignalsLibrary, context = context).read()
         htmlMixingLibrary = urlopen(requestMixingLibrary, context = context).read()
+        htmlHistogramsLibrary = urlopen(requestHistogramsLibrary, context = context).read()
         
         with open("tempCutsLibrary.h", "wb") as f:
             f.write(htmlCutsLibrary)
@@ -213,6 +231,9 @@ if extrargs.local is False:
         with open("tempMixingLibrary.h", "wb") as f:
             f.write(htmlMixingLibrary)
             logging.info("tempMixingLibrary.h downloaded successfully from github")
+        with open("tempHistogramsLibrary.h", "wb") as f:
+            f.write(htmlHistogramsLibrary)
+            logging.info("tempHistogramsLibrary.h downloaded successfully from github")
     
     if isLibsExist:
         logging.info("DQ Libraries have been downloaded before. If you want to update, delete they manually and run this script again.")

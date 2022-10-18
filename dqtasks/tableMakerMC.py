@@ -98,6 +98,7 @@ class TableMakerMC(object):
         # Get DQ Analysis Selections from O2-DQ Framework Header Files
         allAnalysisCuts = self.dqLibGetter.allAnalysisCuts
         allMCSignals = self.dqLibGetter.allMCSignals
+        allHistos = self.dqLibGetter.allHistos
         
         # Interface
         groupTableMakerConfigs = self.parserTableMakerMC.add_argument_group(title = "Data processor options: table-maker-m-c")
@@ -113,10 +114,22 @@ class TableMakerMC(object):
             "--cfgMuonCuts", help = "Space separated list of muon cuts in table-maker", action = "store", nargs = "*", type = str,
             metavar = "CFGMUONCUTS", choices = allAnalysisCuts,
             ).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupTableMakerConfigs.add_argument(
+            "--cfgAddEventHistogram", help = "Comma separated list of histograms", action = "store", type = str, metavar="CFGADDEVENTHISTOGRAM", choices = allHistos,
+            ).completer = ChoicesCompleterList(allHistos)
+        groupTableMakerConfigs.add_argument(
+            "--cfgAddTrackHistogram", help = "Comma separated list of histograms", action = "store", type = str, metavar="CFGADDTRACKHISTOGRAM", choices = allHistos,
+            ).completer = ChoicesCompleterList(allHistos)
+        groupTableMakerConfigs.add_argument(
+            "--cfgAddMuonHistogram", help = "Comma separated list of histograms", action = "store", type = str, metavar="CFGADDMUONHISTOGRAM", choices = allHistos,
+            ).completer = ChoicesCompleterList(allHistos)
+        groupTableMakerConfigs.add_argument(
+            "--cfgAddMCTruthHistogram", help = "Comma separated list of histograms", action = "store", type = str, metavar="CFGADDMCTRUTHHISTOGRAM", choices = allHistos,
+            ).completer = ChoicesCompleterList(allHistos)
         groupTableMakerConfigs.add_argument("--cfgBarrelLowPt", help = "Low pt cut for tracks in the barrel", action = "store", type = str)
         groupTableMakerConfigs.add_argument("--cfgMuonLowPt", help = "Low pt cut for muons", action = "store", type = str)
         groupTableMakerConfigs.add_argument(
-            "--cfgNoQA", help = "If true, no QA histograms", action = "store", type = str.lower, choices = booleanSelections,
+            "--cfgQA", help = "If true, fill QA histograms", action = "store", type = str.lower, choices = booleanSelections,
             ).completer = ChoicesCompleter(booleanSelections)
         groupTableMakerConfigs.add_argument(
             "--cfgDetailedQA", help = "If true, include more QA histograms (BeforeCuts classes and more)", action = "store",

@@ -33,12 +33,13 @@ class DQLibGetter(object):
         object (object): self
     """
     
-    def __init__(self, allAnalysisCuts = [], allMCSignals = [], allSels = [], allMixing = []) -> None:
+    def __init__(self, allAnalysisCuts = [], allMCSignals = [], allSels = [], allMixing = [], allhistos = []) -> None:
         
         self.allAnalysisCuts = list(allAnalysisCuts)
         self.allMCSignals = list(allMCSignals)
         self.allSels = list(allSels)
         self.allMixing = list(allMixing)
+        self.allHistos = list(allhistos)
         
         allPairCuts = [] # only pair cuts
         nAddedallAnalysisCutsList = [] # e.g. muonQualityCuts:2
@@ -55,10 +56,11 @@ class DQLibGetter(object):
         URL_CUTS_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/CutsLibrary.h?raw=true"
         URL_MCSIGNALS_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MCSignalLibrary.h?raw=true"
         URL_MIXING_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MixingLibrary.h?raw=true"
+        URL_HISTOGRAMS_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/HistogramsLibrary.h?raw=true"
         
         # Github Links for CutsLibrary and MCSignalsLibrary from PWG-DQ --> download from github
         # This condition solves performance issues
-        if not (os.path.isfile("tempCutsLibrary.h") or os.path.isfile("tempMCSignalsLibrary.h") or os.path.isfile("tempMixingLibrary.h")):
+        if (os.path.isfile("tempCutsLibrary.h") and os.path.isfile("tempMCSignalsLibrary.h") and os.path.isfile("tempMixingLibrary.h") and os.path.isfile("tempHistogramsLibrary.h")) is False:
             print("[INFO] Some Libs are Missing. They will download.")
             
             # Dummy SSL Adder
@@ -69,11 +71,13 @@ class DQLibGetter(object):
             requestCutsLibrary = Request(URL_CUTS_LIBRARY, headers = headers)
             requestMCSignalsLibrary = Request(URL_MCSIGNALS_LIBRARY, headers = headers)
             requestMixingLibrary = Request(URL_MIXING_LIBRARY, headers = headers)
+            requestHistogramsLibrary = Request(URL_HISTOGRAMS_LIBRARY, headers = headers)
             
             # Get Files With Http Requests
             htmlCutsLibrary = urlopen(requestCutsLibrary, context = context).read()
             htmlMCSignalsLibrary = urlopen(requestMCSignalsLibrary, context = context).read()
             htmlMixingLibrary = urlopen(requestMixingLibrary, context = context).read()
+            htmlHistogramsLibrary = urlopen(requestHistogramsLibrary, context = context).read()
             
             # Save Disk to temp DQ libs
             with open("tempCutsLibrary.h", "wb") as f:
@@ -82,34 +86,39 @@ class DQLibGetter(object):
                 f.write(htmlMCSignalsLibrary)
             with open("tempMixingLibrary.h", "wb") as f:
                 f.write(htmlMixingLibrary)
+            with open("tempHistogramsLibrary.h", "wb") as f:
+                f.write(htmlHistogramsLibrary)
             print("[INFO] Libs downloaded succesfully.")
         # Read Cuts, Signals, Mixing vars from downloaded files
         with open("tempMCSignalsLibrary.h") as f:
-            for line in f:
-                stringIfSearch = [x for x in f if "if" in x]
-                for i in stringIfSearch:
-                    getSignals = re.findall('"([^"]*)"', i)
-                    self.allMCSignals = self.allMCSignals + getSignals
+            stringIfSearch = [x for x in f if "if" in x]
+            for i in stringIfSearch:
+                getSignals = re.findall('"([^"]*)"', i)
+                self.allMCSignals = self.allMCSignals + getSignals
         
         with open("tempMixingLibrary.h") as f:
-            for line in f:
-                stringIfSearch = [x for x in f if "if" in x]
-                for i in stringIfSearch:
-                    getMixing = re.findall('"([^"]*)"', i)
-                    self.allMixing = self.allMixing + getMixing
+            stringIfSearch = [x for x in f if "if" in x]
+            for i in stringIfSearch:
+                getMixing = re.findall('"([^"]*)"', i)
+                self.allMixing = self.allMixing + getMixing
+                    
+        with open("tempHistogramsLibrary.h") as f:
+            stringIfSearch = [x for x in f if "if" in x]
+            for i in stringIfSearch:
+                getHistos = re.findall('"([^"]*)"', i)
+                self.allHistos = self.allHistos + getHistos
         
         with open("tempCutsLibrary.h") as f:
-            for line in f:
-                stringIfSearch = [x for x in f if "if" in x] # get lines only includes if string
-                for i in stringIfSearch:
-                    getCuts = re.findall('"([^"]*)"', i) # get in double quotes string value with regex exp.
-                    getPairCuts = [y for y in getCuts if "pair" in y] # get pair cuts
-                    if getPairCuts: # if pair cut list is not empty
-                        allPairCuts = (allPairCuts + getPairCuts) # Get Only pair cuts from CutsLibrary.h
-                        namespacedPairCuts = [x + oneColon for x in allPairCuts] # paircut:
-                    self.allAnalysisCuts = (self.allAnalysisCuts + getCuts) # Get all Cuts from CutsLibrary.h
-                    nameSpacedallAnalysisCuts = [x + oneColon for x in self.allAnalysisCuts] # cut:
-                    nameSpacedallAnalysisCutsTwoDots = [x + doubleColon for x in self.allAnalysisCuts] # cut::
+            stringIfSearch = [x for x in f if "if" in x] # get lines only includes if string
+            for i in stringIfSearch:
+                getCuts = re.findall('"([^"]*)"', i) # get in double quotes string value with regex exp.
+                getPairCuts = [y for y in getCuts if "pair" in y] # get pair cuts
+                if getPairCuts: # if pair cut list is not empty
+                    allPairCuts = (allPairCuts + getPairCuts) # Get Only pair cuts from CutsLibrary.h
+                    namespacedPairCuts = [x + oneColon for x in allPairCuts] # paircut:
+                self.allAnalysisCuts = (self.allAnalysisCuts + getCuts) # Get all Cuts from CutsLibrary.h
+                nameSpacedallAnalysisCuts = [x + oneColon for x in self.allAnalysisCuts] # cut:
+                nameSpacedallAnalysisCutsTwoDots = [x + doubleColon for x in self.allAnalysisCuts] # cut::
         
         # in Filter PP Task, sels options for barrel and muon uses namespaces e.g. "<track-cut>:[<pair-cut>]:<n> and <track-cut>::<n> For Manage this issue:
         for k in range(1, 10):
