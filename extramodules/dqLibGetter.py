@@ -33,20 +33,28 @@ class DQLibGetter(object):
         object (object): self
     """
     
-    def __init__(self, allAnalysisCuts = [], allMCSignals = [], allSels = [], allMixing = [], allhistos = []) -> None:
+    def __init__(self, allAnalysisCuts = [], allMCSignals = [], allSels = [], allMixing = [], allEventHistos = [], allTrackHistos = [], allMCTruthHistos = []) -> None:
         
         self.allAnalysisCuts = list(allAnalysisCuts)
         self.allMCSignals = list(allMCSignals)
         self.allSels = list(allSels)
         self.allMixing = list(allMixing)
-        self.allHistos = list(allhistos)
-        
+        self.allEventHistos = list(allEventHistos)
+        self.allTrackHistos = list(allTrackHistos)
+        self.allMCTruthHistos = list(allMCTruthHistos)
+
         allPairCuts = [] # only pair cuts
         nAddedallAnalysisCutsList = [] # e.g. muonQualityCuts:2
         nAddedPairCutsList = [] # e.g paircutMass:3
         selsWithOneColon = [] # track/muon cut:paircut:n
         oneColon = ":" # Namespace reference
         doubleColon = "::" # Namespace reference
+        
+        kEvents = True
+        kTracks = True
+        eventHistos = []
+        trackHistos = []
+        mctruthHistos = []
         
         headers = {
             "User-Agent":
@@ -82,12 +90,16 @@ class DQLibGetter(object):
             # Save Disk to temp DQ libs
             with open("tempCutsLibrary.h", "wb") as f:
                 f.write(htmlCutsLibrary)
+            f.close()
             with open("tempMCSignalsLibrary.h", "wb") as f:
                 f.write(htmlMCSignalsLibrary)
+            f.close()
             with open("tempMixingLibrary.h", "wb") as f:
                 f.write(htmlMixingLibrary)
+            f.close()
             with open("tempHistogramsLibrary.h", "wb") as f:
                 f.write(htmlHistogramsLibrary)
+            f.close()
             print("[INFO] Libs downloaded succesfully.")
         # Read Cuts, Signals, Mixing vars from downloaded files
         with open("tempMCSignalsLibrary.h") as f:
@@ -95,19 +107,37 @@ class DQLibGetter(object):
             for i in stringIfSearch:
                 getSignals = re.findall('"([^"]*)"', i)
                 self.allMCSignals = self.allMCSignals + getSignals
+        f.close() 
         
         with open("tempMixingLibrary.h") as f:
             stringIfSearch = [x for x in f if "if" in x]
             for i in stringIfSearch:
                 getMixing = re.findall('"([^"]*)"', i)
                 self.allMixing = self.allMixing + getMixing
-                    
+        f.close() 
+             
+        # todo create dep tree and improve better performance        
         with open("tempHistogramsLibrary.h") as f:
-            stringIfSearch = [x for x in f if "if" in x]
-            for i in stringIfSearch:
-                getHistos = re.findall('"([^"]*)"', i)
-                self.allHistos = self.allHistos + getHistos
-        
+            for line in f:
+                if "if" in line:
+                    #print(line, len(line) - len(line.lstrip()))
+                    if "track" not in line and kEvents is True:
+                        line = re.findall('"([^"]*)"', line)
+                        eventHistos += line
+                    elif "mctruth" not in line and kTracks is True:
+                        line = re.findall('"([^"]*)"', line)
+                        kEvents = False
+                        trackHistos += line
+                    elif "pair_lmee" not in line:
+                        line = re.findall('"([^"]*)"', line)
+                        kTracks = False
+                        mctruthHistos += line
+                    else:
+                        break 
+        f.close()       
+        self.allEventHistos = eventHistos
+        self.allTrackHistos = self.allTrackHistos + trackHistos
+        self.allMCTruthHistos = self.allMCTruthHistos + mctruthHistos
         with open("tempCutsLibrary.h") as f:
             stringIfSearch = [x for x in f if "if" in x] # get lines only includes if string
             for i in stringIfSearch:
@@ -135,4 +165,5 @@ class DQLibGetter(object):
         # Style 2 <track-cut>:<n> --> nAddedallAnalysisCutsList
         
         # Merge All possible styles for Sels (cfgBarrelSels and cfgMuonSels) in FilterPP Task
+        f.close() 
         self.allSels = selsWithOneColon + nAddedallAnalysisCutsList
