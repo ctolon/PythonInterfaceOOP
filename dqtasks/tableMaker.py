@@ -188,13 +188,13 @@ class TableMaker(object):
             metavar = "CFGMUONCUTS", choices = allAnalysisCuts,
             ).completer = ChoicesCompleterList(allAnalysisCuts)
         groupTableMakerConfigs.add_argument(
-            "--cfgAddEventHistogram", help = "Comma separated list of event histograms", action = "store", type = str, metavar="CFGADDEVENTHISTOGRAM", choices = allHistos,
+            "--cfgAddEventHistogram", help = "Comma separated list of event histograms", action = "store", nargs = "*", type = str, metavar="CFGADDEVENTHISTOGRAM", choices = allHistos,
             ).completer = ChoicesCompleterList(allHistos)
         groupTableMakerConfigs.add_argument(
-            "--cfgAddTrackHistogram", help = "Comma separated list of track histograms", action = "store", type = str, metavar="CFGADDTRACKHISTOGRAM", choices = allHistos,
+            "--cfgAddTrackHistogram", help = "Comma separated list of track histograms", action = "store", nargs= "*", type = str, metavar="CFGADDTRACKHISTOGRAM", choices = allHistos,
             ).completer = ChoicesCompleterList(allHistos)
         groupTableMakerConfigs.add_argument(
-            "--cfgAddMuonHistogram", help = "Comma separated list of muon histograms", action = "store", type = str, metavar="CFGADDMUONHISTOGRAM", choices = allHistos,
+            "--cfgAddMuonHistogram", help = "Comma separated list of muon histograms", action = "store", nargs="*", type = str, metavar="CFGADDMUONHISTOGRAM", choices = allHistos,
             ).completer = ChoicesCompleterList(allHistos)
         groupTableMakerConfigs.add_argument("--cfgBarrelLowPt", help = "Low pt cut for tracks in the barrel", action = "store", type = str)
         groupTableMakerConfigs.add_argument("--cfgMuonLowPt", help = "Low pt cut for muons", action = "store", type = str)
