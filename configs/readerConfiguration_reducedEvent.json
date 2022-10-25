@@ -27,6 +27,10 @@
         "treename": "ReducedTracksBarrel"
       },
       {
+        "table": "AOD/RTBARRELCOV/0",
+        "treename": "ReducedTracksBarrelCov"
+      },
+      {
         "table": "AOD/RTBARRELPID/0",
         "treename": "ReducedTracksBarrelPID"
       },

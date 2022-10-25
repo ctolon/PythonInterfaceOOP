@@ -99,6 +99,8 @@ class TableMaker(object):
             "MuonOnlyWithCent": "Build muon-only DQ skimmed data model, w/ centrality",
             "MuonOnlyWithFilter": "Build muon-only DQ skimmed data model, w/ event filter",
             "MuonOnlyWithQvector": "Build muon-only DQ skimmed data model, w/ q vector",
+            "AmbiguousMuonOnly": "Build muon-only DQ skimmed data model with QA plots for ambiguous muons",
+            "AmbiguousBarrelOnly": "Build muon-only DQ skimmed data model with QA plots for ambiguous tracks",
             "OnlyBCs": "Analyze the BCs to store sampled lumi",
             }
         tableMakerProcessSelectionsList = []

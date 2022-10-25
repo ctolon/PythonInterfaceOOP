@@ -194,14 +194,14 @@ def tableProducer(
         if config[taskNameInConfig][processFunc] == "true":
             logging.info("processFunc ========")
             logging.info("%s", processFunc)
-            if "processFull" in processFunc or "processBarrel" in processFunc:
+            if "processFull" in processFunc or "processBarrel" in processFunc or "processAmbiguousBarrel" in processFunc:
                 logging.info("common barrel tables==========")
                 for table in barrelCommonTables:
                     logging.info("%s", table)
                     tablesToProduce[table] = 1
                 if runOverMC:
                     tablesToProduce["ReducedTracksBarrelLabels"] = 1
-            if "processFull" in processFunc or "processMuon" in processFunc:
+            if "processFull" in processFunc or "processMuon" in processFunc or "processAmbiguousMuon" in processFunc:
                 logging.info("common muon tables==========")
                 for table in muonCommonTables:
                     logging.info("%s", table)

@@ -43,6 +43,7 @@ barrelDeps = [
     "o2-analysis-trackselection", "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof",
     "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full",
     ]
+muonDeps = ["o2-analysis-fwdtrackextension"]
 specificDeps = {
     "processFull": [],
     "processFullTiny": [],
@@ -54,11 +55,11 @@ specificDeps = {
     "processBarrelOnlyWithEventFilter": ["o2-analysis-dq-filter-pp"],
     "processBarrelOnlyWithQvector": ["o2-analysis-centrality-table", "o2-analysis-dq-flow",],
     "processBarrelOnlyWithCent": ["o2-analysis-centrality-table"],
-    "processMuonOnly": ["o2-analysis-fwdtrackextension"],
-    "processMuonOnlyWithCov": ["o2-analysis-fwdtrackextension"],
-    "processMuonOnlyWithCent": ["o2-analysis-centrality-table", "o2-analysis-fwdtrackextension"],
-    "processMuonOnlyWithQvector": ["o2-analysis-centrality-table", "o2-analysis-dq-flow", "o2-analysis-fwdtrackextension"],
-    "processMuonOnlyWithFilter": ["o2-analysis-dq-filter-pp", "o2-analysis-fwdtrackextension"]
+    "processMuonOnly": [],
+    "processMuonOnlyWithCov": [],
+    "processMuonOnlyWithCent": ["o2-analysis-centrality-table"],
+    "processMuonOnlyWithQvector": ["o2-analysis-centrality-table", "o2-analysis-dq-flow"],
+    "processMuonOnlyWithFilter": ["o2-analysis-dq-filter-pp"]
     # "processFullWithCentWithV0Bits": ["o2-analysis-centrality-table","o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices"],
     # "processFullWithEventFilterWithV0Bits": ["o2-analysis-dq-filter-pp","o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices"],
     }
@@ -200,6 +201,9 @@ for processFunc in specificDeps.keys():
     if config[taskNameInConfig][processFunc] == "true":
         if "processFull" in processFunc or "processBarrel" in processFunc:
             for dep in barrelDeps:
+                depsToRun[dep] = 1
+        if "processFull" in processFunc or "processMuon" in processFunc:
+            for dep in muonDeps:
                 depsToRun[dep] = 1
         for dep in specificDeps[processFunc]:
             depsToRun[dep] = 1

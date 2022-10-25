@@ -239,6 +239,8 @@
         "processMuonOnly": "false",
         "processMuonOnlyWithQvector": "false",
         "processMuonOnlyWithFilter": "false",
+        "processAmbiguousMuonOnly": "false",
+        "processAmbiguousBarrelOnly": "false",
         "processOnlyBCs": "true"
     },
     "internal-dpl-aod-global-analysis-file-sink": "",
