@@ -227,8 +227,6 @@ python3 runDQEfficiency.py configs/configAnalysisMC.json --aod reducedAod.root -
 
 ## Data Part
 
-IMPORTANT: Analyzes are not running for the LHC15o dataset. They give an error because there are no Ambiguous track TTrees in the dataset. You can skip the tutorials about the LHC15o.
-
 ### Run tableMaker on LHC15o (LHC15o PbPb Run2Data)
 
 Command To Run:
