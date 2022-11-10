@@ -225,19 +225,19 @@ def setSelection(config: dict, deps: dict, targetCfg: list, cliMode: bool):
         targetCfg (list): parameters argument name
         cliMode (bool): CLI mode
     """
-    
-    for selection, taskNameProcessFuncPair in deps.items():
-        if isinstance(taskNameProcessFuncPair, dict):
-            for taskName, processFunc in taskNameProcessFuncPair.items():
-                if selection in targetCfg:
-                    config[taskName][processFunc] = "true"
-                    logging.debug(" - [%s] %s : true", taskName, processFunc)
-                
-                elif cliMode == "true":
-                    config[taskName][processFunc] = "false"
-                    logging.debug(" - [%s] %s : false", taskName, processFunc)
-        else:
-            raise TypeError("Taskname - Process Function pair should be a dictionary type")
+    if targetCfg is not None:
+        for selection, taskNameProcessFuncPair in deps.items():
+            if isinstance(taskNameProcessFuncPair, dict):
+                for taskName, processFunc in taskNameProcessFuncPair.items():
+                    if selection in targetCfg:
+                        config[taskName][processFunc] = "true"
+                        logging.debug(" - [%s] %s : true", taskName, processFunc)
+                    
+                    elif cliMode == "true":
+                        config[taskName][processFunc] = "false"
+                        logging.debug(" - [%s] %s : false", taskName, processFunc)
+            else:
+                raise TypeError("Taskname - Process Function pair should be a dictionary type")
 
 
 def setConfig(config: dict, task: str, cfg: str, allArgs: dict, cliMode: bool):
