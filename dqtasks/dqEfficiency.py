@@ -79,10 +79,10 @@ class DQEfficiency(object):
             analysisSelectionsList.append(k)
         
         sameEventPairingProcessSelections = {
-            "JpsiToEE": "Run electron-electron pairing, with skimmed tracks",
-            "JpsiToEEVertexing": "Run barrel barrel pairing on DQ skimmed tracks including vertexing",
-            "JpsiToMuMu": "Run muon-muon pairing, with skimmed muons",
-            "JpsiToMuMuVertexing": "Run muon-muon pairing and vertexing, with skimmed muons",
+            "DecayToEE": "Run electron-electron pairing, with skimmed tracks",
+            "DecayToEEVertexing": "Run barrel barrel pairing on DQ skimmed tracks including vertexing",
+            "DecayToMuMu": "Run muon-muon pairing, with skimmed muons",
+            "DecayToMuMuVertexing": "Run muon-muon pairing and vertexing, with skimmed muons",
             }
         sameEventPairingProcessSelectionsList = []
         for k, v in sameEventPairingProcessSelections.items():
