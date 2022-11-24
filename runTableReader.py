@@ -29,8 +29,8 @@ from dqtasks.tableReader import TableReader
 
 # Predefined selections for setSwitch function
 sameEventPairingParameters = [
-    "processDecayToEESkimmed", "processDecayToMuMuSkimmed", "processDecayToMuMuVertexingSkimmed", "processVnDecayToEESkimmed",
-    "processVnDecayToMuMuSkimmed", "processElectronMuonSkimmed", "processAllSkimmed"
+    "processJpsiToEESkimmed", "processJpsiToMuMuSkimmed", "processJpsiToMuMuVertexingSkimmed", "processVnJpsiToEESkimmed",
+    "processVnJpsiToMuMuSkimmed", "processElectronMuonSkimmed", "processAllSkimmed"
     ]
 
 eventMixingParameters = [
@@ -46,11 +46,11 @@ analysisSelectionDeps = {
     }
 sameEventTaskName = "analysis-same-event-pairing"
 sameEventPairingDeps = {
-    "processDecayToEESkimmed": {"analysis-track-selection": "processSkimmed"},
-    "processDecayToMuMuSkimmed": {"analysis-muon-selection": "processSkimmed"},
-    "processDecayToMuMuVertexingSkimmed": {"analysis-muon-selection": "processSkimmed"},
-    "processVnDecayToEESkimmed": {"analysis-track-selection": "processSkimmed"},
-    "processVnDecayToMuMuSkimmed": {"analysis-muon-selection": "processSkimmed"},
+    "processJpsiToEESkimmed": {"analysis-track-selection": "processSkimmed"},
+    "processJpsiToMuMuSkimmed": {"analysis-muon-selection": "processSkimmed"},
+    "processJpsiToMuMuVertexingSkimmed": {"analysis-muon-selection": "processSkimmed"},
+    "processVnJpsiToEESkimmed": {"analysis-track-selection": "processSkimmed"},
+    "processVnJpsiToMuMuSkimmed": {"analysis-muon-selection": "processSkimmed"},
     "processElectronMuonSkimmed": {"analysis-track-selection": "processSkimmed","analysis-muon-selection": "processSkimmed"},
     "processAllSkimmed": {"analysis-track-selection": "processSkimmed","analysis-muon-selection": "processSkimmed"},
     }

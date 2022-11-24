@@ -15,29 +15,24 @@
         "cfgMixingVars": "Vtx3",
         "cfgEventCuts": "eventStandardNoINT7",
         "cfgQA": "true",
-        "cfgAddEventHistogram": "",
         "processSkimmed": "true",
         "processDummy": "false"
     },
     "analysis-track-selection": {
         "cfgTrackCuts": "jpsiO2MCdebugCuts",
         "cfgQA": "true",
-        "cfgAddTrackHistogram": "",
         "processSkimmed": "true",
         "processDummy": "false"
     },
     "analysis-muon-selection": {
         "cfgMuonCuts": "muonQualityCuts",
         "cfgQA": "true",
-        "cfgAddMuonHistogram": "",
         "processSkimmed": "true",
         "processDummy": "false"
     },
     "analysis-event-mixing": {
         "cfgTrackCuts": "jpsiO2MCdebugCuts2",
         "cfgMuonCuts": "muonQualityCuts",
-        "cfgAddEventMixingHistogram": "",
-        "cfgMixingDepth": "1",
         "processBarrelSkimmed": "false",
         "processMuonSkimmed": "false",
         "processBarrelMuonSkimmed": "false",
@@ -48,22 +43,20 @@
     "analysis-same-event-pairing": {
         "cfgTrackCuts": "jpsiO2MCdebugCuts",
         "cfgMuonCuts": "muonQualityCuts",
-        "cfgAddSEPHistogram": "",
         "ccdb-url": "http:\/\/ccdb-test.cern.ch:8080",
         "ccdb-path": "Users\/lm",
         "ccdb-no-later-than": "1638360910432",
-        "processDecayToEESkimmed": "true",
-        "processDecayToMuMuSkimmed": "true",
-        "processDecayToMuMuVertexingSkimmed": "false",
-        "processVnDecayToEESkimmed": "false",
-        "processVnDecayToMuMuSkimmed": "false",
-        "processElectronMuonSkimmed": "false",
+        "processJpsiToEESkimmed": "true",
+        "processJpsiToMuMuSkimmed": "true",
+        "processJpsiToMuMuVertexingSkimmed": "false",
+        "processVnJpsiToEESkimmed": "false",
+        "processVnJpsiToMuMuSkimmed": "false",
+        "processElectronMuonSkimmed": "true",
         "processAllSkimmed": "false",
         "processDummy": "false"
     },
     "analysis-dilepton-hadron": {
         "cfgLeptonCuts": "jpsiPID1",
-        "cfgAddDileptonHadHistogram": "",
         "processSkimmed": "false",
         "processDummy": "true"
     },
