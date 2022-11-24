@@ -330,7 +330,7 @@ def oneToMultiDepsChecker(argument: list, mandatoryArg: str, targetCfg: list, ar
     """
     
     try:
-        if argument is not None and mandatoryArg not in targetCfg:
+        if argument is not None and targetCfg is not None and mandatoryArg not in targetCfg:
             raise MandatoryArgNotFoundError(mandatoryArg)
     
     except MandatoryArgNotFoundError as e:
