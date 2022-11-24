@@ -75,11 +75,11 @@ class TableReader(object):
             analysisSelectionsList.append(k)
         
         sameEventPairingProcessSelections = {
-            "DecayToEE": "Run electron-electron pairing, with skimmed tracks",
-            "DecayToMuMu": "Run muon-muon pairing, with skimmed muons",
-            "DecayToMuMuVertexing": "Run muon-muon pairing and vertexing, with skimmed muons",
-            "VnDecayToEE": "Run barrel-barrel vn mixing on skimmed tracks",
-            "VnDecayToMuMu": "Run muon-muon vn mixing on skimmed tracks",
+            "JpsiToEE": "Run electron-electron pairing, with skimmed tracks",
+            "JpsiToMuMu": "Run muon-muon pairing, with skimmed muons",
+            "JpsiToMuMuVertexing": "Run muon-muon pairing and vertexing, with skimmed muons",
+            "VnJpsiToEE": "Run barrel-barrel vn mixing on skimmed tracks",
+            "VnJpsiToMuMu": "Run muon-muon vn mixing on skimmed tracks",
             "ElectronMuon": "Run electron-muon pairing, with skimmed tracks/muons",
             "All": "Run all types of pairing, with skimmed tracks/muons",
             }
