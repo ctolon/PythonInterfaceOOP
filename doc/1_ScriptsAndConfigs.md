@@ -23,13 +23,22 @@ These scripts are the main python scripts that run the workflows in O2-DQ.
 * It provides Download needed O2-DQ Libraries (CutsLibrary, MCSignalLibrary, MixingLibrary from O2Physics) for validation and autocompletion in Manual way. You can download libs with version as nightly or you can pull libs from your local alice-software.
 [`DownloadLibs.py`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/DownloadLibs.py).
 
+Also We have PWG-EM Dilepton Tasks, prepared from @rbailhac
+
+* Analysis task for calculating single electron and dielectron efficiency, skimmed version.
+[`runEMEfficiency.py`](https://github.com/ctolon/PythonInterfaceOOP/blob/main/runEMEfficiency.py).
+* Analysis task for calculating single electron and dielectron efficiency, not skimmed version.
+[`runEMEfficiencyNotSkimmed.py`](https://github.com/ctolon/PythonInterfaceOOP/blob/main/runEMEfficiencyNotSkimmed.py).
+
+
+
 ## Config Files
 
 * Contains workflow configuration files
 [`Configs`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/Configs)
 
 
-* JSON workflow configuration files List in Table
+* JSON workflow configuration files List in Table (DQ)
 
 Main File | Related Task on O2Physics | Description | W.S
 --- | --- | --- | ---
@@ -45,6 +54,13 @@ Main File | Related Task on O2Physics | Description | W.S
 [`configFlowDataRun3.json`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/configs/configFlowDataRun3.json) | [`dqFlow.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/dqFlow.cxx) | run with dqFlow.cxx on data run 3 | `runDQFlow.py`
 [`configV0SelectorDataRun2.json`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/configs/configV0SelectorDataRun2.json) | [`v0selector.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/v0selector.cxx) | run with v0selector.cxx on data run 2 | `runV0selector.py`
 [`configV0SelectorDataRun3.json`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/configs/configV0SelectorDataRun3.json) | [`v0selector.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/v0selector.cxx) | run with v0selector.cxx on data run 3 | `runV0selector.py`
+
+* JSON workflow configuration files List in Table (PWG-EM Dilepton)
+
+Main File | Related Task on O2Physics | Description | W.S
+--- | --- | --- | ---
+[`configAnalysisMCEM.json`](https://github.com/ctolon/PythonInterfaceOOP/blob/main/configs/configAnalysisMCEM.json) | [`emEfficiencyEE.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGEM/Dilepton/Tasks/emEfficiencyEE.cxx) | run with emEfficiencyEE.cxx on MC run 3 (skimmed) | `runEMEfficiency.py`
+[`configAnalysisMCEMNoSkimmed.json`](https://github.com/ctolon/PythonInterfaceOOP/blob/main/configs/configAnalysisMCEMNoSkimmed.json) | [`emEfficiencyEE.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGEM/Dilepton/Tasks/emEfficiencyEE.cxx) | run with emEfficiencyEE.cxx on MC run 3 (not skimmed) | `runEMEfficiencyNotSkimmed.py`
 
 W.S : Workflow Script
 
@@ -75,8 +91,10 @@ Main File | Data Model | Description
 
 These scripts are interface scripts with arguments provided by parser_args to configure DQ tasks analysis side.
 
-* Contains DQ Interface Scripts
-[`dqtasks`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/configs)
+* Contains DQ and EM Interface Scripts
+[`dqtasks`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/dqtasks)
+
+* DQ Interface Script List:
 
 Interface Script | Workflow Script
 --- | --- 
@@ -85,10 +103,20 @@ Interface Script | Workflow Script
 `tableReader.py`     | `runTableReader.py`
 `dqEfficiency.py`    | `runDQEfficiency.py`
 `filterPP.py`        | `filterPP.py`
- `dqFlow.py`         | `runDQFlow.py`
+`dqFlow.py`          | `runDQFlow.py`
 `v0selector.py`      | `runV0selector.py`
 
+* EM Interface Script List:
+
+Interface Script | Workflow Script
+--- | --- 
+`runEMEfficiency.py` | `emEfficiency.py`
+`runEMEfficiencyNotSkimmed.py`    | `emEfficiencyNoSkimmed.py`
+
+
 * Important P.S!!! In order to avoid conflicts in the tableMaker Interface, the arguments in the filterPP and dqFlow interfaces have been reduced and moved to the tableMaker interface. That is, although filterPP and dqFlow interfaces have their own interfaces, the tableMaker interface has both its own interface and the reduced interfaces of these 2 scripts (tableMaker + reduced dqFlow + reduced filterPP). It should be considered when configuring the interface for tableMaker, and the original interfaces of dqFlow and filterPP should never be connected to this interface, their reduced versions in tableMaker should be used.
+
+
 
 ## Common Deps Interface Scripts
 
@@ -99,15 +127,15 @@ These scripts are interface scripts with arguments provided by parser_args to co
 
 Interface Script | Used in
 --- | --- 
-`centralityTable.py`      | `runTablemakerMC.py` <br> `runTableMaker.py` <br>  `runV0selector.py` <br> `runDQFlow.py`
-`dplAodReader.py`      | `runTablemakerMC.py` <br> `runTableMaker.py` <br>  `runV0selector.py` <br> `runDQFlow.py` <br> `tableReader.py`  <br>  `dqEfficiency.py` 
-`eventSelection.py`    | `runTablemakerMC.py` <br> `runTableMaker.py`  <br> `filterPP.py`  <br> `runDQFlow.py`  <br> `runV0selector.py`  
-`multiplicityTable.py`     | `runTablemakerMC.py` <br> `runTableMaker.py`  <br> `filterPP.py`  <br> `runDQFlow.py`  <br> `runV0selector.py`
-`pidTOFBase.py`    |  `runTablemakerMC.py` <br> `runTableMaker.py`  <br> `filterPP.py`  <br> `runDQFlow.py`  <br> `runV0selector.py`
-`pidTOFBeta.py`        | `runTablemakerMC.py` <br> `runTableMaker.py`  <br> `filterPP.py`  <br> `runDQFlow.py`  <br> `runV0selector.py`
-`pidTPCTOFFull.py`         | `runTablemakerMC.py` <br> `runTableMaker.py`  <br> `filterPP.py`  <br> `runDQFlow.py`  <br> `runV0selector.py`
-`trackPropagation.py`      |  `runTablemakerMC.py` <br> `runTableMaker.py`  <br> `filterPP.py`  <br> `runDQFlow.py`  <br> `runV0selector.py`
-`trackselection.py`      |  `runTablemakerMC.py` <br> `runTableMaker.py`  <br> `filterPP.py`  <br> `runDQFlow.py`  <br> `runV0selector.py`
+`centralityTable.py`      | `runTablemakerMC.py` <br> `runTableMaker.py` <br>  `runV0selector.py` <br> `runDQFlow.py` <br> `emEfficiencyNoSkimmed.py`
+`dplAodReader.py`      | `runTablemakerMC.py` <br> `runTableMaker.py` <br>  `runV0selector.py` <br> `runDQFlow.py` <br> `tableReader.py`  <br>  `dqEfficiency.py` <br> `emEfficiencyNoSkimmed.py` 
+`eventSelection.py`    | `runTablemakerMC.py` <br> `runTableMaker.py`  <br> `filterPP.py`  <br> `runDQFlow.py`  <br> `runV0selector.py` <br> `emEfficiencyNoSkimmed.py`
+`multiplicityTable.py`     | `runTablemakerMC.py` <br> `runTableMaker.py`  <br> `filterPP.py`  <br> `runDQFlow.py`  <br> `runV0selector.py` <br> `emEfficiencyNoSkimmed.py`
+`pidTOFBase.py`    |  `runTablemakerMC.py` <br> `runTableMaker.py`  <br> `filterPP.py`  <br> `runDQFlow.py`  <br> `runV0selector.py` <br> `emEfficiencyNoSkimmed.py`
+`pidTOFBeta.py`        | `runTablemakerMC.py` <br> `runTableMaker.py`  <br> `filterPP.py`  <br> `runDQFlow.py`  <br> `runV0selector.py` <br> `emEfficiencyNoSkimmed.py`
+`pidTPCTOFFull.py`         | `runTablemakerMC.py` <br> `runTableMaker.py`  <br> `filterPP.py`  <br> `runDQFlow.py`  <br> `runV0selector.py` <br> `emEfficiencyNoSkimmed.py`
+`trackPropagation.py`      |  `runTablemakerMC.py` <br> `runTableMaker.py`  <br> `filterPP.py`  <br> `runDQFlow.py`  <br> `runV0selector.py` <br> `emEfficiencyNoSkimmed.py`
+`trackselection.py`      |  `runTablemakerMC.py` <br> `runTableMaker.py`  <br> `filterPP.py`  <br> `runDQFlow.py`  <br> `runV0selector.py` <br> `emEfficiencyNoSkimmed.py`
 
 ## Extra Modules
 

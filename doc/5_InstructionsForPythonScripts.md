@@ -259,7 +259,7 @@ Examples(in NewAllWorkFlows):
 
 In case of multiple configs example
   ```ruby
-  python3 runTableReader.py configs/configAnalysisData.json --analysis eventSelection trackSelection eventMixing sameEventPairing --process JpsiToEE --cfgTrackCuts jpsiO2MCdebugCuts --aod reducedAod.root --debug debug --logFile
+  python3 runTableReader.py configs/configAnalysisData.json --analysis eventSelection trackSelection eventMixing sameEventPairing --process DecayToEE --cfgTrackCuts jpsiO2MCdebugCuts --aod reducedAod.root --debug debug --logFile
   ```
 
 
@@ -273,7 +273,7 @@ Arg | Opt | Task | nargs |
 `--writer` | all | Special Option | 1 |
 `--analysis` | `eventSelection`<br>`trackSelection`<br>`muonSelection`<br>`eventMixing`<br>`sameEventPairing`<br> `dileptonHadron`  | `analysis-event-selection`<br>`analysis-track-selection`<br>`analysis-muon-selection`<br>`analysis-event-mixing`<br>`analysis-same-event-pairing`<br>`analysis-dilepton-hadron`  | * |
 `--mixing` | `Barrel`<br>`Muon`<br>`BarrelMuon`<br>`BarrelVn`<br>`MuonVn` | `analysis-same-event-pairing` | * |
-`--process` | `JpsiToEE`<br>`JpsiToMuMu`<br>`JpsiToMuMuVertexing`<br>`VnJpsiToEE`<br>`VnJpsiToMuMu`<br>`ElectronMuon`<br> `All`  | `analysis-same-event-pairing` | * |
+`--process` | `DecayToEE`<br>`DecayToMuMu`<br>`DecayToMuMuVertexing`<br>`VnDecayToEE`<br>`VnDecayToMuMu`<br>`ElectronMuon`<br> `All`  | `analysis-same-event-pairing` | * |
 `--syst` | `pp`<br> `PbPb`<br> `pPb`<br> `Pbp`<br> `XeXe`<br> | `event-selection-task` | 1 |
 `--cfgQA` |`true` <br> `false`  | `analysis-event-selection`<br> `analysis-track-selection`<br> `analysis-muon-selection`  | 1 |
 `--cfgMixingVars` | `allMixingVars`  | `analysis-event-selection`<br> | * |
@@ -319,7 +319,7 @@ Examples(in NewAllWorkFlows):
 
 In case of multiple configs example
   ```ruby
-python3 runDQEfficiency.py configs/configAnalysisMC.json --analysis muonSelection eventSelection sameEventPairing --aod reducedAod.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --cfgMuonMCSignals muFromJpsi muFromPsi2S --cfgBarrelMCGenSignals Jpsi Psi2S --cfgBarrelMCRecSignals mumuFromJpsi mumuFromPsi2S dimuon --process JpsiToMuMu --cfgQA true
+python3 runDQEfficiency.py configs/configAnalysisMC.json --analysis muonSelection eventSelection sameEventPairing --aod reducedAod.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --cfgMuonMCSignals muFromJpsi muFromPsi2S --cfgBarrelMCGenSignals Jpsi Psi2S --cfgBarrelMCRecSignals mumuFromJpsi mumuFromPsi2S dimuon --process DecayToMuMu --cfgQA true
 
 
   ```
@@ -335,7 +335,7 @@ Arg | Opt | Task | nargs |
 `--reader` | all | Special Option | 1 |
 `--writer` | all | Special Option | 1 |
 `--analysis` | `eventSelection`<br>`trackSelection`<br>`muonSelection`<br>`sameEventPairing`<br>`dileptonTrackDimuonMuonSelection`<br> `dileptonTrackDielectronKaonSelection`<br> | `analysis-event-selection`<br>`analysis-track-selection`<br>`analysis-muon-selection`<br>`analysis-same-event-pairing`<br>`analysis-dilepton-track` | * |
-`--process` | `JpsiToEE`<br>`JpsiToMuMu`<br>`JpsiToMuMuVertexing`<br>| `analysis-same-event-pairing` | * |
+`--process` | `DecayToEE`<br>`DecayToMuMu`<br>`DecayToMuMuVertexing`<br>| `analysis-same-event-pairing` | * |
 `--cfgQA` |`true` <br> `false`  | `analysis-event-selection`<br> `analysis-track-selection`<br> `analysis-muon-selection` | 1 |
 `--cfgEventCuts` | `allCuts` | `analysis-event-selection`<br>  | * |
 `--cfgTrackCuts` | `allCuts` | `analysis-track-selection`<br> | * |
@@ -578,5 +578,7 @@ Arg | Ref Type| Desc | Default | Real Type
 `--logFile` | No Param | Enable logger for both file and CLI  | - | - |
 
 TODO v0selector interface instructions will be added.
+TODO EMefficiency interface instructions will be added.
+TODO They will maintain according to latest changes 
 
 [← Go back to Instructions For Techincal Informations](4_TechincalInformations.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Tutorials →](6_Tutorials.md)

@@ -4,12 +4,18 @@
 
 [![doxygen](https://img.shields.io/badge/doxygen-documentation-blue.svg)](https://dquserinterfaceoop.github.io/docs/html/)
 
-This project includes python based user interface development for PWG-DQ Workflows based on nightly-20221025. You can follow the instructions and you can find tutorials in table of contents (For prerequisites, Installation guide for argcomplete and Some Informations good to know).
+This project includes python based user interface development for PWG-DQ Workflows based on nightly-20221125. You can follow the instructions and you can find tutorials in table of contents (For prerequisites, Installation guide for argcomplete and Some Informations good to know).
 
 ## Contact
 Ionut Cristian Arsene (Owner of [`O2DQWorkflows`](https://github.com/iarsene/O2DQworkflows))
 
 Cevat Batuhan Tolon (Author Of Interface)
+
+## LATEST CHANGES (VERY IMPORTANT!!!)
+
+On 25/11/2022, serious changes occurred in the naming rules of the O2-DQ Framework. Interface has been updated to use naming conventions on and after this date. If you are using an older O2 version, pull the scripts from old commits. It is recommended to update O2Physics instead.
+
+Reference: https://github.com/AliceO2Group/O2Physics/pull/1520
 
 ## Important
 
