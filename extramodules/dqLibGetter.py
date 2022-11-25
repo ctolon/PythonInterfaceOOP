@@ -140,7 +140,7 @@ class DQLibGetter(object):
                         line = re.findall('"([^"]*)"', line)
                         kEvents = False
                         trackHistos += line
-                    elif "pair" not in line and kMCtruths is True: # get mctruth histos # TODO test it
+                    elif "mctruth" in line and kMCtruths is True: # get mctruth histos # TODO test it
                         line = re.findall('"([^"]*)"', line)
                         kTracks = False
                         mctruthHistos += line
@@ -158,6 +158,10 @@ class DQLibGetter(object):
         self.allMCTruthHistos = self.allMCTruthHistos + mctruthHistos
         self.allPairHistos = self.allPairHistos + pairHistos
         self.allDileptonHistos = self.allDileptonHistos + dileptonHistos
+        #print("mctruth :" ,mctruthHistos)
+        #print("track :", trackHistos)
+        #print("pair histos :", pairHistos)
+        #print("dilepton histos", dileptonHistos)
         with open("tempCutsLibrary.h") as f:
             stringIfSearch = [x for x in f if "if" in x] # get lines only includes if string
             for i in stringIfSearch:

@@ -54,7 +54,7 @@ debugSettings(args.debug, args.logFile, fileName = "emEfficiencyEE.log")
 # if cliMode true, Overrider mode else additional mode
 cliMode = args.onlySelect
 
-forgettedArgsChecker(allArgs) # Transaction management
+#forgettedArgsChecker(allArgs) # Transaction management
 
 # adding prefix for setSwitch function
 args.process = setPrefixSuffix(args.process, "process", 'Skimmed', True, True)

@@ -56,7 +56,7 @@ debugSettings(args.debug, args.logFile, fileName = "dqFlow.log")
 # if cliMode true, Overrider mode else additional mode
 cliMode = args.onlySelect
 
-forgettedArgsChecker(allArgs) # Transaction Management
+#forgettedArgsChecker(allArgs) # Transaction Management
 
 # adding prefix for setSwitch function
 args.pid = setPrefixSuffix(args.pid, "pid-", '', True, False)

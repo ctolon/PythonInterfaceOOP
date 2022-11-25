@@ -15,7 +15,7 @@
         "cfgMixingVars": "Vtx3",
         "cfgEventCuts": "eventStandardNoINT7",
         "cfgQA": "true",
-        "cfgAddEventHistogram": "",
+        "cfgAddEventHistogram": "trigger,cent,muon",
         "processSkimmed": "true",
         "processDummy": "false"
     },
@@ -36,7 +36,7 @@
     "analysis-event-mixing": {
         "cfgTrackCuts": "jpsiO2MCdebugCuts2",
         "cfgMuonCuts": "muonQualityCuts",
-        "cfgAddEventMixingHistogram": "trigger,cent,muon",
+        "cfgAddEventMixingHistogram": "barrel,vertexing,flow",
         "cfgMixingDepth": "1",
         "processBarrelSkimmed": "false",
         "processMuonSkimmed": "false",
@@ -63,7 +63,7 @@
     },
     "analysis-dilepton-hadron": {
         "cfgLeptonCuts": "jpsiPID1",
-        "cfgAddDileptonHadHistogram": "",
+        "cfgAddDileptonHadHistogram": "dilepton-hadron-correlation",
         "processSkimmed": "false",
         "processDummy": "true"
     },

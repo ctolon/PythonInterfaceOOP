@@ -59,7 +59,7 @@ cliMode = args.onlySelect
 # Debug Settings
 debugSettings(args.debug, args.logFile, fileName = "emEfficiencyEENoSkimmed.log")
 
-forgettedArgsChecker(allArgs) # Transaction management
+#forgettedArgsChecker(allArgs) # Transaction management
 
 # adding prefix for setSwitch function
 args.pid = setPrefixSuffix(args.pid, "pid-", '', True, False)

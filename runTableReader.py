@@ -78,7 +78,7 @@ debugSettings(args.debug, args.logFile, fileName = "tableReader.log")
 cliMode = args.onlySelect
 
 # Transaction
-forgettedArgsChecker(allArgs) # Transaction Management
+#forgettedArgsChecker(allArgs) # Transaction Management
 
 # adding prefix for setSwitch function
 args.process = setPrefixSuffix(args.process, "process", 'Skimmed', True, True)

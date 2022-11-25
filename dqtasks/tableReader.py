@@ -90,10 +90,11 @@ class TableReader(object):
         booleanSelections = ["true", "false"]
         
         # Get DQ Analysis Selections from O2-DQ Framework Header Files
-        # TODO Create group also for SEP, Event Mixing and dileptons
         allAnalysisCuts = self.dqLibGetter.allAnalysisCuts
         allEventHistos = self.dqLibGetter.allEventHistos
         allTrackHistos = self.dqLibGetter.allTrackHistos
+        allPairHistos = self.dqLibGetter.allPairHistos
+        allDileptonHistos = self.dqLibGetter.allDileptonHistos
         
         mixingSelections = {
             "Barrel": "Run barrel-barrel mixing on skimmed tracks",
@@ -127,7 +128,8 @@ class TableReader(object):
         # same event pairing process function selection
         groupProcessSEPSelections = self.parserTableReader.add_argument_group(title = "Data processor options: analysis-same-event-pairing")
         groupProcessSEPSelections.add_argument(
-        "--cfgAddSEPHistogram", help = "Comma separated list of same event pairing histograms", action = "store", nargs= "*", type = str, metavar="CFGADDEVENTMIXINGHISTOGRAM")
+        "--cfgAddSEPHistogram", help = "Comma separated list of same event pairing histograms", action = "store", nargs= "*", type = str, metavar="CFGADDSEPHISTOGRAM",
+        choices = allPairHistos).completer = ChoicesCompleterList(allPairHistos)
         groupProcessSEPSelections.add_argument(
             "--process", help = "analysis-same-event-pairing: PROCESS_SWITCH options", action = "store", nargs = "*", type = str,
             metavar = "PROCESS", choices = sameEventPairingProcessSelectionsList,
@@ -142,13 +144,14 @@ class TableReader(object):
         # analysis-event-mixing
         groupAnalysisEventMixing = self.parserTableReader.add_argument_group(title = "Data processor options: analysis-event-mixing")
         groupAnalysisEventMixing.add_argument(
-        "--cfgAddEventMixingHistogram", help = "Comma separated list of event mixing histograms", action = "store", nargs= "*", type = str, metavar="CFGADDEVENTMIXINGHISTOGRAM")
+        "--cfgAddEventMixingHistogram", help = "Comma separated list of event mixing histograms", action = "store", nargs= "*", type = str, metavar="CFGADDEVENTMIXINGHISTOGRAM",
+            choices = allPairHistos).completer = ChoicesCompleterList(allPairHistos)
         groupAnalysisEventMixing.add_argument(
             "--mixing", help = "analysis-event-mixing: PROCESS_SWITCH options", nargs = "*", action = "store", metavar = "MIXING",
             type = str, choices = mixingSelectionsList,
             ).completer = ChoicesCompleterList(mixingSelectionsList)
         groupAnalysisEventMixing.add_argument(
-            "--cfgMixingDepth", help = "Number of Events stored for event mixing", nargs = "1", action = "store", metavar = "CFGMIXINGDEPTH",
+            "--cfgMixingDepth", help = "Number of Events stored for event mixing", action = "store", metavar = "CFGMIXINGDEPTH",
             type = str)
         groupMixing = self.parserTableReader.add_argument_group(title = "Choice List for analysis-event-mixing PROCESS_SWITCH options")
         for key, value in mixingSelections.items():
@@ -199,7 +202,8 @@ class TableReader(object):
         # analysis-dilepton-hadron
         groupAnalysisDileptonHadron = self.parserTableReader.add_argument_group(title = "Data processor options: analysis-dilepton-hadron")
         groupAnalysisDileptonHadron.add_argument(
-            "--cfgAddDileptonHadHistogram", help = "Comma separated list of dilepton hadron histograms", action = "store", nargs = "*", type = str, metavar="CFGADDDILEPTONHADHISTOGRAM")
+            "--cfgAddDileptonHadHistogram", help = "Comma separated list of dilepton hadron histograms", action = "store", nargs = "*", type = str, metavar="CFGADDDILEPTONHADHISTOGRAM",
+            choices = allDileptonHistos).completer = ChoicesCompleterList(allDileptonHistos)
         groupAnalysisDileptonHadron.add_argument(
             "--cfgLeptonCuts", help = "Space separated list of barrel track cuts", nargs = "*", action = "store", type = str,
             metavar = "CFGLEPTONCUTS", choices = allAnalysisCuts,
