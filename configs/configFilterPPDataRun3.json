@@ -31,6 +31,7 @@
         "processRun3": "true"
     },
     "track-selection": {
+        "compatibilityIU": "false",
         "isRun3": "true",
         "itsMatching": "1",
         "ptMin": "0.1",
@@ -48,6 +49,7 @@
         "processCovariance": "true"
     },
     "track-extension": {
+        "compatibilityIU": "false",
         "processRun2": "false",
         "processRun3": "true"
     },
@@ -115,6 +117,8 @@
         "pid-al": "-1"
     },
     "tof-event-time": {
+        "minMomentum": "0.5",
+        "maxMomentum": "2.0",
         "param-file": "",
         "param-sigma": "TOFReso",
         "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
