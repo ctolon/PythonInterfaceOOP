@@ -28,7 +28,7 @@ from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.dqEfficiency import DQEfficiency
 
 # Predefined selections for setSwitch function
-sameEventPairingParameters = ["processJpsiToEESkimmed", "processJpsiToMuMuSkimmed", "processJpsiToMuMuVertexingSkimmed"]
+sameEventPairingParameters = ["processDecayToEESkimmed", "processDecayToMuMuSkimmed", "processDecayToMuMuVertexingSkimmed"]
 # yapf: disable
 # All Dependencies
 analysisSelectionDeps = {
@@ -40,10 +40,10 @@ analysisSelectionDeps = {
     }
 sameEventPairingTaskName = "analysis-same-event-pairing"
 sameEventPairingDeps = {
-    "processJpsiToEESkimmed": {"analysis-track-selection": "processSkimmed"},
-    "processJpsiToEEVertexingSkimmed": {"analysis-track-selection": "processSkimmed"},
-    "processJpsiToMuMuSkimmed": {"analysis-muon-selection": "processSkimmed"},
-    "processJpsiToMuMuVertexingSkimmed": {"analysis-muon-selection": "processSkimmed"}
+    "processDecayToEESkimmed": {"analysis-track-selection": "processSkimmed"},
+    "processDecayToEEVertexingSkimmed": {"analysis-track-selection": "processSkimmed"},
+    "processDecayToMuMuSkimmed": {"analysis-muon-selection": "processSkimmed"},
+    "processDecayToMuMuVertexingSkimmed": {"analysis-muon-selection": "processSkimmed"}
     }
 dileptonTrackTaskName = "analysis-dilepton-track"
 dileptonTrackDeps = {
