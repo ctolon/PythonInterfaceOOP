@@ -33,8 +33,9 @@ class DQLibGetter(object):
         object (object): self
     """
     
-    def __init__(self, allAnalysisCuts = [], allMCSignals = [], allSels = [], allMixing = [], allEventHistos = [], allTrackHistos = [], allMCTruthHistos = []) -> None:
+    def __init__(self, allAnalysisCuts = [], allMCSignals = [], allSels = [], allMixing = [], allEventHistos = [], allTrackHistos = [], allMCTruthHistos = [], allPairHistos = [], allDileptonHistos = []) -> None:
         
+        # Define Analysis Cuts, MC Signals and Histograms
         self.allAnalysisCuts = list(allAnalysisCuts)
         self.allMCSignals = list(allMCSignals)
         self.allSels = list(allSels)
@@ -42,7 +43,10 @@ class DQLibGetter(object):
         self.allEventHistos = list(allEventHistos)
         self.allTrackHistos = list(allTrackHistos)
         self.allMCTruthHistos = list(allMCTruthHistos)
+        self.allPairHistos = list(allPairHistos)
+        self.allDileptonHistos = list(allDileptonHistos)
 
+        # For filter selections
         allPairCuts = [] # only pair cuts
         nAddedallAnalysisCutsList = [] # e.g. muonQualityCuts:2
         nAddedPairCutsList = [] # e.g paircutMass:3
@@ -50,11 +54,19 @@ class DQLibGetter(object):
         oneColon = ":" # Namespace reference
         doubleColon = "::" # Namespace reference
         
+        # Flags for DQ Lib Getter
         kEvents = True
         kTracks = True
+        kMCtruths = True
+        kPairs = True
+        kDileptons = True
+        
+        # Lists for saving Histograms
         eventHistos = []
         trackHistos = []
         mctruthHistos = []
+        pairHistos = []
+        dileptonHistos = []
         
         headers = {
             "User-Agent":
@@ -116,28 +128,36 @@ class DQLibGetter(object):
                 self.allMixing = self.allMixing + getMixing
         f.close() 
              
-        # todo create dep tree and improve better performance        
+        # TODO create dep tree and improve better performance        
         with open("tempHistogramsLibrary.h") as f:
             for line in f:
                 if "if" in line:
                     #print(line, len(line) - len(line.lstrip()))
-                    if "track" not in line and kEvents is True:
+                    if "track" not in line and kEvents is True: # get event histos
                         line = re.findall('"([^"]*)"', line)
                         eventHistos += line
-                    elif "mctruth" not in line and kTracks is True:
+                    elif "mctruth" not in line and kTracks is True: # get track histos
                         line = re.findall('"([^"]*)"', line)
                         kEvents = False
                         trackHistos += line
-                    elif "pair_lmee" not in line:
+                    elif "pair" not in line and kMCtruths is True: # get mctruth histos # TODO test it
                         line = re.findall('"([^"]*)"', line)
                         kTracks = False
                         mctruthHistos += line
-                    else:
-                        break 
+                    elif "dilepton" not in line and kPairs is True:  # get sep histos
+                        line = re.findall('"([^"]*)"', line)
+                        kMCtruths = False
+                        pairHistos += line
+                    else: # get dilepton histos
+                        line = re.findall('"([^"]*)"', line)
+                        kPairs = False
+                        dileptonHistos += line
         f.close()       
         self.allEventHistos = eventHistos
         self.allTrackHistos = self.allTrackHistos + trackHistos
         self.allMCTruthHistos = self.allMCTruthHistos + mctruthHistos
+        self.allPairHistos = self.allPairHistos + pairHistos
+        self.allDileptonHistos = self.allDileptonHistos + dileptonHistos
         with open("tempCutsLibrary.h") as f:
             stringIfSearch = [x for x in f if "if" in x] # get lines only includes if string
             for i in stringIfSearch:
