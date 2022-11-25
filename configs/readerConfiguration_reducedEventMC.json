@@ -51,11 +51,11 @@
         "treename": "ReducedMuonsCov"
       },
       {
-        "table": "AOD/REMC/0",
+        "table": "AOD/REDUCEDMCEVENT/0",
         "treename": "ReducedMCEvents"
       },
       {
-        "table": "AOD/RTMC/0",
+        "table": "AOD/REDUCEDMCTRACK/0",
         "treename": "ReducedMCTracks"
       },
       {

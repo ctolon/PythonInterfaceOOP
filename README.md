@@ -15,7 +15,9 @@ Cevat Batuhan Tolon (Author Of Interface)
 
 On 25/11/2022, serious changes occurred in the naming rules of the O2-DQ Framework. Interface has been updated to use naming conventions on and after this date. If you are using an older O2 version, pull the scripts from old commits. It is recommended to update O2Physics instead.
 
-Reference: https://github.com/AliceO2Group/O2Physics/pull/1520
+Reference 1: https://github.com/AliceO2Group/O2Physics/pull/1520
+
+Reference 2 : https://github.com/AliceO2Group/O2Physics/pull/1534
 
 ## Important
 
