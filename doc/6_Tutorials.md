@@ -293,8 +293,10 @@ You need to produce reducedAod.root file with tableMaker in previous step.
 Command To Run:
 
 ```ruby
-python3 runTableReader.py configs/configAnalysisData.json --aod reducedAod.root --analysis eventSelection muonSelection sameEventPairing --process DecayToMuMuVertexing --cfgQA true --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --debug debug --logFile
+python3 runTableReader.py configs/configAnalysisData.json --aod reducedAod.root --analysis eventSelection muonSelection sameEventPairing --process DecayToMuMuVertexing --cfgQA true --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --cfgAddSEPHistogram vertexing-forward flow-dimuon --debug debug --logFile
 ```
+
+IMPORTANT NOTE: Here we used the cfgAddSEPHistogram argument (`--cfgAddSEPHistogram vertexing-forward flow-dimuon`) to define same event pairing histograms. This is because by default, dielectron decay histograms for same event pairing are defined in the configAnalysisData.json config file, and since we are doing dimuon analysis here, we replaced these defined (vertexing,flow) histogram configurations with the configuration for dimuon.
 
 ### Run filterPP on fwdprompt(From Hands-on-Session II)
 

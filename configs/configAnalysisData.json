@@ -36,7 +36,7 @@
     "analysis-event-mixing": {
         "cfgTrackCuts": "jpsiO2MCdebugCuts2",
         "cfgMuonCuts": "muonQualityCuts",
-        "cfgAddEventMixingHistogram": "barrel,vertexing,flow",
+        "cfgAddEventMixingHistogram": "vertexing,flow",
         "cfgMixingDepth": "1",
         "processBarrelSkimmed": "false",
         "processMuonSkimmed": "false",
@@ -48,7 +48,7 @@
     "analysis-same-event-pairing": {
         "cfgTrackCuts": "jpsiO2MCdebugCuts",
         "cfgMuonCuts": "muonQualityCuts",
-        "cfgAddSEPHistogram": "barrel,vertexing,flow",
+        "cfgAddSEPHistogram": "vertexing,flow",
         "ccdb-url": "http:\/\/ccdb-test.cern.ch:8080",
         "ccdb-path": "Users\/lm",
         "ccdb-no-later-than": "1638360910432",
