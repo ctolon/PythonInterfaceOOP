@@ -37,10 +37,10 @@
         "cfgBarrelMCRecSignals": "eeFromJpsi,eeFromLMeeLF,dielectron",
         "cfgBarrelMCGenSignals": "Jpsi",
         "cfgFlatTables": "false",
-        "processJpsiToEESkimmed": "true",
-        "processJpsiToEEVertexingSkimmed": "false",
-        "processJpsiToMuMuSkimmed": "false",
-        "processJpsiToMuMuVertexingSkimmed": "false",
+        "processDecayToEESkimmed": "true",
+        "processDecayToEEVertexingSkimmed": "false",
+        "processDecayToMuMuSkimmed": "false",
+        "processDecayToMuMuVertexingSkimmed": "false",
         "processDummy": "false"
     },
     "analysis-dilepton-track": {
