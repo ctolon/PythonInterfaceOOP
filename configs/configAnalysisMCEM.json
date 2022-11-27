@@ -26,9 +26,8 @@
         "processDummyNoSkimmed": "false"
     },
     "analysis-track-selection": {
-        "cfgTrackCuts": "lmee_GlobalTrackRun2_lowPt,lmee_TPCTrackRun2_lowPt,lmee_TPCTrackRun2,lmee_GlobalTrackRun2,lmee_eNSigmaRun2",
+        "cfgTrackCuts": "lmee_GlobalTrackRun2_lowPt,lmee_TPCTrackRun2_lowPt,lmee_TPCTrackRun2",
         "cfgTrackMCSignals": "electronPrimary,pionPrimary,ePrimaryFromLMeeLFQ,eFromLMeeLFQ,eFromHc,eFromHb",
-        "cfgEffRecWithMC" : "true",
         "cfgUsePtVecEff" : "true",
         "cfgMinPtEff" : "0.",
         "cfgMaxPtEff" : "10.",
