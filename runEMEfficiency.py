@@ -19,6 +19,7 @@
 # Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/PWGEM/Dilepton/Tasks/emEfficiencyEE.cxx
 
 import json
+import sys
 import logging
 import logging.config
 import os
@@ -27,101 +28,106 @@ from extramodules.configSetter import setConfig, setFalseHasDeps, setSwitch, set
 from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.emEfficiency import EMEfficiency
 
-# Predefined selections for setSwitch function
-sameEventPairingParameters = ["processToEESkimmed"]
-# yapf: disable
-# All Dependencies
-analysisSelectionDeps = {
-    "trackSelection": {"analysis-track-selection": "processSkimmed"},
-    "eventSelection": {"analysis-event-selection": "processSkimmed"},
-    "eventQA": {"analysis-event-qa": "processSkimmed"}
-    }
-sameEventPairingTaskName = "analysis-same-event-pairing"
-sameEventPairingDeps = {
-    "processToEESkimmed": {"analysis-track-selection": "processSkimmed"}
-    }
-# yapf: enable
-# init args manually
-initArgs = EMEfficiency()
-initArgs.mergeArgs()
-initArgs.parseArgs()
-args = initArgs.parseArgs()
-allArgs = vars(args) # for get args
+def main():
 
-# Debug Settings
-debugSettings(args.debug, args.logFile, fileName = "emEfficiencyEE.log")
+    # Predefined selections for setSwitch function
+    sameEventPairingParameters = ["processToEESkimmed"]
+    # yapf: disable
+    # All Dependencies
+    analysisSelectionDeps = {
+        "trackSelection": {"analysis-track-selection": "processSkimmed"},
+        "eventSelection": {"analysis-event-selection": "processSkimmed"},
+        "eventQA": {"analysis-event-qa": "processSkimmed"}
+        }
+    sameEventPairingTaskName = "analysis-same-event-pairing"
+    sameEventPairingDeps = {
+        "processToEESkimmed": {"analysis-track-selection": "processSkimmed"}
+        }
+    # yapf: enable
+    # init args manually
+    initArgs = EMEfficiency()
+    initArgs.mergeArgs()
+    initArgs.parseArgs()
+    args = initArgs.parseArgs()
+    allArgs = vars(args) # for get args
 
-# if cliMode true, Overrider mode else additional mode
-cliMode = args.onlySelect
+    # Debug Settings
+    debugSettings(args.debug, args.logFile, fileName = "emEfficiencyEE.log")
 
-#forgettedArgsChecker(allArgs) # Transaction management
+    # if cliMode true, Overrider mode else additional mode
+    cliMode = args.onlySelect
 
-# adding prefix for setSwitch function
-args.process = setPrefixSuffix(args.process, "process", 'Skimmed', True, True)
+    #forgettedArgsChecker(allArgs) # Transaction management
 
-# Load the configuration file provided as the first parameter
-config = {}
-with open(args.cfgFileName) as configFile:
-    config = json.load(configFile)
+    # adding prefix for setSwitch function
+    args.process = setPrefixSuffix(args.process, "process", 'Skimmed', True, True)
 
-jsonTypeChecker(args.cfgFileName)
+    # Load the configuration file provided as the first parameter
+    config = {}
+    with open(args.cfgFileName) as configFile:
+        config = json.load(configFile)
 
-taskNameInCommandLine = "o2-analysis-em-efficiency-ee"
-taskNameInConfig = "analysis-event-selection"
+    jsonTypeChecker(args.cfgFileName)
 
-mainTaskChecker(config, taskNameInConfig)
+    taskNameInCommandLine = "o2-analysis-em-efficiency-ee"
+    taskNameInConfig = "analysis-event-selection"
 
-# Interface Process
-logging.info("Only Select Configured as %s", cliMode)
-if cliMode == "true":
-    logging.info("INTERFACE MODE : JSON Overrider")
-if cliMode == "false":
-    logging.info("INTERFACE MODE : JSON Additional")
+    mainTaskChecker(config, taskNameInConfig)
 
-setSelection(config, analysisSelectionDeps, args.analysis, cliMode) # Set selections
+    # Interface Process
+    logging.info("Only Select Configured as %s", cliMode)
+    if cliMode == "true":
+        logging.info("INTERFACE MODE : JSON Overrider")
+    if cliMode == "false":
+        logging.info("INTERFACE MODE : JSON Additional")
 
-# Iterating in JSON config file
-for task, cfgValuePair in config.items():
-    if isinstance(cfgValuePair, dict):
-        for cfg, value in cfgValuePair.items():
+    setSelection(config, analysisSelectionDeps, args.analysis, cliMode) # Set selections
 
-            # aod
-            if cfg == "aod-file" and args.aod:
-                config[task][cfg] = args.aod
-                logging.debug(" - [%s] %s : %s", task, cfg, args.aod)
-            # reader
-            if cfg == "aod-reader-json" and args.reader:
-                config[task][cfg] = args.reader
-                logging.debug(" - [%s] %s : %s", task, cfg, args.reader)
+    # Iterating in JSON config file
+    for task, cfgValuePair in config.items():
+        if isinstance(cfgValuePair, dict):
+            for cfg, value in cfgValuePair.items():
 
-            # Interface Logic
-            setConfig(config, task, cfg, allArgs, cliMode)
-            setSwitch(config, task, cfg, allArgs, cliMode, "process", sameEventPairingParameters, "true/false")
-            setFalseHasDeps(config, task, cfg, args.process, sameEventPairingParameters, cliMode)
-            mandatoryArgChecker(config, task, cfg, taskNameInConfig, "processSkimmed")
+                # aod
+                if cfg == "aod-file" and args.aod:
+                    config[task][cfg] = args.aod
+                    logging.debug(" - [%s] %s : %s", task, cfg, args.aod)
+                # reader
+                if cfg == "aod-reader-json" and args.reader:
+                    config[task][cfg] = args.reader
+                    logging.debug(" - [%s] %s : %s", task, cfg, args.reader)
 
-setProcessDummy(config) # dummy automizer
+                # Interface Logic
+                setConfig(config, task, cfg, allArgs, cliMode)
+                setSwitch(config, task, cfg, allArgs, cliMode, "process", sameEventPairingParameters, "true/false")
+                setFalseHasDeps(config, task, cfg, args.process, sameEventPairingParameters, cliMode)
+                mandatoryArgChecker(config, task, cfg, taskNameInConfig, "processSkimmed")
 
-# Transactions
-aodFileChecker(args.aod)
-oneToMultiDepsChecker(args.process, "sameEventPairing", args.analysis, "analysis")
-depsChecker(config, sameEventPairingDeps, sameEventPairingTaskName)
+    setProcessDummy(config) # dummy automizer
+
+    # Transactions
+    aodFileChecker(args.aod)
+    oneToMultiDepsChecker(args.process, "sameEventPairing", args.analysis, "analysis")
+    depsChecker(config, sameEventPairingDeps, sameEventPairingTaskName)
 
 
-# Write the updated configuration file into a temporary file
-updatedConfigFileName = "tempConfigEMEfficiencyEE.json"
+    # Write the updated configuration file into a temporary file
+    updatedConfigFileName = "tempConfigEMEfficiencyEE.json"
 
-with open(updatedConfigFileName, "w") as outputFile:
-    json.dump(config, outputFile, indent = 2)
+    with open(updatedConfigFileName, "w") as outputFile:
+        json.dump(config, outputFile, indent = 2)
 
-commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b" + " --aod-writer-json " + args.writer)
-if args.writer == "false":
-    commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b")
+    commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b" + " --aod-writer-json " + args.writer)
+    if args.writer == "false":
+        commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b")
 
-print("====================================================================================================================")
-logging.info("Command to run:")
-logging.info(commandToRun)
-print("====================================================================================================================")
-dispArgs(allArgs) # Display all args
-os.system(commandToRun) # Execute O2 generated commands
-runPycacheRemover() # Run pycacheRemover
+    print("====================================================================================================================")
+    logging.info("Command to run:")
+    logging.info(commandToRun)
+    print("====================================================================================================================")
+    dispArgs(allArgs) # Display all args
+    os.system(commandToRun) # Execute O2 generated commands
+    runPycacheRemover() # Run pycacheRemover
+    
+if __name__ == '__main__':
+    sys.exit(main())
