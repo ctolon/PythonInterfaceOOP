@@ -82,6 +82,14 @@ target/
 # PyCharm
 .idea
 
+# Test
+tests/
+
+# For ignore temp json config files
+temp*.json
+aodWriter*.json
+dpl-config*.json
+
 # IPython
 profile_default/
 ipython_config.py
