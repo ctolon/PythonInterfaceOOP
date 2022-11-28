@@ -22,7 +22,7 @@
     "analysis-track-selection": {
         "cfgTrackCuts": "jpsiO2MCdebugCuts",
         "cfgQA": "true",
-        "cfgAddTrackHistogram": "dca,its,tpcpid,tofpid",
+        "cfgAddTrackHistogram": "dca,its,tpcpid,tofpid,postcalib_electron,postcalib_pion,postcalib_proton",
         "processSkimmed": "true",
         "processDummy": "false"
     },
