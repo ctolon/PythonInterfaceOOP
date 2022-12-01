@@ -53,6 +53,14 @@
       {
         "table": "AOD/AMBIGUOUSFWDTR/0",
         "treename": "AmbiguousTracksFwd"
+      },
+      {
+        "table": "AOD/V0BITS/0",
+        "treename": "V0Bits"
+      },
+      {
+        "table": "AOD/DALITZBITS/0",
+        "treename": "DalitzBits"
       }
     ]
   }

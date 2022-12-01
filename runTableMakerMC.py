@@ -55,6 +55,7 @@ def main():
         "processBarrelOnly": [],
         "processBarrelOnlyWithCov": [],
         "processBarrelOnlyWithV0Bits": ["o2-analysis-dq-v0-selector"],
+        "processBarrelOnlyWithDalitzBits" : ["o2-analysis-dq-dalitz-selection"],
         "processBarrelOnlyWithEventFilter": ["o2-analysis-dq-filter-pp"],
         "processBarrelOnlyWithQvector": ["o2-analysis-centrality-table", "o2-analysis-dq-flow",],
         "processBarrelOnlyWithCent": ["o2-analysis-centrality-table"],
@@ -85,7 +86,8 @@ def main():
         "ReducedMuons": {"table": "AOD/RTMUON/0","treename": "ReducedMuons"},
         "ReducedMuonsExtra": {"table": "AOD/RTMUONEXTRA/0","treename": "ReducedMuonsExtra"},
         "ReducedMuonsCov": {"table": "AOD/RTMUONCOV/0","treename": "ReducedMuonsCov"},
-        "ReducedMuonsLabels": {"table": "AOD/RTMUONSLABELS/0","treename": "ReducedMuonsLabels"}
+        "ReducedMuonsLabels": {"table": "AOD/RTMUONSLABELS/0","treename": "ReducedMuonsLabels"},
+        "DalitzBits": {"table": "AOD/DALITZBITS/0","treename": "DalitzBits"},
         }
     # yapf: enable
     # Tables to be written, per process function
@@ -99,7 +101,8 @@ def main():
         "processFullWithCent": [],
         "processBarrelOnly": [],
         "processBarrelOnlyWithCov": ["ReducedTracksBarrelCov"],
-        "processBarrelOnlyWithV0Bits": [],
+        "processBarrelOnlyWithV0Bits": ["V0Bits"],
+        "processBarrelOnlyWithDalitzBits" : ["DalitzBits"],
         "processBarrelOnlyWithQvector": ["ReducedEventsQvector"],
         "processBarrelOnlyWithEventFilter": [],
         "processBarrelOnlyWithCent": [],
