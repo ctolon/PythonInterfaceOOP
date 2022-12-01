@@ -76,6 +76,8 @@ class V0selector(object):
         # Interface
         groupV0Selector = self.parserV0selector.add_argument_group(title = "Data processor options: v0-selector")
         groupV0Selector.add_argument("--d_bz_input", help = "bz field in kG, -999 is automatic", action = "store", type = str)
+        groupV0Selector.add_argument("--v0max_mee", help = "max mee for photon", action = "store", type = str)
+        groupV0Selector.add_argument("--maxpsipair", help = "max psi_pair for photon", action = "store", type = str)
         groupV0Selector.add_argument("--v0cospa", help = "v0cospa", action = "store", type = str)
         groupV0Selector.add_argument("--dcav0dau", help = "DCA V0 Daughters", action = "store", type = str)
         groupV0Selector.add_argument("--v0Rmin", help = "v0Rmin", action = "store", type = str)

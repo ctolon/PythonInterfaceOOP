@@ -16,20 +16,21 @@
 # \Author: ionut.cristian.arsene@cern.ch
 # \Interface:  cevat.batuhan.tolon@cern.ch
 
-# Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/v0selector.cxx
+# Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/DalitzSelection.cxx
 
 import json
 import sys
 import logging
 import logging.config
 import os
-from extramodules.configSetter import setSwitch, setConverters, setConfig, debugSettings, dispArgs, setPrefixSuffix
 from extramodules.dqTranscations import aodFileChecker, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, trackPropagationChecker
+from extramodules.configSetter import setSwitch, setConverters, setConfig, debugSettings, dispArgs, setPrefixSuffix
 from extramodules.pycacheRemover import runPycacheRemover
-from dqtasks.v0selector import V0selector
+from dqtasks.dalitzSelection import DalitzPairing
 
-# TODO Add option for manage all process functions in V0selector
-# TODO: Check new Bits Tables are need in writer dilepton configs?
+# TODO We need handle dalitz cuts in for loop
+# TODO Add new option dqLibGetter for get pair cuts
+# TODO Add new transaction, paircuts and track cuts should be in same order and same number
 
 def main():
 
@@ -37,33 +38,32 @@ def main():
     centralityTableParameters = [
         "estRun2V0M", "estRun2SPDtks", "estRun2SPDcls", "estRun2CL0", "estRun2CL1", "estFV0A", "estFT0M", "estFDDM", "estNTPV",
         ]
-
     ft0Parameters = ["processFT0", "processNoFT0", "processOnlyFT0", "processRun2"]
-    pidParameters = ["pid-el", "pid-mu", "pid-pi", "pid-ka", "pid-pr", "pid-de", "pid-tr", "pid-he", "pid-al",]
+    pidParameters = ["pid-el", "pid-mu", "pid-pi", "pid-ka", "pid-pr", "pid-de", "pid-tr", "pid-he", "pid-al"]
     covParameters = ["processStandard", "processCovariance"]
     sliceParameters = ["processWoSlice", "processWSlice"]
 
     # All Dependencies
     commonDeps = [
-        "o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table", "o2-analysis-trackselection",
-        "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta",
-        "o2-analysis-pid-tpc-full"
+        "o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table", "o2-analysis-centrality-table",
+        "o2-analysis-trackselection", "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof-full",
+        "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full"
         ]
 
     # init args manually
-    initArgs = V0selector()
+    initArgs = DalitzPairing()
     initArgs.mergeArgs()
     initArgs.parseArgs()
     args = initArgs.parseArgs()
     allArgs = vars(args) # for get args
 
     # Debug Settings
-    debugSettings(args.debug, args.logFile, fileName = "v0selector.log")
+    debugSettings(args.debug, args.logFile, fileName = "dalitzSelection.log")
 
     # if cliMode true, Overrider mode else additional mode
     cliMode = args.onlySelect
 
-    forgettedArgsChecker(allArgs) # Transaction management
+    #forgettedArgsChecker(allArgs) # Transaction Management
 
     # adding prefix for setSwitch function
     args.pid = setPrefixSuffix(args.pid, "pid-", '', True, False)
@@ -79,8 +79,8 @@ def main():
 
     jsonTypeChecker(args.cfgFileName)
 
-    taskNameInConfig = "v0-selector"
-    taskNameInCommandLine = "o2-analysis-dq-v0-selector"
+    taskNameInConfig = "dalitz-pairing"
+    taskNameInCommandLine = "o2-analysis-dq-dalitz-selection"
 
     mainTaskChecker(config, taskNameInConfig)
 
@@ -118,8 +118,7 @@ def main():
     trackPropagationChecker(args.add_track_prop, commonDeps)
 
     # Write the updated configuration file into a temporary file
-    updatedConfigFileName = "tempConfigV0Selector.json"
-
+    updatedConfigFileName = "tempConfigDalitzSelection.json"
     with open(updatedConfigFileName, "w") as outputFile:
         json.dump(config, outputFile, indent = 2)
 

@@ -150,6 +150,19 @@
     "tof-pid-beta": {
         "tof-expreso": "80"
     },
+    "dalitz-pairing": {
+        "cfgEventCuts": "eventStandard",
+        "cfgDalitzTrackCuts": "",
+        "cfgDalitzPairCuts": "",
+        "cfgAddTrackHistogram": "",
+        "cfgQA": "true",
+        "cfgBarrelLowPIN": "0.1",
+        "cfgEtaCut": "0.9",
+        "cfgTPCNSigElLow": "-3",
+        "cfgTPCNSigElHigh": "3",
+        "processFullTracks": "true",
+        "processDummy": "false"
+    },
     "table-maker-m-c": {
         "cfgEventCuts": "eventStandardNoINT7",
         "cfgBarrelTrackCuts": "jpsiO2MCdebugCuts2,jpsiO2MCdebugCuts3,jpsiO2MCdebugCuts,kaonPID",
@@ -171,6 +184,7 @@
         "processBarrelOnly": "false",
         "processBarrelOnlyWithCent": "false",
         "processBarrelOnlyWithCov": "false",
+        "processBarrelOnlyWithDalitzBits": "false",
         "processMuonOnlyWithCov": "false",
         "processMuonOnlyWithCent": "false",
         "processOnlyBCs": "true"

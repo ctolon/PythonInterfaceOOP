@@ -79,6 +79,8 @@
     "v0-selector": {
         "d_bz_input": "-999",
         "v0cospa": "0.998",
+        "v0max_mee" : "0.06",
+        "maxpsipair" : "0.3",
         "dcav0dau": "0.3",
         "v0Rmin": "0",
         "v0Rmax": "90.0",
@@ -168,6 +170,19 @@
     "tof-pid-beta": {
         "tof-expreso": "80"
     },
+    "dalitz-pairing": {
+        "cfgEventCuts": "eventStandard",
+        "cfgDalitzTrackCuts": "",
+        "cfgDalitzPairCuts": "",
+        "cfgAddTrackHistogram": "",
+        "cfgQA": "true",
+        "cfgBarrelLowPIN": "0.1",
+        "cfgEtaCut": "0.9",
+        "cfgTPCNSigElLow": "-3",
+        "cfgTPCNSigElHigh": "3",
+        "processFullTracks": "true",
+        "processDummy": "false"
+    },
     "analysis-qvector": {
         "cfgEventCuts": "eventStandard",
         "cfgBarrelTrackCuts": "jpsiPID1,jpsiPID2,jpsiPIDnsigma",
@@ -233,6 +248,7 @@
         "processFullWithCov": "false",
         "processFullWithCent": "false",
         "processBarrelOnlyWithV0Bits": "false",
+        "processBarrelOnlyWithDalitzBits": "false",
         "processBarrelOnlyWithEventFilter": "false",
         "processBarrelOnlyWithQvector" : "false",
         "processBarrelOnlyWithCent": "false",

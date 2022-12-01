@@ -7,7 +7,7 @@
         "start-value-enumeration": "0",
         "end-value-enumeration": "-1",
         "step-value-enumeration": "1",
-        "aod-file": "@infiles/run3pilotMC_LHC21k6.txt"
+        "aod-file": "AO2D.root"
     },
     "internal-dpl-aod-spawner": "",
     "internal-dpl-aod-index-builder": "",
@@ -19,7 +19,7 @@
         "isRun2MC": "false"
     },
     "event-selection-task": {
-        "syst": "PbPb",
+        "syst": "pp",
         "muonSelection": "0",
         "customDeltaBC": "300",
         "isMC": "false",
@@ -27,13 +27,13 @@
         "processRun3": "false"
     },
     "bc-selection-task": {
-        "processRun2": "true",
-        "processRun3": "false"
+        "processRun2": "false",
+        "processRun3": "true"
     },
     "track-selection": {
         "compatibilityIU": "false",
-        "isRun3": "false",
-        "itsMatching": "0",
+        "isRun3": "true",
+        "itsMatching": "1",
         "ptMin": "0.1",
         "ptMax": "1e+10",
         "etaMin": "-0.8",
@@ -50,13 +50,13 @@
     },
     "track-extension": {
         "compatibilityIU": "false",
-        "processRun2": "true",
-        "processRun3": "false"
+        "processRun2": "false",
+        "processRun3": "true"
     },
     "multiplicity-table": {
         "doVertexZeq": "1",
-        "processRun2": "true",
-        "processRun3": "false"
+        "processRun2": "false",
+        "processRun3": "true"
     },
     "centrality-table": {
         "estRun2V0M": "-1",
@@ -68,51 +68,11 @@
         "estFT0M": "-1",
         "estFDDM": "-1",
         "estNTPV": "-1",
-        "ccdburl": "http://alice-ccdb.cern.ch",
-        "ccdbpath": "Centrality/Estimators",
+        "ccdburl": "http:\/\/alice-ccdb.cern.ch",
+        "ccdbpath": "Centrality\/Estimators",
         "genname": "",
-        "processRun2": "true",
-        "processRun3": "false"
-    },
-    "weak-decay-indices-cascades": "",
-    "weak-decay-indices-v0": "",
-    "v0-selector": {
-        "d_bz_input": "-999",
-        "v0cospa": "0.998",
-        "v0max_mee" : "0.06",
-        "maxpsipair" : "0.3",
-        "dcav0dau": "0.3",
-        "v0Rmin": "0",
-        "v0Rmax": "90.0",
-        "dcamin": "0",
-        "dcamax": "1e+10",
-        "mincrossedrows": "70",
-        "maxchi2tpc": "4",
-        "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
-        "lutPath": "GLO\/Param\/MatLUT",
-        "geoPath": "GLO\/Config\/GeometryAligned",
-        "grpmagPath": "GLO/Config/GRPMagField"
-    },
-    "track-pid-qa": "",
-    "v0-gamma-qa": "",
-    "tof-pid": {
-        "param-file": "",
-        "param-sigma": "TOFResoParams",
-        "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
-        "ccdbPath": "Analysis\/PID\/TOF",
-        "ccdb-timestamp": "-1",
-        "enableTimeDependentResponse": "false",
-        "pid-el": "-1",
-        "pid-mu": "-1",
-        "pid-pi": "-1",
-        "pid-ka": "-1",
-        "pid-pr": "-1",
-        "pid-de": "-1",
-        "pid-tr": "-1",
-        "pid-he": "-1",
-        "pid-al": "-1",
-        "processWSlice": "true",
-        "processWoSlice": "false"
+        "processRun2": "false",
+        "processRun3": "true"
     },
     "tof-pid-full": {
         "param-file": "",
@@ -169,6 +129,19 @@
     "tof-signal": "",
     "tof-pid-beta": {
         "tof-expreso": "80"
+    },
+    "dalitz-pairing": {
+        "cfgEventCuts": "eventStandard",
+        "cfgDalitzTrackCuts": "",
+        "cfgDalitzPairCuts": "",
+        "cfgAddTrackHistogram": "",
+        "cfgQA": "true",
+        "cfgBarrelLowPIN": "0.1",
+        "cfgEtaCut": "0.9",
+        "cfgTPCNSigElLow": "-3",
+        "cfgTPCNSigElHigh": "3",
+        "processFullTracks": "true",
+        "processDummy": "false"
     },
     "internal-dpl-aod-global-analysis-file-sink": "",
     "internal-dpl-aod-writer": ""

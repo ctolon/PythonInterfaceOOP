@@ -37,6 +37,8 @@ from commondeps.trackselection import TrackSelectionTask
 from commondeps.dplAodReader import DplAodReader
 from extramodules.dqLibGetter import DQLibGetter
 
+# Special configurations for dalitz pairing are combined to avoid conflicts in the tableMakerMC interface
+
 
 class TableMakerMC(object):
     
@@ -85,6 +87,7 @@ class TableMakerMC(object):
             "BarrelOnly": "Build barrel-only DQ skimmed data model, w/o centrality",
             "BarrelOnlyWithCov": "Build barrel-only DQ skimmed data model, w/ track cov matrix",
             "BarrelOnlyWithCent": "Build barrel-only DQ skimmed data model, w/ centrality",
+            "BarrelOnlyWithDalitzBits": "Build barrel-only DQ skimmed data model, w/o centrality, w/ DalitzBits",
             "MuonOnlyWithCov": "Build muon-only DQ skimmed data model, w/ muon cov matrix",
             "MuonOnlyWithCent": "Build muon-only DQ skimmed data model, w/ centrality",
             "OnlyBCs": "Analyze the BCs to store sampled lumi",
@@ -103,6 +106,30 @@ class TableMakerMC(object):
         allMCTruthHistos = self.dqLibGetter.allMCTruthHistos
         
         # Interface
+        
+        groupDalitzPairing = self.parserTableMakerMC.add_argument_group(title = "Data processor options: dalitz-pairing")
+        groupDalitzPairing.add_argument(
+            "--cfgDalitzTrackCuts", help = "Space separated list of Dalitz track selection cuts", choices = allAnalysisCuts, nargs = "*",
+            action = "store", type = str, metavar = "CFGDALITZTRACKCUTS",
+            ).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupDalitzPairing.add_argument(
+            "--cfgDalitzPairCuts", help = "Space separated list of Dalitz pair selection cuts", action = "store", choices = allAnalysisCuts, nargs = "*",
+            type = str, metavar = "CFGDALITZPAIRCUTS",
+            ).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupDalitzPairing.add_argument(
+            "--cfgBarrelLowPIN", help = "Low pt cut for Dalitz tracks in the barrel", action = "store", type = str, metavar = "CFGBARRELLOWPIN",
+            )
+        groupDalitzPairing.add_argument(
+            "--cfgEtaCut", help = "Eta cut for Dalitz tracks in the barrel", action = "store", type = str, metavar = "CFGETACUT",
+            )
+        groupDalitzPairing.add_argument(
+            "--cfgTPCNSigElLow", help = "LOW TPCNsigEl cut for Dalitz tracks in the barrel", action = "store", type = str, metavar = "CFGTPCNSIGELLOW",
+            )
+        groupDalitzPairing.add_argument(
+            "--cfgTPCNSigElHigh", help = "High TPCNsigEl cut for Dalitz tracks in the barrel", action = "store", type = str, metavar = "CFGTPCNSIGELHIGH",
+            )
+        
+        # table-maker configurables
         groupTableMakerConfigs = self.parserTableMakerMC.add_argument_group(title = "Data processor options: table-maker-m-c")
         groupTableMakerConfigs.add_argument(
             "--cfgEventCuts", help = "Space separated list of event cuts", nargs = "*", action = "store", type = str,
@@ -120,7 +147,7 @@ class TableMakerMC(object):
             "--cfgAddEventHistogram", help = "Comma separated list of event histograms", action = "store", nargs = "*", type = str, metavar="CFGADDEVENTHISTOGRAM", choices = allEventHistos,
             ).completer = ChoicesCompleterList(allEventHistos)
         groupTableMakerConfigs.add_argument(
-            "--cfgAddTrackHistogram", help = "Comma separated list of track histograms", action = "store", nargs= "*", type = str, metavar="CFGADDTRACKHISTOGRAM", choices = allTrackHistos,
+            "--cfgAddTrackHistogram", help = "Comma separated list of track histograms (also extract for dalitz pairing)", action = "store", nargs= "*", type = str, metavar="CFGADDTRACKHISTOGRAM", choices = allTrackHistos,
             ).completer = ChoicesCompleterList(allTrackHistos)
         groupTableMakerConfigs.add_argument(
             "--cfgAddMuonHistogram", help = "Comma separated list of muon histograms", action = "store", nargs="*", type = str, metavar="CFGADDMUONHISTOGRAM", choices = allTrackHistos,

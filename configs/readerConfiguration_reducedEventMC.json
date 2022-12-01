@@ -61,6 +61,14 @@
       {
         "table": "AOD/RTMUONSLABELS/0",
         "treename": "ReducedMuonsLabels"
+      },
+      {
+        "table": "AOD/V0BITS/0",
+        "treename": "V0Bits"
+      },
+      {
+        "table": "AOD/DALITZBITS/0",
+        "treename": "DalitzBits"
       }
     ]
   }
