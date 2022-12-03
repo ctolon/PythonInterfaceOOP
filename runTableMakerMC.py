@@ -24,7 +24,7 @@ import logging
 import logging.config
 import os
 from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, centralityChecker, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, trackPropagationChecker
-from extramodules.configSetter import setSwitch, setConverters, setConfig, debugSettings, dispArgs, generateDescriptors, setPrefixSuffix, tableProducer
+from extramodules.configSetter import setSwitch, setConverters, setConfig, debugSettings, dispArgs, generateDescriptors, setPrefixSuffix, tableProducer, setProcessDummy
 from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.tableMakerMC import TableMakerMC
 
@@ -67,6 +67,8 @@ def main():
         # "processFullWithCentWithV0Bits": ["o2-analysis-centrality-table","o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices"],
         # "processFullWithEventFilterWithV0Bits": ["o2-analysis-dq-filter-pp","o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices"],
         }
+    
+    dummyHasTasks = ["dalitz-pairing"]
 
     # yapf: disable
     # Definition of all the tables we may write
@@ -184,6 +186,8 @@ def main():
                 if task == "tof-event-time": # we have processRun2 option in tof-event-time and for not overriding it other processRun2 options, we have to specifiy task
                     setSwitch(config, task, cfg, allArgs, "true", "FT0", ft0Parameters, "true/false")
                 mandatoryArgChecker(config, task, cfg, taskNameInConfig, "processOnlyBCs")
+                
+    setProcessDummy(config, dummyHasTasks) # dummy automizer
 
     # Transactions
     centralityChecker(config, args.process, args.syst, centSearch)

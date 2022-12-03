@@ -21,10 +21,19 @@
     },
     "analysis-track-selection": {
         "cfgTrackCuts": "jpsiO2MCdebugCuts",
+        "cfgDalitzCutId": "32",
         "cfgQA": "true",
         "cfgAddTrackHistogram": "dca,its,tpcpid,tofpid,postcalib_electron,postcalib_pion,postcalib_proton",
         "processSkimmed": "true",
         "processDummy": "false"
+    },
+    "analysis-prefilter-selection": {
+        "cfgDalitzTrackCutsId": "",
+        "cfgDalitzPairCuts": "",
+        "cfgAddTrackPairHistogram": "",
+        "cfgQA": "true",
+        "processBarrelSkimmed": "false",
+        "processDummy": "true"
     },
     "analysis-muon-selection": {
         "cfgMuonCuts": "muonQualityCuts",
@@ -53,6 +62,7 @@
         "ccdb-path": "Users\/lm",
         "ccdb-no-later-than": "1638360910432",
         "processDecayToEESkimmed": "true",
+        "processDecayToEEPrefilterSkimmed": "false",
         "processDecayToMuMuSkimmed": "true",
         "processDecayToMuMuVertexingSkimmed": "false",
         "processVnDecayToEESkimmed": "false",

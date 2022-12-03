@@ -21,6 +21,7 @@
 import argparse
 from extramodules.choicesHandler import NoAction
 from extramodules.choicesHandler import ChoicesAction
+from extramodules.choicesHandler import ChoicesCompleterList
 from extramodules.helperOptions import HelperOptions
 from extramodules.converters import O2Converters
 import argcomplete
@@ -73,7 +74,24 @@ class V0selector(object):
         This function allows to add arguments for parser_args() function
         """
         
+        # Predefined Selections
+        v0GammaQASelections = {
+            "NM": "Run gamma->ee QA",
+            }
+        v0GammaQASelectionsList = []
+        for k, v in v0GammaQASelections.items():
+            v0GammaQASelectionsList.append(k)
+            
+        trackPIDQASelections = {
+            "QA": "Run PID QA for barrel tracks",
+            }
+        trackPIDQASelectionsList = []
+        for k, v in trackPIDQASelections.items():
+            trackPIDQASelectionsList.append(k)
+        
         # Interface
+        
+        #v0-selector
         groupV0Selector = self.parserV0selector.add_argument_group(title = "Data processor options: v0-selector")
         groupV0Selector.add_argument("--d_bz_input", help = "bz field in kG, -999 is automatic", action = "store", type = str)
         groupV0Selector.add_argument("--v0max_mee", help = "max mee for photon", action = "store", type = str)
@@ -86,6 +104,26 @@ class V0selector(object):
         groupV0Selector.add_argument("--dcamax", help = "dcamax", action = "store", type = str)
         groupV0Selector.add_argument("--mincrossedrows", help = "Min crossed rows", action = "store", type = str)
         groupV0Selector.add_argument("--maxchi2tpc", help = "max chi2/NclsTPC", action = "store", type = str)
+        
+        #track-pid-qa
+        groupTrackPIDQA = self.parserV0selector.add_argument_group(title = "Data processor options: track-pid-qa")
+        groupTrackPIDQA.add_argument(
+            "--QA", help = "track-pid-qa: PROCESS_SWITCH options", action = "store", type = str, nargs="*", metavar = "QA",
+            choices = trackPIDQASelectionsList,
+            ).completer = ChoicesCompleterList(trackPIDQASelectionsList)
+        groupProcessTrackPIDQA = self.parserV0selector.add_argument_group(title = "Choice List for track-pid-qa PROCESS_SWITCH options")
+        for key, value in trackPIDQASelections.items():
+            groupProcessTrackPIDQA.add_argument(key, help = value, action = "none")
+        
+        #v0-gamma-qa
+        groupV0GammaQA = self.parserV0selector.add_argument_group(title = "Data processor options: v0-gamma-qa")
+        groupV0GammaQA.add_argument(
+            "--NM", help = "v0-gamma-qa: PROCESS_SWITCH options", action = "store", type = str, nargs = "*", metavar = "NM",
+            choices = v0GammaQASelectionsList,
+            ).completer = ChoicesCompleterList(v0GammaQASelectionsList)
+        groupProcessV0GammaQA = self.parserV0selector.add_argument_group(title = "Choice List for v0-gamma-qa PROCESS_SWITCH options")
+        for key, value in v0GammaQASelections.items():
+            groupProcessV0GammaQA.add_argument(key, help = value, action = "none")
     
     def parseArgs(self):
         """

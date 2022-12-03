@@ -32,7 +32,7 @@ def main():
     # Predefined selections for setSwitch function
     sameEventPairingParameters = [
         "processDecayToEESkimmed", "processDecayToMuMuSkimmed", "processDecayToMuMuVertexingSkimmed", "processVnDecayToEESkimmed",
-        "processVnDecayToMuMuSkimmed", "processElectronMuonSkimmed", "processAllSkimmed"
+        "processVnDecayToMuMuSkimmed", "processElectronMuonSkimmed", "processAllSkimmed", "processDecayToEEPrefilterSkimmed"
         ]
 
     eventMixingParameters = [
@@ -42,6 +42,7 @@ def main():
     # All Dependencies
     analysisSelectionDeps = {
         "trackSelection": {"analysis-track-selection": "processSkimmed"},
+        "prefilterSelection": {"analysis-prefilter-selection": "processBarrelSkimmed"},
         "eventSelection": {"analysis-event-selection": "processSkimmed"},
         "muonSelection": {"analysis-muon-selection": "processSkimmed"},
         "dileptonHadron": {"analysis-dilepton-hadron": "processSkimmed"}
@@ -49,6 +50,7 @@ def main():
     sameEventTaskName = "analysis-same-event-pairing"
     sameEventPairingDeps = {
         "processDecayToEESkimmed": {"analysis-track-selection": "processSkimmed"},
+        "processDecayToEEPrefilterSkimmed": {"analysis-track-selection": "processSkimmed","analysis-prefilter-selection" : "processBarrelSkimmed"},
         "processDecayToMuMuSkimmed": {"analysis-muon-selection": "processSkimmed"},
         "processDecayToMuMuVertexingSkimmed": {"analysis-muon-selection": "processSkimmed"},
         "processVnDecayToEESkimmed": {"analysis-track-selection": "processSkimmed"},
@@ -128,7 +130,8 @@ def main():
                 setSwitch(config, task, cfg, allArgs, cliMode, "process", sameEventPairingParameters, "true/false")
                 setSwitch(config, task, cfg, allArgs, cliMode, "mixing", eventMixingParameters, "true/false")
                 setFalseHasDeps(config, task, cfg, args.process, sameEventPairingParameters, cliMode)
-                setFalseHasDeps(config, task, cfg, args.mixing, eventMixingParameters, cliMode)
+                if task != "analysis-prefilter-selection": # we have processBarrelSkimmed option in analysis-prefilter-selection and for not overriding it other processBarrelSkimmed option, we have to specifiy task
+                    setFalseHasDeps(config, task, cfg, args.mixing, eventMixingParameters, cliMode)
                 mandatoryArgChecker(config, task, cfg, taskNameInConfig, "processSkimmed")
 
     setProcessDummy(config) # dummy automizer

@@ -23,13 +23,10 @@ import sys
 import logging
 import logging.config
 import os
-from extramodules.configSetter import setSwitch, setConverters, setConfig, debugSettings, dispArgs, setPrefixSuffix
+from extramodules.configSetter import setSwitch, setConverters, setConfig, debugSettings, dispArgs, setPrefixSuffix, setProcessDummy
 from extramodules.dqTranscations import aodFileChecker, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, trackPropagationChecker
 from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.v0selector import V0selector
-
-# TODO Add option for manage all process functions in V0selector
-# TODO: Check new Bits Tables are need in writer dilepton configs?
 
 def main():
 
@@ -42,6 +39,8 @@ def main():
     pidParameters = ["pid-el", "pid-mu", "pid-pi", "pid-ka", "pid-pr", "pid-de", "pid-tr", "pid-he", "pid-al",]
     covParameters = ["processStandard", "processCovariance"]
     sliceParameters = ["processWoSlice", "processWSlice"]
+    trackPIDQAParameters = ["processQA"]
+    v0GammaQAParameters = ["processNM"]
 
     # All Dependencies
     commonDeps = [
@@ -49,6 +48,8 @@ def main():
         "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta",
         "o2-analysis-pid-tpc-full"
         ]
+    
+    dummyHasTasks = ["track-pid-qa", "v0-gamma-qa"]
 
     # init args manually
     initArgs = V0selector()
@@ -63,7 +64,7 @@ def main():
     # if cliMode true, Overrider mode else additional mode
     cliMode = args.onlySelect
 
-    forgettedArgsChecker(allArgs) # Transaction management
+    # forgettedArgsChecker(allArgs) # Transaction management
 
     # adding prefix for setSwitch function
     args.pid = setPrefixSuffix(args.pid, "pid-", '', True, False)
@@ -71,6 +72,8 @@ def main():
     args.FT0 = setPrefixSuffix(args.FT0, "process", '', True, False)
     args.isCovariance = setPrefixSuffix(args.isCovariance, "process", '', True, False)
     args.isWSlice = setPrefixSuffix(args.isWSlice, "process", '', True, False)
+    args.NM = setPrefixSuffix(args.NM, "process", '', True, False)
+    args.QA = setPrefixSuffix(args.QA, "process", '', True, False)
 
     # Load the configuration file provided as the first parameter
     config = {}
@@ -110,9 +113,12 @@ def main():
                 setSwitch(config, task, cfg, allArgs, cliMode, "pid", pidParameters, "1/-1")
                 setSwitch(config, task, cfg, allArgs, "true", "isCovariance", covParameters, "true/false")
                 setSwitch(config, task, cfg, allArgs, "true", "isWSlice", sliceParameters, "true/false")
+                setSwitch(config, task, cfg, allArgs, cliMode, "QA", trackPIDQAParameters, "true/false")
+                setSwitch(config, task, cfg, allArgs, cliMode, "NM", v0GammaQAParameters, "true/false")
                 if task == "tof-event-time": # we have processRun2 option in tof-event-time and for not overriding it other processRun2 options, we have to specifiy task
                     setSwitch(config, task, cfg, allArgs, "true", "FT0", ft0Parameters, "true/false")
 
+    setProcessDummy(config, dummyHasTasks) # dummy automizer
     # Transactions
     aodFileChecker(args.aod)
     trackPropagationChecker(args.add_track_prop, commonDeps)

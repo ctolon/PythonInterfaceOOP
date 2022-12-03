@@ -29,7 +29,6 @@ from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.dalitzSelection import DalitzPairing
 
 # TODO We need handle dalitz cuts in for loop
-# TODO Add new option dqLibGetter for get pair cuts
 # TODO Add new transaction, paircuts and track cuts should be in same order and same number
 
 def main():

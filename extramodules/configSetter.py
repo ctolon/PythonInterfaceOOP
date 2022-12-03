@@ -373,10 +373,10 @@ def setFalseHasDeps(config: dict, task: str, cfg: str, argument: list, parameter
         for process in parameters:
             if cfg == process and selectedKey is None: # for getting task info from json
                 config[task][cfg] = "false"
-                logging.info(" - [%s] %s : false", task, cfg)
+                logging.warning(" - [%s] %s : false", task, cfg)
             elif cfg == process and task == selectedKey: # also with selected task for more control
                 config[task][cfg] = "false"
-                logging.info(" - [%s] %s : false", task, cfg)
+                logging.warning(" - [%s] %s : false", task, cfg)
             else:
                 continue
 

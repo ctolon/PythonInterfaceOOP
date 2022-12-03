@@ -38,6 +38,8 @@ def main():
     pidParameters = ["pid-el", "pid-mu", "pid-pi", "pid-ka", "pid-pr", "pid-de", "pid-tr", "pid-he", "pid-al",]
     covParameters = ["processStandard", "processCovariance"]
     sliceParameters = ["processWoSlice", "processWSlice"]
+    trackPIDQAParameters = ["processQA"]
+    v0GammaQAParameters = ["processNM"]
     fullSearch = []
     barrelSearch = []
     muonSearch = []
@@ -74,7 +76,7 @@ def main():
         # "processFullWithEventFilterWithV0Bits": ["o2-analysis-dq-filter-pp","o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices"],
         }
 
-    dummyHasTasks = ["d-q-barrel-track-selection", "d-q-muons-selection", "d-q-filter-p-p-task"]
+    dummyHasTasks = ["d-q-barrel-track-selection", "d-q-muons-selection", "d-q-filter-p-p-task", "dalitz-pairing", "track-pid-qa", "v0-gamma-qa"]
 
     # yapf: disable
     # Definition of all the tables we may write
@@ -148,6 +150,8 @@ def main():
     args.FT0 = setPrefixSuffix(args.FT0, "process", '', True, False)
     args.isCovariance = setPrefixSuffix(args.isCovariance, "process", '', True, False)
     args.isWSlice = setPrefixSuffix(args.isWSlice, "process", '', True, False)
+    args.NM = setPrefixSuffix(args.NM, "process", '', True, False)
+    args.QA = setPrefixSuffix(args.QA, "process", '', True, False)
 
     # Load the configuration file provided as the first parameter
     config = {}
@@ -225,6 +229,8 @@ def main():
                 setSwitch(config, task, cfg, allArgs, cliMode, "process", specificDeps.keys(), "true/false")
                 setSwitch(config, task, cfg, allArgs, "true", "isCovariance", covParameters, "true/false")
                 setSwitch(config, task, cfg, allArgs, "true", "isWSlice", sliceParameters, "true/false")
+                setSwitch(config, task, cfg, allArgs, cliMode, "QA", trackPIDQAParameters, "true/false")
+                setSwitch(config, task, cfg, allArgs, cliMode, "NM", v0GammaQAParameters, "true/false")
                 if task == "tof-event-time": # we have processRun2 option in tof-event-time and for not overriding it other processRun2 options, we have to specifiy task
                     setSwitch(config, task, cfg, allArgs, "true", "FT0", ft0Parameters, "true/false")
                 mandatoryArgChecker(config, task, cfg, taskNameInConfig, "processOnlyBCs")

@@ -33,10 +33,11 @@ class DQLibGetter(object):
         object (object): self
     """
     
-    def __init__(self, allAnalysisCuts = [], allMCSignals = [], allSels = [], allMixing = [], allEventHistos = [], allTrackHistos = [], allMCTruthHistos = [], allPairHistos = [], allDileptonHistos = []) -> None:
+    def __init__(self, allAnalysisCuts = [], allOnlyPairCuts = [], allMCSignals = [], allSels = [], allMixing = [], allEventHistos = [], allTrackHistos = [], allMCTruthHistos = [], allPairHistos = [], allDileptonHistos = []) -> None:
         
         # Define Analysis Cuts, MC Signals and Histograms
         self.allAnalysisCuts = list(allAnalysisCuts)
+        self.allOnlyPairCuts = list(allOnlyPairCuts)
         self.allMCSignals = list(allMCSignals)
         self.allSels = list(allSels)
         self.allMixing = list(allMixing)
@@ -171,6 +172,7 @@ class DQLibGetter(object):
                     allPairCuts = (allPairCuts + getPairCuts) # Get Only pair cuts from CutsLibrary.h
                     namespacedPairCuts = [x + oneColon for x in allPairCuts] # paircut:
                 self.allAnalysisCuts = (self.allAnalysisCuts + getCuts) # Get all Cuts from CutsLibrary.h
+                self.allOnlyPairCuts = (self.allOnlyPairCuts + allPairCuts) # Get all Pair Cuts from CutsLibrary.h
                 nameSpacedallAnalysisCuts = [x + oneColon for x in self.allAnalysisCuts] # cut:
                 nameSpacedallAnalysisCutsTwoDots = [x + doubleColon for x in self.allAnalysisCuts] # cut::
         

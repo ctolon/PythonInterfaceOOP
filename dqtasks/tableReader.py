@@ -66,6 +66,7 @@ class TableReader(object):
             "eventSelection": "Run event selection on DQ skimmed events",
             "muonSelection": "Run muon selection on DQ skimmed muons",
             "trackSelection": "Run barrel track selection on DQ skimmed tracks",
+            "prefilterSelection": "Run Dalitz selection on reduced tracks",
             "eventMixing": "Run mixing on skimmed tracks based muon and track selections",
             "sameEventPairing": "Run same event pairing selection on DQ skimmed data",
             "dileptonHadron": "Run dilepton-hadron pairing, using skimmed data",
@@ -76,6 +77,7 @@ class TableReader(object):
         
         sameEventPairingProcessSelections = {
             "DecayToEE": "Run electron-electron pairing, with skimmed tracks",
+            "DecayToEEPrefilter" : "Run electron-electron pairing, with skimmed tracks and prefilter from AnalysisPrefilterSelection",
             "DecayToMuMu": "Run muon-muon pairing, with skimmed muons",
             "DecayToMuMuVertexing": "Run muon-muon pairing and vertexing, with skimmed muons",
             "VnDecayToEE": "Run barrel-barrel vn mixing on skimmed tracks",
@@ -159,7 +161,7 @@ class TableReader(object):
         
         # cfg for QA
         groupQASelections = self.parserTableReader.add_argument_group(
-            title = "Data processor options: analysis-event-selection, analysis-muon-selection, analysis-track-selection, analysis-event-mixing"
+            title = "Data processor options: analysis-event-selection, analysis-muon-selection, analysis-track-selection, analysis-prefilter-selection analysis-event-mixing"
             )
         groupQASelections.add_argument(
             "--cfgQA", help = "If true, fill QA histograms", action = "store", type = str.lower, choices = booleanSelections,
@@ -198,6 +200,21 @@ class TableReader(object):
             "--cfgTrackCuts", help = "Space separated list of barrel track cuts", nargs = "*", action = "store", type = str,
             metavar = "CFGTRACKCUTS", choices = allAnalysisCuts,
             ).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupAnalysisTrackSelection.add_argument("--cfgDalitzCutId", help = "Id of the first Dalitz track cut (starting at 0)", action = "store",
+            type = str, metavar = "CFGDALITZCUTID")
+        
+        # analysis-prefilter-selection
+        groupAnalysisPrefilterSelection = self.parserTableReader.add_argument_group(title = "Data processor options: analysis-prefilter-selection")
+        groupAnalysisPrefilterSelection.add_argument("--cfgDalitzTrackCutsId", help = "Id of Dalitz track selection cuts (from cfgTrackCuts in AnalysisTrackSelection, starting at 0 = first dalitz cut)",
+            action = "store",type = str, metavar = "CFGDALITZTRACKCUTSID")
+        groupAnalysisPrefilterSelection.add_argument(
+            "--cfgDalitzPairCuts", help = "Dalitz pair selection cuts", nargs = "*", action = "store", type = str, metavar = "CFGDALITZPAIRCUTS",
+            choices = allAnalysisCuts,
+            ).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupAnalysisPrefilterSelection.add_argument(
+            "--cfgAddTrackPairHistogram", help = "Comma separated list of track pair histograms", action = "store", nargs="*", type = str, metavar="CFGADDTRACKPAIRHISTOGRAM", choices = allTrackHistos,
+            ).completer = ChoicesCompleterList(allTrackHistos)
+
         
         # analysis-dilepton-hadron
         groupAnalysisDileptonHadron = self.parserTableReader.add_argument_group(title = "Data processor options: analysis-dilepton-hadron")
