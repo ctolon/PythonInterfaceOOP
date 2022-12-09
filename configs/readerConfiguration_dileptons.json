@@ -4,39 +4,30 @@
         "InputDescriptors": [
             {
                 "table": "AOD/REDUCEDEVENT/0",
-                "treename": "ReducedEvents" 
             },
             {
                 "table": "AOD/REEXTENDED/0",
-                "treename": "ReducedEventsExtended"
             },
             {
                 "table": "AOD/REVTXCOV/0",
-                "treename": "ReducedEventsVtxCov"
             },
             {
                 "table": "AOD/REDUCEDTRACK/0",
-                "treename": "ReducedTracks"
             },
             {
                 "table": "AOD/RTBARREL/0",
-                "treename": "ReducedTracksBarrel"
             },
             {
                 "table": "AOD/RTBARRELPID/0",
-                "treename": "ReducedTracksBarrelPID"
             },
             {
                 "table": "AOD/RTDILEPTON/0",
-                "treename": "Dileptons"
             },
             {
                 "table": "AOD/RTDILEPTONEXTRA/0",
-                "treename": "DileptonsExtra"
             },
             {
                 "table": "AOD/RTDILEPTONFLOW/0",
-                "treename": "DileptonsFlow"
             }
         ]
     }

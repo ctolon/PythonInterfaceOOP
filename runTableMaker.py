@@ -81,26 +81,26 @@ def main():
     # yapf: disable
     # Definition of all the tables we may write
     tables = {
-        "ReducedEvents": {"table": "AOD/REDUCEDEVENT/0","treename": "ReducedEvents"},
-        "ReducedEventsExtended": {"table": "AOD/REEXTENDED/0","treename": "ReducedEventsExtended"},
-        "ReducedEventsVtxCov": {"table": "AOD/REVTXCOV/0","treename": "ReducedEventsVtxCov"},
-        "ReducedEventsQvector": {"table": "AOD/REQVECTOR/0","treename": "ReducedEventsQvector"},
-        "ReducedMCEventLabels": {"table": "AOD/REMCCOLLBL/0","treename": "ReducedMCEventLabels"},
-        "ReducedMCEvents": {"table": "AOD/REDUCEDMCEVENT/0","treename": "ReducedMCEvents"},
-        "ReducedTracks": {"table": "AOD/REDUCEDTRACK/0","treename": "ReducedTracks"},
-        "ReducedTracksBarrel": {"table": "AOD/RTBARREL/0","treename": "ReducedTracksBarrel"},
-        "ReducedTracksBarrelCov": {"table": "AOD/RTBARRELCOV/0","treename": "ReducedTracksBarrelCov"},
-        "ReducedTracksBarrelPID": {"table": "AOD/RTBARRELPID/0","treename": "ReducedTracksBarrelPID"},
-        "ReducedTracksBarrelLabels": {"table": "AOD/RTBARRELLABELS/0","treename": "ReducedTracksBarrelLabels"},
-        "ReducedMCTracks": {"table": "AOD/REDUCEDMCTRACK/0","treename": "ReducedMCTracks"},
-        "ReducedMuons": {"table": "AOD/RTMUON/0","treename": "ReducedMuons"},
-        "ReducedMuonsExtra": {"table": "AOD/RTMUONEXTRA/0","treename": "ReducedMuonsExtra"},
-        "ReducedMuonsCov": {"table": "AOD/RTMUONCOV/0","treename": "ReducedMuonsCov"},
-        "ReducedMuonsLabels": {"table": "AOD/RTMUONSLABELS/0","treename": "ReducedMuonsLabels"},
-        "AmbiguousTracksMid": {"table": "AOD/AMBIGUOUSTRACK/0","treename": "AmbiguousTracksMid"},
-        "AmbiguousTracksFwd": {"table": "AOD/AMBIGUOUSFWDTR/0","treename": "AmbiguousTracksFwd"},
-        "DalitzBits": {"table": "AOD/DALITZBITS/0","treename": "DalitzBits"},
-        "V0Bits": {"table": "AOD/V0BITS/0","treename": "V0Bits"}
+        "ReducedEvents": {"table": "AOD/REDUCEDEVENT/0"},
+        "ReducedEventsExtended": {"table": "AOD/REEXTENDED/0"},
+        "ReducedEventsVtxCov": {"table": "AOD/REVTXCOV/0"},
+        "ReducedEventsQvector": {"table": "AOD/REQVECTOR/0"},
+        "ReducedMCEventLabels": {"table": "AOD/REMCCOLLBL/0"},
+        "ReducedMCEvents": {"table": "AOD/REDUCEDMCEVENT/0"},
+        "ReducedTracks": {"table": "AOD/REDUCEDTRACK/0"},
+        "ReducedTracksBarrel": {"table": "AOD/RTBARREL/0"},
+        "ReducedTracksBarrelCov": {"table": "AOD/RTBARRELCOV/0"},
+        "ReducedTracksBarrelPID": {"table": "AOD/RTBARRELPID/0"},
+        "ReducedTracksBarrelLabels": {"table": "AOD/RTBARRELLABELS/0"},
+        "ReducedMCTracks": {"table": "AOD/REDUCEDMCTRACK/0"},
+        "ReducedMuons": {"table": "AOD/RTMUON/0"},
+        "ReducedMuonsExtra": {"table": "AOD/RTMUONEXTRA/0"},
+        "ReducedMuonsCov": {"table": "AOD/RTMUONCOV/0"},
+        "ReducedMuonsLabels": {"table": "AOD/RTMUONSLABELS/0"},
+        "AmbiguousTracksMid": {"table": "AOD/AMBIGUOUSTRACK/0"},
+        "AmbiguousTracksFwd": {"table": "AOD/AMBIGUOUSFWDTR/0"}
+        #"DalitzBits": {"table": "AOD/DALITZBITS/0"},
+        #"V0Bits": {"table": "AOD/V0BITS/0"}
         }
     # yapf: enable
     # Tables to be written, per process function

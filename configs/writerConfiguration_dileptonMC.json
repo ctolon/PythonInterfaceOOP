@@ -7,59 +7,45 @@
     "OutputDescriptors": [
       {
         "table": "AOD/REDUCEDEVENT/0",
-        "treename": "ReducedEvents"
       },
       {
         "table": "AOD/REEXTENDED/0",
-        "treename": "ReducedEventsExtended"
       },
       {
         "table": "AOD/REVTXCOV/0",
-        "treename": "ReducedEventsVtxCov"
       },
       {
         "table": "AOD/RTMUON/0",
-        "treename": "ReducedMuons"
       },
       {
         "table": "AOD/RTMUONEXTRA/0",
-        "treename": "ReducedMuonsExtra"
       },
       {
         "table": "AOD/RTMUONCOV/0",
-        "treename": "ReducedMuonsCov"
       },   
       {
         "table": "AOD/REDUCEDMCEVENT/0",
-        "treename": "ReducedMCEvents"
       },
       {
         "table": "AOD/REDUCEDMCTRACK/0",
-        "treename": "ReducedMCTracks"
       },
       {
         "table": "AOD/RTMUONSLABELS/0",
-        "treename": "ReducedMuonsLabels"
       },
       {
         "table": "AOD/REMCCOLLBL/0",
-        "treename": "ReducedMCEventLabels"
       },
       {
         "table": "AOD/RTDILEPTON/0",
-        "treename": "Dileptons"
       },
       {
         "table": "AOD/RTDILEPTONEXTRA/0",
-        "treename": "DileptonsExtra"
       },
       {
         "table": "AOD/RTDIMUONALL/0",
-        "treename": "DimuonsAll"
       },
       {
         "table": "AOD/RTDILEPTONTRACK/0",
-        "treename": "DileptonTrackCandidates"
       }
     ]
   }

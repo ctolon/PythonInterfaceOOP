@@ -43,7 +43,7 @@
         "processDummy": "false"
     },
     "analysis-event-mixing": {
-        "cfgTrackCuts": "jpsiO2MCdebugCuts2",
+        "cfgTrackCuts": "jpsiO2MCdebugCuts",
         "cfgMuonCuts": "muonQualityCuts",
         "cfgAddEventMixingHistogram": "barrel,vertexing,flow",
         "cfgMixingDepth": "1",
