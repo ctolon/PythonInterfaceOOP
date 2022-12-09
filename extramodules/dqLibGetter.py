@@ -50,10 +50,10 @@ class DQLibGetter(object):
 
         # For filter selections
         allPairCuts = [] # only pair cuts
-        nAddedallAnalysisCutsList = [] # e.g. muonQualityCuts:2
-        nAddedPairCutsList = [] # e.g paircutMass:3
-        selsWithOneColon = [] # track/muon cut:paircut:n
-        oneColon = ":" # Namespace reference
+        selsWithDoubleColon = [] # e.g. muonQualityCuts::2
+        pairCutsWithSingleColon = [] # e.g paircutMass:3
+        selsWithSingleColon = [] # track/muon cut:paircut:n
+        singleColon = ":" # Namespace reference
         doubleColon = "::" # Namespace reference
         
         # Flags for DQ Lib Getter
@@ -173,11 +173,9 @@ class DQLibGetter(object):
                 getPairCuts = [y for y in getCuts if "pair" in y] # get pair cuts
                 if getPairCuts: # if pair cut list is not empty
                     allPairCuts = (allPairCuts + getPairCuts) # Get Only pair cuts from CutsLibrary.h
-                    namespacedPairCuts = [x + oneColon for x in allPairCuts] # paircut:
+                    namespacedPairCuts = [x + singleColon for x in allPairCuts] # paircut:
                 self.allAnalysisCuts = (self.allAnalysisCuts + getCuts) # Get all Cuts from CutsLibrary.h
                 self.allOnlyPairCuts = (self.allOnlyPairCuts + allPairCuts) # Get all Pair Cuts from CutsLibrary.h
-                nameSpacedallAnalysisCuts = [x + oneColon for x in self.allAnalysisCuts] # cut:
-                nameSpacedallAnalysisCutsTwoDots = [x + doubleColon for x in self.allAnalysisCuts] # cut::
                 
         # NOTE : Now we have brute-force solution for format specifiers (for dalitz cuts)
         # TODO We need more simple and flexible solution for this isue
@@ -200,19 +198,21 @@ class DQLibGetter(object):
             
             
         # in Filter PP Task, sels options for barrel and muon uses namespaces e.g. "<track-cut>:[<pair-cut>]:<n> and <track-cut>::<n> For Manage this issue:
+        allAnalysisCutsSingleColon = [x + singleColon for x in self.allAnalysisCuts] # cut:
+        allAnalysisCutsDoubleColon = [x + doubleColon for x in self.allAnalysisCuts] # cut::
+        
         for k in range(1, 10):
-            nAddedallAnalysisCuts = [x + str(k) for x in nameSpacedallAnalysisCutsTwoDots]
-            nAddedallAnalysisCutsList = nAddedallAnalysisCutsList + nAddedallAnalysisCuts
+            # Style 1 <track-cut>::<n> --> selsWithDoubleColon
+            nAddedallAnalysisCuts = [x + str(k) for x in allAnalysisCutsDoubleColon]
+            selsWithDoubleColon = selsWithDoubleColon + nAddedallAnalysisCuts
             nAddedPairCuts = [x + str(k) for x in namespacedPairCuts]
-            nAddedPairCutsList = nAddedPairCutsList + nAddedPairCuts
+            pairCutsWithSingleColon = pairCutsWithSingleColon + nAddedPairCuts
         
-        # Style 1 <track-cut>:[<pair-cut>]:<n>:
-        for i in nAddedPairCutsList:
-            Style1 = [x + i for x in nameSpacedallAnalysisCuts]
-            selsWithOneColon = selsWithOneColon + Style1
-        
-        # Style 2 <track-cut>:<n> --> nAddedallAnalysisCutsList
-        
+        # Style 2 <track-cut>:[<pair-cut>]:<n>:
+        for i in pairCutsWithSingleColon:
+            Style1 = [x + i for x in allAnalysisCutsSingleColon]
+            selsWithSingleColon = selsWithSingleColon + Style1
+          
         # Merge All possible styles for Sels (cfgBarrelSels and cfgMuonSels) in FilterPP Task
         f.close() 
-        self.allSels = selsWithOneColon + nAddedallAnalysisCutsList
+        self.allSels = selsWithSingleColon + selsWithDoubleColon
