@@ -33,7 +33,7 @@ class DQLibGetter(object):
         object (object): self
     """
     
-    def __init__(self, allAnalysisCuts = [], allOnlyPairCuts = [], allMCSignals = [], allSels = [], allMixing = [], allEventHistos = [], allTrackHistos = [], allMCTruthHistos = [], allPairHistos = [], allDileptonHistos = []) -> None:
+    def __init__(self, allAnalysisCuts = [], allOnlyPairCuts = [], allMCSignals = [], allSels = [], allMixing = [], allHistos =[], allEventHistos = [], allTrackHistos = [], allMCTruthHistos = [], allPairHistos = [], allDileptonHistos = []) -> None:
         
         # Define Analysis Cuts, MC Signals and Histograms
         self.allAnalysisCuts = list(allAnalysisCuts)
@@ -41,6 +41,7 @@ class DQLibGetter(object):
         self.allMCSignals = list(allMCSignals)
         self.allSels = list(allSels)
         self.allMixing = list(allMixing)
+        self.allHistos = list(allHistos)
         self.allEventHistos = list(allEventHistos)
         self.allTrackHistos = list(allTrackHistos)
         self.allMCTruthHistos = list(allMCTruthHistos)
@@ -128,8 +129,7 @@ class DQLibGetter(object):
                 getMixing = re.findall('"([^"]*)"', i)
                 self.allMixing = self.allMixing + getMixing
         f.close() 
-             
-        # TODO create dep tree and improve better performance        
+                 
         with open("tempHistogramsLibrary.h") as f:
             for line in f:
                 if "if" in line:
@@ -141,7 +141,7 @@ class DQLibGetter(object):
                         line = re.findall('"([^"]*)"', line)
                         kEvents = False
                         trackHistos += line
-                    elif "mctruth" in line and kMCtruths is True: # get mctruth histos # TODO test it
+                    elif "mctruth" in line and kMCtruths is True: # get mctruth histos
                         line = re.findall('"([^"]*)"', line)
                         kTracks = False
                         mctruthHistos += line
@@ -153,16 +153,19 @@ class DQLibGetter(object):
                         line = re.findall('"([^"]*)"', line)
                         kPairs = False
                         dileptonHistos += line
-        f.close()       
+        f.close()
+                       
         self.allEventHistos = eventHistos
         self.allTrackHistos = self.allTrackHistos + trackHistos
         self.allMCTruthHistos = self.allMCTruthHistos + mctruthHistos
         self.allPairHistos = self.allPairHistos + pairHistos
         self.allDileptonHistos = self.allDileptonHistos + dileptonHistos
+        
         #print("mctruth :" ,mctruthHistos)
         #print("track :", trackHistos)
         #print("pair histos :", pairHistos)
         #print("dilepton histos", dileptonHistos)
+                
         with open("tempCutsLibrary.h") as f:
             stringIfSearch = [x for x in f if "if" in x] # get lines only includes if string
             for i in stringIfSearch:
@@ -175,7 +178,27 @@ class DQLibGetter(object):
                 self.allOnlyPairCuts = (self.allOnlyPairCuts + allPairCuts) # Get all Pair Cuts from CutsLibrary.h
                 nameSpacedallAnalysisCuts = [x + oneColon for x in self.allAnalysisCuts] # cut:
                 nameSpacedallAnalysisCutsTwoDots = [x + doubleColon for x in self.allAnalysisCuts] # cut::
+                
+        # NOTE : Now we have brute-force solution for format specifiers (for dalitz cuts)
+        # TODO We need more simple and flexible solution for this isue
+        getCleanDalitzCuts = []
+        getDalitzCutsWithFormatSpecifiers = [x for x in self.allAnalysisCuts if "%d" in x]
+        getDalitzCutsWithFormatSpecifiers = list(map(lambda x: x.replace('%d',''),getDalitzCutsWithFormatSpecifiers)) # delete format specifiers with list comp.
+        #print(getDalitzCutsWithFormatSpecifiers)
         
+        # add one to eight suffix due to for loop in O2-DQ Framework
+        for i in getDalitzCutsWithFormatSpecifiers:
+            for j in range(1,9):
+                i = i + str(j) # add suffix integers
+                getCleanDalitzCuts.append(i)
+                i = i[:-1] # remove last character after suffix
+
+        # after getting clean dalitz cuts, we need remove has format specifier dalitz cuts from allAnalysisCuts and add clean dalitz cuts              
+        self.allAnalysisCuts = [x for x in self.allAnalysisCuts if "%d" not in x] # clean the has format specifier dalitz cuts
+        self.allAnalysisCuts = self.allAnalysisCuts + getCleanDalitzCuts # add clean dalitz cuts
+        # print(self.allAnalysisCuts)
+            
+            
         # in Filter PP Task, sels options for barrel and muon uses namespaces e.g. "<track-cut>:[<pair-cut>]:<n> and <track-cut>::<n> For Manage this issue:
         for k in range(1, 10):
             nAddedallAnalysisCuts = [x + str(k) for x in nameSpacedallAnalysisCutsTwoDots]
