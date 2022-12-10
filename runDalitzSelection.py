@@ -28,8 +28,6 @@ from extramodules.configSetter import setSwitch, setConverters, setConfig, debug
 from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.dalitzSelection import DalitzPairing
 
-# TODO We need handle dalitz cuts in for loop
-# TODO Add new transaction, paircuts and track cuts should be in same order and same number
 
 def main():
 
