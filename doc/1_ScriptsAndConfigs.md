@@ -87,7 +87,7 @@ Main File | Data Model | Description
 
 Main File | Data Model | Description
 --- | --- | ---
-[`writerConfiguration_dileptons.json`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/configs/writerConfiguration_dileptons.json) | DQ Skimmed Data Model | For Data
+[`writerConfiguration_dilepton.json`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/configs/writerConfiguration_dilepton.json) | DQ Skimmed Data Model | For Data
 [`writerConfiguration_dileptonMC.json`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/configs/writerConfiguration_dileptonMC.json) | DQ Skimmed Data Model | For MC
 
 

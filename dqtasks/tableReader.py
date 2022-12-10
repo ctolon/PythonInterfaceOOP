@@ -54,7 +54,7 @@ class TableReader(object):
         """
         
         readerPath = "configs/readerConfiguration_reducedEvent.json"
-        writerPath = "configs/writerConfiguration_dileptons.json"
+        writerPath = "configs/writerConfiguration_dilepton.json"
         
         # Predefined Selections
         analysisSelections = {

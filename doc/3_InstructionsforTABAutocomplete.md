@@ -31,7 +31,7 @@ you will get this displayed options in your terminal:
 ```ruby
 configs/configAnalysisData.json                  configs/configFlowDataRun3.json                  configs/configtestFilterPPDataRun3.json          configs/readerConfiguration_reducedEventMC.json
 configs/configAnalysisMC.json                    configs/configTableMakerDataRun2.json            configs/configtestFlowDataRun3.json              configs/writerConfiguration_dileptonMC.json
-configs/configFilterPPDataRun2.json              configs/configTableMakerDataRun3.json            configs/configtestTableMakerDataRun3.json        configs/writerConfiguration_dileptons.json
+configs/configFilterPPDataRun2.json              configs/configTableMakerDataRun3.json            configs/configtestTableMakerDataRun3.json        configs/writerConfiguration_dilepton.json
 configs/configFilterPPDataRun3.json                  configs/configTableMakerMCRun2.json              configs/readerConfiguration_dilepton.json        
 configs/configFlowDataRun2.json                  configs/configTableMakerMCRun3.json              configs/readerConfiguration_reducedEvent.json 
 ```

@@ -291,7 +291,7 @@ Arg | Ref Type| Desc | Default | Real Type
 `-h` | No Param | list all helper messages for configurable command |  | *
 `--aod` | String | Add your AOD File with path | - | str
 `--reader` | String | Add your AOD Reader JSON with path | `configs/readerConfiguration_reducedEvent.json` | str
-`--writer` | String | Add your AOD Writer JSON with path | `configs/writerConfiguration_dileptons.json` | str
+`--writer` | String | Add your AOD Writer JSON with path | `configs/writerConfiguration_dilepton.json` | str
 `--analysis` | String | Skimmed process selections for analysis | - | str
 `--mixing` | String | Skimmed process selections for Event Mixing manually | - | str
 `--process` | String | Skimmed process Selections for Same Event Pairing  | - | str |
