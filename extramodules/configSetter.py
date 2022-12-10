@@ -262,19 +262,22 @@ def setConfig(config: dict, task: str, cfg: str, allArgs: dict, cliMode: bool):
             logging.debug(" - [%s] %s : %s", task, cfg, valueCfg)
 
 
-def setSwitch(config: dict, task: str, cfg: str, allArgs: dict, cliMode: str, argument: str, parameters: list, switchType: str):
+def setSwitch(config: dict, task: str, cfg: str, allArgs: dict, cliMode: str, argument: str, parameters: list, switchType: str, taskname: str = None) -> None:
     """This method provides configure parameters with SWITCH_ON/SWITCH_OFF (both for configurables and process functions)
 
     Args:
         config (dict): JSON config file as input
-        task (str): Task
+        task (str): Task from JSON iteration
         cfg (str): Configurable or Process Func
         allArgs (dict): Configured args in CLI
         cliMode (bool): CLI mode
         argument (str): Selected argument from configured args
         parameters (list): All available parameters for argument
         switchType (str): Switch type usage in string --> "SWITCH_ON/SWITCHOFF"
+        taskname (str): task name of switch option in JSON
     """
+    
+    isValid = False
     
     possibleSwitchTypes = ["1/-1", "1/0", "true/false"] # you have to add new switch type here if you need
     if switchType not in possibleSwitchTypes:
@@ -289,30 +292,39 @@ def setSwitch(config: dict, task: str, cfg: str, allArgs: dict, cliMode: str, ar
     SWITCH_ON = switchType[0]
     SWITCH_OFF = switchType[1]
     
-    for keyCfg, valueCfg in allArgs.items():
-        if isinstance(valueCfg, list) and keyCfg == argument:
-            for element in valueCfg:
-                if (cfg == element) and (element is not None):
+    if taskname is not None:
+        if taskname == task:
+            isValid = True
+        if isinstance(taskname, str) is False:
+            raise TypeError(f"{taskname} have to in string type!")
+    else:
+        isValid = True
+    
+    if isValid:
+        for keyCfg, valueCfg in allArgs.items():
+            if isinstance(valueCfg, list) and keyCfg == argument:
+                for element in valueCfg:
+                    if (cfg == element) and (element is not None):
+                        config[task][cfg] = SWITCH_ON
+                        logging.debug(" - [%s] %s : %s", task, cfg, SWITCH_ON)
+                
+                if (cliMode == "true"):
+                    for param in parameters:
+                        if param not in valueCfg and param == cfg: # param should equals cfg for getting task info
+                            config[task][cfg] = SWITCH_OFF
+                            logging.debug(" - [%s] %s : %s", task, cfg, SWITCH_OFF)
+                            # print(param)
+            
+            elif isinstance(valueCfg, str) and keyCfg == argument:
+                if (cfg == valueCfg) and (valueCfg is not None):
                     config[task][cfg] = SWITCH_ON
                     logging.debug(" - [%s] %s : %s", task, cfg, SWITCH_ON)
-            
-            if (cliMode == "true"):
-                for param in parameters:
-                    if param not in valueCfg and param == cfg: # param should equals cfg for getting task info
-                        config[task][cfg] = SWITCH_OFF
-                        logging.debug(" - [%s] %s : %s", task, cfg, SWITCH_OFF)
-                        # print(param)
-        
-        elif isinstance(valueCfg, str) and keyCfg == argument:
-            if (cfg == valueCfg) and (valueCfg is not None):
-                config[task][cfg] = SWITCH_ON
-                logging.debug(" - [%s] %s : %s", task, cfg, SWITCH_ON)
-            
-            if (cliMode == "true"):
-                for param in parameters:
-                    if param != valueCfg and param == cfg: # param should equals cfg for getting task info
-                        config[task][param] = SWITCH_OFF
-                        logging.debug(" - [%s] %s : %s", task, param, SWITCH_OFF)
+                
+                if (cliMode == "true"):
+                    for param in parameters:
+                        if param != valueCfg and param == cfg: # param should equals cfg for getting task info
+                            config[task][param] = SWITCH_OFF
+                            logging.debug(" - [%s] %s : %s", task, param, SWITCH_OFF)
 
 
 def setProcessDummy(config: dict, dummyHasTasks = None):

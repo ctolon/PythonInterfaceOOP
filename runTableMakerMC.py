@@ -183,8 +183,7 @@ def main():
                 setSwitch(config, task, cfg, allArgs, cliMode, "process", specificDeps.keys(), "true/false")
                 setSwitch(config, task, cfg, allArgs, "true", "isCovariance", covParameters, "true/false")
                 setSwitch(config, task, cfg, allArgs, "true", "isWSlice", sliceParameters, "true/false")
-                if task == "tof-event-time": # we have processRun2 option in tof-event-time and for not overriding it other processRun2 options, we have to specifiy task
-                    setSwitch(config, task, cfg, allArgs, "true", "FT0", ft0Parameters, "true/false")
+                setSwitch(config, task, cfg, allArgs, "true", "FT0", ft0Parameters, "true/false", "tof-event-time")
                 mandatoryArgChecker(config, task, cfg, taskNameInConfig, "processOnlyBCs")
                 
     setProcessDummy(config, dummyHasTasks) # dummy automizer
