@@ -94,8 +94,9 @@ def main():
         "ReducedMuonsCov": {"table": "AOD/RTMUONCOV/0"},
         "ReducedMuonsLabels": {"table": "AOD/RTMUONSLABELS/0"},
         "AmbiguousTracksMid": {"table": "AOD/AMBIGUOUSTRACK/0"},
-        "AmbiguousTracksFwd": {"table": "AOD/AMBIGUOUSFWDTR/0"}
-        #"DalitzBits": {"table": "AOD/DALITZBITS/0"},
+        "AmbiguousTracksFwd": {"table": "AOD/AMBIGUOUSFWDTR/0"},
+        "DalitzBits": {"table": "AOD/DALITZBITS/0"},
+        #"ReducedV0s": {"table": "AOD/REDUCEDV0/0"}, # NOTE V0 Bits cannot save to reduced tables
         #"V0Bits": {"table": "AOD/V0BITS/0"}
         }
     # yapf: enable
@@ -111,7 +112,7 @@ def main():
         "processBarrelOnly": [],
         "processBarrelOnlyWithCov": ["ReducedTracksBarrelCov"],
         "processBarrelOnlyWithV0Bits": [],
-        "processBarrelOnlyWithDalitzBits": [],
+        "processBarrelOnlyWithDalitzBits": ["DalitzBits"],
         "processBarrelOnlyWithQvector": ["ReducedEventsQvector"],
         "processBarrelOnlyWithEventFilter": [],
         "processBarrelOnlyWithCent": [],

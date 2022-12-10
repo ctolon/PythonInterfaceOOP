@@ -46,6 +46,9 @@
       },
       {
         "table": "AOD/RTMUONSLABELS/0",
+      },
+      {
+        "table": "AOD/DALITZBITS/0",
       }
     ]
   }

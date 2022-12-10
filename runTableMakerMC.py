@@ -84,8 +84,8 @@ def main():
         "ReducedMuons": {"table": "AOD/RTMUON/0"},
         "ReducedMuonsExtra": {"table": "AOD/RTMUONEXTRA/0"},
         "ReducedMuonsCov": {"table": "AOD/RTMUONCOV/0"},
-        "ReducedMuonsLabels": {"table": "AOD/RTMUONSLABELS/0"}
-        #"DalitzBits": {"table": "AOD/DALITZBITS/0"}
+        "ReducedMuonsLabels": {"table": "AOD/RTMUONSLABELS/0"},
+        "DalitzBits": {"table": "AOD/DALITZBITS/0"}
         }
     # yapf: enable
     # Tables to be written, per process function
@@ -100,7 +100,7 @@ def main():
         "processBarrelOnly": [],
         "processBarrelOnlyWithCov": ["ReducedTracksBarrelCov"],
         "processBarrelOnlyWithV0Bits": [],
-        "processBarrelOnlyWithDalitzBits": [],
+        "processBarrelOnlyWithDalitzBits": ["DalitzBits"],
         "processBarrelOnlyWithQvector": ["ReducedEventsQvector"],
         "processBarrelOnlyWithEventFilter": [],
         "processBarrelOnlyWithCent": [],

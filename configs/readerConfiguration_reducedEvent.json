@@ -40,6 +40,9 @@
       },
       {
         "table": "AOD/AMBIGUOUSFWDTR/0",
+      },
+      {
+        "table": "AOD/DALITZBITS/0",
       }
     ]
   }
