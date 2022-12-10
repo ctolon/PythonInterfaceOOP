@@ -51,7 +51,7 @@ class TableMakerMC(object):
     
     def __init__(
         self, parserTableMakerMC = argparse.ArgumentParser(formatter_class = argparse.ArgumentDefaultsHelpFormatter, description = "Example Usage: ./runTableMakerMC.py <yourConfig.json> --arg value",
-                                                          ), eventSelection = EventSelectionTask(), centralityTable = CentralityTable(), multiplicityTable = MultiplicityTable(), tofEventTime = TofEventTime(), tofPidBeta = TofPidBeta(), tpcTofPidFull = TpcTofPidFull(), trackPropagation = TrackPropagation(), trackSelection = TrackSelectionTask(),
+                                                           ), eventSelection = EventSelectionTask(), centralityTable = CentralityTable(), multiplicityTable = MultiplicityTable(), tofEventTime = TofEventTime(), tofPidBeta = TofPidBeta(), tpcTofPidFull = TpcTofPidFull(), trackPropagation = TrackPropagation(), trackSelection = TrackSelectionTask(),
         helperOptions = HelperOptions(), o2Converters = O2Converters(), dplAodReader = DplAodReader(), dqLibGetter = DQLibGetter()
         ):
         super(TableMakerMC, self).__init__()

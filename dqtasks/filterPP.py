@@ -52,7 +52,7 @@ class DQFilterPPTask(object):
     
     def __init__(
         self, parserDQFilterPPTask = argparse.ArgumentParser(formatter_class = argparse.ArgumentDefaultsHelpFormatter, description = "Example Usage: ./runFilterPP.py <yourConfig.json> --arg value",
-                                                            ), eventSelection = EventSelectionTask(), multiplicityTable = MultiplicityTable(), tofEventTime = TofEventTime(), tofPidBeta = TofPidBeta(), tpcTofPidFull = TpcTofPidFull(), trackPropagation = TrackPropagation(), trackSelection = TrackSelectionTask(), helperOptions = HelperOptions(),
+                                                             ), eventSelection = EventSelectionTask(), multiplicityTable = MultiplicityTable(), tofEventTime = TofEventTime(), tofPidBeta = TofPidBeta(), tpcTofPidFull = TpcTofPidFull(), trackPropagation = TrackPropagation(), trackSelection = TrackSelectionTask(), helperOptions = HelperOptions(),
         o2Converters = O2Converters(), dplAodReader = DplAodReader(), dqLibGetter = DQLibGetter()
         ):
         super(DQFilterPPTask, self).__init__()

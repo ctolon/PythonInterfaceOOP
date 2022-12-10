@@ -52,7 +52,7 @@ class EMEfficiencyNoSkimmed(object):
     
     def __init__(
         self, parserEMEfficiencyNoSkimmed = argparse.ArgumentParser(formatter_class = argparse.ArgumentDefaultsHelpFormatter, description = "Example Usage: ./runEMEfficiencyNoSkimmed.py <yourConfig.json> --arg value",
-                                                                   ), eventSelection = EventSelectionTask(), multiplicityTable = MultiplicityTable(), tofEventTime = TofEventTime(), tofPidBeta = TofPidBeta(), tpcTofPidFull = TpcTofPidFull(), trackPropagation = TrackPropagation(), trackSelection = TrackSelectionTask(),
+                                                                    ), eventSelection = EventSelectionTask(), multiplicityTable = MultiplicityTable(), tofEventTime = TofEventTime(), tofPidBeta = TofPidBeta(), tpcTofPidFull = TpcTofPidFull(), trackPropagation = TrackPropagation(), trackSelection = TrackSelectionTask(),
         helperOptions = HelperOptions(), o2Converters = O2Converters(), dplAodReader = DplAodReader(), dqLibGetter = DQLibGetter()
         ):
         super(EMEfficiencyNoSkimmed, self).__init__()
