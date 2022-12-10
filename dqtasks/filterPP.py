@@ -51,13 +51,9 @@ class DQFilterPPTask(object):
     """
     
     def __init__(
-        self, parserDQFilterPPTask = argparse.ArgumentParser(
-            formatter_class = argparse.ArgumentDefaultsHelpFormatter,
-            description = "Example Usage: ./runFilterPP.py <yourConfig.json> --arg value",
-            ), eventSelection = EventSelectionTask(), multiplicityTable = MultiplicityTable(), tofEventTime = TofEventTime(),
-        tofPidBeta = TofPidBeta(), tpcTofPidFull = TpcTofPidFull(), trackPropagation = TrackPropagation(),
-        trackSelection = TrackSelectionTask(), helperOptions = HelperOptions(), o2Converters = O2Converters(),
-        dplAodReader = DplAodReader(), dqLibGetter = DQLibGetter()
+        self, parserDQFilterPPTask = argparse.ArgumentParser(formatter_class = argparse.ArgumentDefaultsHelpFormatter, description = "Example Usage: ./runFilterPP.py <yourConfig.json> --arg value",
+                                                            ), eventSelection = EventSelectionTask(), multiplicityTable = MultiplicityTable(), tofEventTime = TofEventTime(), tofPidBeta = TofPidBeta(), tpcTofPidFull = TpcTofPidFull(), trackPropagation = TrackPropagation(), trackSelection = TrackSelectionTask(), helperOptions = HelperOptions(),
+        o2Converters = O2Converters(), dplAodReader = DplAodReader(), dqLibGetter = DQLibGetter()
         ):
         super(DQFilterPPTask, self).__init__()
         self.parserDQFilterPPTask = parserDQFilterPPTask
@@ -102,59 +98,32 @@ class DQFilterPPTask(object):
         # Interface
         
         # DQ Task Selections
-        groupProcessFilterPP = self.parserDQFilterPPTask.add_argument_group(
-            title = "Data processor options: d-q-filter-p-p-task, d-q-event-selection-task, d-q-barrel-track-selection, d-q-muons-selection "
-            )
-        groupProcessFilterPP.add_argument(
-            "--process", help = "DQ Tasks process Selections options", action = "store", type = str, nargs = "*", metavar = "PROCESS",
-            choices = dqSelectionsList,
-            ).completer = ChoicesCompleterList(dqSelectionsList)
+        groupProcessFilterPP = self.parserDQFilterPPTask.add_argument_group(title = "Data processor options: d-q-filter-p-p-task, d-q-event-selection-task, d-q-barrel-track-selection, d-q-muons-selection ")
+        groupProcessFilterPP.add_argument("--process", help = "DQ Tasks process Selections options", action = "store", type = str, nargs = "*", metavar = "PROCESS", choices = dqSelectionsList,).completer = ChoicesCompleterList(dqSelectionsList)
         
         for key, value in dqSelections.items():
             groupProcessFilterPP.add_argument(key, help = value, action = "none")
         
         # d-q-filter-p-p-task
         groupDQFilterPP = self.parserDQFilterPPTask.add_argument_group(title = "Data processor options: d-q-filter-p-p-task")
-        groupDQFilterPP.add_argument(
-            "--cfgBarrelSels",
-            help = "Configure Barrel Selection <track-cut>:[<pair-cut>]:<n>,[<track-cut>:[<pair-cut>]:<n>],... | example jpsiO2MCdebugCuts2::1 ",
-            action = "store", type = str, nargs = "*", metavar = "CFGBARRELSELS", choices = allSels,
-            ).completer = ChoicesCompleterList(allSels)
-        groupDQFilterPP.add_argument(
-            "--cfgMuonSels", help = "Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1",
-            action = "store", type = str, nargs = "*", metavar = "CFGMUONSELS", choices = allSels,
-            ).completer = ChoicesCompleterList(allSels)
+        groupDQFilterPP.add_argument("--cfgBarrelSels", help = "Configure Barrel Selection <track-cut>:[<pair-cut>]:<n>,[<track-cut>:[<pair-cut>]:<n>],... | example jpsiO2MCdebugCuts2::1 ", action = "store", type = str, nargs = "*", metavar = "CFGBARRELSELS", choices = allSels,).completer = ChoicesCompleterList(allSels)
+        groupDQFilterPP.add_argument("--cfgMuonSels", help = "Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1", action = "store", type = str, nargs = "*", metavar = "CFGMUONSELS", choices = allSels,).completer = ChoicesCompleterList(allSels)
         
         # d-q-event-selection-task
         groupDQEventSelection = self.parserDQFilterPPTask.add_argument_group(title = "Data processor options: d-q-event-selection-task")
-        groupDQEventSelection.add_argument(
-            "--cfgEventCuts", help = "Space separated list of event cuts", nargs = "*", action = "store", type = str,
-            metavar = "CFGEVENTCUTS", choices = allAnalysisCuts,
-            ).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupDQEventSelection.add_argument("--cfgEventCuts", help = "Space separated list of event cuts", nargs = "*", action = "store", type = str, metavar = "CFGEVENTCUTS", choices = allAnalysisCuts,).completer = ChoicesCompleterList(allAnalysisCuts)
         
         # d-q-barrel-track-selection
-        groupDQBarrelTrackSelection = self.parserDQFilterPPTask.add_argument_group(
-            title = "Data processor options: d-q-barrel-track-selection"
-            )
-        groupDQBarrelTrackSelection.add_argument(
-            "--cfgBarrelTrackCuts", help = "Space separated list of barrel track cuts", nargs = "*", action = "store", type = str,
-            metavar = "CFGBARRELTRACKCUTS", choices = allAnalysisCuts,
-            ).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupDQBarrelTrackSelection = self.parserDQFilterPPTask.add_argument_group(title = "Data processor options: d-q-barrel-track-selection")
+        groupDQBarrelTrackSelection.add_argument("--cfgBarrelTrackCuts", help = "Space separated list of barrel track cuts", nargs = "*", action = "store", type = str, metavar = "CFGBARRELTRACKCUTS", choices = allAnalysisCuts,).completer = ChoicesCompleterList(allAnalysisCuts)
         
         # d-q-muons-selection
         groupDQMuonsSelection = self.parserDQFilterPPTask.add_argument_group(title = "Data processor options: d-q-muons-selection")
-        groupDQMuonsSelection.add_argument(
-            "--cfgMuonsCuts", help = "Space separated list of muon cuts in d-q muons selection", action = "store", nargs = "*", type = str,
-            metavar = "CFGMUONSCUT", choices = allAnalysisCuts,
-            ).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupDQMuonsSelection.add_argument("--cfgMuonsCuts", help = "Space separated list of muon cuts in d-q muons selection", action = "store", nargs = "*", type = str, metavar = "CFGMUONSCUT", choices = allAnalysisCuts,).completer = ChoicesCompleterList(allAnalysisCuts)
         
         # all d-q tasks and selections
-        groupQASelections = self.parserDQFilterPPTask.add_argument_group(
-            title = "Data processor options: d-q-barrel-track-selection-task, d-q-muons-selection, d-q-event-selection-task, d-q-filter-p-p-task"
-            )
-        groupQASelections.add_argument(
-            "--cfgWithQA", help = "If true, fill QA histograms", action = "store", type = str.lower, choices = (booleanSelections),
-            ).completer = ChoicesCompleter(booleanSelections)
+        groupQASelections = self.parserDQFilterPPTask.add_argument_group(title = "Data processor options: d-q-barrel-track-selection-task, d-q-muons-selection, d-q-event-selection-task, d-q-filter-p-p-task")
+        groupQASelections.add_argument("--cfgWithQA", help = "If true, fill QA histograms", action = "store", type = str.lower, choices = (booleanSelections),).completer = ChoicesCompleter(booleanSelections)
     
     def parseArgs(self):
         """

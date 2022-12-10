@@ -52,13 +52,8 @@ class AnalysisQvector(object):
     """
     
     def __init__(
-        self, parserAnalysisQvector = argparse.ArgumentParser(
-            formatter_class = argparse.ArgumentDefaultsHelpFormatter,
-            description = "Example Usage: ./runDQFlow.py <yourConfig.json> --arg value "
-            ), eventSelection = EventSelectionTask(), centralityTable = CentralityTable(), multiplicityTable = MultiplicityTable(),
-        tofEventTime = TofEventTime(), tofPidBeta = TofPidBeta(), tpcTofPidFull = TpcTofPidFull(), trackPropagation = TrackPropagation(),
-        trackSelection = TrackSelectionTask(), helperOptions = HelperOptions(), o2Converters = O2Converters(),
-        dplAodReader = DplAodReader(), dqLibGetter = DQLibGetter()
+        self, parserAnalysisQvector = argparse.ArgumentParser(formatter_class = argparse.ArgumentDefaultsHelpFormatter, description = "Example Usage: ./runDQFlow.py <yourConfig.json> --arg value "), eventSelection = EventSelectionTask(), centralityTable = CentralityTable(), multiplicityTable = MultiplicityTable(), tofEventTime = TofEventTime(),
+        tofPidBeta = TofPidBeta(), tpcTofPidFull = TpcTofPidFull(), trackPropagation = TrackPropagation(), trackSelection = TrackSelectionTask(), helperOptions = HelperOptions(), o2Converters = O2Converters(), dplAodReader = DplAodReader(), dqLibGetter = DQLibGetter()
         ):
         super(AnalysisQvector, self).__init__()
         self.parserAnalysisQvector = parserAnalysisQvector
@@ -90,36 +85,15 @@ class AnalysisQvector(object):
         
         # Interface
         groupAnalysisQvector = self.parserAnalysisQvector.add_argument_group(title = "Data processor options: analysis-qvector")
-        groupAnalysisQvector.add_argument(
-            "--cfgBarrelTrackCuts", help = "Space separated list of barrel track cuts", choices = allAnalysisCuts, nargs = "*",
-            action = "store", type = str, metavar = "CFGBARRELTRACKCUTS",
-            ).completer = ChoicesCompleterList(allAnalysisCuts)
-        groupAnalysisQvector.add_argument(
-            "--cfgMuonCuts", help = "Space separated list of muon cuts", action = "store", choices = allAnalysisCuts, nargs = "*",
-            type = str, metavar = "CFGMUONCUTS",
-            ).completer = ChoicesCompleterList(allAnalysisCuts)
-        groupAnalysisQvector.add_argument(
-            "--cfgEventCuts", help = "Space separated list of event cuts", choices = allAnalysisCuts, nargs = "*", action = "store",
-            type = str, metavar = "CFGEVENTCUT",
-            ).completer = ChoicesCompleterList(allAnalysisCuts)
-        groupAnalysisQvector.add_argument(
-            "--cfgWithQA", help = "If true, fill QA histograms", action = "store", type = str.lower, choices = booleanSelections,
-            ).completer = ChoicesCompleter(booleanSelections)
-        groupAnalysisQvector.add_argument(
-            "--cfgCutPtMin", help = "Minimal pT for tracks", action = "store", type = str, metavar = "CFGCUTPTMIN",
-            )
-        groupAnalysisQvector.add_argument(
-            "--cfgCutPtMax", help = "Maximal pT for tracks", action = "store", type = str, metavar = "CFGCUTPTMAX",
-            )
-        groupAnalysisQvector.add_argument(
-            "--cfgCutEta", help = "Eta range for tracks", action = "store", type = str, metavar = "CFGCUTETA",
-            )
-        groupAnalysisQvector.add_argument(
-            "--cfgEtaLimit", help = "Eta gap separation, only if using subEvents", action = "store", type = str, metavar = "CFGETALIMIT",
-            )
-        groupAnalysisQvector.add_argument(
-            "--cfgNPow", help = "Power of weights for Q vector", action = "store", type = str, metavar = "CFGNPOW",
-            )
+        groupAnalysisQvector.add_argument("--cfgBarrelTrackCuts", help = "Space separated list of barrel track cuts", choices = allAnalysisCuts, nargs = "*", action = "store", type = str, metavar = "CFGBARRELTRACKCUTS",).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupAnalysisQvector.add_argument("--cfgMuonCuts", help = "Space separated list of muon cuts", action = "store", choices = allAnalysisCuts, nargs = "*", type = str, metavar = "CFGMUONCUTS",).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupAnalysisQvector.add_argument("--cfgEventCuts", help = "Space separated list of event cuts", choices = allAnalysisCuts, nargs = "*", action = "store", type = str, metavar = "CFGEVENTCUT",).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupAnalysisQvector.add_argument("--cfgWithQA", help = "If true, fill QA histograms", action = "store", type = str.lower, choices = booleanSelections,).completer = ChoicesCompleter(booleanSelections)
+        groupAnalysisQvector.add_argument("--cfgCutPtMin", help = "Minimal pT for tracks", action = "store", type = str, metavar = "CFGCUTPTMIN",)
+        groupAnalysisQvector.add_argument("--cfgCutPtMax", help = "Maximal pT for tracks", action = "store", type = str, metavar = "CFGCUTPTMAX",)
+        groupAnalysisQvector.add_argument("--cfgCutEta", help = "Eta range for tracks", action = "store", type = str, metavar = "CFGCUTETA",)
+        groupAnalysisQvector.add_argument("--cfgEtaLimit", help = "Eta gap separation, only if using subEvents", action = "store", type = str, metavar = "CFGETALIMIT",)
+        groupAnalysisQvector.add_argument("--cfgNPow", help = "Power of weights for Q vector", action = "store", type = str, metavar = "CFGNPOW",)
         groupAnalysisQvector.add_argument("--cfgEfficiency", help = "CCDB path to efficiency object", action = "store", type = str)
         groupAnalysisQvector.add_argument("--cfgAcceptance", help = "CCDB path to acceptance object", action = "store", type = str)
     

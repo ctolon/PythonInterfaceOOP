@@ -28,16 +28,12 @@ from extramodules.configSetter import setConfig, setFalseHasDeps, setSwitch, set
 from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.tableReader import TableReader
 
+
 def main():
     # Predefined selections for setSwitch function
-    sameEventPairingParameters = [
-        "processDecayToEESkimmed", "processDecayToMuMuSkimmed", "processDecayToMuMuVertexingSkimmed", "processVnDecayToEESkimmed",
-        "processVnDecayToMuMuSkimmed", "processElectronMuonSkimmed", "processAllSkimmed", "processDecayToEEPrefilterSkimmed"
-        ]
-
-    eventMixingParameters = [
-        "processBarrelSkimmed", "processMuonSkimmed", "processBarrelMuonSkimmed", "processBarrelVnSkimmed", "processMuonVnSkimmed"
-        ]
+    sameEventPairingParameters = ["processDecayToEESkimmed", "processDecayToMuMuSkimmed", "processDecayToMuMuVertexingSkimmed", "processVnDecayToEESkimmed", "processVnDecayToMuMuSkimmed", "processElectronMuonSkimmed", "processAllSkimmed", "processDecayToEEPrefilterSkimmed"]
+    
+    eventMixingParameters = ["processBarrelSkimmed", "processMuonSkimmed", "processBarrelMuonSkimmed", "processBarrelVnSkimmed", "processMuonVnSkimmed"]
     # yapf: disable
     # All Dependencies
     analysisSelectionDeps = {
@@ -67,50 +63,50 @@ def main():
         "processMuonVnSkimmed": {"analysis-muon-selection": "processSkimmed"}
         }
     # yapf: enable
-
+    
     # init args manually
     initArgs = TableReader()
     initArgs.mergeArgs()
     initArgs.parseArgs()
     args = initArgs.parseArgs()
     allArgs = vars(args) # for get args
-
+    
     # Debug settings
     debugSettings(args.debug, args.logFile, fileName = "tableReader.log")
-
+    
     # if cliMode true, Overrider mode else additional mode
     cliMode = args.onlySelect
-
+    
     # Transaction
     #forgettedArgsChecker(allArgs) # Transaction Management
-
+    
     # adding prefix for setSwitch function
     args.process = setPrefixSuffix(args.process, "process", 'Skimmed', True, True)
     args.mixing = setPrefixSuffix(args.mixing, "process", 'Skimmed', True, True)
-
+    
     # Load the configuration file provided as the first parameter
     config = {}
     with open(args.cfgFileName) as configFile:
         config = json.load(configFile)
-
+    
     # Transaction
     jsonTypeChecker(args.cfgFileName)
-
+    
     taskNameInCommandLine = "o2-analysis-dq-table-reader"
     taskNameInConfig = "analysis-event-selection"
-
+    
     # Transaction
     mainTaskChecker(config, taskNameInConfig)
-
+    
     # Interface Process
     logging.info("Only Select Configured as %s", args.onlySelect)
     if args.onlySelect == "true":
         logging.info("INTERFACE MODE : JSON Overrider")
     if args.onlySelect == "false":
         logging.info("INTERFACE MODE : JSON Additional")
-
+    
     setSelection(config, analysisSelectionDeps, args.analysis, cliMode) # Set selections
-
+    
     # Iterating in JSON config file
     for task, cfgValuePair in config.items():
         if isinstance(cfgValuePair, dict):
@@ -133,28 +129,28 @@ def main():
                 if task != "analysis-prefilter-selection": # we have processBarrelSkimmed option in analysis-prefilter-selection and for not overriding it other processBarrelSkimmed option, we have to specifiy task
                     setFalseHasDeps(config, task, cfg, args.mixing, eventMixingParameters, cliMode)
                 mandatoryArgChecker(config, task, cfg, taskNameInConfig, "processSkimmed")
-
+    
     setProcessDummy(config) # dummy automizer
-
+    
     # Transacations
     aodFileChecker(args.aod)
     oneToMultiDepsChecker(args.mixing, "eventMixing", args.analysis, "analysis")
     oneToMultiDepsChecker(args.process, "sameEventPairing", args.analysis, "analysis")
     depsChecker(config, sameEventPairingDeps, sameEventTaskName)
     depsChecker(config, eventMixingDeps, eventMixingTaskName)
-
+    
     # Write the updated configuration file into a temporary file
     updatedConfigFileName = "tempConfigTableReader.json"
-
+    
     with open(updatedConfigFileName, "w") as outputFile:
         json.dump(config, outputFile, indent = 2)
-
+    
     # commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b"
     commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --aod-writer-json " + args.writer + " -b")
-
+    
     if args.writer == "false":
         commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b")
-
+    
     print("====================================================================================================================")
     logging.info("Command to run:")
     logging.info(commandToRun)
@@ -162,6 +158,7 @@ def main():
     dispArgs(allArgs) # Display all args
     os.system(commandToRun) # Execute O2 generated commands
     runPycacheRemover() # Run pycacheRemover
-    
+
+
 if __name__ == '__main__':
     sys.exit(main())

@@ -38,9 +38,7 @@ class TofPidBeta(object):
         
         # Interface
         groupTofPidbeta = self.parserTofPidBeta.add_argument_group(title = "Data processor options: tof-pid-beta")
-        groupTofPidbeta.add_argument(
-            "--tof-expreso", help = "Expected resolution for the computation of the expected beta", action = "store", type = str,
-            )
+        groupTofPidbeta.add_argument("--tof-expreso", help = "Expected resolution for the computation of the expected beta", action = "store", type = str,)
     
     def parseArgs(self):
         """

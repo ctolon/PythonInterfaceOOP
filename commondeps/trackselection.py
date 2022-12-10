@@ -43,13 +43,8 @@ class TrackSelectionTask(object):
         
         # Interface
         groupTrackSelectionTask = self.parserTrackSelectionTask.add_argument_group(title = "Data processor options: track-selection")
-        groupTrackSelectionTask.add_argument("--compatibilityIU", help = "compatibility option to allow the processing of tracks before the introduction of IU tracks (also apply for track-extension)", action = "store",
-        type = str.lower, choices= (booleanSelections)).completer = ChoicesCompleter(booleanSelections)
-        groupTrackSelectionTask.add_argument(
-            "--itsMatching",
-            help = "condition for ITS matching (0: Run2 SPD kAny, 1: Run3ITSibAny, 2: Run3ITSallAny, 3: Run3ITSall7Layers)",
-            action = "store", type = str, choices = (itsMatchingSelections),
-            ).completer = ChoicesCompleter(itsMatchingSelections)
+        groupTrackSelectionTask.add_argument("--compatibilityIU", help = "compatibility option to allow the processing of tracks before the introduction of IU tracks (also apply for track-extension)", action = "store", type = str.lower, choices = (booleanSelections)).completer = ChoicesCompleter(booleanSelections)
+        groupTrackSelectionTask.add_argument("--itsMatching", help = "condition for ITS matching (0: Run2 SPD kAny, 1: Run3ITSibAny, 2: Run3ITSallAny, 3: Run3ITSall7Layers)", action = "store", type = str, choices = (itsMatchingSelections),).completer = ChoicesCompleter(itsMatchingSelections)
         groupTrackSelectionTask.add_argument("--ptMin", help = "Lower cut on pt for the track selected", action = "store", type = str)
         groupTrackSelectionTask.add_argument("--ptMax", help = "Upper cut on pt for the track selected", action = "store", type = str)
         groupTrackSelectionTask.add_argument("--etaMin", help = "Lower cut on eta for the track selected", action = "store", type = str)

@@ -37,12 +37,8 @@ class DplAodReader(object):
         # Interface
         groupDPLReader = self.parserDplAodReader.add_argument_group(title = "Data processor options: internal-dpl-aod-reader")
         groupDPLReader.add_argument("--aod", help = "Add your AOD File with path", action = "store", type = str)
-        groupDPLReader.add_argument(
-            "--aod-memory-rate-limit", help = "Rate limit AOD processing based on memory", action = "store", type = str
-            )
-        groupDPLReader.add_argument(
-            "cfgFileName", metavar = "Config.json", default = "config.json", help = "config JSON file name (mandatory)"
-            )
+        groupDPLReader.add_argument("--aod-memory-rate-limit", help = "Rate limit AOD processing based on memory", action = "store", type = str)
+        groupDPLReader.add_argument("cfgFileName", metavar = "Config.json", default = "config.json", help = "config JSON file name (mandatory)")
     
     def parseArgs(self):
         """

@@ -35,24 +35,10 @@ headers = {
     }
 
 parser = argparse.ArgumentParser(description = "Arguments to pass")
-parser.add_argument(
-    "--version", help = "Online: Your Production tag for O2Physics example: for nightly-20220619, just enter as 20220619", action = "store",
-    type = str.lower,
-    )
-parser.add_argument(
-    "--debug", help = "Online and Local: execute with debug options", action = "store",
-    choices = ["NOTSET", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], default = "DEBUG", type = str.upper,
-    )
-parser.add_argument(
-    "--local",
-    help = "Local: Use Local Paths for getting DQ Libraries instead of online github download. If you are working LXPLUS, It will not working so don't configure with option",
-    action = "store_true",
-    )
-parser.add_argument(
-    "--localPath",
-    help = "Local: Configure your alice software folder name in your local home path (prefix: home/<user>). Default is home/<user>/alice. Example different configuration is --localpath alice-software --local --> home/<user>/alice-software",
-    action = "store", type = str
-    )
+parser.add_argument("--version", help = "Online: Your Production tag for O2Physics example: for nightly-20220619, just enter as 20220619", action = "store", type = str.lower,)
+parser.add_argument("--debug", help = "Online and Local: execute with debug options", action = "store", choices = ["NOTSET", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], default = "DEBUG", type = str.upper,)
+parser.add_argument("--local", help = "Local: Use Local Paths for getting DQ Libraries instead of online github download. If you are working LXPLUS, It will not working so don't configure with option", action = "store_true",)
+parser.add_argument("--localPath", help = "Local: Configure your alice software folder name in your local home path (prefix: home/<user>). Default is home/<user>/alice. Example different configuration is --localpath alice-software --local --> home/<user>/alice-software", action = "store", type = str)
 
 argcomplete.autocomplete(parser)
 extrargs = parser.parse_args()
@@ -89,16 +75,12 @@ if extrargs.version and extrargs.local is False:
     logging.info("DQ libs will downloaded from github. Your Version For Downloading DQ Libs From Github : %s", extrargs.version,)
     
     URL_CUTS_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/" + extrargs.version + "/PWGDQ/Core/CutsLibrary.h?raw=true")
-    URL_MCSIGNALS_LIBRARY = (
-        "https://github.com/AliceO2Group/O2Physics/blob/" + extrargs.version + "/PWGDQ/Core/MCSignalLibrary.h?raw=true"
-        )
+    URL_MCSIGNALS_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/" + extrargs.version + "/PWGDQ/Core/MCSignalLibrary.h?raw=true")
     URL_MIXING_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/" + extrargs.version + "/PWGDQ/Core/MixingLibrary.h?raw=true")
     URL_HISTOGRAMS_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/" + extrargs.version + "/PWGDQ/Core/HistogramsLibrary.h?raw=true")
 
 if extrargs.local and extrargs.version:
-    logging.warning(
-        "Your provided configuration for getting DQ libs in locally. You don't need to configure your github nightly version. It's for Online Downloading"
-        )
+    logging.warning("Your provided configuration for getting DQ libs in locally. You don't need to configure your github nightly version. It's for Online Downloading")
     logging.warning("%s nightly version will not used in interface. Local working on going", extrargs.version)
 
 if extrargs.localPath and extrargs.local:
@@ -111,9 +93,7 @@ if extrargs.localPath and extrargs.local:
         sys.exit()
 
 if extrargs.localPath and extrargs.local is False:
-    logging.error(
-        "Misconfiguration. You forget to add --local option interface for working localy. You need add this parameter to workflow"
-        )
+    logging.error("Misconfiguration. You forget to add --local option interface for working localy. You need add this parameter to workflow")
     logging.info("Example usage: python3 DownloadLibs.py --local --localPath alice")
     sys.exit()
 
@@ -131,7 +111,7 @@ if extrargs.local:
     localPathCutsLibrary = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/CutsLibrary.h"
     localPathMCSignalsLibrary = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/MCSignalLibrary.h"
     localPathEventMixing = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/MixingLibrary.h"
-    localPathHistogramsLibrary= ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/HistogramsLibrary.h"
+    localPathHistogramsLibrary = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/HistogramsLibrary.h"
     
     logging.info("Local CutsLibrary.h Path: %s ", localPathCutsLibrary)
     logging.info("Local MCSignalsLibrary.h Path: %s ", localPathMCSignalsLibrary)
@@ -172,7 +152,7 @@ if extrargs.local:
     except FileNotFoundError:
         logging.error("%s not found in your provided alice-software path!!! Check your alice software path", localPathEventMixing,)
         sys.exit()
-        
+    
     try:
         with open("tempHistogramsLibrary.h", "wb") as f:
             shutil.copyfile(localPathHistogramsLibrary, MY_PATH + "/tempHistogramsLibrary.h")

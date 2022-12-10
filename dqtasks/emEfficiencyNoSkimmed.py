@@ -42,22 +42,18 @@ from extramodules.dqLibGetter import DQLibGetter
 
 
 class EMEfficiencyNoSkimmed(object):
-
+    
     """
     Class for Interface -> emEfficiencyEE.cxx Task -> Configurable, Process Functions
 
     Args:
         object (parser_args() object): emEfficiencyEE.cxx Interface
     """
-
+    
     def __init__(
-        self, parserEMEfficiencyNoSkimmed = argparse.ArgumentParser(
-            formatter_class = argparse.ArgumentDefaultsHelpFormatter,
-            description = "Example Usage: ./runEMEfficiencyNoSkimmed.py <yourConfig.json> --arg value",
-            ), eventSelection = EventSelectionTask(), multiplicityTable = MultiplicityTable(), tofEventTime = TofEventTime(),
-        tofPidBeta = TofPidBeta(), tpcTofPidFull = TpcTofPidFull(), trackPropagation = TrackPropagation(),
-        trackSelection = TrackSelectionTask(), helperOptions = HelperOptions(), o2Converters = O2Converters(),
-        dplAodReader = DplAodReader(), dqLibGetter = DQLibGetter()
+        self, parserEMEfficiencyNoSkimmed = argparse.ArgumentParser(formatter_class = argparse.ArgumentDefaultsHelpFormatter, description = "Example Usage: ./runEMEfficiencyNoSkimmed.py <yourConfig.json> --arg value",
+                                                                   ), eventSelection = EventSelectionTask(), multiplicityTable = MultiplicityTable(), tofEventTime = TofEventTime(), tofPidBeta = TofPidBeta(), tpcTofPidFull = TpcTofPidFull(), trackPropagation = TrackPropagation(), trackSelection = TrackSelectionTask(),
+        helperOptions = HelperOptions(), o2Converters = O2Converters(), dplAodReader = DplAodReader(), dqLibGetter = DQLibGetter()
         ):
         super(EMEfficiencyNoSkimmed, self).__init__()
         self.parserEMEfficiencyNoSkimmed = parserEMEfficiencyNoSkimmed
@@ -74,12 +70,12 @@ class EMEfficiencyNoSkimmed(object):
         self.dqLibGetter = dqLibGetter
         self.parserEMEfficiencyNoSkimmed.register("action", "none", NoAction)
         self.parserEMEfficiencyNoSkimmed.register("action", "store_choice", ChoicesAction)
-
+    
     def addArguments(self):
         """
         This function allows to add arguments for parser_args() function
         """
-
+        
         # Predefined Selections
         dqSelections = {
             "eventSelection": "Run event selection on DQ skimmed events",
@@ -89,54 +85,35 @@ class EMEfficiencyNoSkimmed(object):
         dqSelectionsList = []
         for k, v in dqSelections.items():
             dqSelectionsList.append(k)
-
+        
         booleanSelections = ["true", "false"]
-
+        
         # Get DQ Analysis Selections from O2-DQ Framework Header Files
         allAnalysisCuts = self.dqLibGetter.allAnalysisCuts
         allMCSignals = self.dqLibGetter.allMCSignals
-
+        
         # Interface
-
+        
         # analysis task selections
-        groupAnalysisSelections = self.parserEMEfficiencyNoSkimmed.add_argument_group(
-            title = "Data processor options: analysis-event-selection, analysis-track-selection"
-            )
-        groupAnalysisSelections.add_argument(
-            "--analysis", help = "Noskimmed process selections for MC Analysis", action = "store", nargs = "*", type = str,
-            metavar = "ANALYSIS", choices = dqSelectionsList,
-            ).completer = ChoicesCompleterList(dqSelectionsList)
-
+        groupAnalysisSelections = self.parserEMEfficiencyNoSkimmed.add_argument_group(title = "Data processor options: analysis-event-selection, analysis-track-selection")
+        groupAnalysisSelections.add_argument("--analysis", help = "Noskimmed process selections for MC Analysis", action = "store", nargs = "*", type = str, metavar = "ANALYSIS", choices = dqSelectionsList,).completer = ChoicesCompleterList(dqSelectionsList)
+        
         for key, value in dqSelections.items():
             groupAnalysisSelections.add_argument(key, help = value, action = "none")
-
+        
         # cfg for QA
-        groupQASelections = self.parserEMEfficiencyNoSkimmed.add_argument_group(
-            title = "Data processor options: analysis-event-selection, analysis-track-selection"
-            )
-        groupQASelections.add_argument(
-            "--cfgQA", help = "If true, fill QA histograms", action = "store", type = str.lower, choices = (booleanSelections),
-            ).completer = ChoicesCompleter(booleanSelections)
-
+        groupQASelections = self.parserEMEfficiencyNoSkimmed.add_argument_group(title = "Data processor options: analysis-event-selection, analysis-track-selection")
+        groupQASelections.add_argument("--cfgQA", help = "If true, fill QA histograms", action = "store", type = str.lower, choices = (booleanSelections),).completer = ChoicesCompleter(booleanSelections)
+        
         # analysis-event-selection
         groupAnalysisEventSelection = self.parserEMEfficiencyNoSkimmed.add_argument_group(title = "Data processor options: analysis-event-selection")
-        groupAnalysisEventSelection.add_argument(
-            "--cfgEventCuts", help = "Space separated list of event cuts", nargs = "*", action = "store", type = str,
-            metavar = "CFGEVENTCUTS", choices = allAnalysisCuts,
-            ).completer = ChoicesCompleterList(allAnalysisCuts)
-
+        groupAnalysisEventSelection.add_argument("--cfgEventCuts", help = "Space separated list of event cuts", nargs = "*", action = "store", type = str, metavar = "CFGEVENTCUTS", choices = allAnalysisCuts,).completer = ChoicesCompleterList(allAnalysisCuts)
+        
         # analysis-track-selection
         groupAnalysisTrackSelection = self.parserEMEfficiencyNoSkimmed.add_argument_group(title = "Data processor options: analysis-track-selection")
-        groupAnalysisTrackSelection.add_argument(
-            "--cfgTrackCuts", help = "Space separated list of barrel track cuts", nargs = "*", action = "store", type = str,
-            metavar = "CFGTRACKCUTS", choices = allAnalysisCuts,
-            ).completer = ChoicesCompleterList(allAnalysisCuts)
-        groupAnalysisTrackSelection.add_argument(
-            "--cfgTrackMCSignals", help = "Space separated list of MC signals", nargs = "*", action = "store", type = str,
-            metavar = "CFGTRACKMCSIGNALS", choices = allMCSignals,
-            ).completer = ChoicesCompleterList(allMCSignals)
-
-
+        groupAnalysisTrackSelection.add_argument("--cfgTrackCuts", help = "Space separated list of barrel track cuts", nargs = "*", action = "store", type = str, metavar = "CFGTRACKCUTS", choices = allAnalysisCuts,).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupAnalysisTrackSelection.add_argument("--cfgTrackMCSignals", help = "Space separated list of MC signals", nargs = "*", action = "store", type = str, metavar = "CFGTRACKMCSIGNALS", choices = allMCSignals,).completer = ChoicesCompleterList(allMCSignals)
+    
     def parseArgs(self):
         """
         This function allows to save the obtained arguments to the parser_args() function
@@ -146,40 +123,40 @@ class EMEfficiencyNoSkimmed(object):
         """
         argcomplete.autocomplete(self.parserEMEfficiencyNoSkimmed, always_complete_options = False)
         return self.parserEMEfficiencyNoSkimmed.parse_args()
-
+    
     def mergeArgs(self):
         """
         This function allows to merge parser_args argument information from different classes
         """
-
+        
         self.helperOptions.parserHelperOptions = self.parserEMEfficiencyNoSkimmed
         self.helperOptions.addArguments()
-
+        
         self.dplAodReader.parserDplAodReader = self.parserEMEfficiencyNoSkimmed
         self.dplAodReader.addArguments()
-
+        
         self.eventSelection.parserEventSelectionTask = self.parserEMEfficiencyNoSkimmed
         self.eventSelection.addArguments()
-
+        
         self.trackSelection.parserTrackSelectionTask = self.parserEMEfficiencyNoSkimmed
         self.trackSelection.addArguments()
-
+        
         self.trackPropagation.parserTrackPropagation = self.parserEMEfficiencyNoSkimmed
         self.trackPropagation.addArguments()
-
+        
         self.multiplicityTable.parserMultiplicityTable = self.parserEMEfficiencyNoSkimmed
         self.multiplicityTable.addArguments()
-
+        
         self.tpcTofPidFull.parserTpcTofPidFull = self.parserEMEfficiencyNoSkimmed
         self.tpcTofPidFull.addArguments()
-
+        
         self.tofEventTime.parserTofEventTime = self.parserEMEfficiencyNoSkimmed
         self.tofEventTime.addArguments()
-
+        
         self.tofPidBeta.parserTofPidBeta = self.parserEMEfficiencyNoSkimmed
         self.tofPidBeta.addArguments()
-
+        
         self.o2Converters.parserO2Converters = self.parserEMEfficiencyNoSkimmed
         self.o2Converters.addArguments()
-
+        
         self.addArguments()

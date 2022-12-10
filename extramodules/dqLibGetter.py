@@ -33,7 +33,7 @@ class DQLibGetter(object):
         object (object): self
     """
     
-    def __init__(self, allAnalysisCuts = [], allOnlyPairCuts = [], allMCSignals = [], allSels = [], allMixing = [], allHistos =[], allEventHistos = [], allTrackHistos = [], allMCTruthHistos = [], allPairHistos = [], allDileptonHistos = []) -> None:
+    def __init__(self, allAnalysisCuts = [], allOnlyPairCuts = [], allMCSignals = [], allSels = [], allMixing = [], allHistos = [], allEventHistos = [], allTrackHistos = [], allMCTruthHistos = [], allPairHistos = [], allDileptonHistos = []) -> None:
         
         # Define Analysis Cuts, MC Signals and Histograms
         self.allAnalysisCuts = list(allAnalysisCuts)
@@ -47,7 +47,7 @@ class DQLibGetter(object):
         self.allMCTruthHistos = list(allMCTruthHistos)
         self.allPairHistos = list(allPairHistos)
         self.allDileptonHistos = list(allDileptonHistos)
-
+        
         # For filter selections
         allPairCuts = [] # only pair cuts
         selsWithDoubleColon = [] # e.g. muonQualityCuts::2
@@ -71,8 +71,7 @@ class DQLibGetter(object):
         dileptonHistos = []
         
         headers = {
-            "User-Agent":
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36"
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36"
             }
         
         URL_CUTS_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/CutsLibrary.h?raw=true"
@@ -121,15 +120,15 @@ class DQLibGetter(object):
             for i in stringIfSearch:
                 getSignals = re.findall('"([^"]*)"', i)
                 self.allMCSignals = self.allMCSignals + getSignals
-        f.close() 
+        f.close()
         
         with open("tempMixingLibrary.h") as f:
             stringIfSearch = [x for x in f if "if" in x]
             for i in stringIfSearch:
                 getMixing = re.findall('"([^"]*)"', i)
                 self.allMixing = self.allMixing + getMixing
-        f.close() 
-                 
+        f.close()
+        
         with open("tempHistogramsLibrary.h") as f:
             for line in f:
                 if "if" in line:
@@ -145,7 +144,7 @@ class DQLibGetter(object):
                         line = re.findall('"([^"]*)"', line)
                         kTracks = False
                         mctruthHistos += line
-                    elif "dilepton" not in line and kPairs is True:  # get sep histos
+                    elif "dilepton" not in line and kPairs is True: # get sep histos
                         line = re.findall('"([^"]*)"', line)
                         kMCtruths = False
                         pairHistos += line
@@ -154,7 +153,7 @@ class DQLibGetter(object):
                         kPairs = False
                         dileptonHistos += line
         f.close()
-                       
+        
         self.allEventHistos = eventHistos
         self.allTrackHistos = self.allTrackHistos + trackHistos
         self.allMCTruthHistos = self.allMCTruthHistos + mctruthHistos
@@ -165,7 +164,7 @@ class DQLibGetter(object):
         #print("track :", trackHistos)
         #print("pair histos :", pairHistos)
         #print("dilepton histos", dileptonHistos)
-                
+        
         with open("tempCutsLibrary.h") as f:
             stringIfSearch = [x for x in f if "if" in x] # get lines only includes if string
             for i in stringIfSearch:
@@ -176,27 +175,26 @@ class DQLibGetter(object):
                     namespacedPairCuts = [x + singleColon for x in allPairCuts] # paircut:
                 self.allAnalysisCuts = (self.allAnalysisCuts + getCuts) # Get all Cuts from CutsLibrary.h
                 self.allOnlyPairCuts = (self.allOnlyPairCuts + allPairCuts) # Get all Pair Cuts from CutsLibrary.h
-                
+        
         # NOTE : Now we have brute-force solution for format specifiers (for dalitz cuts)
         # TODO We need more simple and flexible solution for this isue
         getCleanDalitzCuts = []
         getDalitzCutsWithFormatSpecifiers = [x for x in self.allAnalysisCuts if "%d" in x]
-        getDalitzCutsWithFormatSpecifiers = list(map(lambda x: x.replace('%d',''),getDalitzCutsWithFormatSpecifiers)) # delete format specifiers with list comp.
+        getDalitzCutsWithFormatSpecifiers = list(map(lambda x: x.replace('%d', ''), getDalitzCutsWithFormatSpecifiers)) # delete format specifiers with list comp.
         #print(getDalitzCutsWithFormatSpecifiers)
         
         # add one to eight suffix due to for loop in O2-DQ Framework
         for i in getDalitzCutsWithFormatSpecifiers:
-            for j in range(1,9):
+            for j in range(1, 9):
                 i = i + str(j) # add suffix integers
                 getCleanDalitzCuts.append(i)
                 i = i[:-1] # remove last character after suffix
-
-        # after getting clean dalitz cuts, we need remove has format specifier dalitz cuts from allAnalysisCuts and add clean dalitz cuts              
+        
+        # after getting clean dalitz cuts, we need remove has format specifier dalitz cuts from allAnalysisCuts and add clean dalitz cuts
         self.allAnalysisCuts = [x for x in self.allAnalysisCuts if "%d" not in x] # clean the has format specifier dalitz cuts
         self.allAnalysisCuts = self.allAnalysisCuts + getCleanDalitzCuts # add clean dalitz cuts
         # print(self.allAnalysisCuts)
-            
-            
+        
         # in Filter PP Task, sels options for barrel and muon uses namespaces e.g. "<track-cut>:[<pair-cut>]:<n> and <track-cut>::<n> For Manage this issue:
         allAnalysisCutsSingleColon = [x + singleColon for x in self.allAnalysisCuts] # cut:
         allAnalysisCutsDoubleColon = [x + doubleColon for x in self.allAnalysisCuts] # cut::
@@ -212,7 +210,7 @@ class DQLibGetter(object):
         for i in pairCutsWithSingleColon:
             Style1 = [x + i for x in allAnalysisCutsSingleColon]
             selsWithSingleColon = selsWithSingleColon + Style1
-          
+        
         # Merge All possible styles for Sels (cfgBarrelSels and cfgMuonSels) in FilterPP Task
-        f.close() 
+        f.close()
         self.allSels = selsWithSingleColon + selsWithDoubleColon

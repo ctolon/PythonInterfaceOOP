@@ -28,8 +28,9 @@ from extramodules.configSetter import setConfig, setFalseHasDeps, setSwitch, set
 from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.dqEfficiency import DQEfficiency
 
-def main():
 
+def main():
+    
     # Predefined selections for setSwitch function
     sameEventPairingParameters = ["processDecayToEESkimmed", "processDecayToMuMuSkimmed", "processDecayToMuMuVertexingSkimmed"]
     # yapf: disable
@@ -60,39 +61,39 @@ def main():
     initArgs.parseArgs()
     args = initArgs.parseArgs()
     allArgs = vars(args) # for get args
-
+    
     # Debug Settings
     debugSettings(args.debug, args.logFile, fileName = "dqEfficiency.log")
-
+    
     # if cliMode true, Overrider mode else additional mode
     cliMode = args.onlySelect
-
+    
     #forgettedArgsChecker(allArgs) # Transaction management
-
+    
     # adding prefix for setSwitch function
     args.process = setPrefixSuffix(args.process, "process", 'Skimmed', True, True)
-
+    
     # Load the configuration file provided as the first parameter
     config = {}
     with open(args.cfgFileName) as configFile:
         config = json.load(configFile)
-
+    
     jsonTypeChecker(args.cfgFileName)
-
+    
     taskNameInCommandLine = "o2-analysis-dq-efficiency"
     taskNameInConfig = "analysis-event-selection"
-
+    
     mainTaskChecker(config, taskNameInConfig)
-
+    
     # Interface Process
     logging.info("Only Select Configured as %s", cliMode)
     if cliMode == "true":
         logging.info("INTERFACE MODE : JSON Overrider")
     if cliMode == "false":
         logging.info("INTERFACE MODE : JSON Additional")
-
+    
     setSelection(config, analysisSelectionDeps, args.analysis, cliMode) # Set selections
-
+    
     # Iterating in JSON config file
     for task, cfgValuePair in config.items():
         if isinstance(cfgValuePair, dict):
@@ -122,25 +123,25 @@ def main():
                     if cfg == "cfgBarrelMCGenSignals" and args.cfgBarrelDileptonMCGenSignals:
                         multiConfigurableSet(config, task, cfg, args.cfgBarrelDileptonMCGenSignals, cliMode)
                         logging.debug(" - [%s] %s : %s", task, cfg, args.cfgBarrelDileptonMCGenSignals)
-
+    
     setProcessDummy(config) # dummy automizer
-
+    
     # Transactions
     aodFileChecker(args.aod)
     oneToMultiDepsChecker(args.process, "sameEventPairing", args.analysis, "analysis")
     depsChecker(config, sameEventPairingDeps, sameEventPairingTaskName)
     depsChecker(config, dileptonTrackDeps, dileptonTrackTaskName)
-
+    
     # Write the updated configuration file into a temporary file
     updatedConfigFileName = "tempConfigDQEfficiency.json"
-
+    
     with open(updatedConfigFileName, "w") as outputFile:
         json.dump(config, outputFile, indent = 2)
-
+    
     commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b" + " --aod-writer-json " + args.writer)
     if args.writer == "false":
         commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b")
-
+    
     print("====================================================================================================================")
     logging.info("Command to run:")
     logging.info(commandToRun)
@@ -148,6 +149,7 @@ def main():
     dispArgs(allArgs) # Display all args
     os.system(commandToRun) # Execute O2 generated commands
     runPycacheRemover() # Run pycacheRemover
-    
+
+
 if __name__ == '__main__':
     sys.exit(main())

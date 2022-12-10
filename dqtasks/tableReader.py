@@ -39,12 +39,7 @@ class TableReader(object):
         object (parser_args() object): tableReader.cxx Interface
     """
     
-    def __init__(
-        self, parserTableReader = argparse.ArgumentParser(
-            formatter_class = argparse.ArgumentDefaultsHelpFormatter,
-            description = "Example Usage: ./runTableReader.py <yourConfig.json> --arg value",
-            ), helperOptions = HelperOptions(), dplAodReader = DplAodReader(), dqLibGetter = DQLibGetter()
-        ):
+    def __init__(self, parserTableReader = argparse.ArgumentParser(formatter_class = argparse.ArgumentDefaultsHelpFormatter, description = "Example Usage: ./runTableReader.py <yourConfig.json> --arg value",), helperOptions = HelperOptions(), dplAodReader = DplAodReader(), dqLibGetter = DQLibGetter()):
         super(TableReader, self).__init__()
         self.parserTableReader = parserTableReader
         self.helperOptions = helperOptions
@@ -77,7 +72,7 @@ class TableReader(object):
         
         sameEventPairingProcessSelections = {
             "DecayToEE": "Run electron-electron pairing, with skimmed tracks",
-            "DecayToEEPrefilter" : "Run electron-electron pairing, with skimmed tracks and prefilter from AnalysisPrefilterSelection",
+            "DecayToEEPrefilter": "Run electron-electron pairing, with skimmed tracks and prefilter from AnalysisPrefilterSelection",
             "DecayToMuMu": "Run muon-muon pairing, with skimmed muons",
             "DecayToMuMuVertexing": "Run muon-muon pairing and vertexing, with skimmed muons",
             "VnDecayToEE": "Run barrel-barrel vn mixing on skimmed tracks",
@@ -116,129 +111,66 @@ class TableReader(object):
         # Interface
         
         # analysis task selections
-        groupAnalysisSelections = self.parserTableReader.add_argument_group(
-            title = "Data processor options: analysis-event-selection, analysis-muon-selection, analysis-track-selection, analysis-event-mixing, analysis-dilepton-hadron"
-            )
-        groupAnalysisSelections.add_argument(
-            "--analysis", help = "Skimmed process selections for Data Analysis", action = "store", nargs = "*", type = str,
-            metavar = "ANALYSIS", choices = analysisSelectionsList,
-            ).completer = ChoicesCompleterList(analysisSelectionsList)
+        groupAnalysisSelections = self.parserTableReader.add_argument_group(title = "Data processor options: analysis-event-selection, analysis-muon-selection, analysis-track-selection, analysis-event-mixing, analysis-dilepton-hadron")
+        groupAnalysisSelections.add_argument("--analysis", help = "Skimmed process selections for Data Analysis", action = "store", nargs = "*", type = str, metavar = "ANALYSIS", choices = analysisSelectionsList,).completer = ChoicesCompleterList(analysisSelectionsList)
         
         for key, value in analysisSelections.items():
             groupAnalysisSelections.add_argument(key, help = value, action = "none")
         
         # same event pairing process function selection
         groupProcessSEPSelections = self.parserTableReader.add_argument_group(title = "Data processor options: analysis-same-event-pairing")
-        groupProcessSEPSelections.add_argument(
-        "--cfgAddSEPHistogram", help = "Comma separated list of same event pairing histograms", action = "store", nargs= "*", type = str, metavar="CFGADDSEPHISTOGRAM",
-        choices = allPairHistos).completer = ChoicesCompleterList(allPairHistos)
-        groupProcessSEPSelections.add_argument(
-            "--process", help = "analysis-same-event-pairing: PROCESS_SWITCH options", action = "store", nargs = "*", type = str,
-            metavar = "PROCESS", choices = sameEventPairingProcessSelectionsList,
-            ).completer = ChoicesCompleterList(sameEventPairingProcessSelectionsList)
-        groupProcess = self.parserTableReader.add_argument_group(
-            title = "Choice List for analysis-same-event-pairing PROCESS_SWITCH options"
-            )
+        groupProcessSEPSelections.add_argument("--cfgAddSEPHistogram", help = "Comma separated list of same event pairing histograms", action = "store", nargs = "*", type = str, metavar = "CFGADDSEPHISTOGRAM", choices = allPairHistos).completer = ChoicesCompleterList(allPairHistos)
+        groupProcessSEPSelections.add_argument("--process", help = "analysis-same-event-pairing: PROCESS_SWITCH options", action = "store", nargs = "*", type = str, metavar = "PROCESS", choices = sameEventPairingProcessSelectionsList,).completer = ChoicesCompleterList(sameEventPairingProcessSelectionsList)
+        groupProcess = self.parserTableReader.add_argument_group(title = "Choice List for analysis-same-event-pairing PROCESS_SWITCH options")
         
         for key, value in sameEventPairingProcessSelections.items():
             groupProcess.add_argument(key, help = value, action = "none")
         
         # analysis-event-mixing
         groupAnalysisEventMixing = self.parserTableReader.add_argument_group(title = "Data processor options: analysis-event-mixing")
-        groupAnalysisEventMixing.add_argument(
-        "--cfgAddEventMixingHistogram", help = "Comma separated list of event mixing histograms", action = "store", nargs= "*", type = str, metavar="CFGADDEVENTMIXINGHISTOGRAM",
-            choices = allPairHistos).completer = ChoicesCompleterList(allPairHistos)
-        groupAnalysisEventMixing.add_argument(
-            "--mixing", help = "analysis-event-mixing: PROCESS_SWITCH options", nargs = "*", action = "store", metavar = "MIXING",
-            type = str, choices = mixingSelectionsList,
-            ).completer = ChoicesCompleterList(mixingSelectionsList)
-        groupAnalysisEventMixing.add_argument(
-            "--cfgMixingDepth", help = "Number of Events stored for event mixing", action = "store", metavar = "CFGMIXINGDEPTH",
-            type = str)
+        groupAnalysisEventMixing.add_argument("--cfgAddEventMixingHistogram", help = "Comma separated list of event mixing histograms", action = "store", nargs = "*", type = str, metavar = "CFGADDEVENTMIXINGHISTOGRAM", choices = allPairHistos).completer = ChoicesCompleterList(allPairHistos)
+        groupAnalysisEventMixing.add_argument("--mixing", help = "analysis-event-mixing: PROCESS_SWITCH options", nargs = "*", action = "store", metavar = "MIXING", type = str, choices = mixingSelectionsList,).completer = ChoicesCompleterList(mixingSelectionsList)
+        groupAnalysisEventMixing.add_argument("--cfgMixingDepth", help = "Number of Events stored for event mixing", action = "store", metavar = "CFGMIXINGDEPTH", type = str)
         groupMixing = self.parserTableReader.add_argument_group(title = "Choice List for analysis-event-mixing PROCESS_SWITCH options")
         for key, value in mixingSelections.items():
             groupMixing.add_argument(key, help = value, action = "none")
         
         # cfg for QA
-        groupQASelections = self.parserTableReader.add_argument_group(
-            title = "Data processor options: analysis-event-selection, analysis-muon-selection, analysis-track-selection, analysis-prefilter-selection analysis-event-mixing"
-            )
-        groupQASelections.add_argument(
-            "--cfgQA", help = "If true, fill QA histograms", action = "store", type = str.lower, choices = booleanSelections,
-            ).completer = ChoicesCompleter(booleanSelections)
+        groupQASelections = self.parserTableReader.add_argument_group(title = "Data processor options: analysis-event-selection, analysis-muon-selection, analysis-track-selection, analysis-prefilter-selection analysis-event-mixing")
+        groupQASelections.add_argument("--cfgQA", help = "If true, fill QA histograms", action = "store", type = str.lower, choices = booleanSelections,).completer = ChoicesCompleter(booleanSelections)
         
         # analysis-event-selection
         groupAnalysisEventSelection = self.parserTableReader.add_argument_group(title = "Data processor options: analysis-event-selection")
-        groupAnalysisEventSelection.add_argument(
-            "--cfgMixingVars", help = "Mixing configs separated by a space", nargs = "*", action = "store", type = str,
-            metavar = "CFGMIXINGVARS", choices = allMixing,
-            ).completer = ChoicesCompleterList(allMixing)
-        groupAnalysisEventSelection.add_argument(
-            "--cfgAddEventHistogram", help = "Comma separated list of event histograms", action = "store", nargs = "*", type = str, metavar="CFGADDEVENTHISTOGRAM", choices = allEventHistos,
-            ).completer = ChoicesCompleterList(allEventHistos)
-        groupAnalysisEventSelection.add_argument(
-            "--cfgEventCuts", help = "Space separated list of event cuts", nargs = "*", action = "store", type = str,
-            metavar = "CFGEVENTCUTS", choices = allAnalysisCuts,
-            ).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupAnalysisEventSelection.add_argument("--cfgMixingVars", help = "Mixing configs separated by a space", nargs = "*", action = "store", type = str, metavar = "CFGMIXINGVARS", choices = allMixing,).completer = ChoicesCompleterList(allMixing)
+        groupAnalysisEventSelection.add_argument("--cfgAddEventHistogram", help = "Comma separated list of event histograms", action = "store", nargs = "*", type = str, metavar = "CFGADDEVENTHISTOGRAM", choices = allEventHistos,).completer = ChoicesCompleterList(allEventHistos)
+        groupAnalysisEventSelection.add_argument("--cfgEventCuts", help = "Space separated list of event cuts", nargs = "*", action = "store", type = str, metavar = "CFGEVENTCUTS", choices = allAnalysisCuts,).completer = ChoicesCompleterList(allAnalysisCuts)
         
         # analysis-muon-selection
         groupAnalysisMuonSelection = self.parserTableReader.add_argument_group(title = "Data processor options: analysis-muon-selection")
-        groupAnalysisMuonSelection.add_argument(
-            "--cfgAddMuonHistogram", help = "Comma separated list of muon histograms", action = "store", nargs="*", type = str, metavar="CFGADDMUONHISTOGRAM", choices = allTrackHistos,
-            ).completer = ChoicesCompleterList(allTrackHistos)
-        groupAnalysisMuonSelection.add_argument(
-            "--cfgMuonCuts", help = "Space separated list of muon cuts", nargs = "*", action = "store", type = str, metavar = "CFGMUONCUTS",
-            choices = allAnalysisCuts,
-            ).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupAnalysisMuonSelection.add_argument("--cfgAddMuonHistogram", help = "Comma separated list of muon histograms", action = "store", nargs = "*", type = str, metavar = "CFGADDMUONHISTOGRAM", choices = allTrackHistos,).completer = ChoicesCompleterList(allTrackHistos)
+        groupAnalysisMuonSelection.add_argument("--cfgMuonCuts", help = "Space separated list of muon cuts", nargs = "*", action = "store", type = str, metavar = "CFGMUONCUTS", choices = allAnalysisCuts,).completer = ChoicesCompleterList(allAnalysisCuts)
         
         # analysis-track-selection
         groupAnalysisTrackSelection = self.parserTableReader.add_argument_group(title = "Data processor options: analysis-track-selection")
-        groupAnalysisTrackSelection.add_argument(
-        "--cfgAddTrackHistogram", help = "Comma separated list of track histograms", action = "store", nargs= "*", type = str, metavar="CFGADDTRACKHISTOGRAM", choices = allTrackHistos,
-        ).completer = ChoicesCompleterList(allTrackHistos)
-        groupAnalysisTrackSelection.add_argument(
-            "--cfgTrackCuts", help = "Space separated list of barrel track cuts", nargs = "*", action = "store", type = str,
-            metavar = "CFGTRACKCUTS", choices = allAnalysisCuts,
-            ).completer = ChoicesCompleterList(allAnalysisCuts)
-        groupAnalysisTrackSelection.add_argument("--cfgDalitzCutId", help = "Id of the first Dalitz track cut (starting at 0)", action = "store",
-            type = str, metavar = "CFGDALITZCUTID")
+        groupAnalysisTrackSelection.add_argument("--cfgAddTrackHistogram", help = "Comma separated list of track histograms", action = "store", nargs = "*", type = str, metavar = "CFGADDTRACKHISTOGRAM", choices = allTrackHistos,).completer = ChoicesCompleterList(allTrackHistos)
+        groupAnalysisTrackSelection.add_argument("--cfgTrackCuts", help = "Space separated list of barrel track cuts", nargs = "*", action = "store", type = str, metavar = "CFGTRACKCUTS", choices = allAnalysisCuts,).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupAnalysisTrackSelection.add_argument("--cfgDalitzCutId", help = "Id of the first Dalitz track cut (starting at 0)", action = "store", type = str, metavar = "CFGDALITZCUTID")
         
         # analysis-prefilter-selection
         groupAnalysisPrefilterSelection = self.parserTableReader.add_argument_group(title = "Data processor options: analysis-prefilter-selection")
-        groupAnalysisPrefilterSelection.add_argument("--cfgDalitzTrackCutsId", help = "Id of Dalitz track selection cuts (from cfgTrackCuts in AnalysisTrackSelection, starting at 0 = first dalitz cut)",
-            action = "store",type = str, metavar = "CFGDALITZTRACKCUTSID")
-        groupAnalysisPrefilterSelection.add_argument(
-            "--cfgDalitzPairCuts", help = "Dalitz pair selection cuts", nargs = "*", action = "store", type = str, metavar = "CFGDALITZPAIRCUTS",
-            choices = allAnalysisCuts,
-            ).completer = ChoicesCompleterList(allAnalysisCuts)
-        groupAnalysisPrefilterSelection.add_argument(
-            "--cfgAddTrackPairHistogram", help = "Comma separated list of track pair histograms", action = "store", nargs="*", type = str, metavar="CFGADDTRACKPAIRHISTOGRAM", choices = allTrackHistos,
-            ).completer = ChoicesCompleterList(allTrackHistos)
-
+        groupAnalysisPrefilterSelection.add_argument("--cfgDalitzTrackCutsId", help = "Id of Dalitz track selection cuts (from cfgTrackCuts in AnalysisTrackSelection, starting at 0 = first dalitz cut)", action = "store", type = str, metavar = "CFGDALITZTRACKCUTSID")
+        groupAnalysisPrefilterSelection.add_argument("--cfgDalitzPairCuts", help = "Dalitz pair selection cuts", nargs = "*", action = "store", type = str, metavar = "CFGDALITZPAIRCUTS", choices = allAnalysisCuts,).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupAnalysisPrefilterSelection.add_argument("--cfgAddTrackPairHistogram", help = "Comma separated list of track pair histograms", action = "store", nargs = "*", type = str, metavar = "CFGADDTRACKPAIRHISTOGRAM", choices = allTrackHistos,).completer = ChoicesCompleterList(allTrackHistos)
         
         # analysis-dilepton-hadron
         groupAnalysisDileptonHadron = self.parserTableReader.add_argument_group(title = "Data processor options: analysis-dilepton-hadron")
-        groupAnalysisDileptonHadron.add_argument(
-            "--cfgAddDileptonHadHistogram", help = "Comma separated list of dilepton hadron histograms", action = "store", nargs = "*", type = str, metavar="CFGADDDILEPTONHADHISTOGRAM",
-            choices = allDileptonHistos).completer = ChoicesCompleterList(allDileptonHistos)
-        groupAnalysisDileptonHadron.add_argument(
-            "--cfgLeptonCuts", help = "Space separated list of barrel track cuts", nargs = "*", action = "store", type = str,
-            metavar = "CFGLEPTONCUTS", choices = allAnalysisCuts,
-            ).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupAnalysisDileptonHadron.add_argument("--cfgAddDileptonHadHistogram", help = "Comma separated list of dilepton hadron histograms", action = "store", nargs = "*", type = str, metavar = "CFGADDDILEPTONHADHISTOGRAM", choices = allDileptonHistos).completer = ChoicesCompleterList(allDileptonHistos)
+        groupAnalysisDileptonHadron.add_argument("--cfgLeptonCuts", help = "Space separated list of barrel track cuts", nargs = "*", action = "store", type = str, metavar = "CFGLEPTONCUTS", choices = allAnalysisCuts,).completer = ChoicesCompleterList(allAnalysisCuts)
         
         # Aod Writer - Reader configs
-        groupDPLReader = self.parserTableReader.add_argument_group(
-            title = "Data processor options: internal-dpl-aod-reader, internal-dpl-aod-writer"
-            )
-        groupDPLReader.add_argument(
-            "--reader",
-            help = "Reader config JSON with path. For Standart Analysis use as default, for dilepton analysis change to dilepton JSON config file",
-            action = "store", default = readerPath, type = str
-            )
-        groupDPLReader.add_argument(
-            "--writer", help = "Argument for producing dileptonAOD.root. Set false for disable", action = "store", default = writerPath,
-            type = str
-            )
+        groupDPLReader = self.parserTableReader.add_argument_group(title = "Data processor options: internal-dpl-aod-reader, internal-dpl-aod-writer")
+        groupDPLReader.add_argument("--reader", help = "Reader config JSON with path. For Standart Analysis use as default, for dilepton analysis change to dilepton JSON config file", action = "store", default = readerPath, type = str)
+        groupDPLReader.add_argument("--writer", help = "Argument for producing dileptonAOD.root. Set false for disable", action = "store", default = writerPath, type = str)
     
     def parseArgs(self):
         """

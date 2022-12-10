@@ -111,10 +111,7 @@ def setConverters(allArgs: dict, updatedConfigFileName: str, commandToRun: str):
     return commandToRun
 
 
-def generateDescriptors(
-        tablesToProduce: dict, tables: dict, writerConfigFileName = "aodWriterTempConfig.json",
-        readerConfigFileName = "aodReaderTempConfig.json", kFlag = False
-    ):
+def generateDescriptors(tablesToProduce: dict, tables: dict, writerConfigFileName = "aodWriterTempConfig.json", readerConfigFileName = "aodReaderTempConfig.json", kFlag = False):
     """Generates Descriptors for Writing/Reading Tables from AO2D with json config file (input descriptor is optional)
 
     Args:
@@ -163,10 +160,7 @@ def generateDescriptors(
     print(writerConfig)
 
 
-def tableProducer(
-        config, taskNameInConfig, tablesToProduce, commonTables, barrelCommonTables, muonCommonTables, specificTables, specificDeps,
-        runOverMC
-    ):
+def tableProducer(config, taskNameInConfig, tablesToProduce, commonTables, barrelCommonTables, muonCommonTables, specificTables, specificDeps, runOverMC):
     """Table producer function for tableMaker/tableMakerMC
 
     Args:

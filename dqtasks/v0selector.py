@@ -46,12 +46,8 @@ class V0selector(object):
     """
     
     def __init__(
-        self, parserV0selector = argparse.ArgumentParser(
-            formatter_class = argparse.ArgumentDefaultsHelpFormatter,
-            description = "Example Usage: ./runV0selector.py <yourConfig.json> --arg value"
-            ), eventSelection = EventSelectionTask(), centralityTable = CentralityTable(), multiplicityTable = MultiplicityTable(),
-        tofEventTime = TofEventTime(), tofPidBeta = TofPidBeta(), tpcTofPidFull = TpcTofPidFull(), trackPropagation = TrackPropagation(),
-        trackSelection = TrackSelectionTask(), helperOptions = HelperOptions(), o2Converters = O2Converters(), dplAodReader = DplAodReader()
+        self, parserV0selector = argparse.ArgumentParser(formatter_class = argparse.ArgumentDefaultsHelpFormatter, description = "Example Usage: ./runV0selector.py <yourConfig.json> --arg value"), eventSelection = EventSelectionTask(), centralityTable = CentralityTable(), multiplicityTable = MultiplicityTable(), tofEventTime = TofEventTime(),
+        tofPidBeta = TofPidBeta(), tpcTofPidFull = TpcTofPidFull(), trackPropagation = TrackPropagation(), trackSelection = TrackSelectionTask(), helperOptions = HelperOptions(), o2Converters = O2Converters(), dplAodReader = DplAodReader()
         ):
         super(V0selector, self).__init__()
         self.parserV0selector = parserV0selector
@@ -81,7 +77,7 @@ class V0selector(object):
         v0GammaQASelectionsList = []
         for k, v in v0GammaQASelections.items():
             v0GammaQASelectionsList.append(k)
-            
+        
         trackPIDQASelections = {
             "QA": "Run PID QA for barrel tracks",
             }
@@ -107,20 +103,14 @@ class V0selector(object):
         
         #track-pid-qa
         groupTrackPIDQA = self.parserV0selector.add_argument_group(title = "Data processor options: track-pid-qa")
-        groupTrackPIDQA.add_argument(
-            "--QA", help = "track-pid-qa: PROCESS_SWITCH options", action = "store", type = str, nargs="*", metavar = "QA",
-            choices = trackPIDQASelectionsList,
-            ).completer = ChoicesCompleterList(trackPIDQASelectionsList)
+        groupTrackPIDQA.add_argument("--QA", help = "track-pid-qa: PROCESS_SWITCH options", action = "store", type = str, nargs = "*", metavar = "QA", choices = trackPIDQASelectionsList,).completer = ChoicesCompleterList(trackPIDQASelectionsList)
         groupProcessTrackPIDQA = self.parserV0selector.add_argument_group(title = "Choice List for track-pid-qa PROCESS_SWITCH options")
         for key, value in trackPIDQASelections.items():
             groupProcessTrackPIDQA.add_argument(key, help = value, action = "none")
         
         #v0-gamma-qa
         groupV0GammaQA = self.parserV0selector.add_argument_group(title = "Data processor options: v0-gamma-qa")
-        groupV0GammaQA.add_argument(
-            "--NM", help = "v0-gamma-qa: PROCESS_SWITCH options", action = "store", type = str, nargs = "*", metavar = "NM",
-            choices = v0GammaQASelectionsList,
-            ).completer = ChoicesCompleterList(v0GammaQASelectionsList)
+        groupV0GammaQA.add_argument("--NM", help = "v0-gamma-qa: PROCESS_SWITCH options", action = "store", type = str, nargs = "*", metavar = "NM", choices = v0GammaQASelectionsList,).completer = ChoicesCompleterList(v0GammaQASelectionsList)
         groupProcessV0GammaQA = self.parserV0selector.add_argument_group(title = "Choice List for v0-gamma-qa PROCESS_SWITCH options")
         for key, value in v0GammaQASelections.items():
             groupProcessV0GammaQA.add_argument(key, help = value, action = "none")

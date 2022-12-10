@@ -28,12 +28,11 @@ from extramodules.configSetter import setSwitch, setSelection, setConverters, se
 from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.filterPP import DQFilterPPTask
 
-def main():
 
+def main():
+    
     # Predefined selections for setSwitch function
-    centralityTableParameters = [
-        "estRun2V0M", "estRun2SPDtks", "estRun2SPDcls", "estRun2CL0", "estRun2CL1", "estFV0A", "estFT0M", "estFDDM", "estNTPV",
-        ]
+    centralityTableParameters = ["estRun2V0M", "estRun2SPDtks", "estRun2SPDcls", "estRun2CL0", "estRun2CL1", "estFV0A", "estFT0M", "estFDDM", "estNTPV",]
     ft0Parameters = ["processFT0", "processNoFT0", "processOnlyFT0", "processRun2"]
     pidParameters = ["pid-el", "pid-mu", "pid-pi", "pid-ka", "pid-pr", "pid-de", "pid-tr", "pid-he", "pid-al",]
     covParameters = ["processStandard", "processCovariance"]
@@ -60,42 +59,42 @@ def main():
     initArgs.parseArgs()
     args = initArgs.parseArgs()
     allArgs = vars(args) # for get args
-
+    
     # if cliMode true, Overrider mode else additional mode
     cliMode = args.onlySelect
-
+    
     # Debug Settings
     debugSettings(args.debug, args.logFile, fileName = "filterPP.log")
-
+    
     #forgettedArgsChecker(allArgs) # Transaction management
-
+    
     # adding prefix for setSwitch function
     args.pid = setPrefixSuffix(args.pid, "pid-", '', True, False)
     args.FT0 = setPrefixSuffix(args.FT0, "process", '', True, False)
     args.isCovariance = setPrefixSuffix(args.isCovariance, "process", '', True, False)
     args.isWSlice = setPrefixSuffix(args.isWSlice, "process", '', True, False)
-
+    
     # Load the configuration file provided as the first parameter
     config = {}
     with open(args.cfgFileName) as configFile:
         config = json.load(configFile)
-
+    
     jsonTypeChecker(args.cfgFileName)
-
+    
     taskNameInConfig = "d-q-filter-p-p-task"
     taskNameInCommandLine = "o2-analysis-dq-filter-pp"
-
+    
     mainTaskChecker(config, taskNameInConfig)
-
+    
     # Interface Process
     logging.info("Only Select Configured as %s", args.onlySelect)
     if args.onlySelect == "true":
         logging.info("INTERFACE MODE : JSON Overrider")
     if args.onlySelect == "false":
         logging.info("INTERFACE MODE : JSON Additional")
-
+    
     setSelection(config, selectionDeps, args.process, "true")
-
+    
     # Iterating in JSON config file
     for task, cfgValuePair in config.items():
         if isinstance(cfgValuePair, dict):
@@ -117,32 +116,30 @@ def main():
                 setSwitch(config, task, cfg, allArgs, "true", "FT0", ft0Parameters, "true/false", "tof-event-time")
                 mandatoryArgChecker(config, task, cfg, "d-q-event-selection-task", "processEventSelection")
     setProcessDummy(config, dummyHasTasks) # dummy automizer
-
+    
     # Transactions
     filterSelsChecker(args.cfgBarrelSels, args.cfgMuonSels, args.cfgBarrelTrackCuts, args.cfgMuonsCuts, allArgs)
     aodFileChecker(args.aod)
     trackPropagationChecker(args.add_track_prop, commonDeps)
-
+    
     # Write the updated configuration file into a temporary file
     updatedConfigFileName = "tempConfigFilterPP.json"
-
+    
     with open(updatedConfigFileName, "w") as outputFile:
         json.dump(config, outputFile, indent = 2)
-
+    
     # Check which dependencies need to be run
     depsToRun = {}
     for dep in commonDeps:
         depsToRun[dep] = 1
-
-    commandToRun = (
-        taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --severity error --shm-segment-size 12000000000 -b"
-        )
+    
+    commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --severity error --shm-segment-size 12000000000 -b")
     for dep in depsToRun.keys():
         commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"
         logging.debug("%s added your workflow", dep)
-
+    
     commandToRun = setConverters(allArgs, updatedConfigFileName, commandToRun)
-
+    
     print("====================================================================================================================")
     logging.info("Command to run:")
     logging.info(commandToRun)
@@ -150,6 +147,7 @@ def main():
     dispArgs(allArgs) # Display all args
     os.system(commandToRun) # Execute O2 generated commands
     runPycacheRemover() # Run pycacheRemover
+
 
 if __name__ == '__main__':
     sys.exit(main())

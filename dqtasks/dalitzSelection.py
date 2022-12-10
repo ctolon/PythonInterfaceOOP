@@ -52,13 +52,8 @@ class DalitzPairing(object):
     """
     
     def __init__(
-        self, parserDalitzPairing = argparse.ArgumentParser(
-            formatter_class = argparse.ArgumentDefaultsHelpFormatter,
-            description = "Example Usage: ./runDalitzSelection.py <yourConfig.json> --arg value "
-            ), eventSelection = EventSelectionTask(), centralityTable = CentralityTable(), multiplicityTable = MultiplicityTable(),
-        tofEventTime = TofEventTime(), tofPidBeta = TofPidBeta(), tpcTofPidFull = TpcTofPidFull(), trackPropagation = TrackPropagation(),
-        trackSelection = TrackSelectionTask(), helperOptions = HelperOptions(), o2Converters = O2Converters(),
-        dplAodReader = DplAodReader(), dqLibGetter = DQLibGetter()
+        self, parserDalitzPairing = argparse.ArgumentParser(formatter_class = argparse.ArgumentDefaultsHelpFormatter, description = "Example Usage: ./runDalitzSelection.py <yourConfig.json> --arg value "), eventSelection = EventSelectionTask(), centralityTable = CentralityTable(), multiplicityTable = MultiplicityTable(),
+        tofEventTime = TofEventTime(), tofPidBeta = TofPidBeta(), tpcTofPidFull = TpcTofPidFull(), trackPropagation = TrackPropagation(), trackSelection = TrackSelectionTask(), helperOptions = HelperOptions(), o2Converters = O2Converters(), dplAodReader = DplAodReader(), dqLibGetter = DQLibGetter()
         ):
         super(DalitzPairing, self).__init__()
         self.parserDalitzPairing = parserDalitzPairing
@@ -92,37 +87,16 @@ class DalitzPairing(object):
         
         # Interface
         groupDalitzPairing = self.parserDalitzPairing.add_argument_group(title = "Data processor options: dalitz-pairing")
-        groupDalitzPairing.add_argument(
-            "--cfgEventCuts", help = "Space separated list of event cuts", choices = allAnalysisCuts, nargs = "*", action = "store",
-            type = str, metavar = "CFGEVENTCUT",
-            ).completer = ChoicesCompleterList(allAnalysisCuts)
-        groupDalitzPairing.add_argument(
-            "--cfgDalitzTrackCuts", help = "Space separated list of Dalitz track selection cuts", choices = allAnalysisCuts, nargs = "*",
-            action = "store", type = str, metavar = "CFGDALITZTRACKCUTS",
-            ).completer = ChoicesCompleterList(allAnalysisCuts)
-        groupDalitzPairing.add_argument(
-            "--cfgDalitzPairCuts", help = "Space separated list of Dalitz pair selection cuts", action = "store", choices = allAnalysisCuts, nargs = "*",
-            type = str, metavar = "CFGDALITZPAIRCUTS",
-            ).completer = ChoicesCompleterList(allAnalysisCuts)
-        groupDalitzPairing.add_argument(
-            "--cfgAddTrackHistogram", help = "Comma separated list of track histograms", action = "store", nargs= "*", type = str, metavar="CFGADDTRACKHISTOGRAM", choices = allTrackHistos,
-            ).completer = ChoicesCompleterList(allTrackHistos)
-        groupDalitzPairing.add_argument(
-            "--cfgQA", help = "If true, fill QA histograms", action = "store", type = str.lower, choices = booleanSelections,
-            ).completer = ChoicesCompleter(booleanSelections)
-        groupDalitzPairing.add_argument(
-            "--cfgBarrelLowPIN", help = "Low pt cut for Dalitz tracks in the barrel", action = "store", type = str, metavar = "CFGBARRELLOWPIN",
-            )
-        groupDalitzPairing.add_argument(
-            "--cfgEtaCut", help = "Eta cut for Dalitz tracks in the barrel", action = "store", type = str, metavar = "CFGETACUT",
-            )
-        groupDalitzPairing.add_argument(
-            "--cfgTPCNSigElLow", help = "LOW TPCNsigEl cut for Dalitz tracks in the barrel", action = "store", type = str, metavar = "CFGTPCNSIGELLOW",
-            )
-        groupDalitzPairing.add_argument(
-            "--cfgTPCNSigElHigh", help = "High TPCNsigEl cut for Dalitz tracks in the barrel", action = "store", type = str, metavar = "CFGTPCNSIGELHIGH",
-            )
-            
+        groupDalitzPairing.add_argument("--cfgEventCuts", help = "Space separated list of event cuts", choices = allAnalysisCuts, nargs = "*", action = "store", type = str, metavar = "CFGEVENTCUT",).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupDalitzPairing.add_argument("--cfgDalitzTrackCuts", help = "Space separated list of Dalitz track selection cuts", choices = allAnalysisCuts, nargs = "*", action = "store", type = str, metavar = "CFGDALITZTRACKCUTS",).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupDalitzPairing.add_argument("--cfgDalitzPairCuts", help = "Space separated list of Dalitz pair selection cuts", action = "store", choices = allAnalysisCuts, nargs = "*", type = str, metavar = "CFGDALITZPAIRCUTS",).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupDalitzPairing.add_argument("--cfgAddTrackHistogram", help = "Comma separated list of track histograms", action = "store", nargs = "*", type = str, metavar = "CFGADDTRACKHISTOGRAM", choices = allTrackHistos,).completer = ChoicesCompleterList(allTrackHistos)
+        groupDalitzPairing.add_argument("--cfgQA", help = "If true, fill QA histograms", action = "store", type = str.lower, choices = booleanSelections,).completer = ChoicesCompleter(booleanSelections)
+        groupDalitzPairing.add_argument("--cfgBarrelLowPIN", help = "Low pt cut for Dalitz tracks in the barrel", action = "store", type = str, metavar = "CFGBARRELLOWPIN",)
+        groupDalitzPairing.add_argument("--cfgEtaCut", help = "Eta cut for Dalitz tracks in the barrel", action = "store", type = str, metavar = "CFGETACUT",)
+        groupDalitzPairing.add_argument("--cfgTPCNSigElLow", help = "LOW TPCNsigEl cut for Dalitz tracks in the barrel", action = "store", type = str, metavar = "CFGTPCNSIGELLOW",)
+        groupDalitzPairing.add_argument("--cfgTPCNSigElHigh", help = "High TPCNsigEl cut for Dalitz tracks in the barrel", action = "store", type = str, metavar = "CFGTPCNSIGELHIGH",)
+    
     def parseArgs(self):
         """
         This function allows to save the obtained arguments to the parser_args() function

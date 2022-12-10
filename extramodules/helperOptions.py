@@ -53,10 +53,7 @@ class HelperOptions(object):
         
         # Interface
         groupDebugOptions = self.parserHelperOptions.add_argument_group(title = "Additional Debug Options")
-        groupDebugOptions.add_argument(
-            "--debug", help = "execute with debug options", action = "store", type = str.upper, metavar = "DEBUG", default = "INFO",
-            choices = debugLevelSelectionsList,
-            ).completer = ChoicesCompleterList(debugLevelSelectionsList)
+        groupDebugOptions.add_argument("--debug", help = "execute with debug options", action = "store", type = str.upper, metavar = "DEBUG", default = "INFO", choices = debugLevelSelectionsList,).completer = ChoicesCompleterList(debugLevelSelectionsList)
         groupDebugOptions.add_argument("--logFile", help = "Enable logger for both file and CLI", action = "store_true")
         groupDebug = self.parserHelperOptions.add_argument_group(title = "Choice List for debug Parameters")
         
@@ -64,10 +61,7 @@ class HelperOptions(object):
             groupDebug.add_argument(key, help = value, action = "none")
         
         groupAutomations = self.parserHelperOptions.add_argument_group(title = "Interface Mode Selection Parameters")
-        groupAutomations.add_argument(
-            "--onlySelect", help = "If false JSON Overrider Interface If true JSON Additional Interface", action = "store",
-            default = "true", type = str.lower, choices = booleanSelections,
-            ).completer = ChoicesCompleter(booleanSelections)
+        groupAutomations.add_argument("--onlySelect", help = "If false JSON Overrider Interface If true JSON Additional Interface", action = "store", default = "true", type = str.lower, choices = booleanSelections,).completer = ChoicesCompleter(booleanSelections)
     
     def parseArgs(self):
         """

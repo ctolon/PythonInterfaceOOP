@@ -41,24 +41,15 @@ class TpcTofPidFull(object):
         
         # Predefined Selections
         pidSelections = {
-            "el":
-                "Produce PID information for the Electron mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
-            "mu":
-                "Produce PID information for the Muon mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
-            "pi":
-                "Produce PID information for the Pion mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
-            "ka":
-                "Produce PID information for the Kaon mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
-            "pr":
-                "Produce PID information for the Proton mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
-            "de":
-                "Produce PID information for the Deuterons mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
-            "tr":
-                "Produce PID information for the Triton mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
-            "he":
-                "Produce PID information for the Helium3 mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
-            "al":
-                "Produce PID information for the Alpha mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+            "el": "Produce PID information for the Electron mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+            "mu": "Produce PID information for the Muon mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+            "pi": "Produce PID information for the Pion mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+            "ka": "Produce PID information for the Kaon mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+            "pr": "Produce PID information for the Proton mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+            "de": "Produce PID information for the Deuterons mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+            "tr": "Produce PID information for the Triton mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+            "he": "Produce PID information for the Helium3 mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
+            "al": "Produce PID information for the Alpha mass hypothesis, overrides the automatic setup: the corresponding table can be set off (0) or on (1)",
             }
         pidSelectionsList = []
         for k, v in pidSelections.items():
@@ -74,19 +65,13 @@ class TpcTofPidFull(object):
         
         # Interface
         groupPID = self.parserTpcTofPidFull.add_argument_group(title = "Data processor options: tpc-pid-full, tof-pid-full")
-        groupPID.add_argument(
-            "--pid", help = "Produce PID information for the <particle> mass hypothesis", action = "store", nargs = "*", type = str.lower,
-            metavar = "PID", choices = pidSelectionsList,
-            ).completer = ChoicesCompleterList(pidSelectionsList)
+        groupPID.add_argument("--pid", help = "Produce PID information for the <particle> mass hypothesis", action = "store", nargs = "*", type = str.lower, metavar = "PID", choices = pidSelectionsList,).completer = ChoicesCompleterList(pidSelectionsList)
         
         for key, value in pidSelections.items():
             groupPID.add_argument(key, help = value, action = "none")
         
         groupTofPid = self.parserTpcTofPidFull.add_argument_group(title = "Data processor options: tof-pid, tof-pid-full")
-        groupTofPid.add_argument(
-            "--isWSlice", help = "tof-pid, tof-pid-full: PROCESS_SWITCH options", action = "store", metavar = "ISWSLICE", type = str,
-            choices = sliceSelectionsList,
-            ).completer = ChoicesCompleter(sliceSelectionsList)
+        groupTofPid.add_argument("--isWSlice", help = "tof-pid, tof-pid-full: PROCESS_SWITCH options", action = "store", metavar = "ISWSLICE", type = str, choices = sliceSelectionsList,).completer = ChoicesCompleter(sliceSelectionsList)
         groupProcess = self.parserTpcTofPidFull.add_argument_group(title = "Choice List for tof-pid, tof-pid-full PROCESS_SWITCH options")
         for key, value in sliceSelections.items():
             groupProcess.add_argument(key, help = value, action = "none")

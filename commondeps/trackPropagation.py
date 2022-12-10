@@ -48,10 +48,7 @@ class TrackPropagation(object):
         
         # Interface
         groupTrackPropagation = self.parserTrackPropagation.add_argument_group(title = "Data processor options: track-propagation")
-        groupTrackPropagation.add_argument(
-            "--isCovariance", help = "track-propagation: PROCESS_SWITCH options", action = "store", metavar = "ISCOVARIANCE", type = str,
-            choices = (covSelectionsList),
-            ).completer = ChoicesCompleter(covSelectionsList)
+        groupTrackPropagation.add_argument("--isCovariance", help = "track-propagation: PROCESS_SWITCH options", action = "store", metavar = "ISCOVARIANCE", type = str, choices = (covSelectionsList),).completer = ChoicesCompleter(covSelectionsList)
         groupProcess = self.parserTrackPropagation.add_argument_group(title = "Choice List for track-propagation PROCESS_SWITCH options")
         for key, value in covSelections.items():
             groupProcess.add_argument(key, help = value, action = "none")

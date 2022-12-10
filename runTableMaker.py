@@ -28,12 +28,11 @@ from extramodules.configSetter import setProcessDummy, setSwitch, setConverters,
 from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.tableMaker import TableMaker
 
-def main():
 
+def main():
+    
     # Predefined selections for setSwitch function
-    centralityTableParameters = [
-        "estRun2V0M", "estRun2SPDtks", "estRun2SPDcls", "estRun2CL0", "estRun2CL1", "estFV0A", "estFT0M", "estFDDM", "estNTPV",
-        ]
+    centralityTableParameters = ["estRun2V0M", "estRun2SPDtks", "estRun2SPDcls", "estRun2CL0", "estRun2CL1", "estFV0A", "estFT0M", "estFDDM", "estNTPV",]
     ft0Parameters = ["processFT0", "processNoFT0", "processOnlyFT0", "processRun2"]
     pidParameters = ["pid-el", "pid-mu", "pid-pi", "pid-ka", "pid-pr", "pid-de", "pid-tr", "pid-he", "pid-al",]
     covParameters = ["processStandard", "processCovariance"]
@@ -45,13 +44,10 @@ def main():
     muonSearch = []
     centSearch = []
     filterSearch = []
-
+    
     # All Dependencies
     commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table"]
-    barrelDeps = [
-        "o2-analysis-trackselection", "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof",
-        "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full"
-        ]
+    barrelDeps = ["o2-analysis-trackselection", "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full"]
     muonDeps = ["o2-analysis-fwdtrackextension"]
     specificDeps = {
         "processFull": [],
@@ -61,7 +57,7 @@ def main():
         "processBarrelOnly": [],
         "processBarrelOnlyWithCov": [],
         "processBarrelOnlyWithV0Bits": ["o2-analysis-dq-v0-selector"],
-        "processBarrelOnlyWithDalitzBits" : ["o2-analysis-dq-dalitz-selection"],
+        "processBarrelOnlyWithDalitzBits": ["o2-analysis-dq-dalitz-selection"],
         "processBarrelOnlyWithEventFilter": ["o2-analysis-dq-filter-pp"],
         "processBarrelOnlyWithQvector": ["o2-analysis-centrality-table", "o2-analysis-dq-flow"],
         "processBarrelOnlyWithCent": ["o2-analysis-centrality-table"],
@@ -75,9 +71,9 @@ def main():
         # "processFullWithCentWithV0Bits": ["o2-analysis-centrality-table","o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices"],
         # "processFullWithEventFilterWithV0Bits": ["o2-analysis-dq-filter-pp","o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices"],
         }
-
+    
     dummyHasTasks = ["d-q-barrel-track-selection", "d-q-muons-selection", "d-q-filter-p-p-task", "dalitz-pairing", "track-pid-qa", "v0-gamma-qa"]
-
+    
     # yapf: disable
     # Definition of all the tables we may write
     tables = {
@@ -115,7 +111,7 @@ def main():
         "processBarrelOnly": [],
         "processBarrelOnlyWithCov": ["ReducedTracksBarrelCov"],
         "processBarrelOnlyWithV0Bits": [],
-        "processBarrelOnlyWithDalitzBits" : [],
+        "processBarrelOnlyWithDalitzBits": [],
         "processBarrelOnlyWithQvector": ["ReducedEventsQvector"],
         "processBarrelOnlyWithEventFilter": [],
         "processBarrelOnlyWithCent": [],
@@ -127,22 +123,22 @@ def main():
         "processAmbiguousMuonOnly": ["AmbiguousTracksFwd"],
         "processAmbiguousBarrelOnly": ["AmbiguousTracksMid"]
         }
-
+    
     # init args manually
     initArgs = TableMaker()
     initArgs.mergeArgs()
     initArgs.parseArgs()
     args = initArgs.parseArgs()
     allArgs = vars(args) # for get args
-
+    
     # Debug Settings
     debugSettings(args.debug, args.logFile, fileName = "tableMaker.log")
-
+    
     # if cliMode true, Overrider mode else additional mode
     cliMode = args.onlySelect
-
+    
     #forgettedArgsChecker(allArgs) # Transaction management
-
+    
     # adding prefix for setSwitch function
     args.process = setPrefixSuffix(args.process, "process", '', True, False)
     args.pid = setPrefixSuffix(args.pid, "pid-", '', True, False)
@@ -152,36 +148,36 @@ def main():
     args.isWSlice = setPrefixSuffix(args.isWSlice, "process", '', True, False)
     args.NM = setPrefixSuffix(args.NM, "process", '', True, False)
     args.QA = setPrefixSuffix(args.QA, "process", '', True, False)
-
+    
     # Load the configuration file provided as the first parameter
     config = {}
     with open(args.cfgFileName) as configFile:
         config = json.load(configFile)
-
+    
     jsonTypeChecker(args.cfgFileName)
-
+    
     runOverMC = False
     logging.info("runOverMC : %s, Reduced Tables will be produced for Data", runOverMC)
-
+    
     taskNameInConfig = "table-maker"
     taskNameInCommandLine = "o2-analysis-dq-table-maker"
-
+    
     mainTaskChecker(config, taskNameInConfig)
-
+    
     if args.process:
         fullSearch = [s for s in args.process if "Full" in s]
         barrelSearch = [s for s in args.process if "Barrel" in s]
         muonSearch = [s for s in args.process if "Muon" in s]
         filterSearch = [s for s in args.process if "Filter" in s]
         centSearch = [s for s in args.process if "Cent" in s]
-
+    
     # Interface Process
     logging.info("Only Select Configured as %s", cliMode)
     if cliMode == "true":
         logging.info("INTERFACE MODE : JSON Overrider")
     if cliMode == "false":
         logging.info("INTERFACE MODE : JSON Additional")
-
+    
     # Iterating in JSON config file
     for task, cfgValuePair in config.items():
         if isinstance(cfgValuePair, dict):
@@ -233,26 +229,26 @@ def main():
                 setSwitch(config, task, cfg, allArgs, cliMode, "NM", v0GammaQAParameters, "true/false")
                 setSwitch(config, task, cfg, allArgs, "true", "FT0", ft0Parameters, "true/false", "tof-event-time")
                 mandatoryArgChecker(config, task, cfg, taskNameInConfig, "processOnlyBCs")
-
+    
     setProcessDummy(config, dummyHasTasks) # dummy automizer
-
+    
     # Transactions
     centralityChecker(config, args.process, args.syst, centSearch)
     filterSelsChecker(args.cfgBarrelSels, args.cfgMuonSels, args.cfgBarrelTrackCuts, args.cfgMuonsCuts, allArgs)
     aodFileChecker(args.aod)
     trackPropagationChecker(args.add_track_prop, barrelDeps)
-
+    
     # Write the updated configuration file into a temporary file
     updatedConfigFileName = "tempConfigTableMaker.json"
-
+    
     with open(updatedConfigFileName, "w") as outputFile:
         json.dump(config, outputFile, indent = 2)
-
+    
     # Check which dependencies need to be run
     depsToRun = {}
     for dep in commonDeps:
         depsToRun[dep] = 1
-
+    
     for processFunc in specificDeps.keys():
         if processFunc not in config[taskNameInConfig].keys():
             continue
@@ -265,35 +261,26 @@ def main():
                     depsToRun[dep] = 1
             for dep in specificDeps[processFunc]:
                 depsToRun[dep] = 1
-
+    
     # Check which tables are required in the output
     tablesToProduce = {}
-    tableProducer(
-        config, taskNameInConfig, tablesToProduce, commonTables, barrelCommonTables, muonCommonTables, specificTables, specificDeps, runOverMC
-        )
-
+    tableProducer(config, taskNameInConfig, tablesToProduce, commonTables, barrelCommonTables, muonCommonTables, specificTables, specificDeps, runOverMC)
+    
     writerConfigFileName = "aodWriterTempConfig.json"
-
+    
     # Generate the aod-writer output descriptor json file
     generateDescriptors(tablesToProduce, tables, writerConfigFileName, kFlag = False)
-
-    commandToRun = (
-        taskNameInCommandLine + " --configuration json://" + updatedConfigFileName +
-        " --severity error --shm-segment-size 12000000000 --aod-writer-json " + writerConfigFileName + " -b"
-        )
+    
+    commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --severity error --shm-segment-size 12000000000 --aod-writer-json " + writerConfigFileName + " -b")
     if args.aod_memory_rate_limit:
-        commandToRun = (
-            taskNameInCommandLine + " --configuration json://" + updatedConfigFileName +
-            " --severity error --shm-segment-size 12000000000 --aod-memory-rate-limit " + args.aod_memory_rate_limit + " --aod-writer-json " +
-            writerConfigFileName + " -b"
-            )
-
+        commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --severity error --shm-segment-size 12000000000 --aod-memory-rate-limit " + args.aod_memory_rate_limit + " --aod-writer-json " + writerConfigFileName + " -b")
+    
     for dep in depsToRun.keys():
         commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"
         logging.debug("%s added your workflow", dep)
-
+    
     commandToRun = setConverters(allArgs, updatedConfigFileName, commandToRun)
-
+    
     print("====================================================================================================================")
     logging.info("Command to run:")
     logging.info(commandToRun)
@@ -304,6 +291,7 @@ def main():
     dispArgs(allArgs) # Display all args
     os.system(commandToRun) # Execute O2 generated commands
     runPycacheRemover() # Run pycacheRemover
+
 
 if __name__ == '__main__':
     sys.exit(main())

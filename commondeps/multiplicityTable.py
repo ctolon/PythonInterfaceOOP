@@ -42,9 +42,7 @@ class MultiplicityTable(object):
         
         # Interface
         groupMultiplicityTable = self.parserMultiplicityTable.add_argument_group(title = "Data processor options: multiplicity-table")
-        groupMultiplicityTable.add_argument(
-            "--doVertexZeq", help = "if 1: do vertex Z eq mult table", action = "store", type = str, choices = (binarySelections),
-            ).completer = ChoicesCompleter(binarySelections)
+        groupMultiplicityTable.add_argument("--doVertexZeq", help = "if 1: do vertex Z eq mult table", action = "store", type = str, choices = (binarySelections),).completer = ChoicesCompleter(binarySelections)
     
     def parseArgs(self):
         """

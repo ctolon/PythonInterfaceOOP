@@ -50,14 +50,9 @@ class TofEventTime(object):
         
         # Interface
         groupTofEventTime = self.parserTofEventTime.add_argument_group(title = "Data processor options: tof-event-time")
-        groupTofEventTime.add_argument(
-            "--minMomentum", help = "Minimum momentum to select track sample for TOF event time", action = "store", metavar = "MINMOMENTUM", type = str)
-        groupTofEventTime.add_argument(
-            "--maxMomentum", help = "Maximum momentum to select track sample for TOF event time", action = "store", metavar = "MAXMOMENTUM", type = str)
-        groupTofEventTime.add_argument(
-            "--FT0", help = "tof-event-time: PROCESS_SWITCH options", action = "store", metavar = "FT0", type = str,
-            choices = ft0SelectionsList,
-            ).completer = ChoicesCompleter(ft0SelectionsList)
+        groupTofEventTime.add_argument("--minMomentum", help = "Minimum momentum to select track sample for TOF event time", action = "store", metavar = "MINMOMENTUM", type = str)
+        groupTofEventTime.add_argument("--maxMomentum", help = "Maximum momentum to select track sample for TOF event time", action = "store", metavar = "MAXMOMENTUM", type = str)
+        groupTofEventTime.add_argument("--FT0", help = "tof-event-time: PROCESS_SWITCH options", action = "store", metavar = "FT0", type = str, choices = ft0SelectionsList,).completer = ChoicesCompleter(ft0SelectionsList)
         groupProcess = self.parserTofEventTime.add_argument_group(title = "Choice List for tof-event-time PROCESS_SWITCH options")
         for key, value in ft0Selections.items():
             groupProcess.add_argument(key, help = value, action = "none")

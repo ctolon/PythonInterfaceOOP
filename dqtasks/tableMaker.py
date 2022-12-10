@@ -52,13 +52,8 @@ class TableMaker(object):
     """
     
     def __init__(
-        self, parserTableMaker = argparse.ArgumentParser(
-            formatter_class = argparse.ArgumentDefaultsHelpFormatter,
-            description = "Example Usage: ./runTableMaker.py <yourConfig.json> --arg value "
-            ), eventSelection = EventSelectionTask(), centralityTable = CentralityTable(), multiplicityTable = MultiplicityTable(),
-        tofEventTime = TofEventTime(), tofPidBeta = TofPidBeta(), tpcTofPidFull = TpcTofPidFull(), trackPropagation = TrackPropagation(),
-        trackSelection = TrackSelectionTask(), v0selector = V0selector(), helperOptions = HelperOptions(), o2Converters = O2Converters(),
-        dplAodReader = DplAodReader(), dqLibGetter = DQLibGetter()
+        self, parserTableMaker = argparse.ArgumentParser(formatter_class = argparse.ArgumentDefaultsHelpFormatter, description = "Example Usage: ./runTableMaker.py <yourConfig.json> --arg value "), eventSelection = EventSelectionTask(), centralityTable = CentralityTable(), multiplicityTable = MultiplicityTable(), tofEventTime = TofEventTime(),
+        tofPidBeta = TofPidBeta(), tpcTofPidFull = TpcTofPidFull(), trackPropagation = TrackPropagation(), trackSelection = TrackSelectionTask(), v0selector = V0selector(), helperOptions = HelperOptions(), o2Converters = O2Converters(), dplAodReader = DplAodReader(), dqLibGetter = DQLibGetter()
         ):
         super(TableMaker, self).__init__()
         self.parserTableMaker = parserTableMaker
@@ -120,129 +115,58 @@ class TableMaker(object):
         
         # dalitz-pairing
         groupDalitzPairing = self.parserTableMaker.add_argument_group(title = "Data processor options: dalitz-pairing")
-        groupDalitzPairing.add_argument(
-            "--cfgDalitzTrackCuts", help = "Space separated list of Dalitz track selection cuts", choices = allAnalysisCuts, nargs = "*",
-            action = "store", type = str, metavar = "CFGDALITZTRACKCUTS",
-            ).completer = ChoicesCompleterList(allAnalysisCuts)
-        groupDalitzPairing.add_argument(
-            "--cfgDalitzPairCuts", help = "Space separated list of Dalitz pair selection cuts", action = "store", choices = allAnalysisCuts, nargs = "*",
-            type = str, metavar = "CFGDALITZPAIRCUTS",
-            ).completer = ChoicesCompleterList(allAnalysisCuts)
-        groupDalitzPairing.add_argument(
-            "--cfgBarrelLowPIN", help = "Low pt cut for Dalitz tracks in the barrel", action = "store", type = str, metavar = "CFGBARRELLOWPIN",
-            )
-        groupDalitzPairing.add_argument(
-            "--cfgEtaCut", help = "Eta cut for Dalitz tracks in the barrel", action = "store", type = str, metavar = "CFGETACUT",
-            )
-        groupDalitzPairing.add_argument(
-            "--cfgTPCNSigElLow", help = "LOW TPCNsigEl cut for Dalitz tracks in the barrel", action = "store", type = str, metavar = "CFGTPCNSIGELLOW",
-            )
-        groupDalitzPairing.add_argument(
-            "--cfgTPCNSigElHigh", help = "High TPCNsigEl cut for Dalitz tracks in the barrel", action = "store", type = str, metavar = "CFGTPCNSIGELHIGH",
-            )
+        groupDalitzPairing.add_argument("--cfgDalitzTrackCuts", help = "Space separated list of Dalitz track selection cuts", choices = allAnalysisCuts, nargs = "*", action = "store", type = str, metavar = "CFGDALITZTRACKCUTS",).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupDalitzPairing.add_argument("--cfgDalitzPairCuts", help = "Space separated list of Dalitz pair selection cuts", action = "store", choices = allAnalysisCuts, nargs = "*", type = str, metavar = "CFGDALITZPAIRCUTS",).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupDalitzPairing.add_argument("--cfgBarrelLowPIN", help = "Low pt cut for Dalitz tracks in the barrel", action = "store", type = str, metavar = "CFGBARRELLOWPIN",)
+        groupDalitzPairing.add_argument("--cfgEtaCut", help = "Eta cut for Dalitz tracks in the barrel", action = "store", type = str, metavar = "CFGETACUT",)
+        groupDalitzPairing.add_argument("--cfgTPCNSigElLow", help = "LOW TPCNsigEl cut for Dalitz tracks in the barrel", action = "store", type = str, metavar = "CFGTPCNSIGELLOW",)
+        groupDalitzPairing.add_argument("--cfgTPCNSigElHigh", help = "High TPCNsigEl cut for Dalitz tracks in the barrel", action = "store", type = str, metavar = "CFGTPCNSIGELHIGH",)
         
         # analysis-qvector
         groupAnalysisQvector = self.parserTableMaker.add_argument_group(title = "Data processor options: analysis-qvector")
-        groupAnalysisQvector.add_argument(
-            "--cfgCutPtMin", help = "Minimal pT for tracks", action = "store", type = str, metavar = "CFGCUTPTMIN",
-            )
-        groupAnalysisQvector.add_argument(
-            "--cfgCutPtMax", help = "Maximal pT for tracks", action = "store", type = str, metavar = "CFGCUTPTMAX",
-            )
-        groupAnalysisQvector.add_argument(
-            "--cfgCutEta", help = "Eta range for tracks", action = "store", type = str, metavar = "CFGCUTETA",
-            )
-        groupAnalysisQvector.add_argument(
-            "--cfgEtaLimit", help = "Eta gap separation, only if using subEvents", action = "store", type = str, metavar = "CFGETALIMIT",
-            )
-        groupAnalysisQvector.add_argument(
-            "--cfgNPow", help = "Power of weights for Q vector", action = "store", type = str, metavar = "CFGNPOW",
-            )
+        groupAnalysisQvector.add_argument("--cfgCutPtMin", help = "Minimal pT for tracks", action = "store", type = str, metavar = "CFGCUTPTMIN",)
+        groupAnalysisQvector.add_argument("--cfgCutPtMax", help = "Maximal pT for tracks", action = "store", type = str, metavar = "CFGCUTPTMAX",)
+        groupAnalysisQvector.add_argument("--cfgCutEta", help = "Eta range for tracks", action = "store", type = str, metavar = "CFGCUTETA",)
+        groupAnalysisQvector.add_argument("--cfgEtaLimit", help = "Eta gap separation, only if using subEvents", action = "store", type = str, metavar = "CFGETALIMIT",)
+        groupAnalysisQvector.add_argument("--cfgNPow", help = "Power of weights for Q vector", action = "store", type = str, metavar = "CFGNPOW",)
         groupAnalysisQvector.add_argument("--cfgEfficiency", help = "CCDB path to efficiency object", action = "store", type = str)
         groupAnalysisQvector.add_argument("--cfgAcceptance", help = "CCDB path to acceptance object", action = "store", type = str)
         
         # all d-q tasks and selections
-        groupQASelections = self.parserTableMaker.add_argument_group(
-            title = "Data processor options: d-q-event-selection-task, d-q-barrel-track-selection-task, d-q-muons-selection, d-q-filter-p-p-task, analysis-qvector"
-            )
-        groupQASelections.add_argument(
-            "--cfgWithQA", help = "If true, fill QA histograms", action = "store", type = str.lower, choices = booleanSelections,
-            ).completer = ChoicesCompleter(booleanSelections)
+        groupQASelections = self.parserTableMaker.add_argument_group(title = "Data processor options: d-q-event-selection-task, d-q-barrel-track-selection-task, d-q-muons-selection, d-q-filter-p-p-task, analysis-qvector")
+        groupQASelections.add_argument("--cfgWithQA", help = "If true, fill QA histograms", action = "store", type = str.lower, choices = booleanSelections,).completer = ChoicesCompleter(booleanSelections)
         
         # d-q-track barrel-task
         groupDQTrackBarrelTask = self.parserTableMaker.add_argument_group(title = "Data processor options: d-q-barrel-track-selection-task")
-        groupDQTrackBarrelTask.add_argument(
-            "--isBarrelSelectionTiny",
-            help = "Run barrel track selection instead of normal(process func. for barrel selection must be true)", action = "store",
-            type = str.lower, choices = booleanSelections,
-            ).completer = ChoicesCompleter(booleanSelections)
+        groupDQTrackBarrelTask.add_argument("--isBarrelSelectionTiny", help = "Run barrel track selection instead of normal(process func. for barrel selection must be true)", action = "store", type = str.lower, choices = booleanSelections,).completer = ChoicesCompleter(booleanSelections)
         
         # d-q muons-selection
         groupDQMuonsSelection = self.parserTableMaker.add_argument_group(title = "Data processor options: d-q muons-selection")
-        groupDQMuonsSelection.add_argument(
-            "--cfgMuonsCuts", help = "Space separated list of ADDITIONAL muon track cuts", action = "store", nargs = "*", type = str,
-            metavar = "CFGMUONSCUT", choices = allAnalysisCuts,
-            ).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupDQMuonsSelection.add_argument("--cfgMuonsCuts", help = "Space separated list of ADDITIONAL muon track cuts", action = "store", nargs = "*", type = str, metavar = "CFGMUONSCUT", choices = allAnalysisCuts,).completer = ChoicesCompleterList(allAnalysisCuts)
         
         # d-q-filter-p-p-task
         groupDQFilterPP = self.parserTableMaker.add_argument_group(title = "Data processor options: d-q-filter-p-p-task")
-        groupDQFilterPP.add_argument(
-            "--cfgBarrelSels",
-            help = "Configure Barrel Selection <track-cut>:[<pair-cut>]:<n>,[<track-cut>:[<pair-cut>]:<n>],... | example jpsiO2MCdebugCuts2::1 ",
-            action = "store", type = str, nargs = "*", metavar = "CFGBARRELSELS", choices = allSels,
-            ).completer = ChoicesCompleterList(allSels)
-        groupDQFilterPP.add_argument(
-            "--cfgMuonSels", help = "Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1",
-            action = "store", type = str, nargs = "*", metavar = "CFGMUONSELS", choices = allSels,
-            ).completer = ChoicesCompleterList(allSels)
-        groupDQFilterPP.add_argument(
-            "--isFilterPPTiny", help = "Run filter tiny task instead of normal (processFilterPP must be true) ", action = "store",
-            type = str.lower, choices = booleanSelections,
-            ).completer = ChoicesCompleter(booleanSelections)
+        groupDQFilterPP.add_argument("--cfgBarrelSels", help = "Configure Barrel Selection <track-cut>:[<pair-cut>]:<n>,[<track-cut>:[<pair-cut>]:<n>],... | example jpsiO2MCdebugCuts2::1 ", action = "store", type = str, nargs = "*", metavar = "CFGBARRELSELS", choices = allSels,).completer = ChoicesCompleterList(allSels)
+        groupDQFilterPP.add_argument("--cfgMuonSels", help = "Configure Muon Selection <muon-cut>:[<pair-cut>]:<n> example muonQualityCuts:pairNoCut:1", action = "store", type = str, nargs = "*", metavar = "CFGMUONSELS", choices = allSels,).completer = ChoicesCompleterList(allSels)
+        groupDQFilterPP.add_argument("--isFilterPPTiny", help = "Run filter tiny task instead of normal (processFilterPP must be true) ", action = "store", type = str.lower, choices = booleanSelections,).completer = ChoicesCompleter(booleanSelections)
         
         # table-maker configurables
         groupTableMakerConfigs = self.parserTableMaker.add_argument_group(title = "Data processor options: table-maker")
-        groupTableMakerConfigs.add_argument(
-            "--cfgEventCuts", help = "Space separated list of event cuts", nargs = "*", action = "store", type = str,
-            metavar = "CFGEVENTCUTS", choices = allAnalysisCuts,
-            ).completer = ChoicesCompleterList(allAnalysisCuts)
-        groupTableMakerConfigs.add_argument(
-            "--cfgBarrelTrackCuts", help = " Space separated list of barrel track cuts", nargs = "*", action = "store", type = str,
-            metavar = "CFGBARRELTRACKCUTS", choices = allAnalysisCuts,
-            ).completer = ChoicesCompleterList(allAnalysisCuts)
-        groupTableMakerConfigs.add_argument(
-            "--cfgMuonCuts", help = "Space separated list of muon cuts in table-maker", action = "store", nargs = "*", type = str,
-            metavar = "CFGMUONCUTS", choices = allAnalysisCuts,
-            ).completer = ChoicesCompleterList(allAnalysisCuts)
-        groupTableMakerConfigs.add_argument(
-            "--cfgAddEventHistogram", help = "Comma separated list of event histograms", action = "store", nargs = "*", type = str, metavar="CFGADDEVENTHISTOGRAM", choices = allEventHistos,
-            ).completer = ChoicesCompleterList(allEventHistos)
-        groupTableMakerConfigs.add_argument(
-            "--cfgAddTrackHistogram", help = "Comma separated list of track histograms (also extract for dalitz-pairing)", action = "store", nargs= "*", type = str, metavar="CFGADDTRACKHISTOGRAM", choices = allTrackHistos,
-            ).completer = ChoicesCompleterList(allTrackHistos)
-        groupTableMakerConfigs.add_argument(
-            "--cfgAddMuonHistogram", help = "Comma separated list of muon histograms", action = "store", nargs="*", type = str, metavar="CFGADDMUONHISTOGRAM", choices = allTrackHistos,
-            ).completer = ChoicesCompleterList(allTrackHistos)
+        groupTableMakerConfigs.add_argument("--cfgEventCuts", help = "Space separated list of event cuts", nargs = "*", action = "store", type = str, metavar = "CFGEVENTCUTS", choices = allAnalysisCuts,).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupTableMakerConfigs.add_argument("--cfgBarrelTrackCuts", help = " Space separated list of barrel track cuts", nargs = "*", action = "store", type = str, metavar = "CFGBARRELTRACKCUTS", choices = allAnalysisCuts,).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupTableMakerConfigs.add_argument("--cfgMuonCuts", help = "Space separated list of muon cuts in table-maker", action = "store", nargs = "*", type = str, metavar = "CFGMUONCUTS", choices = allAnalysisCuts,).completer = ChoicesCompleterList(allAnalysisCuts)
+        groupTableMakerConfigs.add_argument("--cfgAddEventHistogram", help = "Comma separated list of event histograms", action = "store", nargs = "*", type = str, metavar = "CFGADDEVENTHISTOGRAM", choices = allEventHistos,).completer = ChoicesCompleterList(allEventHistos)
+        groupTableMakerConfigs.add_argument("--cfgAddTrackHistogram", help = "Comma separated list of track histograms (also extract for dalitz-pairing)", action = "store", nargs = "*", type = str, metavar = "CFGADDTRACKHISTOGRAM", choices = allTrackHistos,).completer = ChoicesCompleterList(allTrackHistos)
+        groupTableMakerConfigs.add_argument("--cfgAddMuonHistogram", help = "Comma separated list of muon histograms", action = "store", nargs = "*", type = str, metavar = "CFGADDMUONHISTOGRAM", choices = allTrackHistos,).completer = ChoicesCompleterList(allTrackHistos)
         groupTableMakerConfigs.add_argument("--cfgBarrelLowPt", help = "Low pt cut for tracks in the barrel", action = "store", type = str)
         groupTableMakerConfigs.add_argument("--cfgMuonLowPt", help = "Low pt cut for muons", action = "store", type = str)
-        groupTableMakerConfigs.add_argument(
-            "--cfgQA", help = "If true, fill QA histograms", action = "store", type = str.lower, choices = booleanSelections,
-            ).completer = ChoicesCompleter(booleanSelections)
-        groupTableMakerConfigs.add_argument(
-            "--cfgDetailedQA", help = "If true, include more QA histograms (BeforeCuts classes and more)", action = "store",
-            type = str.lower, choices = booleanSelections,
-            ).completer = ChoicesCompleter(booleanSelections)
+        groupTableMakerConfigs.add_argument("--cfgQA", help = "If true, fill QA histograms", action = "store", type = str.lower, choices = booleanSelections,).completer = ChoicesCompleter(booleanSelections)
+        groupTableMakerConfigs.add_argument("--cfgDetailedQA", help = "If true, include more QA histograms (BeforeCuts classes and more)", action = "store", type = str.lower, choices = booleanSelections,).completer = ChoicesCompleter(booleanSelections)
         # groupTableMakerConfigs.add_argument("--cfgIsRun2", help="Run selection true or false", action="store", choices=["true","false"], type=str) # no need
-        groupTableMakerConfigs.add_argument(
-            "--cfgIsAmbiguous", help = "Whether we enable QA plots for ambiguous tracks", action = "store", choices = booleanSelections,
-            type = str.lower
-            ).completer = ChoicesCompleter(booleanSelections)
+        groupTableMakerConfigs.add_argument("--cfgIsAmbiguous", help = "Whether we enable QA plots for ambiguous tracks", action = "store", choices = booleanSelections, type = str.lower).completer = ChoicesCompleter(booleanSelections)
         groupTableMakerConfigs.add_argument("--cfgMinTpcSignal", help = "Minimum TPC signal", action = "store", type = str)
         groupTableMakerConfigs.add_argument("--cfgMaxTpcSignal", help = "Maximum TPC signal", action = "store", type = str)
-        groupTableMakerConfigs.add_argument(
-            "--process", help = "table-maker: PROCESS_SWITCH options", action = "store", type = str, nargs = "*", metavar = "PROCESS",
-            choices = tableMakerProcessSelectionsList,
-            ).completer = ChoicesCompleterList(tableMakerProcessSelectionsList)
+        groupTableMakerConfigs.add_argument("--process", help = "table-maker: PROCESS_SWITCH options", action = "store", type = str, nargs = "*", metavar = "PROCESS", choices = tableMakerProcessSelectionsList,).completer = ChoicesCompleterList(tableMakerProcessSelectionsList)
         groupProcess = self.parserTableMaker.add_argument_group(title = "Choice List for table-maker PROCESS_SWITCH options")
         for key, value in tableMakerProcessSelections.items():
             groupProcess.add_argument(key, help = value, action = "none")

@@ -44,16 +44,9 @@ class EventSelectionTask(object):
         
         # Interface
         groupEventSelection = self.parserEventSelectionTask.add_argument_group(title = "Data processor options: event-selection-task")
-        groupEventSelection.add_argument(
-            "--syst", help = "Collision System Selection ex. pp", action = "store", type = str, choices = (collisionSystemSelections),
-            ).completer = ChoicesCompleter(collisionSystemSelections)
-        groupEventSelection.add_argument(
-            "--muonSelection", help = "0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts",
-            action = "store", type = str, choices = (eventMuonSelections),
-            ).completer = ChoicesCompleter(eventMuonSelections)
-        groupEventSelection.add_argument(
-            "--customDeltaBC", help = "custom BC delta for FIT-collision matching", action = "store", type = str,
-            )
+        groupEventSelection.add_argument("--syst", help = "Collision System Selection ex. pp", action = "store", type = str, choices = (collisionSystemSelections),).completer = ChoicesCompleter(collisionSystemSelections)
+        groupEventSelection.add_argument("--muonSelection", help = "0 - barrel, 1 - muon selection with pileup cuts, 2 - muon selection without pileup cuts", action = "store", type = str, choices = (eventMuonSelections),).completer = ChoicesCompleter(eventMuonSelections)
+        groupEventSelection.add_argument("--customDeltaBC", help = "custom BC delta for FIT-collision matching", action = "store", type = str,)
     
     def parseArgs(self):
         """

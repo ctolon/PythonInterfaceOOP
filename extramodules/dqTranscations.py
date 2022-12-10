@@ -188,9 +188,7 @@ def centralityChecker(config: dict, process, syst, centSearch):
         CentFilterError: If you assign a centrality-related process function
     """
     if (process and len(centSearch) != 0 and (syst == "pp" or (syst is None and config["event-selection-task"]["syst"] == "pp"))):
-        logging.warning(
-            "JSON file does not include configs for centrality-table task, It's for DATA. Centrality will removed because you select pp collision system."
-            )
+        logging.warning("JSON file does not include configs for centrality-table task, It's for DATA. Centrality will removed because you select pp collision system.")
         if process is not None:
             processCentralityMatch = [s for s in process if "Cent" in s]
             try:
@@ -247,12 +245,8 @@ def filterSelsChecker(argBarrelSels: list, argMuonSels: list, argBarrelTrackCuts
         
         except EventFilterSelectionsError as e:
             logging.exception(e)
-            logging.info(
-                "[INFO] For fixing this issue, you should have the same number of cuts (and in the same order) provided to the cfgMuonsCuts from dq-selection as those provided to the cfgMuonSels in the DQFilterPPTask."
-                )
-            logging.info(
-                "For example, if cfgMuonCuts is muonLowPt,muonHighPt,muonLowPt then the cfgMuonSels has to be something like: muonLowPt::1,muonHighPt::1,muonLowPt:pairNoCut:1"
-                )
+            logging.info("[INFO] For fixing this issue, you should have the same number of cuts (and in the same order) provided to the cfgMuonsCuts from dq-selection as those provided to the cfgMuonSels in the DQFilterPPTask.")
+            logging.info("For example, if cfgMuonCuts is muonLowPt,muonHighPt,muonLowPt then the cfgMuonSels has to be something like: muonLowPt::1,muonHighPt::1,muonLowPt:pairNoCut:1")
             sys.exit()
         
         logging.info("Event filter configuration is valid for muons")
@@ -283,12 +277,8 @@ def filterSelsChecker(argBarrelSels: list, argMuonSels: list, argBarrelTrackCuts
         
         except EventFilterSelectionsError as e:
             logging.exception(e)
-            logging.info(
-                "For fixing this issue, you should have the same number of cuts (and in the same order) provided to the cfgBarrelTrackCuts from dq-selection as those provided to the cfgBarrelSels in the DQFilterPPTask."
-                )
-            logging.info(
-                "For example, if cfgBarrelTrackCuts is jpsiO2MCdebugCuts,jpsiO2MCdebugCuts2,jpsiO2MCdebugCuts then the cfgBarrelSels has to be something like: jpsiO2MCdebugCuts::1,jpsiO2MCdebugCuts2::1,jpsiO2MCdebugCuts:pairNoCut:1"
-                )
+            logging.info("For fixing this issue, you should have the same number of cuts (and in the same order) provided to the cfgBarrelTrackCuts from dq-selection as those provided to the cfgBarrelSels in the DQFilterPPTask.")
+            logging.info("For example, if cfgBarrelTrackCuts is jpsiO2MCdebugCuts,jpsiO2MCdebugCuts2,jpsiO2MCdebugCuts then the cfgBarrelSels has to be something like: jpsiO2MCdebugCuts::1,jpsiO2MCdebugCuts2::1,jpsiO2MCdebugCuts:pairNoCut:1")
             sys.exit()
         
         logging.info("Event filter configuration is valid for barrel")
@@ -351,10 +341,7 @@ def mandatoryArgChecker(config: dict, task: str, cfg: str, selectedKey: str, sel
     """
     
     if config[task][cfg] == "false" and task == selectedKey and cfg == selectedValue:
-        logging.warning(
-            "You forget the configure an Mandatory -> [%s] %s must always true for this workflow. This will automaticaly converted true.",
-            task, cfg
-            )
+        logging.warning("You forget the configure an Mandatory -> [%s] %s must always true for this workflow. This will automaticaly converted true.", task, cfg)
         logging.info(" - [%s] %s : true", task, cfg)
     else:
         pass
