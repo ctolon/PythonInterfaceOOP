@@ -21,7 +21,7 @@ These scripts are the main python scripts that run the workflows in O2-DQ.
 * V0 Selector makes Loops over a V0Data table and produces some standard analysis output.
 [`runV0selector.py`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/runV0selector.py).
 * Task to select electrons from dalitz decay
-[`runV0selector.py`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/runDalitzSelection.py).
+[`runDalitzSelection.py`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/runDalitzSelection.py).
 * It provides Download needed O2-DQ Libraries (CutsLibrary, MCSignalLibrary, MixingLibrary from O2Physics) for validation and autocompletion in Manual way. You can download libs with version as nightly or you can pull libs from your local alice-software.
 [`DownloadLibs.py`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/DownloadLibs.py).
 
@@ -56,8 +56,8 @@ Main File | Related Task on O2Physics | Description | W.S
 [`configFlowDataRun3.json`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/configs/configFlowDataRun3.json) | [`dqFlow.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/dqFlow.cxx) | run with dqFlow.cxx on data run 3 | `runDQFlow.py`
 [`configV0SelectorDataRun2.json`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/configs/configV0SelectorDataRun2.json) | [`v0selector.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/v0selector.cxx) | run with v0selector.cxx on data run 2 | `runV0selector.py`
 [`configV0SelectorDataRun3.json`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/configs/configV0SelectorDataRun3.json) | [`v0selector.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/v0selector.cxx) | run with v0selector.cxx on data run 3 | `runV0selector.py`
-[`configV0SelectorDataRun2.json`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/configs/configDalitzSelectionDataRun2.json) | [`DalitzSelection.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/DalitzSelection.cxx) | run with DalitzSelection.cxx.cxx on data run 2 | `runDalitzSelection.py`
-[`configV0SelectorDataRun3.json`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/configs/configDalitzSelectionDataRun3.json) | [`DalitzSelection.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/DalitzSelection.cxx) | run with DalitzSelection.cxx.cxx on data run 3 | `runDalitzSelection.py`
+[`configDalitzSelectionDataRun2`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/configs/configDalitzSelectionDataRun2.json) | [`DalitzSelection.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/DalitzSelection.cxx) | run with DalitzSelection.cxx.cxx on data run 2 | `runDalitzSelection.py`
+[`configDalitzSelectionDataRun3`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/configs/configDalitzSelectionDataRun3.json) | [`DalitzSelection.cxx`](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/DalitzSelection.cxx) | run with DalitzSelection.cxx.cxx on data run 3 | `runDalitzSelection.py`
 
 * JSON workflow configuration files List in Table (PWG-EM Dilepton)
 
@@ -115,8 +115,8 @@ Interface Script | Workflow Script
 
 Interface Script | Workflow Script
 --- | --- 
-`runEMEfficiency.py` | `emEfficiency.py`
-`runEMEfficiencyNotSkimmed.py`    | `emEfficiencyNoSkimmed.py`
+`emEfficiency.py`          | `runEMEfficiency.py` 
+`emEfficiencyNoSkimmed.py` | `runEMEfficiencyNotSkimmed.py` 
 
 
 * Important P.S!!! In order to avoid conflicts in the tableMaker Interface, the arguments in the filterPP, dqFlow and dalitzSelection interfaces have been reduced and moved to the tableMaker interface. That is, although filterPP, dqFlow and dalitzSelection interfaces have their own interfaces, the tableMaker interface has both its own interface and the reduced interfaces of these 2 scripts (tableMaker + reduced dqFlow + reduced filterPP + reduced dalitzSelection). It should be considered when configuring the interface for tableMaker, and the original interfaces of dqFlow and filterPP should never be connected to this interface, their reduced versions in tableMaker should be used.
