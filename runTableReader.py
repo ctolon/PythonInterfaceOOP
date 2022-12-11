@@ -145,11 +145,9 @@ def main():
     with open(updatedConfigFileName, "w") as outputFile:
         json.dump(config, outputFile, indent = 2)
     
-    # commandToRun = taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b"
-    commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --aod-writer-json " + args.writer + " -b")
-    
-    if args.writer == "false":
-        commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b")
+    commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b")
+    if args.writer is not None:
+        commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --aod-writer-json " + args.writer + " -b")
     
     print("====================================================================================================================")
     logging.info("Command to run:")

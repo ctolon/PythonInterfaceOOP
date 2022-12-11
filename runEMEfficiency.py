@@ -110,11 +110,7 @@ def main():
     aodFileChecker(args.aod)
     oneToMultiDepsChecker(args.process, "sameEventPairing", args.analysis, "analysis")
     depsChecker(config, sameEventPairingDeps, sameEventPairingTaskName)
-    
-    # TODO Prepare global options
-    # disable writer for dilepton producing
-    args.writer = "false"
-    
+        
     if isinstance(args.aod_memory_rate_limit, type(None)):
         args.aod_memory_rate_limit = "6000000000"
     
@@ -124,11 +120,7 @@ def main():
     with open(updatedConfigFileName, "w") as outputFile:
         json.dump(config, outputFile, indent = 2)
     
-    # NOTE: writer options is now always false for memory optimization (don't need produce any dileptonAod)
-    # commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b" + " --aod-writer-json " + args.writer)
-    if args.writer == "false":
-        commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b" + " --shm-segment-size 12000000000 \
-        --aod-memory-rate-limit " + args.aod_memory_rate_limit)
+    commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b" + " --shm-segment-size 12000000000 --aod-memory-rate-limit " + args.aod_memory_rate_limit)
     
     print("====================================================================================================================")
     logging.info("Command to run:")
@@ -137,7 +129,6 @@ def main():
     dispArgs(allArgs) # Display all args
     os.system(commandToRun) # Execute O2 generated commands
     runPycacheRemover() # Run pycacheRemover
-
 
 if __name__ == '__main__':
     sys.exit(main())

@@ -59,7 +59,6 @@ class EMEfficiency(object):
         # Predefined Selections
         
         readerPath = "configs/readerConfiguration_reducedEventMC.json"
-        writerPath = "configs/writerConfiguration_dileptonMC.json"
         
         analysisSelections = {
             "eventSelection": "Run event selection on DQ skimmed events",
@@ -118,7 +117,7 @@ class EMEfficiency(object):
         # Aod Writer - Reader configs
         groupDPLReader = self.parserEMEfficiency.add_argument_group(title = "Data processor options: internal-dpl-aod-reader, internal-dpl-aod-writer")
         groupDPLReader.add_argument("--reader", help = "Reader config JSON with path. For Standart Analysis use as default, for dilepton analysis change to dilepton JSON config file", action = "store", default = readerPath, type = str)
-        groupDPLReader.add_argument("--writer", help = "Argument for producing dileptonAOD.root. Set false for disable", action = "store", default = writerPath, type = str)
+        #groupDPLReader.add_argument("--writer", help = "Argument for producing dileptonAOD.root. Set false for disable", action = "store", type = str)
     
     def parseArgs(self):
         """
