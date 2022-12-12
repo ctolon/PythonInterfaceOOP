@@ -24,7 +24,7 @@ import logging
 import logging.config
 import os
 from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, centralityChecker, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, trackPropagationChecker
-from extramodules.configSetter import setSwitch, setConverters, setConfig, debugSettings, dispArgs, generateDescriptors, setPrefixSuffix, tableProducer, setProcessDummy
+from extramodules.configSetter import setParallelismOnSkimming, setSwitch, setConverters, setConfig, debugSettings, dispArgs, generateDescriptors, setPrefixSuffix, tableProducer, setProcessDummy
 from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.tableMakerMC import TableMakerMC
 
@@ -225,12 +225,18 @@ def main():
     commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --severity error --shm-segment-size 12000000000 --aod-writer-json " + writerConfigFileName + " -b")
     if args.aod_memory_rate_limit:
         commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --severity error --shm-segment-size 12000000000 --aod-memory-rate-limit " + args.aod_memory_rate_limit + " --aod-writer-json " + writerConfigFileName + " -b")
+        
+    if args.runParallel is True:
+        commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --severity error --shm-segment-size 12000000000 " + "-b")
     
     for dep in depsToRun.keys():
         commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"
         logging.debug("%s added your workflow", dep)
     
     commandToRun = setConverters(allArgs, updatedConfigFileName, commandToRun)
+    
+    if args.runParallel is True:
+        commandToRun = setParallelismOnSkimming(commandToRun, taskNameInCommandLine, updatedConfigFileName, "o2-analysis-dq-efficiency", "tempConfigDQEfficiency.json", config)
     
     print("====================================================================================================================")
     logging.info("Command to run:")

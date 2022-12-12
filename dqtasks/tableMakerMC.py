@@ -136,6 +136,10 @@ class TableMakerMC(object):
         # Core Part
         groupCoreSelections = self.parserTableMakerMC.add_argument_group(title = "Core configurations that must be configured")
         groupCoreSelections.add_argument("-runMC", help = "Run over MC", action = "store_true", default = True)
+        
+        # parallelism part
+        groupParallelSelections = self.parserTableMakerMC.add_argument_group(title = "Parallelism Configuration")
+        groupParallelSelections.add_argument("-runParallel", help = "Run with also dq-efficiency", action = "store_true", default = False)
     
     def parseArgs(self):
         """

@@ -147,8 +147,10 @@ def main():
     logging.info(commandToRun)
     print("====================================================================================================================")
     dispArgs(allArgs) # Display all args
-    os.system(commandToRun) # Execute O2 generated commands
-    runPycacheRemover() # Run pycacheRemover
+    
+    if args.runParallel is False:
+        os.system(commandToRun) # Execute O2 generated commands
+        runPycacheRemover() # Run pycacheRemover
 
 
 if __name__ == '__main__':

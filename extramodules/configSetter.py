@@ -24,7 +24,7 @@ import json
 
 
 # NOTE This will removed when we have unique name for dilepton-track signals
-def multiConfigurableSet(config: dict, task: str, cfg: str, arg: list, cliMode):
+def multiConfigurableSet(config: dict, task: str, cfg: str, arg: list, cliMode) -> None:
     
     if isinstance(arg, list):
         arg = listToString(arg)
@@ -34,7 +34,7 @@ def multiConfigurableSet(config: dict, task: str, cfg: str, arg: list, cliMode):
     config[task][cfg] = arg
 
 
-def dispArgs(allArgs: dict):
+def dispArgs(allArgs: dict) -> None:
     """Display all configured commands you provided in CLI
 
     Args:
@@ -50,8 +50,8 @@ def dispArgs(allArgs: dict):
     print("====================================================================================================================")
 
 
-def debugSettings(argDebug: bool, argLogFile: bool, fileName: str):
-    """Debug settings for CLI
+def debugSettings(argDebug: bool, argLogFile: bool, fileName: str) -> None:
+    """Set Debug settings for CLI
 
     Args:
         argDebug (bool): Debug Level
@@ -88,13 +88,16 @@ def debugSettings(argDebug: bool, argLogFile: bool, fileName: str):
         log.addHandler(fh)
 
 
-def setConverters(allArgs: dict, updatedConfigFileName: str, commandToRun: str):
+def setConverters(allArgs: dict, updatedConfigFileName: str, commandToRun: str) -> str:
     """Converter task setter function
 
     Args:
         allArgs (dict): All provided args in CLI
         updatedConfigFileName (str): Overrided json config file
         commandToRun (str): Generated command for running in O2
+        
+    Returns:
+        str: Command To Run with provided converter task options
     """
     specificTasks = {
         "add_mc_conv": "o2-analysis-mc-converter",
@@ -111,7 +114,7 @@ def setConverters(allArgs: dict, updatedConfigFileName: str, commandToRun: str):
     return commandToRun
 
 
-def generateDescriptors(tablesToProduce: dict, tables: dict, writerConfigFileName = "aodWriterTempConfig.json", readerConfigFileName = "aodReaderTempConfig.json", kFlag = False):
+def generateDescriptors(tablesToProduce: dict, tables: dict, writerConfigFileName = "aodWriterTempConfig.json", readerConfigFileName = "aodReaderTempConfig.json", kFlag = False) -> None:
     """Generates Descriptors for Writing/Reading Tables from AO2D with json config file (input descriptor is optional)
 
     Args:
@@ -160,12 +163,12 @@ def generateDescriptors(tablesToProduce: dict, tables: dict, writerConfigFileNam
     print(writerConfig)
 
 
-def tableProducer(config, taskNameInConfig, tablesToProduce, commonTables, barrelCommonTables, muonCommonTables, specificTables, specificDeps, runOverMC):
+def tableProducer(config: dict, taskNameInConfig: str, tablesToProduce: dict, commonTables: list, barrelCommonTables: list, muonCommonTables: list, specificTables: list, specificDeps: dict, runOverMC: bool) -> None:
     """Table producer function for tableMaker/tableMakerMC
 
     Args:
         config (dict): Input as JSON config file
-        taskNameInConfig (string): Taskname in config file (table-maker/table-maker-m-c)
+        taskNameInConfig (str): Taskname in config file (table-maker/table-maker-m-c)
         tablesToProduce (dict): Input as which tables are needed
         commonTables (list): Common tables which are always be created
         barrelCommonTables (list): Barrel tables in reduced DQ data model
@@ -210,7 +213,7 @@ def tableProducer(config, taskNameInConfig, tablesToProduce, commonTables, barre
                 tablesToProduce[table] = 1
 
 
-def setSelection(config: dict, deps: dict, targetCfg: list, cliMode: bool):
+def setSelection(config: dict, deps: dict, targetCfg: list, cliMode: bool) -> None:
     """If the arguments are set with very different naming conventions and they are for selection, this function is used to set the values
 
     Args:
@@ -218,6 +221,8 @@ def setSelection(config: dict, deps: dict, targetCfg: list, cliMode: bool):
         deps (dict): Dependency list
         targetCfg (list): parameters argument name
         cliMode (bool): CLI mode
+    Raises:
+        TypeError: If your selection list not type of dict
     """
     if targetCfg is not None:
         for selection, taskNameProcessFuncPair in deps.items():
@@ -234,7 +239,7 @@ def setSelection(config: dict, deps: dict, targetCfg: list, cliMode: bool):
                 raise TypeError("Taskname - Process Function pair should be a dictionary type")
 
 
-def setConfig(config: dict, task: str, cfg: str, allArgs: dict, cliMode: bool):
+def setConfig(config: dict, task: str, cfg: str, allArgs: dict, cliMode: bool) -> None:
     """This function provides directly set to argument parameter, if argument naming and json cfg naming equals
 
     Args:
@@ -321,7 +326,7 @@ def setSwitch(config: dict, task: str, cfg: str, allArgs: dict, cliMode: str, ar
                             logging.debug(" - [%s] %s : %s", task, param, SWITCH_OFF)
 
 
-def setProcessDummy(config: dict, dummyHasTasks = None):
+def setProcessDummy(config: dict, dummyHasTasks = None) -> None:
     """Dummy Automizer
 
     Args:
@@ -362,7 +367,7 @@ def setProcessDummy(config: dict, dummyHasTasks = None):
                                 #logging.debug(" - [%s] processDummy : true", k)
 
 
-def setFalseHasDeps(config: dict, task: str, cfg: str, argument: list, parameters: list, cliMode: bool, selectedKey = None):
+def setFalseHasDeps(config: dict, task: str, cfg: str, argument: list, parameters: list, cliMode: bool, selectedKey = None) -> None:
     """function to pull all process function values false when the argument with dependencies is not configured. Otherwise, the process will crash due to dependencies.
 
     Args:
@@ -396,6 +401,9 @@ def setPrefixSuffix(argument, prefix = None, suffix = None, kFlagPrefix = None, 
         suffix (str, optional): Suffix as string. Defaults to None
         kFlagPrefix (bool, optional): Flag for activating prefix setter. Defaults to None.
         kFlagSuffix (bool, optional): Flag for activating suffix setter. Defaults to None.
+        
+    Returns:
+        str or list: Prefixed/Suffixed Argument
     """
     
     if argument is not None:
@@ -410,3 +418,36 @@ def setPrefixSuffix(argument, prefix = None, suffix = None, kFlagPrefix = None, 
             else:
                 argument = argument + suffix
         return argument
+    
+def setParallelismOnSkimming(commandToRun: str, taskNameInCommandLine: str, updatedConfigFileName: str, analysisTaskName: str, analysisTaskTempConfig: str, config: dict) -> str:
+    """Setter method for activate parallel sesion run in O2
+
+    Args:
+        commandToRun (str): Command To Run
+        taskNameInCommandLine (str): Skimming task name
+        updatedConfigFileName (str): Skimming task temp JSON config file name
+        analysisTaskName (str): Command to Run for Analysis Task in O2
+        analysisTaskTempConfig (dict): Analysis task temp JSON config file name
+        config (dict): Skimming task JSON config file
+
+    Returns:
+        str: Command To Run for run analysis and skimming task at same time
+    """
+            
+    # For paralel session, we should define some tableReader parms
+    skimmingTaskFullCommand = commandToRun
+        
+    # open tablereader temp config
+    with open(analysisTaskTempConfig) as configAnalysisTask:
+        config2 = json.load(configAnalysisTask)
+
+    # merge configs
+    mergedConfigs = {**config2, **config}
+
+    #save merged configs
+    with open(updatedConfigFileName, "w") as outputFile:
+        json.dump(mergedConfigs, outputFile, indent = 2)
+
+    #NOTE: Aod writer json config arg currently not working with parallelism
+    #return (analysisTaskName + " --configuration json://" + updatedConfigFileName + " --aod-writer-json aodWriterTempConfig.json " + " -b " + '| ' + skimmingTaskFullCommand)
+    return (analysisTaskName + " --configuration json://" + updatedConfigFileName + " -b " + '| ' + skimmingTaskFullCommand)

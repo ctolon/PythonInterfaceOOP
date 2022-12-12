@@ -137,6 +137,10 @@ class DQEfficiency(object):
         groupDPLReader = self.parserDQEfficiency.add_argument_group(title = "Data processor options: internal-dpl-aod-reader, internal-dpl-aod-writer")
         groupDPLReader.add_argument("--reader", help = "Reader config JSON with path. For Standart Analysis use as default, for dilepton analysis change to dilepton JSON config file", action = "store", default = readerPath, type = str)
         groupDPLReader.add_argument("--writer", help = "Argument for producing extra reduced tables", action = "store", type = str)
+        
+        # parallelism part
+        groupParallelSelections = self.parserDQEfficiency.add_argument_group(title = "Parallelism Configuration")
+        groupParallelSelections.add_argument("-runParallel", help = "Run with also table-maker-m-c", action = "store_true", default = False)
     
     def parseArgs(self):
         """

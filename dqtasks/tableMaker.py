@@ -174,6 +174,10 @@ class TableMaker(object):
         # core part
         groupCoreSelections = self.parserTableMaker.add_argument_group(title = "Core configurations that must be configured")
         groupCoreSelections.add_argument("-runData", help = "Run over Data", action = "store_true", default = True)
+        
+        # parallelism part
+        groupParallelSelections = self.parserTableMaker.add_argument_group(title = "Parallelism Configuration")
+        groupParallelSelections.add_argument("-runParallel", help = "Run with also table-reader", action = "store_true", default = False)
     
     def parseArgs(self):
         """

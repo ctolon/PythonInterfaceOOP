@@ -144,18 +144,20 @@ def main():
     
     with open(updatedConfigFileName, "w") as outputFile:
         json.dump(config, outputFile, indent = 2)
-    
+            
     commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b")
     if args.writer is not None:
         commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --aod-writer-json " + args.writer + " -b")
-    
+        
     print("====================================================================================================================")
     logging.info("Command to run:")
     logging.info(commandToRun)
     print("====================================================================================================================")
     dispArgs(allArgs) # Display all args
-    os.system(commandToRun) # Execute O2 generated commands
-    runPycacheRemover() # Run pycacheRemover
+        
+    if args.runParallel is False:
+        os.system(commandToRun) # Execute O2 generated commands
+        runPycacheRemover() # Run pycacheRemover
 
 
 if __name__ == '__main__':
