@@ -345,7 +345,7 @@ For example, when the file is logged, you should see a result like this when you
 choices).
 * If the argument can take more than one value, when adding a new property choices is a list and the values
 must be converted to comma-separated strings
-* if your dataset is for run3, o2-analysis-trackextension will be automatically deleted from your workflow as it is not a valid command dep. If the production of the data you want to analyze is new, you should add the o2-analysis-track-propagation task to your workflow with the `--add_track_prop` parameter. You can found detalis from there [`Click Here`](https://aliceo2group.github.io/analysis-framework/docs/helperTasks/trackselection.html?highlight=some%20of%20the%20track%20parameters)
+* if your dataset is for run3, o2-analysis-trackextension will be automatically deleted from your workflow as if you define `--add_track_prop` argument for track-propagation. If the production of the data you want to analyze is new, you should add the o2-analysis-track-propagation task to your workflow with the `--add_track_prop` parameter. You can found detalis from there [`Click Here`](https://aliceo2group.github.io/analysis-framework/docs/helperTasks/trackselection.html?highlight=some%20of%20the%20track%20parameters)
 
 ## Some Notes Before The Instructions
 
@@ -532,5 +532,17 @@ This is the same for all analysis cuts, MC Signals, barrel and muon sels in filt
 This is the main reason why Interface works in these two modes. If you already have a JSON configuration file prepared for a specific data for analysis, it makes sense to use JSON additional mode if you just want to add some values. Because you will want to preserve the old values.
 
 If you are going to do an analysis from zero and you will prepare your JSON configuration file accordingly, or if you want to completely change your analysis values, then it makes sense to use JSON overrider mode. Because the default JSON files must be manipulated in accordance with the analysis (like configAnalysisData.json) or you choose this mode to change the complete analysis values
+
+
+
+## Project Architecture For Per Script
+
+For the architecture of the project, you can view the diagrams below for each dq workflow script.
+
+
+<div align="center">
+<img src="images/table-maker_script.jpg" width="100%" alt="TableMaker Workflow">
+</div>
+
 
 [← Go back to Instructions For Instructions for TAB Autocomplete](3_InstructionsforTABAutocomplete.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Instructions For Python Scripts →](5_InstructionsForPythonScripts.md)
