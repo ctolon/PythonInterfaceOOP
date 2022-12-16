@@ -27,6 +27,7 @@ from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, dep
 from extramodules.configSetter import setConfig, setFalseHasDeps, setSwitch, setSelection, setProcessDummy, debugSettings, dispArgs, setPrefixSuffix
 from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.tableReader import TableReader
+from extramodules.utils import loadJson
 
 
 def main():
@@ -85,9 +86,7 @@ def main():
     args.mixing = setPrefixSuffix(args.mixing, "process", 'Skimmed', True, True)
     
     # Load the configuration file provided as the first parameter
-    config = {}
-    with open(args.cfgFileName) as configFile:
-        config = json.load(configFile)
+    config = loadJson(args.cfgFileName) 
     
     # Transaction
     jsonTypeChecker(args.cfgFileName)

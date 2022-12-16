@@ -27,6 +27,7 @@ from extramodules.configSetter import setSwitch, setConverters, setConfig, debug
 from extramodules.dqTranscations import aodFileChecker, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, trackPropagationChecker
 from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.v0selector import V0selector
+from extramodules.utils import loadJson, writeJson
 
 
 def main():
@@ -71,9 +72,7 @@ def main():
     args.QA = setPrefixSuffix(args.QA, "process", '', True, False)
     
     # Load the configuration file provided as the first parameter
-    config = {}
-    with open(args.cfgFileName) as configFile:
-        config = json.load(configFile)
+    config = loadJson(args.cfgFileName) 
     
     jsonTypeChecker(args.cfgFileName)
     
@@ -119,9 +118,7 @@ def main():
     
     # Write the updated configuration file into a temporary file
     updatedConfigFileName = "tempConfigV0Selector.json"
-    
-    with open(updatedConfigFileName, "w") as outputFile:
-        json.dump(config, outputFile, indent = 2)
+    writeJson(updatedConfigFileName, config)
     
     # Check which dependencies need to be run
     depsToRun = {}

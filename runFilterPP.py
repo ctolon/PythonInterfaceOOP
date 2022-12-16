@@ -27,6 +27,7 @@ from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, for
 from extramodules.configSetter import setSwitch, setSelection, setConverters, setConfig, setProcessDummy, debugSettings, dispArgs, setPrefixSuffix
 from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.filterPP import DQFilterPPTask
+from extramodules.utils import loadJson
 
 
 def main():
@@ -75,9 +76,7 @@ def main():
     args.isWSlice = setPrefixSuffix(args.isWSlice, "process", '', True, False)
     
     # Load the configuration file provided as the first parameter
-    config = {}
-    with open(args.cfgFileName) as configFile:
-        config = json.load(configFile)
+    config = loadJson(args.cfgFileName) 
     
     jsonTypeChecker(args.cfgFileName)
     

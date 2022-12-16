@@ -15,7 +15,7 @@
 
 # This script includes setter functions for configurables (Developer package)
 
-from .stringOperations import listToString, stringToListWithSlash
+from .utils import listToString, stringToListWithSlash
 import logging
 from logging import handlers
 import sys
@@ -163,13 +163,12 @@ def generateDescriptors(tablesToProduce: dict, tables: dict, writerConfigFileNam
     print(writerConfig)
 
 
-def tableProducer(config: dict, taskNameInConfig: str, tablesToProduce: dict, commonTables: list, barrelCommonTables: list, muonCommonTables: list, specificTables: list, specificDeps: dict, runOverMC: bool) -> None:
+def tableProducer(config: dict, taskNameInConfig: str, commonTables: list, barrelCommonTables: list, muonCommonTables: list, specificTables: list, specificDeps: dict, runOverMC: bool) -> dict:
     """Table producer function for tableMaker/tableMakerMC
 
     Args:
         config (dict): Input as JSON config file
         taskNameInConfig (str): Taskname in config file (table-maker/table-maker-m-c)
-        tablesToProduce (dict): Input as which tables are needed
         commonTables (list): Common tables which are always be created
         barrelCommonTables (list): Barrel tables in reduced DQ data model
         muonCommonTables (list): Muon tables in reduced DQ data model
@@ -177,6 +176,8 @@ def tableProducer(config: dict, taskNameInConfig: str, tablesToProduce: dict, co
         specificDeps (dict): Specific Dependencies for specific tasks
         runOverMC (bool): Checking to run over MC or Data
     """
+    
+    tablesToProduce = {}
     
     for table in commonTables:
         tablesToProduce[table] = 1
@@ -211,6 +212,7 @@ def tableProducer(config: dict, taskNameInConfig: str, tablesToProduce: dict, co
             for table in specificTables[processFunc]:
                 logging.info("%s", table)
                 tablesToProduce[table] = 1
+    return tablesToProduce
 
 
 def setSelection(config: dict, deps: dict, targetCfg: list, cliMode: bool) -> None:
@@ -451,3 +453,36 @@ def setParallelismOnSkimming(commandToRun: str, taskNameInCommandLine: str, upda
     #NOTE: Aod writer json config arg currently not working with parallelism
     #return (analysisTaskName + " --configuration json://" + updatedConfigFileName + " --aod-writer-json aodWriterTempConfig.json " + " -b " + '| ' + skimmingTaskFullCommand)
     return (analysisTaskName + " --configuration json://" + updatedConfigFileName + " -b " + '| ' + skimmingTaskFullCommand)
+
+
+def commonDepsToRun(commonDeps):    
+    # Check which dependencies need to be run
+    depsToRun = {}
+    for dep in commonDeps:
+        depsToRun[dep] = 1
+    return depsToRun
+
+# todo implement it
+"""               
+def specificDepsToRun(config, taskNameInConfig, specificDeps, **depsHashMap, commonDepsToRun):
+    
+    # depsHasMap  {barrelDeps : list : [processBarrel, processMuon]}
+    
+    isAtLeastOneProcessFuncInDepsList = lambda a,b: a in b
+    if specificDeps is not None:
+        for processFunc in specificDeps.keys():
+            if processFunc not in config[taskNameInConfig].keys():
+                continue
+            if config[taskNameInConfig][processFunc] == "true":
+                for depList,processFuncList in depsHashMap.items():
+                    if len(list(map(isAtLeastOneProcessFuncInDepsList, processFunc))) > 0:
+                if "processFull" in processFunc or "processBarrel" in processFunc or "processAmbiguousBarrel" in processFunc:
+                    for dep in depsHashMap.keys():
+                        depsToRun[dep] = 1
+                if "processFull" in processFunc or "processMuon" in processFunc or "processAmbiguousMuon" in processFunc:
+                    for dep in muonDeps:
+                        depsToRun[dep] = 1
+                for dep in specificDeps[processFunc]:
+                    depsToRun[dep] = 1
+"""
+

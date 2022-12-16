@@ -27,6 +27,7 @@ from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, dep
 from extramodules.configSetter import setConfig, setFalseHasDeps, setSwitch, setSelection, debugSettings, setProcessDummy, dispArgs, multiConfigurableSet, setPrefixSuffix
 from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.dqEfficiency import DQEfficiency
+from extramodules.utils import loadJson, writeJson
 
 
 def main():
@@ -74,9 +75,7 @@ def main():
     args.process = setPrefixSuffix(args.process, "process", 'Skimmed', True, True)
     
     # Load the configuration file provided as the first parameter
-    config = {}
-    with open(args.cfgFileName) as configFile:
-        config = json.load(configFile)
+    config = loadJson(args.cfgFileName) 
     
     jsonTypeChecker(args.cfgFileName)
     
@@ -134,9 +133,7 @@ def main():
     
     # Write the updated configuration file into a temporary file
     updatedConfigFileName = "tempConfigDQEfficiency.json"
-    
-    with open(updatedConfigFileName, "w") as outputFile:
-        json.dump(config, outputFile, indent = 2)
+    writeJson(updatedConfigFileName, config)
     
     commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b")
     if args.writer is not None:

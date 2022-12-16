@@ -27,6 +27,7 @@ from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, cen
 from extramodules.configSetter import setParallelismOnSkimming, setProcessDummy, setSwitch, setConverters, setConfig, debugSettings, dispArgs, generateDescriptors, setPrefixSuffix, tableProducer
 from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.tableMaker import TableMaker
+from extramodules.utils import loadJson, writeJson
 
 
 def main():
@@ -137,9 +138,7 @@ def main():
     
     # if cliMode true, Overrider mode else additional mode
     cliMode = args.onlySelect
-    
-    #forgettedArgsChecker(allArgs) # Transaction management
-    
+        
     # adding prefix for setSwitch function
     args.process = setPrefixSuffix(args.process, "process", '', True, False)
     args.pid = setPrefixSuffix(args.pid, "pid-", '', True, False)
@@ -151,10 +150,7 @@ def main():
     args.QA = setPrefixSuffix(args.QA, "process", '', True, False)
     
     # Load the configuration file provided as the first parameter
-    config = {}
-    with open(args.cfgFileName) as configFile:
-        config = json.load(configFile)
-    
+    config = loadJson(args.cfgFileName)    
     jsonTypeChecker(args.cfgFileName)
     
     runOverMC = False
@@ -241,9 +237,10 @@ def main():
     
     # Write the updated configuration file into a temporary file
     updatedConfigFileName = "tempConfigTableMaker.json"
+    writeJson(updatedConfigFileName, config)
     
-    with open(updatedConfigFileName, "w") as outputFile:
-        json.dump(config, outputFile, indent = 2)
+    #with open(updatedConfigFileName, "w") as outputFile:
+        #json.dump(config, outputFile, indent = 2)
     
     # Check which dependencies need to be run
     depsToRun = {}
@@ -264,8 +261,7 @@ def main():
                 depsToRun[dep] = 1
     
     # Check which tables are required in the output
-    tablesToProduce = {}
-    tableProducer(config, taskNameInConfig, tablesToProduce, commonTables, barrelCommonTables, muonCommonTables, specificTables, specificDeps, runOverMC)
+    tablesToProduce = tableProducer(config, taskNameInConfig, commonTables, barrelCommonTables, muonCommonTables, specificTables, specificDeps, runOverMC)
     
     writerConfigFileName = "aodWriterTempConfig.json"
     

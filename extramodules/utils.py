@@ -13,8 +13,10 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-# This script includes string operations for logic
+# This script includes utils for basic operations
 
+import json
+import re
 
 def listToString(s: list):
     """
@@ -68,3 +70,30 @@ def stringToListWithSlash(string: str):
     """
     li = list(string.split("/"))
     return li
+
+
+def writeFile(openFile, writeFile):
+    with open(openFile, "wb") as f:
+        f.write(writeFile)
+    f.close()
+        
+def loadJson(fileName):
+    with open(fileName) as configFile:
+        return json.load(configFile)
+    
+def writeJson(updatedConfigFileName, config):
+    with open(updatedConfigFileName, "w") as outputFile:
+        json.dump(config, outputFile, indent = 2)
+    
+# TODO: ommit the side effects    
+def getIfStartedInDoubleQuotes(headerFileName):
+    mylist = []
+    with open(headerFileName) as f:
+        stringIfSearch = [x for x in f if "if" in x]
+        for i in stringIfSearch:
+            mylist.extend(re.findall('"([^"]*)"', i))
+        return mylist
+
+    #f.close()
+
+    

@@ -16,10 +16,13 @@
 # \Author: ionut.cristian.arsene@cern.ch
 # \Interface:  cevat.batuhan.tolon@cern.ch
 
+from itertools import chain
 import os
 import re
 from urllib.request import Request, urlopen
 import ssl
+
+from .utils import getIfStartedInDoubleQuotes, writeFile
 
 
 # TODO It should check first local path then it should try download
@@ -101,34 +104,17 @@ class DQLibGetter(object):
             htmlHistogramsLibrary = urlopen(requestHistogramsLibrary, context = context).read()
             
             # Save Disk to temp DQ libs
-            with open("tempCutsLibrary.h", "wb") as f:
-                f.write(htmlCutsLibrary)
-            f.close()
-            with open("tempMCSignalsLibrary.h", "wb") as f:
-                f.write(htmlMCSignalsLibrary)
-            f.close()
-            with open("tempMixingLibrary.h", "wb") as f:
-                f.write(htmlMixingLibrary)
-            f.close()
-            with open("tempHistogramsLibrary.h", "wb") as f:
-                f.write(htmlHistogramsLibrary)
-            f.close()
+            writeFile("tempCutsLibrary.h", htmlCutsLibrary)
+            writeFile("tempMCSignalsLibrary.h", htmlMCSignalsLibrary)
+            writeFile("tempMixingLibrary.h", htmlMixingLibrary)
+            writeFile("tempHistogramsLibrary.h", htmlHistogramsLibrary)
             print("[INFO] Libs downloaded succesfully.")
+            
         # Read Cuts, Signals, Mixing vars from downloaded files
-        with open("tempMCSignalsLibrary.h") as f:
-            stringIfSearch = [x for x in f if "if" in x]
-            for i in stringIfSearch:
-                getSignals = re.findall('"([^"]*)"', i)
-                self.allMCSignals = self.allMCSignals + getSignals
-        f.close()
-        
-        with open("tempMixingLibrary.h") as f:
-            stringIfSearch = [x for x in f if "if" in x]
-            for i in stringIfSearch:
-                getMixing = re.findall('"([^"]*)"', i)
-                self.allMixing = self.allMixing + getMixing
-        f.close()
-        
+        self.allMCSignals = getIfStartedInDoubleQuotes("tempMCSignalsLibrary.h")
+        self.allMixing =  getIfStartedInDoubleQuotes("tempMixingLibrary.h")
+                
+        # Get All histograms with flags # TODO: Reduce the complexity        
         with open("tempHistogramsLibrary.h") as f:
             for line in f:
                 if "if" in line:
@@ -154,27 +140,18 @@ class DQLibGetter(object):
                         dileptonHistos += line
         f.close()
         
-        self.allEventHistos = eventHistos
-        self.allTrackHistos = self.allTrackHistos + trackHistos
-        self.allMCTruthHistos = self.allMCTruthHistos + mctruthHistos
-        self.allPairHistos = self.allPairHistos + pairHistos
-        self.allDileptonHistos = self.allDileptonHistos + dileptonHistos
+        self.allEventHistos += eventHistos
+        self.allTrackHistos += trackHistos
+        self.allMCTruthHistos += mctruthHistos
+        self.allPairHistos += pairHistos
+        self.allDileptonHistos += dileptonHistos
         
-        #print("mctruth :" ,mctruthHistos)
-        #print("track :", trackHistos)
-        #print("pair histos :", pairHistos)
-        #print("dilepton histos", dileptonHistos)
-        
-        with open("tempCutsLibrary.h") as f:
-            stringIfSearch = [x for x in f if "if" in x] # get lines only includes if string
-            for i in stringIfSearch:
-                getCuts = re.findall('"([^"]*)"', i) # get in double quotes string value with regex exp.
-                getPairCuts = [y for y in getCuts if "pair" in y] # get pair cuts
-                if getPairCuts: # if pair cut list is not empty
-                    allPairCuts = (allPairCuts + getPairCuts) # Get Only pair cuts from CutsLibrary.h
-                    namespacedPairCuts = [x + singleColon for x in allPairCuts] # paircut:
-                self.allAnalysisCuts = (self.allAnalysisCuts + getCuts) # Get all Cuts from CutsLibrary.h
-                self.allOnlyPairCuts = (self.allOnlyPairCuts + allPairCuts) # Get all Pair Cuts from CutsLibrary.h
+        self.allAnalysisCuts =  getIfStartedInDoubleQuotes("tempCutsLibrary.h")
+        getPairCuts = [y for y in self.allAnalysisCuts if "pair" in y]
+        if getPairCuts: # if pair cut list is not empty
+            allPairCuts += getPairCuts # Get Only pair cuts from CutsLibrary.h
+            namespacedPairCuts = [x + singleColon for x in allPairCuts] # paircut:
+            self.allOnlyPairCuts +=  allPairCuts # Get all Pair Cuts from CutsLibrary.h
         
         # NOTE : Now we have brute-force solution for format specifiers (for dalitz cuts)
         # TODO We need more simple and flexible solution for this isue
@@ -192,7 +169,7 @@ class DQLibGetter(object):
         
         # after getting clean dalitz cuts, we need remove has format specifier dalitz cuts from allAnalysisCuts and add clean dalitz cuts
         self.allAnalysisCuts = [x for x in self.allAnalysisCuts if "%d" not in x] # clean the has format specifier dalitz cuts
-        self.allAnalysisCuts = self.allAnalysisCuts + getCleanDalitzCuts # add clean dalitz cuts
+        self.allAnalysisCuts += getCleanDalitzCuts # add clean dalitz cuts
         # print(self.allAnalysisCuts)
         
         # in Filter PP Task, sels options for barrel and muon uses namespaces e.g. "<track-cut>:[<pair-cut>]:<n> and <track-cut>::<n> For Manage this issue:
@@ -202,14 +179,14 @@ class DQLibGetter(object):
         for k in range(1, 10):
             # Style 1 <track-cut>::<n> --> selsWithDoubleColon
             nAddedallAnalysisCuts = [x + str(k) for x in allAnalysisCutsDoubleColon]
-            selsWithDoubleColon = selsWithDoubleColon + nAddedallAnalysisCuts
+            selsWithDoubleColon += nAddedallAnalysisCuts
             nAddedPairCuts = [x + str(k) for x in namespacedPairCuts]
-            pairCutsWithSingleColon = pairCutsWithSingleColon + nAddedPairCuts
+            pairCutsWithSingleColon += nAddedPairCuts
         
         # Style 2 <track-cut>:[<pair-cut>]:<n>:
         for i in pairCutsWithSingleColon:
             Style1 = [x + i for x in allAnalysisCutsSingleColon]
-            selsWithSingleColon = selsWithSingleColon + Style1
+            selsWithSingleColon += Style1
         
         # Merge All possible styles for Sels (cfgBarrelSels and cfgMuonSels) in FilterPP Task
         f.close()

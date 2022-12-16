@@ -27,6 +27,7 @@ from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, for
 from extramodules.configSetter import setSwitch, setSelection, setConverters, setConfig, setProcessDummy, debugSettings, dispArgs, setPrefixSuffix
 from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.emEfficiencyNoSkimmed import EMEfficiencyNoSkimmed
+from extramodules.utils import loadJson, writeJson
 
 
 def main():
@@ -72,9 +73,7 @@ def main():
     args.isWSlice = setPrefixSuffix(args.isWSlice, "process", '', True, False)
     
     # Load the configuration file provided as the first parameter
-    config = {}
-    with open(args.cfgFileName) as configFile:
-        config = json.load(configFile)
+    config = loadJson(args.cfgFileName) 
     
     jsonTypeChecker(args.cfgFileName)
     
@@ -120,9 +119,7 @@ def main():
     
     # Write the updated configuration file into a temporary file
     updatedConfigFileName = "tempConfigEMEfficiencyEENoSkimmed.json"
-    
-    with open(updatedConfigFileName, "w") as outputFile:
-        json.dump(config, outputFile, indent = 2)
+    writeJson(updatedConfigFileName, config)
     
     # Check which dependencies need to be run
     depsToRun = {}

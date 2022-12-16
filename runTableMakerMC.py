@@ -27,6 +27,7 @@ from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, cen
 from extramodules.configSetter import setParallelismOnSkimming, setSwitch, setConverters, setConfig, debugSettings, dispArgs, generateDescriptors, setPrefixSuffix, tableProducer, setProcessDummy
 from extramodules.pycacheRemover import runPycacheRemover
 from dqtasks.tableMakerMC import TableMakerMC
+from extramodules.utils import loadJson, writeJson
 
 
 def main():
@@ -135,9 +136,7 @@ def main():
     args.isWSlice = setPrefixSuffix(args.isWSlice, "process", '', True, False)
     
     # Load the configuration file provided as the first parameter
-    config = {}
-    with open(args.cfgFileName) as configFile:
-        config = json.load(configFile)
+    config = loadJson(args.cfgFileName) 
     
     jsonTypeChecker(args.cfgFileName)
     
@@ -191,10 +190,7 @@ def main():
     
     # Write the updated configuration file into a temporary file
     updatedConfigFileName = "tempConfigTableMakerMC.json"
-    
-    with open(updatedConfigFileName, "w") as outputFile:
-        json.dump(config, outputFile, indent = 2)
-    
+    writeJson(updatedConfigFileName, config)
     # Check which dependencies need to be run
     depsToRun = {}
     for dep in commonDeps:

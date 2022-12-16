@@ -159,6 +159,6 @@ Extra Script | Desc
 `dqTranscations.py`     | To manage dependencies and misconfigurations in the DQ workflow
 `helperOptions.py`     | Includes Interface arguments for debug and interface mode options
 `pycacheRemover.py`        | For automatically removing pycache files when workflow is finished
-`stringOperations.py`        | For managing string operations of multiple arguments in workflows
+`utils.py`        | For managing some basic cases as wrapper
 
 [↑ Go to the Table of Content ↑](../README.md) | [Continue to Prerequisites →](2_Prerequisites.md)
