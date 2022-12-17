@@ -18,14 +18,14 @@
 
 # Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/dqEfficiency.cxx
 
-import json
 import sys
 import logging
 import logging.config
 import os
 from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, depsChecker, jsonTypeChecker, mainTaskChecker
-from extramodules.configSetter import setArgsToArgParser, setConfigs, debugSettings, setProcessDummy, dispArgs
+from extramodules.configSetter import dispInterfaceMode, setArgsToArgParser, setConfigs, debugSettings, setProcessDummy, dispArgs
 from extramodules.pycacheRemover import runPycacheRemover
+from extramodules.utils import dumpJson, loadJson
 
 
 def main():
@@ -34,7 +34,7 @@ def main():
     parsedJsonFile = "configs/configAnalysisMC.json"
     args = setArgsToArgParser(parsedJsonFile)
     allArgs = vars(args) # for get args
-        
+    
     # yapf: disable
     sameEventPairingTaskName = "analysis-same-event-pairing"
     sameEventPairingDeps = {
@@ -57,9 +57,7 @@ def main():
     cliMode = args.onlySelect
     
     # Load the configuration file provided as the first parameter
-    config = {}
-    with open(args.cfgFileName) as configFile:
-        config = json.load(configFile)
+    config = loadJson(args.cfgFileName)
     
     jsonTypeChecker(args.cfgFileName)
     jsonTypeChecker(parsedJsonFile)
@@ -69,12 +67,8 @@ def main():
     
     mainTaskChecker(config, taskNameInConfig)
     
-    # Interface Process
-    logging.info("Only Select Configured as %s", cliMode)
-    if cliMode == "true":
-        logging.info("INTERFACE MODE : JSON Overrider")
-    if cliMode == "false":
-        logging.info("INTERFACE MODE : JSON Additional")
+    # Interface Mode message
+    dispInterfaceMode(cliMode)
     
     # Set arguments to config json file
     setConfigs(allArgs, config, cliMode)
@@ -89,12 +83,11 @@ def main():
     # Write the updated configuration file into a temporary file
     updatedConfigFileName = "tempConfigDQEfficiency.json"
     
-    with open(updatedConfigFileName, "w") as outputFile:
-        json.dump(config, outputFile, indent = 2)
+    dumpJson(updatedConfigFileName, config)
     
-    commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b")
+    commandToRun = f"{taskNameInCommandLine} --configuration json://{updatedConfigFileName} -b"
     if args.writer is not None:
-        commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --aod-writer-json " + args.writer + " -b")
+        commandToRun = f"{taskNameInCommandLine} --configuration json://{updatedConfigFileName} --aod-writer-json {args.writer} -b"
     
     print("====================================================================================================================")
     logging.info("Command to run:")

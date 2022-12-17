@@ -18,14 +18,14 @@
 
 # Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/PWGEM/Dilepton/Tasks/emEfficiencyEE.cxx
 
-import json
 import sys
 import logging
 import logging.config
 import os
 from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, jsonTypeChecker, mainTaskChecker, trackPropagationChecker
-from extramodules.configSetter import setArgsToArgParser, setConfigs, setConverters, setProcessDummy, debugSettings, dispArgs
+from extramodules.configSetter import dispInterfaceMode, setArgsToArgParser, setConfigs, setConverters, setProcessDummy, debugSettings, dispArgs
 from extramodules.pycacheRemover import runPycacheRemover
+from extramodules.utils import dumpJson, loadJson
 
 
 def main():
@@ -45,9 +45,7 @@ def main():
     debugSettings(args.debug, args.logFile, fileName = "emEfficiencyEENoSkimmed.log")
     
     # Load the configuration file provided as the first parameter
-    config = {}
-    with open(args.cfgFileName) as configFile:
-        config = json.load(configFile)
+    config = loadJson(args.cfgFileName)
     
     jsonTypeChecker(args.cfgFileName)
     jsonTypeChecker(parsedJsonFile)
@@ -57,12 +55,8 @@ def main():
     
     mainTaskChecker(config, taskNameInConfig)
     
-    # Interface Process
-    logging.info("Only Select Configured as %s", args.onlySelect)
-    if args.onlySelect == "true":
-        logging.info("INTERFACE MODE : JSON Overrider")
-    if args.onlySelect == "false":
-        logging.info("INTERFACE MODE : JSON Additional")
+    # Interface Mode message
+    dispInterfaceMode(cliMode)
     
     setConfigs(allArgs, config, cliMode)
     
@@ -75,15 +69,14 @@ def main():
     # Write the updated configuration file into a temporary file
     updatedConfigFileName = "tempConfigEMEfficiencyEENoSkimmed.json"
     
-    with open(updatedConfigFileName, "w") as outputFile:
-        json.dump(config, outputFile, indent = 2)
+    dumpJson(updatedConfigFileName, config)
     
     # Check which dependencies need to be run
     depsToRun = {}
     for dep in commonDeps:
         depsToRun[dep] = 1
     
-    commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --severity error --shm-segment-size 12000000000 -b")
+    commandToRun = f"{taskNameInCommandLine} --configuration json://{updatedConfigFileName} --severity error --shm-segment-size 12000000000 -b"
     for dep in depsToRun.keys():
         commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"
         logging.debug("%s added your workflow", dep)

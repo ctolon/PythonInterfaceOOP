@@ -21,7 +21,6 @@
 import logging
 import sys
 import os
-from distutils.util import strtobool
 
 from .dqExceptions import CentFilterError, CfgInvalidFormatError, DependencyNotFoundError, MandatoryArgNotFoundError, NotInAlienvError, EventFilterSelectionsError, TasknameNotFoundInConfigFileError, TextListNotStartsWithAtError
 
@@ -120,13 +119,6 @@ def mainTaskChecker(config: dict, taskNameInConfig: str):
             logging.info("You are in %s alienv", O2PHYSICS_ROOT)
     except NotInAlienvError as e:
         logging.exception(e)
-        #message = "Do you want continue without O2?"
-        #sys.stdout.write('%s [y/n]\n' % message)
-        #while True:
-            #try:
-                #return strtobool(raw_input().lower())
-            #except ValueError:
-                #sys.stdout.write('Please respond with \'y\' or \'n\'.\n')
 
 
 def jsonTypeChecker(cfgFileName: str):

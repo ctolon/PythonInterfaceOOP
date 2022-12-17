@@ -18,23 +18,23 @@
 
 # Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/TableProducer/tableMaker.cxx
 
-import json
 import sys
 import logging
 import logging.config
 import os
 from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, jsonTypeChecker, mainTaskChecker, trackPropagationChecker
-from extramodules.configSetter import setArgsToArgParser, setConfigs, setParallelismOnSkimming, setProcessDummy, setConverters, debugSettings, dispArgs, generateDescriptors, tableProducer
+from extramodules.configSetter import dispInterfaceMode, setArgsToArgParser, setConfigs, setParallelismOnSkimming, setProcessDummy, setConverters, debugSettings, dispArgs, generateDescriptors, tableProducer
 from extramodules.pycacheRemover import runPycacheRemover
+from extramodules.utils import dumpJson, loadJson
 
 
 def main():
     
     # Setting arguments for CLI
     parsedJsonFile = "configs/configTableMakerDataRun3.json"
-    args = setArgsToArgParser(parsedJsonFile, ["timestamp-task", "tof-pid", "tof-event-time", "bc-selection-task", "tof-pid-beta"])
+    args = setArgsToArgParser(parsedJsonFile, ["timestamp-task", "tof-event-time", "bc-selection-task", "tof-pid-beta"])
     allArgs = vars(args) # for get args
-    
+        
     # All Dependencies
     commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table"]
     barrelDeps = ["o2-analysis-trackselection", "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full"]
@@ -122,9 +122,7 @@ def main():
     cliMode = args.onlySelect
     
     # Load the configuration file provided as the first parameter
-    config = {}
-    with open(args.cfgFileName) as configFile:
-        config = json.load(configFile)
+    config = loadJson(args.cfgFileName)
     
     jsonTypeChecker(args.cfgFileName)
     jsonTypeChecker(parsedJsonFile)
@@ -137,12 +135,8 @@ def main():
     
     mainTaskChecker(config, taskNameInConfig)
     
-    # Interface Process
-    logging.info("Only Select Configured as %s", cliMode)
-    if cliMode == "true":
-        logging.info("INTERFACE MODE : JSON Overrider")
-    if cliMode == "false":
-        logging.info("INTERFACE MODE : JSON Additional")
+    # Interface Mode message
+    dispInterfaceMode(cliMode)
     
     # Set arguments to config json file
     setConfigs(allArgs, config, cliMode)
@@ -158,8 +152,7 @@ def main():
     # Write the updated configuration file into a temporary file
     updatedConfigFileName = "tempConfigTableMaker.json"
     
-    with open(updatedConfigFileName, "w") as outputFile:
-        json.dump(config, outputFile, indent = 2)
+    dumpJson(updatedConfigFileName, config)
     
     # Check which dependencies need to be run
     depsToRun = {}
@@ -188,12 +181,11 @@ def main():
     # Generate the aod-writer output descriptor json file
     generateDescriptors(tablesToProduce, tables, writerConfigFileName, kFlag = False)
     
-    commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --severity error --shm-segment-size 12000000000 --aod-writer-json " + writerConfigFileName + " -b")
+    commandToRun = f"{taskNameInCommandLine} --configuration json://{updatedConfigFileName} --severity error --shm-segment-size 12000000000 --aod-writer-json {writerConfigFileName} -b"
     if args.aod_memory_rate_limit:
-        commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --severity error --shm-segment-size 12000000000 --aod-memory-rate-limit " + args.aod_memory_rate_limit + " --aod-writer-json " + writerConfigFileName + " -b")
-    
+        commandToRun = f"{taskNameInCommandLine} --configuration json://{updatedConfigFileName} --severity error --shm-segment-size 12000000000 --aod-memory-rate-limit {args.aod_memory_rate_limit} --aod-writer-json {writerConfigFileName} -b"
     if args.runParallel is True:
-        commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --severity error --shm-segment-size 12000000000 " + "-b")
+        commandToRun = f"{taskNameInCommandLine} --configuration json://{updatedConfigFileName} --severity error --shm-segment-size 12000000000 -b"
     
     for dep in depsToRun.keys():
         commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"
@@ -203,6 +195,9 @@ def main():
     
     if args.runParallel is True:
         commandToRun = setParallelismOnSkimming(commandToRun, taskNameInCommandLine, updatedConfigFileName, "o2-analysis-dq-table-reader", "tempConfigTableReader.json", config)
+    
+    if args.helpO2 is True:
+        commandToRun += " --help full"
     
     print("====================================================================================================================")
     logging.info("Command to run:")
