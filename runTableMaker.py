@@ -23,27 +23,17 @@ import sys
 import logging
 import logging.config
 import os
-from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, centralityChecker, forgettedArgsChecker, jsonTypeChecker, filterSelsChecker, mainTaskChecker, trackPropagationChecker
-from extramodules.configSetter import setParallelismOnSkimming, setProcessDummy, setSwitch, setConverters, setConfig, debugSettings, dispArgs, generateDescriptors, setPrefixSuffix, tableProducer
+from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, jsonTypeChecker, mainTaskChecker, trackPropagationChecker
+from extramodules.configSetter import setArgsToArgParser, setConfigs, setParallelismOnSkimming, setProcessDummy, setConverters, debugSettings, dispArgs, generateDescriptors, tableProducer
 from extramodules.pycacheRemover import runPycacheRemover
-from dqtasks.tableMaker import TableMaker
 
 
 def main():
     
-    # Predefined selections for setSwitch function
-    centralityTableParameters = ["estRun2V0M", "estRun2SPDtks", "estRun2SPDcls", "estRun2CL0", "estRun2CL1", "estFV0A", "estFT0M", "estFDDM", "estNTPV",]
-    ft0Parameters = ["processFT0", "processNoFT0", "processOnlyFT0", "processRun2"]
-    pidParameters = ["pid-el", "pid-mu", "pid-pi", "pid-ka", "pid-pr", "pid-de", "pid-tr", "pid-he", "pid-al",]
-    covParameters = ["processStandard", "processCovariance"]
-    sliceParameters = ["processWoSlice", "processWSlice"]
-    trackPIDQAParameters = ["processQA"]
-    v0GammaQAParameters = ["processNM"]
-    fullSearch = []
-    barrelSearch = []
-    muonSearch = []
-    centSearch = []
-    filterSearch = []
+    # Setting arguments for CLI
+    parsedJsonFile = "configs/configTableMakerDataRun3.json"
+    args = setArgsToArgParser(parsedJsonFile, ["timestamp-task", "tof-pid", "tof-event-time", "bc-selection-task", "tof-pid-beta"])
+    allArgs = vars(args) # for get args
     
     # All Dependencies
     commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table"]
@@ -125,30 +115,11 @@ def main():
         "processAmbiguousBarrelOnly": ["AmbiguousTracksMid"]
         }
     
-    # init args manually
-    initArgs = TableMaker()
-    initArgs.mergeArgs()
-    initArgs.parseArgs()
-    args = initArgs.parseArgs()
-    allArgs = vars(args) # for get args
-    
     # Debug Settings
     debugSettings(args.debug, args.logFile, fileName = "tableMaker.log")
     
     # if cliMode true, Overrider mode else additional mode
     cliMode = args.onlySelect
-    
-    #forgettedArgsChecker(allArgs) # Transaction management
-    
-    # adding prefix for setSwitch function
-    args.process = setPrefixSuffix(args.process, "process", '', True, False)
-    args.pid = setPrefixSuffix(args.pid, "pid-", '', True, False)
-    args.est = setPrefixSuffix(args.est, "est", '', True, False)
-    args.FT0 = setPrefixSuffix(args.FT0, "process", '', True, False)
-    args.isCovariance = setPrefixSuffix(args.isCovariance, "process", '', True, False)
-    args.isWSlice = setPrefixSuffix(args.isWSlice, "process", '', True, False)
-    args.NM = setPrefixSuffix(args.NM, "process", '', True, False)
-    args.QA = setPrefixSuffix(args.QA, "process", '', True, False)
     
     # Load the configuration file provided as the first parameter
     config = {}
@@ -156,6 +127,7 @@ def main():
         config = json.load(configFile)
     
     jsonTypeChecker(args.cfgFileName)
+    jsonTypeChecker(parsedJsonFile)
     
     runOverMC = False
     logging.info("runOverMC : %s, Reduced Tables will be produced for Data", runOverMC)
@@ -165,13 +137,6 @@ def main():
     
     mainTaskChecker(config, taskNameInConfig)
     
-    if args.process:
-        fullSearch = [s for s in args.process if "Full" in s]
-        barrelSearch = [s for s in args.process if "Barrel" in s]
-        muonSearch = [s for s in args.process if "Muon" in s]
-        filterSearch = [s for s in args.process if "Filter" in s]
-        centSearch = [s for s in args.process if "Cent" in s]
-    
     # Interface Process
     logging.info("Only Select Configured as %s", cliMode)
     if cliMode == "true":
@@ -179,65 +144,16 @@ def main():
     if cliMode == "false":
         logging.info("INTERFACE MODE : JSON Additional")
     
-    # Iterating in JSON config file
-    for task, cfgValuePair in config.items():
-        if isinstance(cfgValuePair, dict):
-            for cfg, value in cfgValuePair.items():
-                
-                # aod
-                if cfg == "aod-file" and args.aod:
-                    config[task][cfg] = args.aod
-                    logging.debug(" - [%s] %s : %s", task, cfg, args.aod)
-                
-                # For don't override tof-pid: pid tables. We use instead of tof-pid-full and tpc-pid-full for pid tables
-                if task == "tof-pid" and cfg.startswith("pid"):
-                    continue
-                
-                if len(barrelSearch) > 0 or len(fullSearch) > 0:
-                    if args.isBarrelSelectionTiny == "true":
-                        config["d-q-barrel-track-selection-task"]["processSelection"] = "false"
-                        config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = args.isBarrelSelectionTiny
-                
-                if (len(barrelSearch) == 0 and len(fullSearch) == 0 and args.runData and cliMode == "true"):
-                    config["d-q-barrel-track-selection-task"]["processSelection"] = "false"
-                    config["d-q-barrel-track-selection-task"]["processSelectionTiny"] = "false"
-                    config["d-q-barrel-track-selection-task"]["processDummy"] = "true"
-                
-                if (len(muonSearch) == 0 and len(fullSearch) == 0 and args.runData and cliMode == "true"):
-                    config["d-q-muons-selection"]["processSelection"] = "false"
-                    config["d-q-muons-selection"]["processDummy"] = "true"
-                
-                if len(filterSearch) > 0 and args.runData:
-                    config["d-q-filter-p-p-task"]["processFilterPP"] = "true"
-                    config["d-q-filter-p-p-task"]["processFilterPPTiny"] = "false"
-                    
-                    if args.isFilterPPTiny == "true":
-                        config["d-q-filter-p-p-task"]["processFilterPP"] = "false"
-                        config["d-q-filter-p-p-task"]["processFilterPPTiny"] = "true"
-                
-                if len(filterSearch) == 0 and args.runData and cliMode == "true":
-                    config["d-q-filter-p-p-task"]["processFilterPP"] = "false"
-                    config["d-q-filter-p-p-task"]["processFilterPPTiny"] = "false"
-                    config["d-q-filter-p-p-task"]["processDummy"] = "false"
-                
-                setConfig(config, task, cfg, allArgs, cliMode)
-                setSwitch(config, task, cfg, allArgs, cliMode, "est", centralityTableParameters, "1/-1")
-                setSwitch(config, task, cfg, allArgs, cliMode, "pid", pidParameters, "1/-1")
-                setSwitch(config, task, cfg, allArgs, cliMode, "process", specificDeps.keys(), "true/false")
-                setSwitch(config, task, cfg, allArgs, "true", "isCovariance", covParameters, "true/false")
-                setSwitch(config, task, cfg, allArgs, "true", "isWSlice", sliceParameters, "true/false")
-                setSwitch(config, task, cfg, allArgs, cliMode, "QA", trackPIDQAParameters, "true/false")
-                setSwitch(config, task, cfg, allArgs, cliMode, "NM", v0GammaQAParameters, "true/false")
-                setSwitch(config, task, cfg, allArgs, "true", "FT0", ft0Parameters, "true/false", "tof-event-time")
-                mandatoryArgChecker(config, task, cfg, taskNameInConfig, "processOnlyBCs")
-    
-    setProcessDummy(config, dummyHasTasks) # dummy automizer
+    # Set arguments to config json file
+    setConfigs(allArgs, config, cliMode)
     
     # Transactions
-    centralityChecker(config, args.process, args.syst, centSearch)
-    filterSelsChecker(args.cfgBarrelSels, args.cfgMuonSels, args.cfgBarrelTrackCuts, args.cfgMuonsCuts, allArgs)
-    aodFileChecker(args.aod)
+    #centralityChecker(config, args.process, args.syst, centSearch)
+    #filterSelsChecker(args.cfgBarrelSels, args.cfgMuonSels, args.cfgBarrelTrackCuts, args.cfgMuonsCuts, allArgs)
+    aodFileChecker(allArgs["internal_dpl_aod_reader:aod_file"])
     trackPropagationChecker(args.add_track_prop, barrelDeps)
+    mandatoryArgChecker(config, taskNameInConfig, "processOnlyBCs")
+    setProcessDummy(config, dummyHasTasks) # dummy automizer
     
     # Write the updated configuration file into a temporary file
     updatedConfigFileName = "tempConfigTableMaker.json"
@@ -275,10 +191,10 @@ def main():
     commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --severity error --shm-segment-size 12000000000 --aod-writer-json " + writerConfigFileName + " -b")
     if args.aod_memory_rate_limit:
         commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --severity error --shm-segment-size 12000000000 --aod-memory-rate-limit " + args.aod_memory_rate_limit + " --aod-writer-json " + writerConfigFileName + " -b")
-        
+    
     if args.runParallel is True:
         commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --severity error --shm-segment-size 12000000000 " + "-b")
-
+    
     for dep in depsToRun.keys():
         commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"
         logging.debug("%s added your workflow", dep)

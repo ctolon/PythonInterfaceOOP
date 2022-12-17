@@ -23,66 +23,74 @@ import logging
 import logging.config
 import os
 import sys
-from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, depsChecker, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, oneToMultiDepsChecker
-from extramodules.configSetter import setConfig, setFalseHasDeps, setSwitch, setSelection, setProcessDummy, debugSettings, dispArgs, setPrefixSuffix
+from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, depsChecker, jsonTypeChecker, mainTaskChecker
+from extramodules.configSetter import setArgsToArgParser, setConfigs, setProcessDummy, debugSettings, dispArgs
 from extramodules.pycacheRemover import runPycacheRemover
-from dqtasks.tableReader import TableReader
 
 
 def main():
-    # Predefined selections for setSwitch function
-    sameEventPairingParameters = ["processDecayToEESkimmed", "processDecayToMuMuSkimmed", "processDecayToMuMuVertexingSkimmed", "processVnDecayToEESkimmed", "processVnDecayToMuMuSkimmed", "processElectronMuonSkimmed", "processAllSkimmed", "processDecayToEEPrefilterSkimmed"]
     
-    eventMixingParameters = ["processBarrelSkimmed", "processMuonSkimmed", "processBarrelMuonSkimmed", "processBarrelVnSkimmed", "processMuonVnSkimmed"]
-    # yapf: disable
-    # All Dependencies
-    analysisSelectionDeps = {
-        "trackSelection": {"analysis-track-selection": "processSkimmed"},
-        "prefilterSelection": {"analysis-prefilter-selection": "processBarrelSkimmed"},
-        "eventSelection": {"analysis-event-selection": "processSkimmed"},
-        "muonSelection": {"analysis-muon-selection": "processSkimmed"},
-        "dileptonHadron": {"analysis-dilepton-hadron": "processSkimmed"}
-        }
-    sameEventTaskName = "analysis-same-event-pairing"
+    # Setting arguments for CLI
+    parsedJsonFile = "configs/configAnalysisData.json"
+    args = setArgsToArgParser(parsedJsonFile)
+    allArgs = vars(args) # for get args
+        
+    sameEventPairingTaskName = "analysis-same-event-pairing"
     sameEventPairingDeps = {
-        "processDecayToEESkimmed": {"analysis-track-selection": "processSkimmed"},
-        "processDecayToEEPrefilterSkimmed": {"analysis-track-selection": "processSkimmed","analysis-prefilter-selection" : "processBarrelSkimmed"},
-        "processDecayToMuMuSkimmed": {"analysis-muon-selection": "processSkimmed"},
-        "processDecayToMuMuVertexingSkimmed": {"analysis-muon-selection": "processSkimmed"},
-        "processVnDecayToEESkimmed": {"analysis-track-selection": "processSkimmed"},
-        "processVnDecayToMuMuSkimmed": {"analysis-muon-selection": "processSkimmed"},
-        "processElectronMuonSkimmed": {"analysis-track-selection": "processSkimmed","analysis-muon-selection": "processSkimmed"},
-        "processAllSkimmed": {"analysis-track-selection": "processSkimmed","analysis-muon-selection": "processSkimmed"},
+        "processDecayToEESkimmed": {
+            "analysis-track-selection": "processSkimmed"
+            },
+        "processDecayToEEPrefilterSkimmed": {
+            "analysis-track-selection": "processSkimmed",
+            "analysis-prefilter-selection": "processBarrelSkimmed"
+            },
+        "processDecayToMuMuSkimmed": {
+            "analysis-muon-selection": "processSkimmed"
+            },
+        "processDecayToMuMuVertexingSkimmed": {
+            "analysis-muon-selection": "processSkimmed"
+            },
+        "processVnDecayToEESkimmed": {
+            "analysis-track-selection": "processSkimmed"
+            },
+        "processVnDecayToMuMuSkimmed": {
+            "analysis-muon-selection": "processSkimmed"
+            },
+        "processElectronMuonSkimmed": {
+            "analysis-track-selection": "processSkimmed",
+            "analysis-muon-selection": "processSkimmed"
+            },
+        "processAllSkimmed": {
+            "analysis-track-selection": "processSkimmed",
+            "analysis-muon-selection": "processSkimmed"
+            },
         }
     eventMixingTaskName = "analysis-event-mixing"
     eventMixingDeps = {
-        "processBarrelSkimmed": {"analysis-track-selection": "processSkimmed"},
-        "processMuonSkimmed": {"analysis-muon-selection": "processSkimmed"},
-        "processBarrelMuonSkimmed": {"analysis-track-selection": "processSkimmed", "analysis-muon-selection": "processSkimmed"},
-        "processBarrelVnSkimmed": {"analysis-track-selection": "processSkimmed"},
-        "processMuonVnSkimmed": {"analysis-muon-selection": "processSkimmed"}
+        "processBarrelSkimmed": {
+            "analysis-track-selection": "processSkimmed"
+            },
+        "processMuonSkimmed": {
+            "analysis-muon-selection": "processSkimmed"
+            },
+        "processBarrelMuonSkimmed": {
+            "analysis-track-selection": "processSkimmed",
+            "analysis-muon-selection": "processSkimmed"
+            },
+        "processBarrelVnSkimmed": {
+            "analysis-track-selection": "processSkimmed"
+            },
+        "processMuonVnSkimmed": {
+            "analysis-muon-selection": "processSkimmed"
+            }
         }
     # yapf: enable
-    
-    # init args manually
-    initArgs = TableReader()
-    initArgs.mergeArgs()
-    initArgs.parseArgs()
-    args = initArgs.parseArgs()
-    allArgs = vars(args) # for get args
     
     # Debug settings
     debugSettings(args.debug, args.logFile, fileName = "tableReader.log")
     
     # if cliMode true, Overrider mode else additional mode
     cliMode = args.onlySelect
-    
-    # Transaction
-    #forgettedArgsChecker(allArgs) # Transaction Management
-    
-    # adding prefix for setSwitch function
-    args.process = setPrefixSuffix(args.process, "process", 'Skimmed', True, True)
-    args.mixing = setPrefixSuffix(args.mixing, "process", 'Skimmed', True, True)
     
     # Load the configuration file provided as the first parameter
     config = {}
@@ -91,6 +99,7 @@ def main():
     
     # Transaction
     jsonTypeChecker(args.cfgFileName)
+    jsonTypeChecker(parsedJsonFile)
     
     taskNameInCommandLine = "o2-analysis-dq-table-reader"
     taskNameInConfig = "analysis-event-selection"
@@ -105,56 +114,32 @@ def main():
     if args.onlySelect == "false":
         logging.info("INTERFACE MODE : JSON Additional")
     
-    setSelection(config, analysisSelectionDeps, args.analysis, cliMode) # Set selections
-    
-    # Iterating in JSON config file
-    for task, cfgValuePair in config.items():
-        if isinstance(cfgValuePair, dict):
-            for cfg, value in cfgValuePair.items():
-                
-                # aod
-                if cfg == "aod-file" and args.aod:
-                    config[task][cfg] = args.aod
-                    logging.debug(" - [%s] %s : %s", task, cfg, args.aod)
-                # reader
-                if cfg == "aod-reader-json" and args.reader:
-                    config[task][cfg] = args.reader
-                    logging.debug(" - [%s] %s : %s", task, cfg, args.reader)
-                
-                # Interface Logic
-                setConfig(config, task, cfg, allArgs, cliMode)
-                setSwitch(config, task, cfg, allArgs, cliMode, "process", sameEventPairingParameters, "true/false")
-                setSwitch(config, task, cfg, allArgs, cliMode, "mixing", eventMixingParameters, "true/false")
-                setFalseHasDeps(config, task, cfg, args.process, sameEventPairingParameters, cliMode)
-                if task != "analysis-prefilter-selection": # we have processBarrelSkimmed option in analysis-prefilter-selection and for not overriding it other processBarrelSkimmed option, we have to specifiy task
-                    setFalseHasDeps(config, task, cfg, args.mixing, eventMixingParameters, cliMode)
-                mandatoryArgChecker(config, task, cfg, taskNameInConfig, "processSkimmed")
-    
-    setProcessDummy(config) # dummy automizer
+    # Set arguments to config json file
+    setConfigs(allArgs, config, cliMode)
     
     # Transacations
-    aodFileChecker(args.aod)
-    oneToMultiDepsChecker(args.mixing, "eventMixing", args.analysis, "analysis")
-    oneToMultiDepsChecker(args.process, "sameEventPairing", args.analysis, "analysis")
-    depsChecker(config, sameEventPairingDeps, sameEventTaskName)
+    aodFileChecker(allArgs["internal_dpl_aod_reader:aod_file"])
+    depsChecker(config, sameEventPairingDeps, sameEventPairingTaskName)
     depsChecker(config, eventMixingDeps, eventMixingTaskName)
+    mandatoryArgChecker(config, taskNameInConfig, "processSkimmed")
+    setProcessDummy(config) # dummy automizer
     
     # Write the updated configuration file into a temporary file
     updatedConfigFileName = "tempConfigTableReader.json"
     
     with open(updatedConfigFileName, "w") as outputFile:
         json.dump(config, outputFile, indent = 2)
-            
+    
     commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " -b")
     if args.writer is not None:
         commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --aod-writer-json " + args.writer + " -b")
-        
+    
     print("====================================================================================================================")
     logging.info("Command to run:")
     logging.info(commandToRun)
     print("====================================================================================================================")
     dispArgs(allArgs) # Display all args
-        
+    
     if args.runParallel is False:
         os.system(commandToRun) # Execute O2 generated commands
         runPycacheRemover() # Run pycacheRemover

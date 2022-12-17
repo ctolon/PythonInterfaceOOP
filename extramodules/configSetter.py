@@ -15,23 +15,17 @@
 
 # This script includes setter functions for configurables (Developer package)
 
-from .stringOperations import listToString, stringToListWithSlash
+from extramodules.dqLibGetter import DQLibGetter
+from .stringOperations import convertListToStr, listToString, stringToListWithColon
 import logging
 from logging import handlers
 import sys
 import os
 import json
-
-
-# NOTE This will removed when we have unique name for dilepton-track signals
-def multiConfigurableSet(config: dict, task: str, cfg: str, arg: list, cliMode) -> None:
-    
-    if isinstance(arg, list):
-        arg = listToString(arg)
-    if cliMode == "false":
-        actualConfig = config[task][cfg]
-        arg = actualConfig + "," + arg
-    config[task][cfg] = arg
+import argparse
+from extramodules.choicesHandler import ChoicesCompleterList
+import argcomplete
+from argcomplete.completers import ChoicesCompleter
 
 
 def dispArgs(allArgs: dict) -> None:
@@ -160,7 +154,7 @@ def generateDescriptors(tablesToProduce: dict, tables: dict, writerConfigFileNam
         with open(readerConfigFileName, "w") as readerConfigFile:
             json.dump(readerConfig, readerConfigFile, indent = 2)
     logging.info("aodWriterTempConfig==========")
-    print(writerConfig)
+    logging.info(f"{writerConfig}")
 
 
 def tableProducer(config: dict, taskNameInConfig: str, tablesToProduce: dict, commonTables: list, barrelCommonTables: list, muonCommonTables: list, specificTables: list, specificDeps: dict, runOverMC: bool) -> None:
@@ -213,119 +207,6 @@ def tableProducer(config: dict, taskNameInConfig: str, tablesToProduce: dict, co
                 tablesToProduce[table] = 1
 
 
-def setSelection(config: dict, deps: dict, targetCfg: list, cliMode: bool) -> None:
-    """If the arguments are set with very different naming conventions and they are for selection, this function is used to set the values
-
-    Args:
-        config (dict): Input as JSON config file
-        deps (dict): Dependency list
-        targetCfg (list): parameters argument name
-        cliMode (bool): CLI mode
-    Raises:
-        TypeError: If your selection list not type of dict
-    """
-    if targetCfg is not None:
-        for selection, taskNameProcessFuncPair in deps.items():
-            if isinstance(taskNameProcessFuncPair, dict):
-                for taskName, processFunc in taskNameProcessFuncPair.items():
-                    if selection in targetCfg:
-                        config[taskName][processFunc] = "true"
-                        logging.debug(" - [%s] %s : true", taskName, processFunc)
-                    
-                    elif cliMode == "true":
-                        config[taskName][processFunc] = "false"
-                        logging.debug(" - [%s] %s : false", taskName, processFunc)
-            else:
-                raise TypeError("Taskname - Process Function pair should be a dictionary type")
-
-
-def setConfig(config: dict, task: str, cfg: str, allArgs: dict, cliMode: bool) -> None:
-    """This function provides directly set to argument parameter, if argument naming and json cfg naming equals
-
-    Args:
-        config (dict): Input as JSON config file
-        task (str): Task as argument
-        cfg (str): Configurable or Process Func as parameter
-        allArgs (dict): Configured args in CLI
-        cliMode (bool): CLI mode
-    """
-    
-    for keyCfg, valueCfg in allArgs.items():
-        if (cfg == keyCfg) and (valueCfg is not None):
-            if isinstance(valueCfg, list):
-                valueCfg = listToString(valueCfg)
-            if cliMode == "false":
-                actualConfig = config[task][cfg]
-                valueCfg = actualConfig + "," + valueCfg
-            config[task][cfg] = valueCfg
-            logging.debug(" - [%s] %s : %s", task, cfg, valueCfg)
-
-
-def setSwitch(config: dict, task: str, cfg: str, allArgs: dict, cliMode: str, argument: str, parameters: list, switchType: str, taskname: str = None) -> None:
-    """This method provides configure parameters with SWITCH_ON/SWITCH_OFF (both for configurables and process functions)
-
-    Args:
-        config (dict): JSON config file as input
-        task (str): Task from JSON iteration
-        cfg (str): Configurable or Process Func
-        allArgs (dict): Configured args in CLI
-        cliMode (bool): CLI mode
-        argument (str): Selected argument from configured args
-        parameters (list): All available parameters for argument
-        switchType (str): Switch type usage in string --> "SWITCH_ON/SWITCHOFF"
-        taskname (str): task name of switch option in JSON
-    """
-    
-    isValid = False
-    
-    possibleSwitchTypes = ["1/-1", "1/0", "true/false"] # you have to add new switch type here if you need
-    if switchType not in possibleSwitchTypes:
-        logging.error("%s is invalid argument for setSwitch", switchType)
-        raise ValueError("Invalid switchType. Expected one of: %s" % possibleSwitchTypes)
-    
-    switchType = stringToListWithSlash(switchType)
-    
-    if len(switchType) != 2:
-        raise ValueError("Invalid switch Type. Your switch types should be seperated with /. ex: true/false")
-    
-    SWITCH_ON = switchType[0]
-    SWITCH_OFF = switchType[1]
-    
-    if taskname is not None:
-        if taskname == task:
-            isValid = True
-        if isinstance(taskname, str) is False:
-            raise TypeError(f"{taskname} have to in string type!")
-    else:
-        isValid = True
-    
-    if isValid:
-        for keyCfg, valueCfg in allArgs.items():
-            if isinstance(valueCfg, list) and keyCfg == argument:
-                for element in valueCfg:
-                    if (cfg == element) and (element is not None):
-                        config[task][cfg] = SWITCH_ON
-                        logging.debug(" - [%s] %s : %s", task, cfg, SWITCH_ON)
-                
-                if (cliMode == "true"):
-                    for param in parameters:
-                        if param not in valueCfg and param == cfg: # param should equals cfg for getting task info
-                            config[task][cfg] = SWITCH_OFF
-                            logging.debug(" - [%s] %s : %s", task, cfg, SWITCH_OFF)
-                            # print(param)
-            
-            elif isinstance(valueCfg, str) and keyCfg == argument:
-                if (cfg == valueCfg) and (valueCfg is not None):
-                    config[task][cfg] = SWITCH_ON
-                    logging.debug(" - [%s] %s : %s", task, cfg, SWITCH_ON)
-                
-                if (cliMode == "true"):
-                    for param in parameters:
-                        if param != valueCfg and param == cfg: # param should equals cfg for getting task info
-                            config[task][param] = SWITCH_OFF
-                            logging.debug(" - [%s] %s : %s", task, param, SWITCH_OFF)
-
-
 def setProcessDummy(config: dict, dummyHasTasks = None) -> None:
     """Dummy Automizer
 
@@ -366,59 +247,6 @@ def setProcessDummy(config: dict, dummyHasTasks = None) -> None:
                                 config[k]["processDummy"] = "true"
                                 #logging.debug(" - [%s] processDummy : true", k)
 
-
-def setFalseHasDeps(config: dict, task: str, cfg: str, argument: list, parameters: list, cliMode: bool, selectedKey = None) -> None:
-    """function to pull all process function values false when the argument with dependencies is not configured. Otherwise, the process will crash due to dependencies.
-
-    Args:
-        config (dict): Input as JSON config file
-        task (str): Config Task
-        cfg (str): Config cfg
-        argument (list): CLI Argument
-        parameters (list): Your parameter list
-        cliMode (bool): CLI mode
-        selectedKey (str, optional): If you wish, you can define one selected task for more control
-    """
-    
-    if argument is None and cliMode == "true":
-        for process in parameters:
-            if cfg == process and selectedKey is None: # for getting task info from json
-                config[task][cfg] = "false"
-                logging.warning(" - [%s] %s : false", task, cfg)
-            elif cfg == process and task == selectedKey: # also with selected task for more control
-                config[task][cfg] = "false"
-                logging.warning(" - [%s] %s : false", task, cfg)
-            else:
-                continue
-
-
-def setPrefixSuffix(argument, prefix = None, suffix = None, kFlagPrefix = None, kFlagSuffix = None):
-    """Prefix and/or suffix setter function
-
-    Args:
-        argument (str or list): CLI argument
-        prefix (str, optional): Prefix as string. Defaults to None.
-        suffix (str, optional): Suffix as string. Defaults to None
-        kFlagPrefix (bool, optional): Flag for activating prefix setter. Defaults to None.
-        kFlagSuffix (bool, optional): Flag for activating suffix setter. Defaults to None.
-        
-    Returns:
-        str or list: Prefixed/Suffixed Argument
-    """
-    
-    if argument is not None:
-        if kFlagPrefix is True:
-            if isinstance(argument, list):
-                argument = [prefix + sub for sub in argument]
-            else:
-                argument = prefix + argument
-        if kFlagSuffix is True:
-            if isinstance(argument, list):
-                argument = [sub + suffix for sub in argument]
-            else:
-                argument = argument + suffix
-        return argument
-    
 def setParallelismOnSkimming(commandToRun: str, taskNameInCommandLine: str, updatedConfigFileName: str, analysisTaskName: str, analysisTaskTempConfig: str, config: dict) -> str:
     """Setter method for activate parallel sesion run in O2
 
@@ -433,21 +261,192 @@ def setParallelismOnSkimming(commandToRun: str, taskNameInCommandLine: str, upda
     Returns:
         str: Command To Run for run analysis and skimming task at same time
     """
-            
+    
     # For paralel session, we should define some tableReader parms
     skimmingTaskFullCommand = commandToRun
-        
+    
     # open tablereader temp config
     with open(analysisTaskTempConfig) as configAnalysisTask:
         config2 = json.load(configAnalysisTask)
-
+    
     # merge configs
-    mergedConfigs = {**config2, **config}
-
+    mergedConfigs = {
+        **config2,
+        **config
+        }
+    
     #save merged configs
     with open(updatedConfigFileName, "w") as outputFile:
         json.dump(mergedConfigs, outputFile, indent = 2)
-
+    
     #NOTE: Aod writer json config arg currently not working with parallelism
     #return (analysisTaskName + " --configuration json://" + updatedConfigFileName + " --aod-writer-json aodWriterTempConfig.json " + " -b " + '| ' + skimmingTaskFullCommand)
     return (analysisTaskName + " --configuration json://" + updatedConfigFileName + " -b " + '| ' + skimmingTaskFullCommand)
+
+
+def setArgsToArgParser(cfgJsonName: str, tasksToPassList = []) -> dict:
+    """This method parses the json file and generates CLI arguments
+
+    Args:
+        cfgJsonName (str): Path to Json config file for creating CLI arguments with parsing
+        tasksToPassList (list): If you don't want to include and provide some tasks from the JSON config file to CLI arguments you can define them in a list type
+
+    Returns:
+        dict: namespace, argument
+    """
+    
+    # Load the configuration file for creating parser args (hard coded)
+    configForParsing = {}
+    with open(cfgJsonName) as configFile:
+        configForParsing = json.load(configFile)
+    
+    # Dependency injection
+    dqLibGetter = DQLibGetter()
+    
+    # Get All Configurables for DQ Framework from DQ header files
+    allAnalysisCuts = dqLibGetter.allAnalysisCuts
+    allMCSignals = dqLibGetter.allMCSignals
+    allSels = dqLibGetter.allSels
+    allMixing = dqLibGetter.allMixing
+    
+    # Get all histogram groups for DQ Framework from histogram library
+    # NOTE Now we use only all histos for backward comp.
+    allHistos = dqLibGetter.allHistos
+    allEventHistos = dqLibGetter.allEventHistos
+    allTrackHistos = dqLibGetter.allTrackHistos
+    allMCTruthHistos = dqLibGetter.allMCTruthHistos
+    allPairHistos = dqLibGetter.allPairHistos
+    allDileptonHistos = dqLibGetter.allDileptonHistos
+    
+    # Predefined lists for autocompletion
+    booleanSelections = ["true", "false"]
+    itsMatchingSelections = ["0", "1", "2", "3"]
+    binarySelection = ["0", "1"]
+    tripletSelection = ["-1", "0", "1"]
+    collisionSystemSelections = ["PbPb", "pp", "pPb", "Pbp", "XeXe"]
+    eventMuonSelections = ["0", "1", "2"]
+    debugLevelSelectionsList = ["NOTSET", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+
+    # list for save all arguments (template --> taskname:configuration)
+    arglist = []
+    
+    # Iterating in JSON config file
+    for task, cfgValuePair in configForParsing.items():
+        if isinstance(cfgValuePair, dict):
+            for argument in cfgValuePair.keys():
+                arglist.append(task + ":" + argument) # Set CLI argument as --> taskname:config
+    
+    parser = argparse.ArgumentParser(description = 'Arguments to pass', formatter_class = argparse.ArgumentDefaultsHelpFormatter)
+    
+    parser.add_argument("cfgFileName", metavar = "Config.json", default = "config.json", help = "config JSON file name (mandatory)")
+    parser.add_argument("-runParallel", help = "Run with also table-maker", action = "store_true", default = False)
+    
+    # Special Configs
+    # parser.add_argument("-runData", help = "Run over Data", action = "store_true", default = True)
+    
+    # GLOBAL OPTIONS
+    # TODO extend them
+    groupGlobal = parser.add_argument_group(title = f"Global workflow options")
+    groupGlobal.add_argument("--aod-memory-rate-limit", help = "Rate limit AOD processing based on memory", action = "store", type = str)
+    groupGlobal.add_argument("--writer", help = "Argument for producing extra reduced tables", action = "store", type = str)
+    
+    # Converter Task Options
+    groupO2Converters = parser.add_argument_group(title = f"Add to workflow O2 Converter task options")
+    groupO2Converters.add_argument("--add_mc_conv", help = "Add the converter from mcparticle to mcparticle+001 (Adds your workflow o2-analysis-mc-converter task)", action = "store_true",)
+    groupO2Converters.add_argument("--add_fdd_conv", help = "Add the fdd converter (Adds your workflow o2-analysis-fdd-converter task)", action = "store_true",)
+    groupO2Converters.add_argument("--add_track_prop", help = "Add track propagation to the innermost layer (TPC or ITS) (Adds your workflow o2-analysis-track-propagation task)", action = "store_true",)
+    groupO2Converters.add_argument("--add_weakdecay_ind", help = "Add Converts V0 and cascade version 000 to 001 (Adds your workflow o2-analysis-weak-decay-indices task)", action = "store_true",)
+    
+    # Helper Options
+    groupHelper= parser.add_argument_group(title = f"Helper Options")
+    groupHelper.add_argument("--debug", help = "execute with debug options", action = "store", type = str.upper, default = "INFO", choices = debugLevelSelectionsList,).completer = ChoicesCompleterList(debugLevelSelectionsList)
+    groupHelper.add_argument("--logFile", help = "Enable logger for both file and CLI", action = "store_true")
+    groupHelper.add_argument("--onlySelect", help = "If false JSON Overrider Interface If true JSON Additional Interface", action = "store", default = "true", type = str.lower, choices = booleanSelections,).completer = ChoicesCompleter(booleanSelections)
+    
+    # Create argument group for iterating json options
+    groupJsonParser = parser.add_argument_group(title = f"JSON configuration options")
+    
+    # save args to parser(template --> --taskname:config)
+    for arg in arglist:
+        
+        # seperate the template to list --> taskname:config to [taskname, configurable]
+        seperatedArg = stringToListWithColon(arg)
+        configurable = seperatedArg[1] # configurable as second index
+        taskname = seperatedArg[0] # taskname as first index
+        
+        # Tasks to pass
+        if taskname in tasksToPassList:
+            continue
+        
+        # Define posible autocompletions
+        # DQ Framework
+        if "Cuts" in configurable:
+            groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allAnalysisCuts)
+        elif configurable.endswith("Signals"):
+            groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allMCSignals)
+        elif "Histogram" in configurable:
+            groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allHistos)
+        elif configurable.endswith("BarrelSels") or configurable.endswith("MuonSels"):
+            groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allSels)
+        elif "MixingVars" in configurable:
+            groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allMixing)
+        elif configurable.startswith("cfg") and "QA" in configurable:
+            groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleterList(booleanSelections)
+        elif configurable == "cfgIsAmbiguous":
+            groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleterList(booleanSelections)
+        elif configurable == "cfgFillCandidateTable":
+            groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleterList(booleanSelections)
+        elif configurable == "cfgFlatTables":
+            groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleterList(booleanSelections)
+        elif configurable == "processDummy": # NOTE we don't need configure processDummy since we have dummy automizer
+            continue
+        
+        # NOTE maybe need define also task name except process for protection
+        # Common Framework
+        elif configurable.startswith("process"):
+            groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, nargs = "*", metavar = "\b").completer = ChoicesCompleterList(booleanSelections)
+        elif configurable == "syst":
+            groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b").completer = ChoicesCompleterList(collisionSystemSelections)
+        elif configurable == "doVertexZeq":
+            groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b").completer = ChoicesCompleterList(binarySelection)
+        elif configurable.startswith("pid-") or configurable.startswith("est-"):
+            groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b").completer = ChoicesCompleterList(tripletSelection)
+        elif configurable == "muonSelection":
+            groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b").completer = ChoicesCompleterList(eventMuonSelections)
+        elif configurable == "itsMatching":
+            groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b").completer = ChoicesCompleterList(itsMatchingSelections)
+        elif configurable == "compatibilityIU":
+            groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleterList(booleanSelections)
+        else:
+            groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b") # Has no autocompletion
+    
+    argcomplete.autocomplete(parser, always_complete_options = False)
+    return parser.parse_args()
+
+
+def setConfigs(allArgs: dict, config: dict, climode: str) -> None:
+    """Setter function for CLI arguments to JSON config file
+
+    Args:
+        allArgs (dict): All provided arguments from CLI
+        config (dict): Input as JSON config file
+        climode (str): CLI mode selection (true or false in string type)
+    """
+    for argument, parameter in allArgs.items():
+        if parameter is not None: # NOTE We can't iterate in None types
+            if ":" in argument: # protection, we need seperate only core O2 interface args
+                
+                # Seperating for taskname and configurable
+                tasknameConfigurablePair = stringToListWithColon(argument) # taskname:Configurable --> [taskname, configurable]
+                taskname = tasknameConfigurablePair[0] # get taskname as first index
+                taskname = [char.replace("_", "-") for char in taskname] # replace _ to - (list comprehension)
+                taskname = convertListToStr(taskname) # convert list to string after list comprehension
+                configurable = tasknameConfigurablePair[1] # get configurable as second index
+                
+                if isinstance(parameter, list): # for list to comma seperated strings
+                    parameter = listToString(parameter)
+                if climode == "false":
+                    actualConfig = config[taskname][configurable]
+                    valueCfg = actualConfig + "," + valueCfg
+                config[taskname][configurable] = parameter
+                logging.debug(" - [%s] %s : %s", taskname, configurable, parameter)

@@ -23,21 +23,17 @@ import sys
 import logging
 import logging.config
 import os
-from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, centralityChecker, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, trackPropagationChecker
-from extramodules.configSetter import setParallelismOnSkimming, setSwitch, setConverters, setConfig, debugSettings, dispArgs, generateDescriptors, setPrefixSuffix, tableProducer, setProcessDummy
+from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, jsonTypeChecker, mainTaskChecker, trackPropagationChecker
+from extramodules.configSetter import setArgsToArgParser, setConfigs, setParallelismOnSkimming, setConverters, debugSettings, dispArgs, generateDescriptors, tableProducer, setProcessDummy
 from extramodules.pycacheRemover import runPycacheRemover
-from dqtasks.tableMakerMC import TableMakerMC
 
 
 def main():
     
-    # Predefined selections for setSwitch function
-    centralityTableParameters = ["estRun2V0M", "estRun2SPDtks", "estRun2SPDcls", "estRun2CL0", "estRun2CL1", "estFV0A", "estFT0M", "estFDDM", "estNTPV",]
-    ft0Parameters = ["processFT0", "processNoFT0", "processOnlyFT0", "processRun2"]
-    pidParameters = ["pid-el", "pid-mu", "pid-pi", "pid-ka", "pid-pr", "pid-de", "pid-tr", "pid-he", "pid-al",]
-    covParameters = ["processStandard", "processCovariance"]
-    sliceParameters = ["processWoSlice", "processWSlice"]
-    centSearch = [] # for centrality transaction
+    # Setting arguments for CLI
+    parsedJsonFile = "configs/configTableMakerMCRun3.json"
+    args = setArgsToArgParser(parsedJsonFile)
+    allArgs = vars(args) # for get args
     
     # All Dependencies
     commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table",]
@@ -110,29 +106,11 @@ def main():
         "processMuonOnlyWithQvector": ["ReducedEventsQvector"],
         "processMuonOnlyWithFilter": [],
         }
-    
-    # init args manually
-    initArgs = TableMakerMC()
-    initArgs.mergeArgs()
-    initArgs.parseArgs()
-    args = initArgs.parseArgs()
-    allArgs = vars(args) # for get args
-    
     # Debug Settings
     debugSettings(args.debug, args.logFile, fileName = "tableMakerMC.log")
     
     # if cliMode true, Overrider mode else additional mode
     cliMode = args.onlySelect
-    
-    #forgettedArgsChecker(allArgs) # Transaction management
-    
-    # adding prefix for setSwitch function
-    args.process = setPrefixSuffix(args.process, "process", '', True, False)
-    args.pid = setPrefixSuffix(args.pid, "pid-", '', True, False)
-    args.est = setPrefixSuffix(args.est, "est", '', True, False)
-    args.FT0 = setPrefixSuffix(args.FT0, "process", '', True, False)
-    args.isCovariance = setPrefixSuffix(args.isCovariance, "process", '', True, False)
-    args.isWSlice = setPrefixSuffix(args.isWSlice, "process", '', True, False)
     
     # Load the configuration file provided as the first parameter
     config = {}
@@ -140,6 +118,7 @@ def main():
         config = json.load(configFile)
     
     jsonTypeChecker(args.cfgFileName)
+    jsonTypeChecker(parsedJsonFile)
     
     runOverMC = True
     logging.info("runOverMC : %s, Reduced Tables will be produced for MC", runOverMC)
@@ -156,38 +135,13 @@ def main():
     if cliMode == "false":
         logging.info("INTERFACE MODE : JSON Additional")
     
-    if args.process:
-        centSearch = [s for s in args.process if "Cent" in s]
+    # Set arguments to config json file
+    setConfigs(allArgs, config, cliMode)
     
-    # Iterating in JSON config file
-    for task, cfgValuePair in config.items():
-        if isinstance(cfgValuePair, dict):
-            for cfg, value in cfgValuePair.items():
-                
-                # aod
-                if cfg == "aod-file" and args.aod:
-                    config[task][cfg] = args.aod
-                    logging.debug(" - [%s] %s : %s", task, cfg, args.aod)
-                
-                # For don't override tof-pid: pid tables. We use instead of tof-pid-full and tpc-pid-full for pid tables
-                if task == "tof-pid" and cfg.startswith("pid"):
-                    continue
-                
-                setConfig(config, task, cfg, allArgs, cliMode)
-                setSwitch(config, task, cfg, allArgs, cliMode, "est", centralityTableParameters, "1/-1")
-                setSwitch(config, task, cfg, allArgs, cliMode, "pid", pidParameters, "1/-1")
-                setSwitch(config, task, cfg, allArgs, cliMode, "process", specificDeps.keys(), "true/false")
-                setSwitch(config, task, cfg, allArgs, "true", "isCovariance", covParameters, "true/false")
-                setSwitch(config, task, cfg, allArgs, "true", "isWSlice", sliceParameters, "true/false")
-                setSwitch(config, task, cfg, allArgs, "true", "FT0", ft0Parameters, "true/false", "tof-event-time")
-                mandatoryArgChecker(config, task, cfg, taskNameInConfig, "processOnlyBCs")
-    
-    setProcessDummy(config, dummyHasTasks) # dummy automizer
-    
-    # Transactions
-    centralityChecker(config, args.process, args.syst, centSearch)
-    aodFileChecker(args.aod)
+    aodFileChecker(allArgs["internal_dpl_aod_reader:aod_file"])
     trackPropagationChecker(args.add_track_prop, barrelDeps)
+    mandatoryArgChecker(config, taskNameInConfig, "processOnlyBCs")
+    setProcessDummy(config, dummyHasTasks) # dummy automizer
     
     # Write the updated configuration file into a temporary file
     updatedConfigFileName = "tempConfigTableMakerMC.json"
@@ -225,7 +179,7 @@ def main():
     commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --severity error --shm-segment-size 12000000000 --aod-writer-json " + writerConfigFileName + " -b")
     if args.aod_memory_rate_limit:
         commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --severity error --shm-segment-size 12000000000 --aod-memory-rate-limit " + args.aod_memory_rate_limit + " --aod-writer-json " + writerConfigFileName + " -b")
-        
+    
     if args.runParallel is True:
         commandToRun = (taskNameInCommandLine + " --configuration json://" + updatedConfigFileName + " --severity error --shm-segment-size 12000000000 " + "-b")
     

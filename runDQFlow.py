@@ -23,30 +23,20 @@ import sys
 import logging
 import logging.config
 import os
-from extramodules.dqTranscations import aodFileChecker, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, trackPropagationChecker
-from extramodules.configSetter import setSwitch, setConverters, setConfig, debugSettings, dispArgs, setPrefixSuffix
+from extramodules.dqTranscations import aodFileChecker, jsonTypeChecker, mainTaskChecker, trackPropagationChecker
+from extramodules.configSetter import setArgsToArgParser, setConfigs, setConverters, debugSettings, dispArgs
 from extramodules.pycacheRemover import runPycacheRemover
-from dqtasks.dqFlow import AnalysisQvector
 
 
 def main():
     
-    # Predefined selections for setSwitch function
-    centralityTableParameters = ["estRun2V0M", "estRun2SPDtks", "estRun2SPDcls", "estRun2CL0", "estRun2CL1", "estFV0A", "estFT0M", "estFDDM", "estNTPV",]
-    ft0Parameters = ["processFT0", "processNoFT0", "processOnlyFT0", "processRun2"]
-    pidParameters = ["pid-el", "pid-mu", "pid-pi", "pid-ka", "pid-pr", "pid-de", "pid-tr", "pid-he", "pid-al"]
-    covParameters = ["processStandard", "processCovariance"]
-    sliceParameters = ["processWoSlice", "processWSlice"]
+    # Setting arguments for CLI
+    parsedJsonFile = "configs/configFlowDataRun3.json"
+    args = setArgsToArgParser(parsedJsonFile)
+    allArgs = vars(args) # for get args
     
     # All Dependencies
     commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table", "o2-analysis-centrality-table", "o2-analysis-trackselection", "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full"]
-    
-    # init args manually
-    initArgs = AnalysisQvector()
-    initArgs.mergeArgs()
-    initArgs.parseArgs()
-    args = initArgs.parseArgs()
-    allArgs = vars(args) # for get args
     
     # Debug Settings
     debugSettings(args.debug, args.logFile, fileName = "dqFlow.log")
@@ -54,21 +44,13 @@ def main():
     # if cliMode true, Overrider mode else additional mode
     cliMode = args.onlySelect
     
-    #forgettedArgsChecker(allArgs) # Transaction Management
-    
-    # adding prefix for setSwitch function
-    args.pid = setPrefixSuffix(args.pid, "pid-", '', True, False)
-    args.est = setPrefixSuffix(args.est, "est", '', True, False)
-    args.FT0 = setPrefixSuffix(args.FT0, "process", '', True, False)
-    args.isCovariance = setPrefixSuffix(args.isCovariance, "process", '', True, False)
-    args.isWSlice = setPrefixSuffix(args.isWSlice, "process", '', True, False)
-    
     # Load the configuration file provided as the first parameter
     config = {}
     with open(args.cfgFileName) as configFile:
         config = json.load(configFile)
     
     jsonTypeChecker(args.cfgFileName)
+    jsonTypeChecker(parsedJsonFile)
     
     taskNameInConfig = "analysis-qvector"
     taskNameInCommandLine = "o2-analysis-dq-flow"
@@ -82,33 +64,16 @@ def main():
     if args.onlySelect == "false":
         logging.info("INTERFACE MODE : JSON Additional")
     
-    # Iterating in JSON config file
-    for task, cfgValuePair in config.items():
-        if isinstance(cfgValuePair, dict):
-            for cfg, value in cfgValuePair.items():
-                
-                # aod
-                if cfg == "aod-file" and args.aod:
-                    config[task][cfg] = args.aod
-                    logging.debug(" - [%s] %s : %s", task, cfg, args.aod)
-                
-                # For don't override tof-pid: pid tables. We use instead of tof-pid-full and tpc-pid-full for pid tables
-                if task == "tof-pid" and cfg.startswith("pid"):
-                    continue
-                
-                setConfig(config, task, cfg, allArgs, cliMode)
-                setSwitch(config, task, cfg, allArgs, cliMode, "est", centralityTableParameters, "1/-1")
-                setSwitch(config, task, cfg, allArgs, cliMode, "pid", pidParameters, "1/-1")
-                setSwitch(config, task, cfg, allArgs, "true", "isCovariance", covParameters, "true/false")
-                setSwitch(config, task, cfg, allArgs, "true", "isWSlice", sliceParameters, "true/false")
-                setSwitch(config, task, cfg, allArgs, "true", "FT0", ft0Parameters, "true/false", "tof-event-time")
+    # Set arguments to config json file
+    setConfigs(allArgs, config, cliMode)
     
     # Transactions
-    aodFileChecker(args.aod)
+    aodFileChecker(allArgs["internal_dpl_aod_reader:aod_file"])
     trackPropagationChecker(args.add_track_prop, commonDeps)
     
     # Write the updated configuration file into a temporary file
     updatedConfigFileName = "tempConfigDQFlow.json"
+    
     with open(updatedConfigFileName, "w") as outputFile:
         json.dump(config, outputFile, indent = 2)
     

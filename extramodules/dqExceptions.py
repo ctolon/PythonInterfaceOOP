@@ -61,22 +61,6 @@ class NotInAlienvError(Exception):
         super().__init__(self.message)
 
 
-class ForgettedArgsError(Exception):
-    
-    """Exception raised for forgetted args errors in parser args.
-
-    Attributes:
-        forgettedArgs: arguments whose configuration is forgotten
-    """
-    
-    def __init__(self, forgettedArgs):
-        self.forgettedArgs = forgettedArgs
-        super().__init__()
-    
-    def __str__(self):
-        return f"Your forget assign a value to for this parameters: {self.forgettedArgs}"
-
-
 class CentFilterError(Exception):
     
     """Exception raised if you provide centrality process function for pp system in tableMaker/tableMakerMC"""

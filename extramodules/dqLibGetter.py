@@ -136,22 +136,27 @@ class DQLibGetter(object):
                     if "track" not in line and kEvents is True: # get event histos
                         line = re.findall('"([^"]*)"', line)
                         eventHistos += line
+                        allHistos += line
                     elif "mctruth" not in line and kTracks is True: # get track histos
                         line = re.findall('"([^"]*)"', line)
                         kEvents = False
                         trackHistos += line
+                        allHistos += line
                     elif "mctruth" in line and kMCtruths is True: # get mctruth histos
                         line = re.findall('"([^"]*)"', line)
                         kTracks = False
                         mctruthHistos += line
+                        allHistos += line
                     elif "dilepton" not in line and kPairs is True: # get sep histos
                         line = re.findall('"([^"]*)"', line)
                         kMCtruths = False
                         pairHistos += line
+                        allHistos += line
                     else: # get dilepton histos
                         line = re.findall('"([^"]*)"', line)
                         kPairs = False
                         dileptonHistos += line
+                        allHistos += line
         f.close()
         
         self.allEventHistos = eventHistos

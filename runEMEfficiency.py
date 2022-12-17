@@ -23,34 +23,25 @@ import sys
 import logging
 import logging.config
 import os
-from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, depsChecker, forgettedArgsChecker, jsonTypeChecker, mainTaskChecker, oneToMultiDepsChecker
-from extramodules.configSetter import setConfig, setFalseHasDeps, setSwitch, setSelection, debugSettings, setProcessDummy, dispArgs, multiConfigurableSet, setPrefixSuffix
+from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, depsChecker, jsonTypeChecker, mainTaskChecker
+from extramodules.configSetter import setArgsToArgParser, setConfigs, debugSettings, setProcessDummy, dispArgs
 from extramodules.pycacheRemover import runPycacheRemover
-from dqtasks.emEfficiency import EMEfficiency
 
 
 def main():
     
-    # Predefined selections for setSwitch function
-    sameEventPairingParameters = ["processToEESkimmed"]
+    # Setting arguments for CLI
+    parsedJsonFile = "configs/configAnalysisMCEM.json.json"
+    args = setArgsToArgParser(parsedJsonFile)
+    allArgs = vars(args) # for get args
+        
     # yapf: disable
     # All Dependencies
-    analysisSelectionDeps = {
-        "trackSelection": {"analysis-track-selection": "processSkimmed"},
-        "eventSelection": {"analysis-event-selection": "processSkimmed"},
-        "eventQA": {"analysis-event-qa": "processSkimmed"}
-        }
     sameEventPairingTaskName = "analysis-same-event-pairing"
     sameEventPairingDeps = {
         "processToEESkimmed": {"analysis-track-selection": "processSkimmed"}
         }
     # yapf: enable
-    # init args manually
-    initArgs = EMEfficiency()
-    initArgs.mergeArgs()
-    initArgs.parseArgs()
-    args = initArgs.parseArgs()
-    allArgs = vars(args) # for get args
     
     # Debug Settings
     debugSettings(args.debug, args.logFile, fileName = "emEfficiencyEE.log")
@@ -58,17 +49,13 @@ def main():
     # if cliMode true, Overrider mode else additional mode
     cliMode = args.onlySelect
     
-    #forgettedArgsChecker(allArgs) # Transaction management
-    
-    # adding prefix for setSwitch function
-    args.process = setPrefixSuffix(args.process, "process", 'Skimmed', True, True)
-    
     # Load the configuration file provided as the first parameter
     config = {}
     with open(args.cfgFileName) as configFile:
         config = json.load(configFile)
     
     jsonTypeChecker(args.cfgFileName)
+    jsonTypeChecker(parsedJsonFile)
     
     taskNameInCommandLine = "o2-analysis-em-efficiency-ee"
     taskNameInConfig = "analysis-event-selection"
@@ -82,35 +69,15 @@ def main():
     if cliMode == "false":
         logging.info("INTERFACE MODE : JSON Additional")
     
-    setSelection(config, analysisSelectionDeps, args.analysis, cliMode) # Set selections
-    
-    # Iterating in JSON config file
-    for task, cfgValuePair in config.items():
-        if isinstance(cfgValuePair, dict):
-            for cfg, value in cfgValuePair.items():
-                
-                # aod
-                if cfg == "aod-file" and args.aod:
-                    config[task][cfg] = args.aod
-                    logging.debug(" - [%s] %s : %s", task, cfg, args.aod)
-                # reader
-                if cfg == "aod-reader-json" and args.reader:
-                    config[task][cfg] = args.reader
-                    logging.debug(" - [%s] %s : %s", task, cfg, args.reader)
-                
-                # Interface Logic
-                setConfig(config, task, cfg, allArgs, cliMode)
-                setSwitch(config, task, cfg, allArgs, cliMode, "process", sameEventPairingParameters, "true/false")
-                setFalseHasDeps(config, task, cfg, args.process, sameEventPairingParameters, cliMode)
-                mandatoryArgChecker(config, task, cfg, taskNameInConfig, "processSkimmed")
-    
-    setProcessDummy(config) # dummy automizer
+    # Set arguments to config json file
+    setConfigs(allArgs, config, cliMode)
     
     # Transactions
-    aodFileChecker(args.aod)
-    oneToMultiDepsChecker(args.process, "sameEventPairing", args.analysis, "analysis")
+    aodFileChecker(allArgs["internal_dpl_aod_reader:aod_file"])
     depsChecker(config, sameEventPairingDeps, sameEventPairingTaskName)
-        
+    mandatoryArgChecker(config, taskNameInConfig, "processSkimmed")
+    setProcessDummy(config) # dummy automizer
+    
     if isinstance(args.aod_memory_rate_limit, type(None)):
         args.aod_memory_rate_limit = "6000000000"
     
@@ -129,6 +96,7 @@ def main():
     dispArgs(allArgs) # Display all args
     os.system(commandToRun) # Execute O2 generated commands
     runPycacheRemover() # Run pycacheRemover
+
 
 if __name__ == '__main__':
     sys.exit(main())

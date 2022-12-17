@@ -40,6 +40,19 @@ def listToString(s: list):
         return str1.join(s)
 
 
+def convertListToStr(s):
+    
+    # initialization of string to ""
+    new = ""
+    
+    # traverse in the string
+    for x in s:
+        new += x
+    
+    # return string
+    return new
+
+
 def stringToList(string: str):
     """
     stringToList provides converts strings to list with commas.
@@ -67,4 +80,19 @@ def stringToListWithSlash(string: str):
         list: merge string elements with slash
     """
     li = list(string.split("/"))
+    return li
+
+
+def stringToListWithColon(string: str):
+    """
+    stringToListWithSlash provides converts strings to list with Slashes.
+    This function is written to save as list type instead of string
+
+    Args:
+        string (string): Input as String
+
+    Returns:
+        list: merge string elements with slash
+    """
+    li = list(string.split(":"))
     return li

@@ -23,39 +23,20 @@ import sys
 import logging
 import logging.config
 import os
-from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, forgettedArgsChecker, jsonTypeChecker, filterSelsChecker, mainTaskChecker, trackPropagationChecker
-from extramodules.configSetter import setSwitch, setSelection, setConverters, setConfig, setProcessDummy, debugSettings, dispArgs, setPrefixSuffix
+from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, jsonTypeChecker, mainTaskChecker, trackPropagationChecker
+from extramodules.configSetter import setArgsToArgParser, setConfigs, setConverters, setProcessDummy, debugSettings, dispArgs
 from extramodules.pycacheRemover import runPycacheRemover
-from dqtasks.emEfficiencyNoSkimmed import EMEfficiencyNoSkimmed
 
 
 def main():
     
-    # Predefined selections for setSwitch function
-    ft0Parameters = ["processFT0", "processNoFT0", "processOnlyFT0", "processRun2"]
-    pidParameters = ["pid-el", "pid-mu", "pid-pi", "pid-ka", "pid-pr", "pid-de", "pid-tr", "pid-he", "pid-al",]
-    covParameters = ["processStandard", "processCovariance"]
-    sliceParameters = ["processWoSlice", "processWSlice"]
-    # yapf: disable
-    # All Dependencies
-    commonDeps = [
-        "o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table", "o2-analysis-trackselection",
-        "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta",
-        "o2-analysis-pid-tpc-full"
-        ]
-    selectionDeps = {
-        "trackSelection": {"analysis-track-selection": "processNoSkimmed"},
-        "eventSelection": {"analysis-event-selection": "processNoSkimmed"},
-        "eventQA": {"analysis-event-qa": "processNoSkimmed"}
-        }
-    dummyHasTasks = ["analysis-track-selection", "analysis-event-selection", "analysis-event-qa"]
-    # yapf: enable
-    # init args manually
-    initArgs = EMEfficiencyNoSkimmed()
-    initArgs.mergeArgs()
-    initArgs.parseArgs()
-    args = initArgs.parseArgs()
+    # Setting arguments for CLI
+    parsedJsonFile = "configs/configAnalysisMCEMNoSkimmed.json"
+    args = setArgsToArgParser(parsedJsonFile)
     allArgs = vars(args) # for get args
+    
+    commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table", "o2-analysis-trackselection", "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full"]
+    dummyHasTasks = ["analysis-track-selection", "analysis-event-selection", "analysis-event-qa"]
     
     # if cliMode true, Overrider mode else additional mode
     cliMode = args.onlySelect
@@ -63,20 +44,13 @@ def main():
     # Debug Settings
     debugSettings(args.debug, args.logFile, fileName = "emEfficiencyEENoSkimmed.log")
     
-    #forgettedArgsChecker(allArgs) # Transaction management
-    
-    # adding prefix for setSwitch function
-    args.pid = setPrefixSuffix(args.pid, "pid-", '', True, False)
-    args.FT0 = setPrefixSuffix(args.FT0, "process", '', True, False)
-    args.isCovariance = setPrefixSuffix(args.isCovariance, "process", '', True, False)
-    args.isWSlice = setPrefixSuffix(args.isWSlice, "process", '', True, False)
-    
     # Load the configuration file provided as the first parameter
     config = {}
     with open(args.cfgFileName) as configFile:
         config = json.load(configFile)
     
     jsonTypeChecker(args.cfgFileName)
+    jsonTypeChecker(parsedJsonFile)
     
     taskNameInConfig = "analysis-event-selection"
     taskNameInCommandLine = "o2-analysis-em-efficiency-ee"
@@ -90,33 +64,13 @@ def main():
     if args.onlySelect == "false":
         logging.info("INTERFACE MODE : JSON Additional")
     
-    #setSelection(config, selectionDeps, args.process, "true")
-    
-    # Iterating in JSON config file
-    for task, cfgValuePair in config.items():
-        if isinstance(cfgValuePair, dict):
-            for cfg, value in cfgValuePair.items():
-                
-                # aod
-                if cfg == "aod-file" and args.aod:
-                    config[task][cfg] = args.aod
-                    logging.debug(" - [%s] %s : %s", task, cfg, args.aod)
-                
-                # For don't override tof-pid: pid tables. We use instead of tof-pid-full and tpc-pid-full for pid tables
-                if task == "tof-pid" and cfg.startswith("pid"):
-                    continue
-                
-                setConfig(config, task, cfg, allArgs, cliMode)
-                setSwitch(config, task, cfg, allArgs, cliMode, "pid", pidParameters, "1/-1")
-                setSwitch(config, task, cfg, allArgs, "true", "isCovariance", covParameters, "true/false")
-                setSwitch(config, task, cfg, allArgs, "true", "isWSlice", sliceParameters, "true/false")
-                setSwitch(config, task, cfg, allArgs, "true", "FT0", ft0Parameters, "true/false", "tof-event-time")
-                mandatoryArgChecker(config, task, cfg, "analysis-event-selection", "processNoSkimmed")
-    setProcessDummy(config, dummyHasTasks) # dummy automizer
+    setConfigs(allArgs, config, cliMode)
     
     # Transactions
-    aodFileChecker(args.aod)
+    aodFileChecker(allArgs["internal_dpl_aod_reader:aod_file"])
     trackPropagationChecker(args.add_track_prop, commonDeps)
+    mandatoryArgChecker(config, "analysis-event-selection", "processNoSkimmed")
+    setProcessDummy(config, dummyHasTasks) # dummy automizer
     
     # Write the updated configuration file into a temporary file
     updatedConfigFileName = "tempConfigEMEfficiencyEENoSkimmed.json"

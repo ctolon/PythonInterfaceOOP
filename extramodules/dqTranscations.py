@@ -21,8 +21,9 @@
 import logging
 import sys
 import os
+from distutils.util import strtobool
 
-from .dqExceptions import CentFilterError, CfgInvalidFormatError, DependencyNotFoundError, ForgettedArgsError, MandatoryArgNotFoundError, NotInAlienvError, EventFilterSelectionsError, TasknameNotFoundInConfigFileError, TextListNotStartsWithAtError
+from .dqExceptions import CentFilterError, CfgInvalidFormatError, DependencyNotFoundError, MandatoryArgNotFoundError, NotInAlienvError, EventFilterSelectionsError, TasknameNotFoundInConfigFileError, TextListNotStartsWithAtError
 
 
 def aodFileChecker(aod: str):
@@ -68,13 +69,8 @@ def aodFileChecker(aod: str):
                 sys.exit()
         
         else:
-            try:
-                open(argProvidedAod, "r")
-                logging.info("%s has valid File Format and Path, File Found", argProvidedAod)
-            
-            except FileNotFoundError:
-                logging.exception("%s Wrong formatted File, check your file extension!", argProvidedAod)
-                sys.exit()
+            logging.error("AOD File Checker: FATAL ERROR")
+            raise TypeError(f"{argProvidedAod} is wrong formatted file!!!")
 
 
 def trackPropagationChecker(trackProp: bool, deps: list):
@@ -124,7 +120,13 @@ def mainTaskChecker(config: dict, taskNameInConfig: str):
             logging.info("You are in %s alienv", O2PHYSICS_ROOT)
     except NotInAlienvError as e:
         logging.exception(e)
-        #sys.exit()
+        #message = "Do you want continue without O2?"
+        #sys.stdout.write('%s [y/n]\n' % message)
+        #while True:
+            #try:
+                #return strtobool(raw_input().lower())
+            #except ValueError:
+                #sys.stdout.write('Please respond with \'y\' or \'n\'.\n')
 
 
 def jsonTypeChecker(cfgFileName: str):
@@ -135,6 +137,7 @@ def jsonTypeChecker(cfgFileName: str):
 
     Raises:
         CfgInvalidFormatError: If the file format is not correct
+        FileNotFoundError: If file not found
     """
     
     isConfigJson = cfgFileName.endswith(".json")
@@ -144,33 +147,7 @@ def jsonTypeChecker(cfgFileName: str):
             raise CfgInvalidFormatError(cfgFileName)
         else:
             logging.info("%s is valid json config file", cfgFileName)
-    
     except CfgInvalidFormatError as e:
-        logging.exception(e)
-        sys.exit()
-
-
-# Transcation management for forgettining assign a cfg to parameters
-def forgettedArgsChecker(allArgs: dict):
-    """Checks for any arguments forgot to assign a cfg which you provided to command line
-    
-    E.x. --process --syst PbPb (It will raise)
-
-    Args:
-        allArgs (dict): Dictionary of arguments entered from the CLI
-
-    Raises:
-        ForgettedArgsError: if there is an argument you forgot to configure
-    """
-    forgetParams = []
-    for task, cfg in allArgs.items():
-        if cfg is not None:
-            if (isinstance(cfg, str) or isinstance(cfg, list)) and len(cfg) == 0:
-                forgetParams.append(task)
-    try:
-        if len(forgetParams) > 0:
-            raise ForgettedArgsError(forgetParams)
-    except ForgettedArgsError as e:
         logging.exception(e)
         sys.exit()
 
@@ -306,42 +283,17 @@ def depsChecker(config: dict, deps: dict, task: str):
             raise TypeError("Dependency dict must be dict (right side) :", dep)
 
 
-def oneToMultiDepsChecker(argument: list, mandatoryArg: str, targetCfg: list, argName: str):
-    """To configure many arguments in a task to check if a cfg needs to be defined in another argument
-
-    Args:
-        argument (list): Have an dependency CLI argument parameters
-        mandatoryArg (str): Needed argument name from another CLI argument
-        targetCfg (list): MandatoryArg target config
-        argName (str): Argument name of have an dependency argument 
-
-    Raises:
-        MandatoryArgNotFoundError: If mandatory arg not found
-    """
-    
-    try:
-        if argument is not None and targetCfg is not None and mandatoryArg not in targetCfg:
-            raise MandatoryArgNotFoundError(mandatoryArg)
-    
-    except MandatoryArgNotFoundError as e:
-        logging.exception(e)
-        logging.info("For configuring %s you have to specify %s cfg in --%s argument", argument, mandatoryArg, argName)
-        sys.exit()
-
-
-def mandatoryArgChecker(config: dict, task: str, cfg: str, selectedKey: str, selectedValue: str):
+def mandatoryArgChecker(config: dict, taskname: str, processFunc: str):
     """The process function, which must be included in the workflow, if it is missing, the transaction function to include it
 
     Args:
         config (dict): Input as JSON config file
-        task (str): task
-        cfg (str): cfg
-        selectedKey (str): Taskname for mandatory process function
-        selectedValue (str): Mandatory process function
+        taskname (str): task
+        processFunc (str): cfg
     """
     
-    if config[task][cfg] == "false" and task == selectedKey and cfg == selectedValue:
-        logging.warning("You forget the configure an Mandatory -> [%s] %s must always true for this workflow. This will automaticaly converted true.", task, cfg)
-        logging.info(" - [%s] %s : true", task, cfg)
+    if config[taskname][processFunc] != "true":
+        logging.warning("You forget the configure an Mandatory -> [%s] %s must always true for this workflow. This will automaticaly converted true.", taskname, processFunc)
+        logging.info(" - [%s] %s : true", taskname, processFunc)
     else:
         pass
