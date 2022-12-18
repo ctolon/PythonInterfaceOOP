@@ -264,15 +264,16 @@ def depsChecker(config: dict, deps: dict, task: str):
     Raises:
         DependencyNotFoundError: If dependency is not found
     """
-    for processFunc, dep in deps.items():
-        if isinstance(dep, dict):
-            for depTaskName, depProcessFunc in dep.items():
-                if config[task][processFunc] == "false":
-                    continue
-                elif config[task][processFunc] == "true" and config[depTaskName][depProcessFunc] == "false":
-                    raise DependencyNotFoundError(processFunc, depTaskName, depProcessFunc)
-        else:
-            raise TypeError("Dependency dict must be dict (right side) :", dep)
+    if task in config:
+        for processFunc, dep in deps.items():
+            if isinstance(dep, dict):
+                for depTaskName, depProcessFunc in dep.items():
+                    if config[task][processFunc] == "false":
+                        continue
+                    elif config[task][processFunc] == "true" and config[depTaskName][depProcessFunc] == "false":
+                        raise DependencyNotFoundError(processFunc, depTaskName, depProcessFunc)
+            else:
+                raise TypeError("Dependency dict must be dict (right side) :", dep)
 
 
 def mandatoryArgChecker(config: dict, taskname: str, processFunc: str):

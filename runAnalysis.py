@@ -23,7 +23,7 @@ import logging
 import logging.config
 import os
 import sys
-from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, jsonTypeChecker, mainTaskChecker
+from extramodules.dqTranscations import depsChecker, mandatoryArgChecker, aodFileChecker, jsonTypeChecker, mainTaskChecker
 from extramodules.configSetter import SetArgsToArgumentParser, dispInterfaceMode, setConfigs, setProcessDummy, debugSettings, dispArgs
 from extramodules.pycacheRemover import runPycacheRemover
 from extramodules.utils import dumpJson, loadJson
@@ -109,8 +109,9 @@ def main():
     
     # Transacations
     aodFileChecker(allArgs["internal_dpl_aod_reader:aod_file"])
-    #depsChecker(config, sameEventPairingDeps, sameEventPairingTaskName)
-    #depsChecker(config, eventMixingDeps, eventMixingTaskName)
+    depsChecker(config, sameEventPairingDeps, sameEventPairingTaskName)
+    depsChecker(config, eventMixingDeps, eventMixingTaskName)
+    depsChecker(config, dileptonTrackDeps, dileptonTrackTaskName)
     mandatoryArgChecker(config, taskNameInConfig, "processSkimmed")
     setProcessDummy(config, dummyHasTasks) # dummy automizer
     

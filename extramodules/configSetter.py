@@ -451,7 +451,7 @@ class SetArgsToArgumentParser(object):
             elif configurable == "doVertexZeq":
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b").completer = ChoicesCompleter(binarySelection)
             elif configurable.startswith("pid-") or configurable.startswith("est-"):
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b").completer = ChoicesCompleterList(tripletSelection)
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs="*", type = str, metavar = "\b").completer = ChoicesCompleterList(tripletSelection)
             elif configurable == "muonSelection":
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b").completer = ChoicesCompleter(eventMuonSelections)
             elif configurable == "itsMatching":
