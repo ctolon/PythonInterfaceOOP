@@ -23,7 +23,7 @@ import logging
 import logging.config
 import os
 from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, jsonTypeChecker, mainTaskChecker, trackPropagationChecker
-from extramodules.configSetter import dispInterfaceMode, setArgsToArgParser, setConfigs, setConverters, setProcessDummy, debugSettings, dispArgs
+from extramodules.configSetter import SetArgsToArgumentParser, dispInterfaceMode, setConfigs, setConverters, setProcessDummy, debugSettings, dispArgs
 from extramodules.pycacheRemover import runPycacheRemover
 from extramodules.utils import dumpJson, loadJson
 
@@ -32,14 +32,14 @@ def main():
     
     # Setting arguments for CLI
     parsedJsonFile = "configs/configFilterPPDataRun3.json"
-    args = setArgsToArgParser(parsedJsonFile, ["timestamp-task", "tof-event-time", "bc-selection-task", "tof-pid-beta"])
+    setArgsToArgumentParser = SetArgsToArgumentParser(parsedJsonFile, ["timestamp-task", "tof-event-time", "bc-selection-task", "tof-pid-beta"])
+    args = setArgsToArgumentParser.parser.parse_args()
+    dummyHasTasks = setArgsToArgumentParser.dummyHasTasks
     allArgs = vars(args) # for get args
     
     # All Dependencies
     commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table", "o2-analysis-trackselection", "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full", "o2-analysis-fwdtrackextension"]
-    
-    dummyHasTasks = ["d-q-barrel-track-selection", "d-q-muons-selection", "d-q-filter-p-p-task"]
-    
+        
     # if cliMode true, Overrider mode else additional mode
     cliMode = args.onlySelect
     

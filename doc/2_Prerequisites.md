@@ -112,7 +112,7 @@ pip install argcomplete
 And go your Folder which includes your run scripts with cd commands (e.g.):
 
 ```ruby
-cd ~/NewAllWorkFlows
+cd ~/PythonInterfaceOOP
 ```
 
 

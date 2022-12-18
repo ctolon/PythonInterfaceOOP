@@ -23,7 +23,7 @@ import logging
 import logging.config
 import os
 from extramodules.dqTranscations import aodFileChecker, jsonTypeChecker, mainTaskChecker, trackPropagationChecker
-from extramodules.configSetter import dispInterfaceMode, setArgsToArgParser, setConfigs, setConverters, debugSettings, dispArgs
+from extramodules.configSetter import SetArgsToArgumentParser, dispInterfaceMode, setConfigs, setConverters, debugSettings, dispArgs, setProcessDummy
 from extramodules.pycacheRemover import runPycacheRemover
 from extramodules.utils import dumpJson, loadJson
 
@@ -32,7 +32,9 @@ def main():
     
     # Setting arguments for CLI
     parsedJsonFile = "configs/configFlowDataRun3.json"
-    args = setArgsToArgParser(parsedJsonFile, ["timestamp-task", "tof-event-time", "bc-selection-task", "tof-pid-beta"])
+    setArgsToArgumentParser = SetArgsToArgumentParser(parsedJsonFile, ["timestamp-task", "tof-event-time", "bc-selection-task", "tof-pid-beta"])
+    args = setArgsToArgumentParser.parser.parse_args()
+    dummyHasTasks = setArgsToArgumentParser.dummyHasTasks
     allArgs = vars(args) # for get args
     
     # All Dependencies
@@ -64,6 +66,7 @@ def main():
     # Transactions
     aodFileChecker(allArgs["internal_dpl_aod_reader:aod_file"])
     trackPropagationChecker(args.add_track_prop, commonDeps)
+    setProcessDummy(config, dummyHasTasks) # dummy automizer
     
     # Write the updated configuration file into a temporary file
     updatedConfigFileName = "tempConfigDQFlow.json"

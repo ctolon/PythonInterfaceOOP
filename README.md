@@ -1,23 +1,15 @@
-# User Python Based Interface
+# User Python Based Interface for O2-DQ Framework
 
 \tableofcontents
 
 [![doxygen](https://img.shields.io/badge/doxygen-documentation-blue.svg)](https://dquserinterfaceoop.github.io/docs/html/)
 
-This project includes python based user interface development for PWG-DQ Workflows based on nightly-20221212. You can follow the instructions and you can find tutorials in table of contents (For prerequisites, Installation guide for argcomplete and Some Informations good to know).
+This project includes python based user interface development for PWG-DQ Workflows based on nightly-20221812. You can follow the instructions and you can find tutorials in table of contents (For prerequisites, Installation guide for argcomplete and Some Informations good to know).
 
 ## Contact
 Ionut Cristian Arsene (Owner of [`O2DQWorkflows`](https://github.com/iarsene/O2DQworkflows))
 
 Cevat Batuhan Tolon (Author Of Interface)
-
-## LATEST CHANGES (VERY IMPORTANT!!!)
-
-On 25/11/2022, serious changes occurred in the naming rules of the O2-DQ Framework. Interface has been updated to use naming conventions on and after this date. If you are using an older O2 version, pull the scripts from old commits. It is recommended to update O2Physics instead.
-
-Reference 1: https://github.com/AliceO2Group/O2Physics/pull/1520
-
-Reference 2 : https://github.com/AliceO2Group/O2Physics/pull/1534
 
 ## Important
 
@@ -27,8 +19,6 @@ Since the interface is constantly updated for stability, it is recommended to up
 - [Python Scripts And JSON Configs](doc/1_ScriptsAndConfigs.md)
   - [Main Python Scripts](doc/1_ScriptsAndConfigs.md#main-python-scripts)
   - [Config Files](doc/1_ScriptsAndConfigs.md#config-files)
-  - [DQ Interface Scripts](doc/1_ScriptsAndConfigs.md#dq-interface-scripts)
-  - [Common Deps Interface Scripts](doc/1_ScriptsAndConfigs.md#common-deps-interface-scripts)
   - [Extra Modules](doc/1_ScriptsAndConfigs.md#extra-modules)
 - [Prerequisites!!!](doc/2_Prerequisites.md)
   - [Cloning repository](doc/2_Prerequisites.md#cloning-repository)
@@ -50,16 +40,10 @@ Since the interface is constantly updated for stability, it is recommended to up
   - [Download CutsLibrary, MCSignalLibrary, MixingLibrary From Github](doc/5_InstructionsForPythonScripts.md#download-cutslibrary-mcsignallibrary-mixinglibrary-from-github)
   - [Get CutsLibrary, MCSignalLibrary, MixingLibrary From Local Machine](doc/5_InstructionsForPythonScripts.md#get-cutslibrary-mcsignallibrary-mixinglibrary-from-local-machine)
   - [Available configs in DownloadLibs.py Interface](doc/5_InstructionsForPythonScripts.md#available-configs-in-downloadlibspy-interface)
-- [Instructions for runTableMaker/runTableMakerMC.py](doc/5_InstructionsForPythonScripts.md#instructions-for-runtablemakerruntablemakermcpy)
-  - [Available configs in runTableMaker Interface](doc/5_InstructionsForPythonScripts.md#available-configs-in-runtablemakerruntablemakermc-interface)
-- [Instructions for runTableReader.py](doc/5_InstructionsForPythonScripts.md#instructions-for-runtablereaderpy)
-  - [Available configs in runTableReader Interface](doc/5_InstructionsForPythonScripts.md#available-configs-in-runtablereader-interface)
-- [Instructions for runDQEfficiency.py](doc/5_InstructionsForPythonScripts.md#instructions-for-rundqefficiencypy)
-  - [Available configs in runDQEfficiency Interface](doc/5_InstructionsForPythonScripts.md#available-configs-in-rundqefficiency-interface)
+- [Instructions for runTableMaker](doc/5_InstructionsForPythonScripts.md#instructions-for-runtablemaker)
+- [Instructions for runAnalysis.py](doc/5_InstructionsForPythonScripts.md#instructions-for-runanalysispy)
 - [Instructions for runFilterPP.py](doc/5_InstructionsForPythonScripts.md#instructions-for-runfilterpppy)
-  - [Available configs in runFilterPP Interface](doc/5_InstructionsForPythonScripts.md#available-configs-in-runfilterpp-interface)
 - [Instructions for runDQFlow.py](doc/5_InstructionsForPythonScripts.md#instructions-for-rundqflowpy)
-  - [Available configs in runDQFlow Interface](doc/5_InstructionsForPythonScripts.md#available-configs-in-rundqflow-interface)
 - [Tutorial Part](doc/6_Tutorials.md)
   - [Download Datas For Tutorials](doc/6_Tutorials.md#download-datas-for-tutorials)
     - [Workflows In Tutorials](doc/6_Tutorials.md#workflows-in-tutorials)
@@ -95,5 +79,4 @@ Since the interface is constantly updated for stability, it is recommended to up
 ## TODO LIST
 
 - Add developer guide (for contributing) chapter
-- Maintaince need for available configs part (v0selector is missing)
 - Needed to explain O2-DQ Data Model and Workflow

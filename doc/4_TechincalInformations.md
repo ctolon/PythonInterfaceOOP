@@ -4,7 +4,9 @@
 
 ## Helper Command Functionality
 
-With the `python3 <scriptname> -h` command you will see a help message for all commands valid for the CLI. CLI has same formatted messages in O2-DPL. It is recommended to use this command at least once before using the interface. If you do not remember the parameters related to the interface, you can list all valid parameters and the values that these parameters can take with this command. In addition, helper messages are integrated into helper messages for all values that are valid for each very important parameter. For example, if you want to get a help message with the `python3 runTableMaker.py -h` command:
+TODO Change this section
+
+With the `python3 <scriptname> -h` command you will see a help message for all commands valid for the CLI. CLI has same formatted messages in O2-DPL. It is recommended to use this command at least once before using the interface. If you do not remember the arguments related to the interface, you can list all valid arguments and the values that these arguments can take with this command. In addition, helper messages are integrated into helper messages for all values that are valid for each very important arguments. For example, if you want to get a help message with the `python3 runTableMaker.py -h` command:
 
 P.S The default values you see in the helper messages are the default values for the interface. The values you see None will directly take the default values from JSON
 
@@ -271,7 +273,7 @@ You will see helper messages again. As long as this command is added in the para
 
 ## Debug and Logging Options for O2DQWorkflows and DownloadLibs.py
 
-We have Debug options if you want to follow the flow in the Interface. For this, you can configure your script as `--debug` `<Level>` in the terminal. You can check which levels are valid and at which level to debug from the table. Also if you want to keep your LOG log in a file then the `--logFile` parameter should be added to the workflow.
+We have Debug options if you want to follow the flow in the Interface. For this, you can configure your script as `--debug` `<Level>` in the terminal. You can check which levels are valid and at which level to debug from the table. Also if you want to keep your LOG log in a file then the `--logFile` argument should be added to the workflow.
 
 The LOG file will be created the same as the workflow name. For example, the file that will be created for tableMaker will be `tableMaker.log`. In addition, if you work with the debug option, the old LOG file will be automatically deleted first, so that there is no confusion in the log files and it does not override. Then a new LOG file will be created.
 
@@ -286,18 +288,18 @@ Level | Numeric Value |
 `ERROR` | 40 |
 `CRITICAL` | 50 |
 
-You can see the debug messages of the numeric value you selected and the level above. If you want debug with `--debug` parameter, you must select the Level you want to debug.
+You can see the debug messages of the numeric value you selected and the level above. If you want debug with `--debug` argument, you must select the Level you want to debug.
 
 Example usage Logging for Both File and terminal:
 
 ```ruby 
-  python3 runTableMakerMC.py configs/configTableMakerMCRun3.json -runMC --run 3  --debug DEBUG --logFile --process MuonOnlyWithCov OnlyBCs --cfgMCsignals muFromJpsi Jpsi muFromPsi2S Psi2S --aod Datas/AO2D.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --syst pp --add_track_prop
+  python3 runTableMaker.py configs/configTableMakerDataRun3.json --debug DEBUG --logFile --table-maker:processFull true --internal-dpl-aod-reader:aod-file Datas/AO2D.root --table-maker:cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --event-selection-task:syst pp --add_track_prop
 ```
 
 Example usage for only logging to terminal:
 
 ```ruby 
-  python3 runTableMakerMC.py configs/configTableMakerMCRun3.json -runMC --run 3 --debug DEBUG --process MuonOnlyWithCov OnlyBCs --cfgMCsignals muFromJpsi Jpsi muFromPsi2S Psi2S --aod Datas/AO2D.root --cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --syst pp --add_track_prop
+  python3 runTableMaker.py configs/configTableMakerDataRun3.json --debug DEBUG --table-maker:processMuonOnlyWithCov true --table-maker:processOnlyBCs true --internal-dpl-aod-reader:aod-file Datas/AO2D.root --table-maker:cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --event-selection-task:syst pp --add_track_prop
 ```
 
 For example, when the file is logged, you should see a result like this when you open the relevant file.
@@ -329,8 +331,7 @@ For example, when the file is logged, you should see a result like this when you
   2022-08-17 17:15:06,631 - [INFO] --reader : configs/readerConfiguration_reducedEventMC.json 
   2022-08-17 17:15:06,632 - [INFO] --writer : configs/writerConfiguration_dileptonMC.json 
   2022-08-17 17:15:06,632 - [INFO] --analysis : ['muonSelection', 'eventSelection', 'sameEventPairing'] 
-  2022-08-17 17:15:06,632 - [INFO] --process : ['JpsiToMuMu'] 
-  2022-08-17 17:15:06,632 - [INFO] --autoDummy : true 
+  2022-08-17 17:15:06,632 - [INFO] --process : ['JpsiToMuMu']  
   2022-08-17 17:15:06,632 - [INFO] --cfgMuonCuts : muonQualityCuts,muonTightQualityCutsForTests 
   2022-08-17 17:15:06,632 - [INFO] --cfgMuonMCSignals : muFromJpsi,muFromPsi2S 
   2022-08-17 17:15:06,633 - [INFO] --cfgBarrelMCRecSignals : mumuFromJpsi,mumuFromPsi2S,dimuon 
@@ -341,17 +342,16 @@ For example, when the file is logged, you should see a result like this when you
 ```
 ## Some Things You Should Be Careful For Using and Development
 
-* There are also filters for some arguments. No value should be entered outside of these filters (look at the
-choices).
+* aspğkfaspğfasğpfk
 * If the argument can take more than one value, when adding a new property choices is a list and the values
 must be converted to comma-separated strings
-* if your dataset is for run3, o2-analysis-trackextension will be automatically deleted from your workflow as if you define `--add_track_prop` argument for track-propagation. If the production of the data you want to analyze is new, you should add the o2-analysis-track-propagation task to your workflow with the `--add_track_prop` parameter. You can found detalis from there [`Click Here`](https://aliceo2group.github.io/analysis-framework/docs/helperTasks/trackselection.html?highlight=some%20of%20the%20track%20parameters)
+* if your dataset is for run3, o2-analysis-trackextension will be automatically deleted from your workflow as if you define `--add_track_prop` argument for track-propagation. If the production of the data you want to analyze is new, you should add the o2-analysis-track-propagation task to your workflow with the `--add_track_prop` argument. You can found detalis from there [`Click Here`](https://aliceo2group.github.io/analysis-framework/docs/basics-usage/HelperTasks.html#track-selection)
 
 ## Some Notes Before The Instructions
 
-* You don't have to configure all the parameters in the Python interface. the parameter you did not configure will remain as the value in the JSON.
-* Don't forget to configure your Config JSON file in interface for each workflow and also configure extra `-run<Data|MC>` parameters for tableMaker workflow only.
-* Sometimes you may need to add extra tables and transformations to your workflow to resolve the errors you get. These are related to the data model and the production tag. It is stated in the steps that they will be used when errors are received. If you get an error about these add the relevant parameter to your workflow.
+* You don't need configure all the parameters in the Python interface. the parameter you did not configure will remain as the value in the JSON.
+* Don't forget to configure your Config JSON file in interface for each workflow.
+* Sometimes you may need to add extra tables and transformations to your workflow to resolve the errors you get. These are related to the data model and the production tag. It is stated in the steps that they will be used when errors are received. If you get an error about these add the relevant parameter to your workflow (you can look at troubleshoot not found section).
 
 ## Interface Modes: JSON Overrider and JSON Additional
 
@@ -397,7 +397,7 @@ For example, let's say we're working on a tableMaker:
 As seen here, the process functions for Full, FullWithCov, and OnlyBCs are true. Let's assume that we made the following configuration for the interface in the terminal:
 
 ```ruby
-python3 runTableMaker.py configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs BarrelOnlyWithCent --onlySelect true
+python3 runTableMaker.py configs/configTableMakerDataRun2.json --table-maker:processOnlyBCs true table-maker:processBarrelOnlyWithCent true --onlySelect true
 ```
 P.S. Since onlySelect is true (you don't need to add it to your workflow when configuring `--onlySelect` to true, its default value is true I just added it to show, JSON Overrider Mode):
 
@@ -433,10 +433,10 @@ P.S. Since onlySelect is true (you don't need to add it to your workflow when co
 
 As you can see, only the OnlyBCs and BarrelOnlyWithCent process functions are set to true, while all other process functions in the tableMaker are set to false.
 
-If we configured onlySelect to false:
+If we configured onlySelect to false (JSON Additional Mode):
 
 ```ruby
-python3 runTableMaker.py configs/configTableMakerDataRun2.json -runData --aod Datas/AO2D_PbPbDataRun2_LHC15o.root --process OnlyBCs BarrelOnlyWithCent --onlySelect false (JSON Additional Mode)
+python3 runTableMaker.py configs/configTableMakerDataRun2.json --table-maker:processOnlyBCs true table-maker:processBarrelOnlyWithCent true --onlySelect false
 ```
 
 Then our output would be:
@@ -473,7 +473,7 @@ Then our output would be:
 
 As you can see, the old process values ​​Full and FullWithCov remained true, in addition, the BarrelOnlyWithCent process function was set to true. OnlyBCs was already true and remains true.
 
-This is the case for the `--analysis`, `--process`, `--pid` and `--est` parameters.
+This is the case for the `--process`, `--pid` and `--est` parameters.
 
 A similar situation applies to Analysis Cut configurations and MC Signal configurations. Suppose there is a configuration like this in it (for tableReader):
 
@@ -490,7 +490,7 @@ A similar situation applies to Analysis Cut configurations and MC Signal configu
 Here we will configure the track cuts:
 
 ```ruby
-python3 runTableReader.py configs/configAnalysisData.json --aod reducedAod.root --cfgTrackCuts jpsiPID1 jpsiPID2
+python3 runAnalysis.py configs/configAnalysisData.json --analysis-track-selection:cfgTrackCuts jpsiPID1 jpsiPID2
 ```
 
 The JSON is in overrider mode as the default is onlySelect true and the equivalent of this configuration is:
@@ -510,7 +510,7 @@ As we can see, the old cut values ​​were deleted, the new cut values ​​w
 If onlySelect is False:
 
 ```ruby
-python3 runTableReader.py configs/configAnalysisData.json --aod reducedAod.root --cfgTrackCuts jpsiPID1 jpsiPID2 --onlySelect false
+python3 runAnalysis.py configs/configAnalysisData.json --analysis-track-selection:cfgTrackCuts jpsiPID1 jpsiPID2 --onlySelect false
 ```
 
 Then the JSON is in additional mode and the equivalent of this configuration is:
@@ -537,12 +537,6 @@ If you are going to do an analysis from zero and you will prepare your JSON conf
 
 ## Project Architecture For Per Script
 
-For the architecture of the project, you can view the diagrams below for each dq workflow script.
-
-
-<div align="center">
-<img src="images/table-maker_script.jpg" width="100%" alt="TableMaker Workflow">
-</div>
-
+TODO explain this
 
 [← Go back to Instructions For Instructions for TAB Autocomplete](3_InstructionsforTABAutocomplete.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Instructions For Python Scripts →](5_InstructionsForPythonScripts.md)

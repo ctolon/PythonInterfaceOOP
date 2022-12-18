@@ -22,7 +22,7 @@ import sys
 import logging
 import logging.config
 import os
-from extramodules.configSetter import dispInterfaceMode, setArgsToArgParser, setConfigs, setConverters, debugSettings, dispArgs, setProcessDummy
+from extramodules.configSetter import SetArgsToArgumentParser, dispInterfaceMode, setConfigs, setConverters, debugSettings, dispArgs, setProcessDummy
 from extramodules.dqTranscations import aodFileChecker, jsonTypeChecker, mainTaskChecker, trackPropagationChecker
 from extramodules.pycacheRemover import runPycacheRemover
 from extramodules.utils import dumpJson, loadJson
@@ -32,14 +32,14 @@ def main():
     
     # Setting arguments for CLI
     parsedJsonFile = "configs/configV0SelectorDataRun3.json"
-    args = setArgsToArgParser(parsedJsonFile, ["timestamp-task", "tof-event-time", "bc-selection-task", "tof-pid-beta"])
+    setArgsToArgumentParser = SetArgsToArgumentParser(parsedJsonFile, ["timestamp-task", "tof-event-time", "bc-selection-task", "tof-pid-beta"])
+    args = setArgsToArgumentParser.parser.parse_args()
+    dummyHasTasks = setArgsToArgumentParser.dummyHasTasks
     allArgs = vars(args) # for get args
     
     # All Dependencies
     commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table", "o2-analysis-trackselection", "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full"]
-    
-    dummyHasTasks = ["track-pid-qa", "v0-gamma-qa"]
-    
+        
     # Debug Settings
     debugSettings(args.debug, args.logFile, fileName = "v0selector.log")
     

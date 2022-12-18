@@ -23,16 +23,33 @@ import logging
 import logging.config
 import os
 from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, depsChecker, jsonTypeChecker, mainTaskChecker
-from extramodules.configSetter import dispInterfaceMode, setArgsToArgParser, setConfigs, debugSettings, setProcessDummy, dispArgs
+from extramodules.configSetter import SetArgsToArgumentParser, dispInterfaceMode, setConfigs, debugSettings, setConverters, setProcessDummy, dispArgs
 from extramodules.pycacheRemover import runPycacheRemover
 from extramodules.utils import dumpJson, loadJson
 
 
 def main():
     
+    # Switch runOverSkimmed to True if you want work on skimmed em-efficiency else it will run for not skimmed em-efficiency
+    runOverSkimmed = False
+    
+    # Simple protection
+    if not isinstance(runOverSkimmed, bool):
+        print(f"[FATAL] runOverSkimmed have to true or false!")
+        sys.exit()
+        
+    # Load json config file for create interface arguments as skimmed or not skimmed
+    parsedJsonFile = "configs/configAnalysisMCEM.json"
+    if runOverSkimmed is True:
+        parsedJsonFile = "configs/configAnalysisMCEMNoSkimmed.json"
+    
+    # All Dependencies
+    commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table", "o2-analysis-trackselection", "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full"]
+    
     # Setting arguments for CLI
-    parsedJsonFile = "configs/configAnalysisMCEM.json.json"
-    args = setArgsToArgParser(parsedJsonFile, ["timestamp-task", "tof-event-time", "bc-selection-task", "tof-pid-beta"])
+    setArgsToArgumentParser = SetArgsToArgumentParser(parsedJsonFile, ["timestamp-task", "tof-event-time", "bc-selection-task", "tof-pid-beta"])
+    args = setArgsToArgumentParser.parser.parse_args()
+    dummyHasTasks = setArgsToArgumentParser.dummyHasTasks
     allArgs = vars(args) # for get args
     
     # yapf: disable
@@ -44,7 +61,10 @@ def main():
     # yapf: enable
     
     # Debug Settings
-    debugSettings(args.debug, args.logFile, fileName = "emEfficiencyEE.log")
+    fileName = "emEfficiencyEE.log"
+    if runOverSkimmed is False:
+            fileName = "emEfficiencyEENotSkimmed.log"
+    debugSettings(args.debug, args.logFile, fileName)
     
     # if cliMode true, Overrider mode else additional mode
     cliMode = args.onlySelect
@@ -70,17 +90,31 @@ def main():
     aodFileChecker(allArgs["internal_dpl_aod_reader:aod_file"])
     depsChecker(config, sameEventPairingDeps, sameEventPairingTaskName)
     mandatoryArgChecker(config, taskNameInConfig, "processSkimmed")
-    setProcessDummy(config) # dummy automizer
+    setProcessDummy(config, dummyHasTasks) # dummy automizer
     
     if isinstance(args.aod_memory_rate_limit, type(None)):
         args.aod_memory_rate_limit = "6000000000"
     
     # Write the updated configuration file into a temporary file
     updatedConfigFileName = "tempConfigEMEfficiencyEE.json"
+    if runOverSkimmed is False:
+        updatedConfigFileName = "tempConfigEMEfficiencyEENoSkimmed.json"
     
     dumpJson(updatedConfigFileName, config)
     
+    # Check which dependencies need to be run
+    if runOverSkimmed is False:
+        depsToRun = {}
+        for dep in commonDeps:
+            depsToRun[dep] = 1
+    
     commandToRun = f"{taskNameInCommandLine} --configuration json://{updatedConfigFileName} --severity error --shm-segment-size 12000000000 --aod-memory-rate-limit {args.aod_memory_rate_limit} -b"
+    if runOverSkimmed is False:
+        for dep in depsToRun.keys():
+            commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"
+            logging.debug("%s added your workflow", dep)
+            
+    commandToRun = setConverters(allArgs, updatedConfigFileName, commandToRun)
     
     print("====================================================================================================================")
     logging.info("Command to run:")

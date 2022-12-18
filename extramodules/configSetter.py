@@ -256,7 +256,7 @@ def setProcessDummy(config: dict, dummyHasTasks = None) -> None:
                         else:
                             config[k]["processDummy"] = "true"
                             #logging.debug(" - [%s] processDummy : true", k)
-                if dummyHasTasks is not None:
+                if dummyHasTasks is not None and len(dummyHasTasks) > 0:
                     for task in dummyHasTasks:
                         if processFuncFound == k:
                             continue
@@ -310,149 +310,160 @@ def setParallelismOnSkimming(commandToRun: str, taskNameInCommandLine: str, upda
     return (analysisTaskName + " --configuration json://" + updatedConfigFileName + " -b " + '| ' + skimmingTaskFullCommand)
 
 
-def setArgsToArgParser(cfgJsonName: str, tasksToPassList = []) -> dict:
-    """This method parses the json file and generates CLI arguments
+class SetArgsToArgumentParser(object):
+    """This class parses the json file and generates CLI arguments
 
     Args:
         cfgJsonName (str): Path to Json config file for creating CLI arguments with parsing
         tasksToPassList (list): If you don't want to include and provide some tasks from the JSON config file to CLI arguments you can define them in a list type
+        parser (object): For getting args from ArgumentParser 
+        dummyHasTasks (Optional, list): If there are tasks with processDummy in the json, it will save them to the list (for dummy automizer)
 
     Returns:
         dict: namespace, argument
     """
     
-    # Load the configuration file for creating parser args (hard coded)
-    configForParsing = {}
-    with open(cfgJsonName) as configFile:
-        configForParsing = json.load(configFile)
     
-    # Dependency injection
-    dqLibGetter = DQLibGetter()
-    
-    # Get All Configurables for DQ Framework from DQ header files
-    allAnalysisCuts = dqLibGetter.allAnalysisCuts
-    allMCSignals = dqLibGetter.allMCSignals
-    allSels = dqLibGetter.allSels
-    allMixing = dqLibGetter.allMixing
-    
-    # Get all histogram groups for DQ Framework from histogram library
-    # NOTE Now we use only all histos for backward comp.
-    allHistos = dqLibGetter.allHistos
-    # allEventHistos = dqLibGetter.allEventHistos
-    # allTrackHistos = dqLibGetter.allTrackHistos
-    # allMCTruthHistos = dqLibGetter.allMCTruthHistos
-    # allPairHistos = dqLibGetter.allPairHistos
-    # allDileptonHistos = dqLibGetter.allDileptonHistos
-    
-    # Predefined lists for autocompletion
-    booleanSelections = ["true", "false"]
-    itsMatchingSelections = ["0", "1", "2", "3"]
-    binarySelection = ["0", "1"]
-    tripletSelection = ["-1", "0", "1"]
-    collisionSystemSelections = ["PbPb", "pp", "pPb", "Pbp", "XeXe"]
-    eventMuonSelections = ["0", "1", "2"]
-    debugLevelSelectionsList = ["NOTSET", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
-    
-    # list for save all arguments (template --> taskname:configuration)
-    arglist = []
-    
-    # Iterating in JSON config file
-    for task, cfgValuePair in configForParsing.items():
-        if isinstance(cfgValuePair, dict):
-            for argument in cfgValuePair.keys():
-                arglist.append(task + ":" + argument) # Set CLI argument as --> taskname:config
-    
-    parser = argparse.ArgumentParser(description = 'Arguments to pass', formatter_class = argparse.ArgumentDefaultsHelpFormatter)
-    
-    parser.add_argument("cfgFileName", metavar = "Config.json", default = "config.json", help = "config JSON file name (mandatory)")
-    parser.add_argument("-runParallel", help = "Run parallel sessions", action = "store_true", default = False)
-    
-    # Special Configs
-    # parser.add_argument("-runData", help = "Run over Data", action = "store_true", default = True)
-    
-    # GLOBAL OPTIONS
-    # TODO extend them
-    groupGlobal = parser.add_argument_group(title = f"Global workflow options")
-    groupGlobal.add_argument("--aod-memory-rate-limit", help = "Rate limit AOD processing based on memory", action = "store", type = str)
-    groupGlobal.add_argument("--writer", help = "Argument for producing extra reduced tables", action = "store", type = str)
-    groupGlobal.add_argument("--helpO2", help = "Display help message on O2", action = "store_true", default = False)
-    
-    # Converter Task Options
-    groupO2Converters = parser.add_argument_group(title = f"Add to workflow O2 Converter task options")
-    groupO2Converters.add_argument("--add_mc_conv", help = "Add the converter from mcparticle to mcparticle+001 (Adds your workflow o2-analysis-mc-converter task)", action = "store_true",)
-    groupO2Converters.add_argument("--add_fdd_conv", help = "Add the fdd converter (Adds your workflow o2-analysis-fdd-converter task)", action = "store_true",)
-    groupO2Converters.add_argument("--add_track_prop", help = "Add track propagation to the innermost layer (TPC or ITS) (Adds your workflow o2-analysis-track-propagation task)", action = "store_true",)
-    groupO2Converters.add_argument("--add_weakdecay_ind", help = "Add Converts V0 and cascade version 000 to 001 (Adds your workflow o2-analysis-weak-decay-indices task)", action = "store_true",)
-    
-    # Helper Options
-    groupHelper = parser.add_argument_group(title = f"Helper Options")
-    groupHelper.add_argument("--debug", help = "execute with debug options", action = "store", type = str.upper, default = "INFO", choices = debugLevelSelectionsList,).completer = ChoicesCompleterList(debugLevelSelectionsList)
-    groupHelper.add_argument("--logFile", help = "Enable logger for both file and CLI", action = "store_true")
-    groupHelper.add_argument("--onlySelect", help = "If false JSON Overrider Interface If true JSON Additional Interface", action = "store", default = "true", type = str.lower, choices = booleanSelections,).completer = ChoicesCompleter(booleanSelections)
-    
-    # Create argument group for iterating json options
-    groupJsonParser = parser.add_argument_group(title = f"JSON configuration options")
-    
-    # save args to parser(template --> --taskname:config)
-    for arg in arglist:
+    def __init__(self, cfgJsonName, tasksToPassList: list, parser = None, dummyHasTasks = []) -> dict:
         
-        # seperate the template to list --> taskname:config to [taskname, configurable]
-        seperatedArg = stringToList(arg, ":")
-        configurable = seperatedArg[1] # configurable as second index
-        taskname = seperatedArg[0] # taskname as first index
+        self.cfgJsonName = cfgJsonName
+        self.tasksToPassList = list(tasksToPassList)
+        self.parser = argparse.ArgumentParser(description = 'Arguments to pass', formatter_class = argparse.ArgumentDefaultsHelpFormatter)
+        self.dummyHasTasks = dummyHasTasks
+            
+        # Load the configuration file for creating parser args (hard coded)
+        configForParsing = {}
+        with open(cfgJsonName) as configFile:
+            configForParsing = json.load(configFile)
         
-        # Tasks to pass
-        if taskname in tasksToPassList:
-            continue
+        # Dependency injection
+        dqLibGetter = DQLibGetter()
         
-        # We may define posible all autocompletions as semi hard-coded with substring search (according to naming conventions)
-        # DQ Framework
-        if "Cuts" in configurable:
-            groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allAnalysisCuts)
-        elif configurable.endswith("Signals"):
-            groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allMCSignals)
-        elif "Histogram" in configurable:
-            groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allHistos)
-        elif configurable.endswith("BarrelSels") or configurable.endswith("MuonSels"):
-            groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allSels)
-        elif "MixingVars" in configurable:
-            groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allMixing)
-        elif configurable.startswith("cfg") and "QA" in configurable:
-            groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
-        elif configurable == "cfgIsAmbiguous":
-            groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
-        elif configurable == "cfgFillCandidateTable":
-            groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
-        elif configurable == "cfgFlatTables":
-            groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
-        elif configurable == "cfgTPCpostCalib":
-            groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
-        elif configurable == "processDummy": # NOTE we don't need configure processDummy since we have dummy automizer
-            continue
+        # Get All Configurables for DQ Framework from DQ header files
+        allAnalysisCuts = dqLibGetter.allAnalysisCuts
+        allMCSignals = dqLibGetter.allMCSignals
+        allSels = dqLibGetter.allSels
+        allMixing = dqLibGetter.allMixing
         
-        # NOTE maybe need define also task name except process for protection
-        # Common Framework
-        elif configurable.startswith("process"):
-            groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
-        elif configurable == "syst":
-            groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b").completer = ChoicesCompleter(collisionSystemSelections)
-        elif configurable == "doVertexZeq":
-            groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b").completer = ChoicesCompleter(binarySelection)
-        elif configurable.startswith("pid-") or configurable.startswith("est-"):
-            groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b").completer = ChoicesCompleterList(tripletSelection)
-        elif configurable == "muonSelection":
-            groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b").completer = ChoicesCompleter(eventMuonSelections)
-        elif configurable == "itsMatching":
-            groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b").completer = ChoicesCompleter(itsMatchingSelections)
-        elif configurable == "compatibilityIU":
-            groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
-        else:
-            groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b") # Has no autocompletion
+        # Get all histogram groups for DQ Framework from histogram library
+        # NOTE Now we use only all histos for backward comp.
+        allHistos = dqLibGetter.allHistos
+        # allEventHistos = dqLibGetter.allEventHistos
+        # allTrackHistos = dqLibGetter.allTrackHistos
+        # allMCTruthHistos = dqLibGetter.allMCTruthHistos
+        # allPairHistos = dqLibGetter.allPairHistos
+        # allDileptonHistos = dqLibGetter.allDileptonHistos
+        
+        # Predefined lists for autocompletion
+        booleanSelections = ["true", "false"]
+        itsMatchingSelections = ["0", "1", "2", "3"]
+        binarySelection = ["0", "1"]
+        tripletSelection = ["-1", "0", "1"]
+        collisionSystemSelections = ["PbPb", "pp", "pPb", "Pbp", "XeXe"]
+        eventMuonSelections = ["0", "1", "2"]
+        debugLevelSelectionsList = ["NOTSET", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+        
+        # list for save all arguments (template --> taskname:configuration)
+        arglist = []
+        
+        # Iterating in JSON config file
+        for task, cfgValuePair in configForParsing.items():
+            if isinstance(cfgValuePair, dict):
+                for argument in cfgValuePair.keys():
+                    arglist.append(task + ":" + argument) # Set CLI argument as --> taskname:config
+                
+        self.parser.add_argument("cfgFileName", metavar = "Config.json", default = "config.json", help = "config JSON file name (mandatory)")
+        self.parser.add_argument("-runParallel", help = "Run parallel sessions", action = "store_true", default = False)
+        
+        # Special Configs
+        # parser.add_argument("-runData", help = "Run over Data", action = "store_true", default = True)
+        
+        # GLOBAL OPTIONS
+        # TODO extend them
+        groupGlobal = self.parser.add_argument_group(title = f"Global workflow options")
+        groupGlobal.add_argument("--aod-memory-rate-limit", help = "Rate limit AOD processing based on memory", action = "store", type = str)
+        groupGlobal.add_argument("--writer", help = "Argument for producing extra reduced tables", action = "store", type = str)
+        groupGlobal.add_argument("--helpO2", help = "Display help message on O2", action = "store_true", default = False)
+        
+        # Converter Task Options
+        groupO2Converters = self.parser.add_argument_group(title = f"Add to workflow O2 Converter task options")
+        groupO2Converters.add_argument("--add_mc_conv", help = "Add the converter from mcparticle to mcparticle+001 (Adds your workflow o2-analysis-mc-converter task)", action = "store_true",)
+        groupO2Converters.add_argument("--add_fdd_conv", help = "Add the fdd converter (Adds your workflow o2-analysis-fdd-converter task)", action = "store_true",)
+        groupO2Converters.add_argument("--add_track_prop", help = "Add track propagation to the innermost layer (TPC or ITS) (Adds your workflow o2-analysis-track-propagation task)", action = "store_true",)
+        groupO2Converters.add_argument("--add_weakdecay_ind", help = "Add Converts V0 and cascade version 000 to 001 (Adds your workflow o2-analysis-weak-decay-indices task)", action = "store_true",)
+        
+        # Helper Options
+        groupHelper = self.parser.add_argument_group(title = f"Helper Options")
+        groupHelper.add_argument("--debug", help = "execute with debug options", action = "store", type = str.upper, default = "INFO", choices = debugLevelSelectionsList,).completer = ChoicesCompleterList(debugLevelSelectionsList)
+        groupHelper.add_argument("--logFile", help = "Enable logger for both file and CLI", action = "store_true")
+        groupHelper.add_argument("--onlySelect", help = "If false JSON Overrider Interface If true JSON Additional Interface", action = "store", default = "true", type = str.lower, choices = booleanSelections,).completer = ChoicesCompleter(booleanSelections)
+        
+        # Create argument group for iterating json options
+        groupJsonParser = self.parser.add_argument_group(title = f"JSON configuration options")
+        
+        # save args to parser(template --> --taskname:config)
+        for arg in arglist:
+            
+            # seperate the template to list --> taskname:config to [taskname, configurable]
+            seperatedArg = stringToList(arg, ":")
+            configurable = seperatedArg[1] # configurable as second index
+            taskname = seperatedArg[0] # taskname as first index
+            
+            # Tasks to pass
+            if taskname in tasksToPassList:
+                continue
+            
+            # Get has processDummy tasks from json
+            if configurable == "processDummy":
+                self.dummyHasTasks.append(taskname)
+            
+            # We may define posible all autocompletions as semi hard-coded with substring search (according to naming conventions)
+            # DQ Framework
+            if "Cuts" in configurable:
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allAnalysisCuts)
+            elif configurable.endswith("Signals"):
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allMCSignals)
+            elif "Histogram" in configurable:
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allHistos)
+            elif configurable.endswith("BarrelSels") or configurable.endswith("MuonSels"):
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allSels)
+            elif "MixingVars" in configurable:
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allMixing)
+            elif configurable.startswith("cfg") and "QA" in configurable:
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+            elif configurable == "cfgIsAmbiguous":
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+            elif configurable == "cfgFillCandidateTable":
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+            elif configurable == "cfgFlatTables":
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+            elif configurable == "cfgTPCpostCalib":
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+            elif configurable == "processDummy": # NOTE we don't need configure processDummy since we have dummy automizer
+                continue
+            
+            # NOTE maybe need define also task name except process for protection
+            # Common Framework
+            elif configurable.startswith("process"):
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+            elif configurable == "syst":
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b").completer = ChoicesCompleter(collisionSystemSelections)
+            elif configurable == "doVertexZeq":
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b").completer = ChoicesCompleter(binarySelection)
+            elif configurable.startswith("pid-") or configurable.startswith("est-"):
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b").completer = ChoicesCompleterList(tripletSelection)
+            elif configurable == "muonSelection":
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b").completer = ChoicesCompleter(eventMuonSelections)
+            elif configurable == "itsMatching":
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b").completer = ChoicesCompleter(itsMatchingSelections)
+            elif configurable == "compatibilityIU":
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+            else:
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b") # Has no autocompletion
+        
+        argcomplete.autocomplete(self.parser, always_complete_options = False)
+        self.parser.parse_args()
     
-    argcomplete.autocomplete(parser, always_complete_options = False)
-    return parser.parse_args()
-
-
 def setConfigs(allArgs: dict, config: dict, climode: str) -> None:
     """Setter function for CLI arguments to JSON config file
 

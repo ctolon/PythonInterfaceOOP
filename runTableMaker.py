@@ -16,23 +16,38 @@
 # \Author: ionut.cristian.arsene@cern.ch
 # \Interface:  cevat.batuhan.tolon@cern.ch
 
-# Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/TableProducer/tableMaker.cxx
+# Orginal Task for Data: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/TableProducer/tableMaker.cxx
+# Orginal Task for MC: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/TableProducer/tableMakerMC.cxx
 
 import sys
 import logging
 import logging.config
 import os
 from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, jsonTypeChecker, mainTaskChecker, trackPropagationChecker
-from extramodules.configSetter import dispInterfaceMode, setArgsToArgParser, setConfigs, setParallelismOnSkimming, setProcessDummy, setConverters, debugSettings, dispArgs, generateDescriptors, tableProducer
+from extramodules.configSetter import SetArgsToArgumentParser, dispInterfaceMode, setConfigs, setParallelismOnSkimming, setProcessDummy, setConverters, debugSettings, dispArgs, generateDescriptors, tableProducer
 from extramodules.pycacheRemover import runPycacheRemover
 from extramodules.utils import dumpJson, loadJson
 
 
 def main():
     
-    # Setting arguments for CLI
+    # Switch runOverMC to True if you want work on tableMakerMC for MC else it will run for tableMaker for Data
+    runOverMC = False
+    
+    # Simple protection
+    if not isinstance(runOverMC, bool):
+        print(f"[FATAL] runOverMC have to true or false!")
+        sys.exit()
+    
+    # Load json config file for create interface arguments as MC or Data
     parsedJsonFile = "configs/configTableMakerDataRun3.json"
-    args = setArgsToArgParser(parsedJsonFile, ["timestamp-task", "tof-event-time", "bc-selection-task", "tof-pid-beta"])
+    if runOverMC is True:
+        parsedJsonFile = "configs/configTableMakerMCRun3.json"
+
+    # Setting arguments for CLI
+    setArgsToArgumentParser = SetArgsToArgumentParser(parsedJsonFile, ["timestamp-task", "tof-event-time", "bc-selection-task", "tof-pid-beta"])
+    args = setArgsToArgumentParser.parser.parse_args()
+    dummyHasTasks = setArgsToArgumentParser.dummyHasTasks
     allArgs = vars(args) # for get args
         
     # All Dependencies
@@ -62,6 +77,7 @@ def main():
         # "processFullWithEventFilterWithV0Bits": ["o2-analysis-dq-filter-pp","o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices"],
         }
     
+    # TODO check this
     dummyHasTasks = ["d-q-barrel-track-selection", "d-q-muons-selection", "d-q-filter-p-p-task", "dalitz-pairing", "track-pid-qa", "v0-gamma-qa"]
     
     # yapf: disable
@@ -116,7 +132,10 @@ def main():
         }
     
     # Debug Settings
-    debugSettings(args.debug, args.logFile, fileName = "tableMaker.log")
+    fileName = "tableMaker.log"
+    if runOverMC:
+        fileName = "tableMakerMC.log"
+    debugSettings(args.debug, args.logFile, fileName)
     
     # if cliMode true, Overrider mode else additional mode
     cliMode = args.onlySelect
@@ -127,11 +146,13 @@ def main():
     jsonTypeChecker(args.cfgFileName)
     jsonTypeChecker(parsedJsonFile)
     
-    runOverMC = False
-    logging.info("runOverMC : %s, Reduced Tables will be produced for Data", runOverMC)
+    logging.info("runOverMC : %s, Reduced Tables will be produced...", runOverMC)
     
     taskNameInConfig = "table-maker"
     taskNameInCommandLine = "o2-analysis-dq-table-maker"
+    if runOverMC:
+        taskNameInConfig = "table-maker-m-c"
+        taskNameInCommandLine = "o2-analysis-dq-table-maker-m-c"
     
     mainTaskChecker(config, taskNameInConfig)
     
@@ -151,6 +172,8 @@ def main():
     
     # Write the updated configuration file into a temporary file
     updatedConfigFileName = "tempConfigTableMaker.json"
+    if runOverMC:
+        updatedConfigFileName ="tempConfigTableMakerMC.json"
     
     dumpJson(updatedConfigFileName, config)
     
