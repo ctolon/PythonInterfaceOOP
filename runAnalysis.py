@@ -125,15 +125,20 @@ def main():
     commandToRun = f"{taskNameInCommandLine} --configuration json://{updatedConfigFileName} -b"
     if args.writer is not None:
         commandToRun = f"{taskNameInCommandLine} --configuration json://{updatedConfigFileName} --aod-writer-json {args.writer} -b"
+        
+    if args.helpO2 is True:
+        commandToRun += " --help full"
+        os.system(commandToRun)
+        sys.exit()
     print("====================================================================================================================")
     logging.info("Command to run:")
     logging.info(commandToRun)
     print("====================================================================================================================")
     dispArgs(allArgs) # Display all args
-    
-    if args.runParallel is False:
-        os.system(commandToRun) # Execute O2 generated commands
-        runPycacheRemover() # Run pycacheRemover
+    if args.runParallel is True:
+        sys.exit()
+    os.system(commandToRun) # Execute O2 generated commands
+    runPycacheRemover() # Run pycacheRemover
 
 
 if __name__ == '__main__':

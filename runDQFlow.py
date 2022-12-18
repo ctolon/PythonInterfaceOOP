@@ -85,6 +85,11 @@ def main():
     
     commandToRun = setConverters(allArgs, updatedConfigFileName, commandToRun)
     
+    if args.helpO2 is True:
+        commandToRun += " --help full"
+        os.system(commandToRun)
+        sys.exit()
+    
     print("====================================================================================================================")
     logging.info("Command to run:")
     logging.info(commandToRun)

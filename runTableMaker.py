@@ -76,10 +76,7 @@ def main():
         # "processFullWithCentWithV0Bits": ["o2-analysis-centrality-table","o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices"],
         # "processFullWithEventFilterWithV0Bits": ["o2-analysis-dq-filter-pp","o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices"],
         }
-    
-    # TODO check this
-    dummyHasTasks = ["d-q-barrel-track-selection", "d-q-muons-selection", "d-q-filter-p-p-task", "dalitz-pairing", "track-pid-qa", "v0-gamma-qa"]
-    
+        
     # yapf: disable
     # Definition of all the tables we may write
     tables = {
@@ -217,10 +214,14 @@ def main():
     commandToRun = setConverters(allArgs, updatedConfigFileName, commandToRun)
     
     if args.runParallel is True:
-        commandToRun = setParallelismOnSkimming(commandToRun, taskNameInCommandLine, updatedConfigFileName, "o2-analysis-dq-table-reader", "tempConfigTableReader.json", config)
+        commandToRun = setParallelismOnSkimming(commandToRun, taskNameInCommandLine, updatedConfigFileName, "o2-analysis-dq-efficiency", "tempConfigDQEfficiency.json", config)
+        if runOverMC is False:
+            commandToRun = setParallelismOnSkimming(commandToRun, taskNameInCommandLine, updatedConfigFileName, "o2-analysis-dq-table-reader", "tempConfigTableReader.json", config)
     
     if args.helpO2 is True:
         commandToRun += " --help full"
+        os.system(commandToRun)
+        sys.exit()
     
     print("====================================================================================================================")
     logging.info("Command to run:")
