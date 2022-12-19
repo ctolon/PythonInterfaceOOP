@@ -46,12 +46,13 @@ def main():
     # Debug Settings
     debugSettings(args.debug, args.logFile, fileName = "filterPP.log")
     
-    # Load the configuration file provided as the first parameter
-    config = loadJson(args.cfgFileName)
-    
+    # Basic validations
     jsonTypeChecker(args.cfgFileName)
     jsonTypeChecker(parsedJsonFile)
     
+    # Load the configuration file provided as the first parameter
+    config = loadJson(args.cfgFileName)
+        
     taskNameInConfig = "d-q-filter-p-p-task"
     taskNameInCommandLine = "o2-analysis-dq-filter-pp"
     
@@ -64,7 +65,6 @@ def main():
     setConfigs(allArgs, config, cliMode)
     
     # Transactions
-    #filterSelsChecker(args.cfgBarrelSels, args.cfgMuonSels, args.cfgBarrelTrackCuts, args.cfgMuonsCuts, allArgs)
     aodFileChecker(allArgs["internal_dpl_aod_reader:aod_file"])
     trackPropagationChecker(args.add_track_prop, commonDeps)
     mandatoryArgChecker(config, "d-q-event-selection-task", "processEventSelection")

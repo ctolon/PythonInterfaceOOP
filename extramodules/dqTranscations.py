@@ -22,7 +22,7 @@ import logging
 import sys
 import os
 
-from .dqExceptions import CentFilterError, CfgInvalidFormatError, DependencyNotFoundError, MandatoryArgNotFoundError, NotInAlienvError, EventFilterSelectionsError, TasknameNotFoundInConfigFileError, TextListNotStartsWithAtError
+from .dqExceptions import DependencyNotFoundError, NotInAlienvError, TasknameNotFoundInConfigFileError, TextListNotStartsWithAtError
 
 
 def aodFileChecker(aod: str):
@@ -128,7 +128,7 @@ def jsonTypeChecker(cfgFileName: str):
         cfgFileName (json): CLI argument as your input json config file
 
     Raises:
-        CfgInvalidFormatError: If the file format is not correct
+        TypeError: If the file format is not correct
         FileNotFoundError: If file not found
     """
     
@@ -136,121 +136,12 @@ def jsonTypeChecker(cfgFileName: str):
     
     try:
         if not isConfigJson:
-            raise CfgInvalidFormatError(cfgFileName)
+            raise TypeError(f"{cfgFileName} hasn't valid extension for json config file as input!")
         else:
             logging.info("%s is valid json config file", cfgFileName)
-    except CfgInvalidFormatError as e:
+    except TypeError as e:
         logging.exception(e)
         sys.exit()
-
-
-def centralityChecker(config: dict, process, syst, centSearch):
-    """If you assign a centrality-related process function for the pp collision
-    system while trying to skim the data, an error will return.
-
-    Args:
-        process (CLI argument): process function in tableMaker/tableMakerMC
-        centSearch (list): List counting Cent sub strings in process function
-        syst (CLI argument): collision system
-
-    Raises:
-        CentFilterError: If you assign a centrality-related process function
-    """
-    if (process and len(centSearch) != 0 and (syst == "pp" or (syst is None and config["event-selection-task"]["syst"] == "pp"))):
-        logging.warning("JSON file does not include configs for centrality-table task, It's for DATA. Centrality will removed because you select pp collision system.")
-        if process is not None:
-            processCentralityMatch = [s for s in process if "Cent" in s]
-            try:
-                if len(processCentralityMatch) > 0:
-                    raise CentFilterError
-                else:
-                    pass
-            except CentFilterError as e:
-                logging.exception(e)
-                sys.exit()
-
-
-def filterSelsChecker(argBarrelSels: list, argMuonSels: list, argBarrelTrackCuts: list, argMuonsCuts: list, allArgs: dict):
-    """It checks whether the event filter selections and analysis cuts in the
-    Filter PP task are in the same number and order
-
-    Args:
-        argBarrelSels (CLI Argument): Event filter argument for barrel
-        argMuonSels (CLI Argument): Event filter argument for muons
-        argBarrelTrackCuts (CLI Argument): Analysis cut argument for barrel
-        argMuonsCuts (CLI Argument): Analysis cuts argument for muons
-        allArgs (dict): Dictionary of all arguments provided by the CLI
-
-    Raises:
-        MandatoryArgNotFoundError: If the required argument is not found
-        EventFilterSelectionsError : If Filter Selections and analysis cuts not in same number and order
-    """
-    
-    argMuonSelsClean = []
-    argBarrelSelsClean = []
-    
-    if argMuonSels:
-        try:
-            if argMuonsCuts is None:
-                raise MandatoryArgNotFoundError(argMuonsCuts)
-            else:
-                pass
-        
-        except MandatoryArgNotFoundError as e:
-            logging.exception(e)
-            logging.error("For configure to cfgMuonSels (For DQ Filter PP Task), you must also configure cfgMuonsCuts!!!")
-            sys.exit()
-        
-        # remove string values after :
-        for i in argMuonSels:
-            i = i[0 : i.index(":")]
-            argMuonSelsClean.append(i)
-        
-        try:
-            if argMuonSelsClean == argMuonsCuts:
-                pass
-            else:
-                raise EventFilterSelectionsError
-        
-        except EventFilterSelectionsError as e:
-            logging.exception(e)
-            logging.info("[INFO] For fixing this issue, you should have the same number of cuts (and in the same order) provided to the cfgMuonsCuts from dq-selection as those provided to the cfgMuonSels in the DQFilterPPTask.")
-            logging.info("For example, if cfgMuonCuts is muonLowPt,muonHighPt,muonLowPt then the cfgMuonSels has to be something like: muonLowPt::1,muonHighPt::1,muonLowPt:pairNoCut:1")
-            sys.exit()
-        
-        logging.info("Event filter configuration is valid for muons")
-    
-    if argBarrelSels:
-        
-        try:
-            if argBarrelTrackCuts is None:
-                raise MandatoryArgNotFoundError(argBarrelTrackCuts)
-            else:
-                pass
-        
-        except MandatoryArgNotFoundError as e:
-            logging.exception(e)
-            logging.error("For configure to cfgBarrelSels (For DQ Filter PP Task), you must also configure cfgBarrelTrackCuts!!!")
-            sys.exit()
-        
-        # remove string values after :
-        for i in argBarrelSels:
-            i = i[0 : i.index(":")]
-            argBarrelSelsClean.append(i)
-        
-        try:
-            if argBarrelSelsClean == argBarrelTrackCuts:
-                pass
-            else:
-                raise EventFilterSelectionsError
-        
-        except EventFilterSelectionsError as e:
-            logging.exception(e)
-            logging.info("For fixing this issue, you should have the same number of cuts (and in the same order) provided to the cfgBarrelTrackCuts from dq-selection as those provided to the cfgBarrelSels in the DQFilterPPTask.")
-            logging.info("For example, if cfgBarrelTrackCuts is jpsiO2MCdebugCuts,jpsiO2MCdebugCuts2,jpsiO2MCdebugCuts then the cfgBarrelSels has to be something like: jpsiO2MCdebugCuts::1,jpsiO2MCdebugCuts2::1,jpsiO2MCdebugCuts:pairNoCut:1")
-            sys.exit()
-        
-        logging.info("Event filter configuration is valid for barrel")
 
 
 def depsChecker(config: dict, deps: dict, task: str):
@@ -273,7 +164,7 @@ def depsChecker(config: dict, deps: dict, task: str):
                     elif config[task][processFunc] == "true" and config[depTaskName][depProcessFunc] == "false":
                         raise DependencyNotFoundError(processFunc, depTaskName, depProcessFunc)
             else:
-                raise TypeError("Dependency dict must be dict (right side) :", dep)
+                raise TypeError(f"Dependency dict must be dict (right side) : {dep}")
 
 
 def mandatoryArgChecker(config: dict, taskname: str, processFunc: str):

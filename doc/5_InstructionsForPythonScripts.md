@@ -70,7 +70,6 @@ Arg | Ref Type| Desc | Default | Real Type
 
 
 # Instructions for runTableMaker
-TODO: Seperate interfaces
 
 Add extrac tables and converters with:
 1. **--add_mc_conv**: conversion from o2mcparticle to o2mcparticle_001
@@ -87,26 +86,26 @@ Add extrac tables and converters with:
    * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2v0_001" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.`
 
 * Minimum Required Parameter List:
-  * The runOverMC variable, which is just below the main function in the script, must be false for tableMaker and True for tableMakerMC
+  * The runOverMC variable, which is just below the main function in the script, must be False for tableMaker and True for tableMakerMC
   * `python3`
   * `runTableMaker.py`
   * JSON Config File
     * Example usage: configs/configTableMakerDataRun3.json 
 
 Examples:
-- Run TableMaker on Data run3 With Minimum Commands for Barrel Only (with automation)
+- Run TableMaker on Data run3 With Minimum Commands for Barrel Only (in script, runOverMC must be False)
   ```ruby
   python3 runTableMaker.py configs/configTableMakerDataRun3.json --table-maker:processBarrelOnly true
   ```
-- Run TableMaker on MC run3 with Minimum Commands for Barrel Only (with automation)
+- Run TableMaker on MC run3 with Minimum Commands for Barrel Only (in script, runOverMC must be True)
   ```ruby
   python3 runTableMaker.py configs/configTableMakerMCRun3.json --table-maker-m-c:processBarrelOnly true
   ```
-- Run TableMaker on Data run2 With Minimum Commands for Barrel Only (with automation)
+- Run TableMaker on Data run2 With Minimum Commands for Barrel Only (in script, runOverMC must be False)
   ```ruby
   python3 runTableMaker.py configs/configTableMakerDataRun2.json --table-maker:processBarrelOnly true
   ```
-- Run TableMaker on MC run2 with Minimum Commands for Barrel Only (with automation)
+- Run TableMaker on MC run2 with Minimum Commands for Barrel Only (in script, runOverMC must be True)
   ```ruby
   python3 runTableMaker.py configs/configTableMakerMCRun2.json --table-maker-m-c:processBarrelOnly true
   ```
@@ -116,7 +115,7 @@ In case of multiple configs example
 python3 runTableMaker.py configs/configTableMakerMCRun3.json --table-maker-m-c:processMuonOnlyWithCov true --table-maker-m-c:processOnlyBCs true --table-maker-m-c:cfgMCsignals muFromJpsi Jpsi muFromPsi2S Psi2S --onlySelect true --internal-dpl-aod-reader:aod-file Datas/AO2D.root --table-maker-m-c:cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --event-selection-task:syst pp --onlySelect true --add_track_prop
   ```
 # Instructions for runAnalysis.py
-* The runOverMC variable, which is just below the main function in the script, must be false for tableReader and True for dqEfficiency
+* The runOverMC variable, which is just below the main function in the script, must be False for tableReader and True for dqEfficiency
 * Minimum Required Parameter List:
   * `python3`
   * `runAnalysis.py`
@@ -124,18 +123,18 @@ python3 runTableMaker.py configs/configTableMakerMCRun3.json --table-maker-m-c:p
     * Example For Most common usages: configs/configAnalysisData.json or configs/configAnalysisMC.json
 
 Examples(in NewAllWorkFlows):
-- Run tableReader on Data run3 With Minimum Commands
+- Run tableReader on Data run3 With Minimum Commands (in script, runOverMC must be False)
   ```ruby
   python3 runAnalysis.py configs/configAnalysisData.json
   ```
-- Run dqEfficiency on MC run3 With Minimum Commands
+- Run dqEfficiency on MC run3 With Minimum Commands (in script, runOverMC must be True)
   ```ruby
   python3 runAnalysis.py configs/configAnalysisMC.json
   ```
 
 In case of multiple configs example:
   ```ruby
-  python3 runAnalysis.py configs/configAnalysisData.json --analysis-event-selection:processSkimmed true --analysis-track-selection:processSkimmed true --analysis-same-event-pairing:processDecayToEE true --analysis-track-selection:cfgTrackCuts jpsiO2MCdebugCuts --analysis-same-event-pairing:cfgTrackCuts jpsiO2MCdebugCuts --internal-dpl-aod-reader:aod-file Datas/reducedAod.root --debug debug --logFile
+  python3 runAnalysis.py configs/configAnalysisData.json --analysis-event-selection:processSkimmed true --analysis-track-selection:processSkimmed true --analysis-same-event-pairing:processDecayToEESkimmed true --analysis-track-selection:cfgTrackCuts jpsiO2MCdebugCuts --analysis-same-event-pairing:cfgTrackCuts jpsiO2MCdebugCuts --internal-dpl-aod-reader:aod-file Datas/reducedAod.root --debug debug --logFile
   ```
 # Instructions for runFilterPP.py
 
@@ -172,7 +171,7 @@ Examples(in NewAllWorkFlows):
 
 In case of multiple configs example
   ```ruby
-python3 runFilterPP.py configs/configFilterPPDataRun3.json --internal-dpl-aod-reader:aod-file Datas/AO2D.root  --event-selection-task:syst pp --process barrelTrackSelection eventSelection --cfgBarrelSels jpsiO2MCdebugCuts2::1 --cfgEventCuts eventStandardNoINT7 --cfgBarrelTrackCuts jpsiO2MCdebugCuts2 jpsiO2MCdebugCuts2 --cfgWithQA true
+python3 runFilterPP.py configs/configFilterPPDataRun3.json --internal-dpl-aod-reader:aod-file Datas/AO2D.root  --event-selection-task:syst pp --d-q-event-selection-task:processEventSelection true --d-q-barrel-track-selection-task:processSelection true --d-q-muons-selection:processSelection true --d-q-filter-p-p-task:cfgBarrelSels jpsiO2MCdebugCuts2::1 --d-q-event-selection-task:cfgEventCuts eventStandardNoINT7 --d-q-barrel-track-selection-task:cfgBarrelTrackCuts jpsiO2MCdebugCuts2 jpsiO2MCdebugCuts2 --d-q-filter-p-p-task:cfgWithQA true
   ```
 
 # Instructions for runDQFlow.py
@@ -215,7 +214,6 @@ python3 runDQFlow.py configs/configFlowDataRun3.json --internal-dpl-aod-reader:a
 
 TODO v0selector interface instructions will be added.
 TODO EMefficiency interface instructions will be added.
-TODO They will maintain according to latest changes 
 
 # Working with Histogram configurables and other configurables
 

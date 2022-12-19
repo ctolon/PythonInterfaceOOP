@@ -31,23 +31,6 @@ class TasknameNotFoundInConfigFileError(Exception):
     def __str__(self):
         return f"The JSON config does not include {self.taskName} task"
 
-
-class CfgInvalidFormatError(Exception):
-    
-    """Exception raised for Invalid format json file
-
-    Attributes:
-        config: input provided config json file
-    """
-    
-    def __init__(self, configjson):
-        self.configjson = configjson
-        super().__init__()
-    
-    def __str__(self):
-        return f"Invalid Format for json config file! Your JSON config input: {self.configjson} After the script, you must define your json configuration file"
-
-
 class NotInAlienvError(Exception):
     
     """Exception raised for O2Physics Alienv Loading
@@ -59,28 +42,6 @@ class NotInAlienvError(Exception):
     def __init__(self, message = "You must load O2Physics with alienv"):
         self.message = message
         super().__init__(self.message)
-
-
-class CentFilterError(Exception):
-    
-    """Exception raised if you provide centrality process function for pp system in tableMaker/tableMakerMC"""
-    
-    def __init__(self):
-        super().__init__()
-    
-    def __str__(self):
-        return f"Collision System pp can't be include related task and process function about Centrality. misconfigure for process function in tableMaker/tableMakerMC!"
-
-
-class EventFilterSelectionsError(Exception):
-    
-    """Exception raised if Filter Selections and analysis cuts not in same order and same number"""
-    
-    def __init__(self):
-        super().__init__()
-    
-    def __str__(self):
-        return f"Event Filter selections and analysis cuts not in same order and same number"
 
 
 class MandatoryArgNotFoundError(Exception):

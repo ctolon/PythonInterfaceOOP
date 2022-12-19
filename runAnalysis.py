@@ -32,7 +32,7 @@ from extramodules.utils import dumpJson, loadJson
 def main():
 
     # Switch runOverMC to True if you want work on dqEfficiency for MC else it will run for tableReader for Data
-    runOverMC = False    
+    runOverMC = True 
     
     # Simple protection
     if not isinstance(runOverMC, bool):
@@ -86,13 +86,13 @@ def main():
     # if cliMode true, Overrider mode else additional mode
     cliMode = args.onlySelect
     
-    # Load the configuration file provided as the first parameter
-    config = loadJson(args.cfgFileName)
-    
-    # Transaction
+    # Basic validations
     jsonTypeChecker(args.cfgFileName)
     jsonTypeChecker(parsedJsonFile)
     
+    # Load the configuration file provided as the first parameter
+    config = loadJson(args.cfgFileName)
+        
     taskNameInCommandLine = "o2-analysis-dq-table-reader"
     taskNameInConfig = "analysis-event-selection"
     if runOverMC:
@@ -109,9 +109,9 @@ def main():
     
     # Transacations
     aodFileChecker(allArgs["internal_dpl_aod_reader:aod_file"])
-    depsChecker(config, sameEventPairingDeps, sameEventPairingTaskName)
-    depsChecker(config, eventMixingDeps, eventMixingTaskName)
-    depsChecker(config, dileptonTrackDeps, dileptonTrackTaskName)
+    #depsChecker(config, sameEventPairingDeps, sameEventPairingTaskName)
+    #depsChecker(config, eventMixingDeps, eventMixingTaskName)
+    #depsChecker(config, dileptonTrackDeps, dileptonTrackTaskName)
     mandatoryArgChecker(config, taskNameInConfig, "processSkimmed")
     setProcessDummy(config, dummyHasTasks) # dummy automizer
     

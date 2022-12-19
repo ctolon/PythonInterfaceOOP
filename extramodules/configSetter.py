@@ -419,7 +419,7 @@ class SetArgsToArgumentParser(object):
             # DQ Framework
             if "Cuts" in configurable:
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allAnalysisCuts)
-            elif configurable.endswith("Signals"):
+            elif configurable.endswith("Signals") or configurable.endswith("signals"):
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allMCSignals)
             elif "Histogram" in configurable:
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allHistos)
@@ -437,8 +437,8 @@ class SetArgsToArgumentParser(object):
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
             elif configurable == "cfgTPCpostCalib":
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
-            elif configurable == "processDummy": # NOTE we don't need configure processDummy since we have dummy automizer
-                continue
+            #elif configurable == "processDummy": # NOTE we don't need configure processDummy since we have dummy automizer
+                #continue
             
             # NOTE maybe need define also task name except process for protection
             # Common Framework
@@ -448,7 +448,7 @@ class SetArgsToArgumentParser(object):
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b").completer = ChoicesCompleter(collisionSystemSelections)
             elif configurable == "doVertexZeq":
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b").completer = ChoicesCompleter(binarySelection)
-            elif configurable.startswith("pid-") or configurable.startswith("est-"):
+            elif configurable.startswith("pid-") or configurable.startswith("est"):
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs="*", type = str, metavar = "\b").completer = ChoicesCompleterList(tripletSelection)
             elif configurable == "muonSelection":
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b").completer = ChoicesCompleter(eventMuonSelections)
@@ -480,6 +480,8 @@ def setConfigs(allArgs: dict, config: dict, climode: str) -> None:
                 configurable = tasknameConfigurablePair[1] # get configurable as second index
                 taskname = [char.replace("_", "-") for char in taskname] # replace _ to - (list comprehension)
                 taskname = convertListToStr(taskname) # convert list to string after list comprehension
+                configurable = [char.replace("_", "-") for char in configurable] # replace _ to - (list comprehension)
+                configurable = convertListToStr(configurable) # convert list to string after list comprehension
                 
                 if isinstance(parameter, list): # for list to comma seperated strings
                     parameter = listToString(parameter)

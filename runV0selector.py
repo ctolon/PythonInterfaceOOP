@@ -46,11 +46,12 @@ def main():
     # if cliMode true, Overrider mode else additional mode
     cliMode = args.onlySelect
     
-    # Load the configuration file provided as the first parameter
-    config = loadJson(args.cfgFileName)
-    
+    # Basic validations
     jsonTypeChecker(args.cfgFileName)
     jsonTypeChecker(parsedJsonFile)
+    
+    # Load the configuration file provided as the first parameter
+    config = loadJson(args.cfgFileName)
     
     taskNameInConfig = "v0-selector"
     taskNameInCommandLine = "o2-analysis-dq-v0-selector"

@@ -32,7 +32,7 @@ from extramodules.utils import dumpJson, loadJson
 def main():
     
     # Switch runOverMC to True if you want work on tableMakerMC for MC else it will run for tableMaker for Data
-    runOverMC = False
+    runOverMC = True
     
     # Simple protection
     if not isinstance(runOverMC, bool):
@@ -140,19 +140,20 @@ def main():
     # if cliMode true, Overrider mode else additional mode
     cliMode = args.onlySelect
     
-    # Load the configuration file provided as the first parameter
-    config = loadJson(args.cfgFileName)
-    
+    # Basic validations
     jsonTypeChecker(args.cfgFileName)
     jsonTypeChecker(parsedJsonFile)
     
+    # Load the configuration file provided as the first parameter
+    config = loadJson(args.cfgFileName)
+
     logging.info("runOverMC : %s, Reduced Tables will be produced...", runOverMC)
     
     taskNameInConfig = "table-maker"
     taskNameInCommandLine = "o2-analysis-dq-table-maker"
     if runOverMC:
         taskNameInConfig = "table-maker-m-c"
-        taskNameInCommandLine = "o2-analysis-dq-table-maker-m-c"
+        taskNameInCommandLine = "o2-analysis-dq-table-maker-mc"
     
     mainTaskChecker(config, taskNameInConfig)
     
@@ -163,9 +164,7 @@ def main():
     setConfigs(allArgs, config, cliMode)
     
     # Transactions
-    #centralityChecker(config, args.process, args.syst, centSearch)
-    #filterSelsChecker(args.cfgBarrelSels, args.cfgMuonSels, args.cfgBarrelTrackCuts, args.cfgMuonsCuts, allArgs)
-    aodFileChecker(allArgs["internal_dpl_aod_reader:aod_file"])
+    #aodFileChecker(allArgs["internal_dpl_aod_reader:aod_file"])
     trackPropagationChecker(args.add_track_prop, barrelDeps)
     mandatoryArgChecker(config, taskNameInConfig, "processOnlyBCs")
     setProcessDummy(config, dummyHasTasks) # dummy automizer
