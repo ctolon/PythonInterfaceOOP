@@ -24,7 +24,7 @@ import logging.config
 import os
 import sys
 from extramodules.dqTranscations import depsChecker, mandatoryArgChecker, aodFileChecker, jsonTypeChecker, mainTaskChecker
-from extramodules.configSetter import SetArgsToArgumentParser, dispInterfaceMode, setConfigs, setProcessDummy, debugSettings, dispArgs
+from extramodules.configSetter import SetArgsToArgumentParser, dispInterfaceMode, dispO2HelpMessage, setConfigs, setProcessDummy, debugSettings, dispArgs
 from extramodules.pycacheRemover import runPycacheRemover
 from extramodules.utils import dumpJson, loadJson
 
@@ -126,10 +126,8 @@ def main():
     if args.writer is not None:
         commandToRun = f"{taskNameInCommandLine} --configuration json://{updatedConfigFileName} --aod-writer-json {args.writer} -b"
         
-    if args.helpO2 is True:
-        commandToRun += " --help full"
-        os.system(commandToRun)
-        sys.exit()
+    dispO2HelpMessage(args.helpO2, commandToRun)
+    
     print("====================================================================================================================")
     logging.info("Command to run:")
     logging.info(commandToRun)

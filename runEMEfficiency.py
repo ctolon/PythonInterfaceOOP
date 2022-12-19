@@ -23,7 +23,7 @@ import logging
 import logging.config
 import os
 from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, depsChecker, jsonTypeChecker, mainTaskChecker
-from extramodules.configSetter import SetArgsToArgumentParser, dispInterfaceMode, setConfigs, debugSettings, setConverters, setProcessDummy, dispArgs
+from extramodules.configSetter import SetArgsToArgumentParser, commonDepsToRun, dispInterfaceMode, dispO2HelpMessage, setConfigs, debugSettings, setConverters, setProcessDummy, dispArgs
 from extramodules.pycacheRemover import runPycacheRemover
 from extramodules.utils import dumpJson, loadJson
 
@@ -35,8 +35,7 @@ def main():
     
     # Simple protection
     if not isinstance(runOverSkimmed, bool):
-        print(f"[FATAL] runOverSkimmed have to true or false!")
-        sys.exit()
+        raise TypeError(f"[FATAL] runOverSkimmeed have to True or False! (in bool type)")
         
     # Load json config file for create interface arguments as skimmed or not skimmed
     parsedJsonFile = "configs/configAnalysisMCEM.json"
@@ -104,9 +103,7 @@ def main():
     
     # Check which dependencies need to be run
     if runOverSkimmed is False:
-        depsToRun = {}
-        for dep in commonDeps:
-            depsToRun[dep] = 1
+        depsToRun = commonDepsToRun(commonDeps)
     
     commandToRun = f"{taskNameInCommandLine} --configuration json://{updatedConfigFileName} --severity error --shm-segment-size 12000000000 --aod-memory-rate-limit {args.aod_memory_rate_limit} -b"
     if runOverSkimmed is False:
@@ -116,15 +113,16 @@ def main():
             
     commandToRun = setConverters(allArgs, updatedConfigFileName, commandToRun)
     
-    if args.helpO2 is True:
-        commandToRun += " --help full"
-        os.system(commandToRun)
-        sys.exit()
+    dispO2HelpMessage(args.helpO2, commandToRun)
     
     print("====================================================================================================================")
     logging.info("Command to run:")
     logging.info(commandToRun)
     print("====================================================================================================================")
+    if runOverSkimmed is False:
+        logging.info("Deps to run:")
+        logging.info(depsToRun.keys())
+        print("====================================================================================================================")
     dispArgs(allArgs) # Display all args
     os.system(commandToRun) # Execute O2 generated commands
     runPycacheRemover() # Run pycacheRemover

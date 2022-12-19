@@ -24,7 +24,7 @@ import logging
 import logging.config
 import os
 from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, jsonTypeChecker, mainTaskChecker, trackPropagationChecker
-from extramodules.configSetter import SetArgsToArgumentParser, dispInterfaceMode, setConfigs, setParallelismOnSkimming, setProcessDummy, setConverters, debugSettings, dispArgs, generateDescriptors, tableProducer
+from extramodules.configSetter import SetArgsToArgumentParser, commonDepsToRun, dispInterfaceMode, dispO2HelpMessage, setConfigs, setParallelismOnSkimming, setProcessDummy, setConverters, debugSettings, dispArgs, generateDescriptors, tableProducer
 from extramodules.pycacheRemover import runPycacheRemover
 from extramodules.utils import dumpJson, loadJson
 
@@ -36,8 +36,7 @@ def main():
     
     # Simple protection
     if not isinstance(runOverMC, bool):
-        print(f"[FATAL] runOverMC have to true or false!")
-        sys.exit()
+        raise TypeError(f"[FATAL] runOverMC have to True or False! (in bool type)")
     
     # Load json config file for create interface arguments as MC or Data
     parsedJsonFile = "configs/configTableMakerDataRun3.json"
@@ -130,8 +129,12 @@ def main():
     
     # Debug Settings
     fileName = "tableMaker.log"
+    if args.runParallel:
+        fileName = "fullAnalysisData.json"
     if runOverMC:
         fileName = "tableMakerMC.log"
+        if args.runParallel:
+            fileName = "fullAnalysisMC.log"
     debugSettings(args.debug, args.logFile, fileName)
     
     # if cliMode true, Overrider mode else additional mode
@@ -169,15 +172,17 @@ def main():
     
     # Write the updated configuration file into a temporary file
     updatedConfigFileName = "tempConfigTableMaker.json"
+    if args.runParallel:
+        updatedConfigFileName = "tempConfigFullAnalysisData.json"
     if runOverMC:
         updatedConfigFileName ="tempConfigTableMakerMC.json"
+        if args.runParallel:
+            updatedConfigFileName = "tempConfigFullAnalysisMC.json"
     
     dumpJson(updatedConfigFileName, config)
     
     # Check which dependencies need to be run
-    depsToRun = {}
-    for dep in commonDeps:
-        depsToRun[dep] = 1
+    depsToRun = commonDepsToRun(commonDeps)
     
     for processFunc in specificDeps.keys():
         if processFunc not in config[taskNameInConfig].keys():
@@ -193,8 +198,7 @@ def main():
                 depsToRun[dep] = 1
     
     # Check which tables are required in the output
-    tablesToProduce = {}
-    tableProducer(config, taskNameInConfig, tablesToProduce, commonTables, barrelCommonTables, muonCommonTables, specificTables, specificDeps, runOverMC)
+    tablesToProduce = tableProducer(config, taskNameInConfig, commonTables, barrelCommonTables, muonCommonTables, specificTables, specificDeps, runOverMC)
     
     writerConfigFileName = "aodWriterTempConfig.json"
     
@@ -218,10 +222,7 @@ def main():
         if runOverMC is False:
             commandToRun = setParallelismOnSkimming(commandToRun, taskNameInCommandLine, updatedConfigFileName, "o2-analysis-dq-table-reader", "tempConfigTableReader.json", config)
     
-    if args.helpO2 is True:
-        commandToRun += " --help full"
-        os.system(commandToRun)
-        sys.exit()
+    dispO2HelpMessage(args.helpO2, commandToRun)
     
     print("====================================================================================================================")
     logging.info("Command to run:")
@@ -229,6 +230,9 @@ def main():
     print("====================================================================================================================")
     logging.info("Tables to produce:")
     logging.info(tablesToProduce.keys())
+    print("====================================================================================================================")
+    logging.info("Deps to run:")
+    logging.info(depsToRun.keys())
     print("====================================================================================================================")
     dispArgs(allArgs) # Display all args
     os.system(commandToRun) # Execute O2 generated commands

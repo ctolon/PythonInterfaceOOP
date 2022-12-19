@@ -44,11 +44,11 @@ def dispArgs(allArgs: dict) -> None:
     print("====================================================================================================================")
 
 
-def dispInterfaceMode(cliMode):
+def dispInterfaceMode(cliMode: str):
     """Display interface mode in CLI
 
     Args:
-        cliMode (str): Interface mode argument
+        cliMode (str): Interface mode argument as bool str
     """
     
     logging.info("Only Select Configured as %s", cliMode)
@@ -58,15 +58,20 @@ def dispInterfaceMode(cliMode):
         logging.info("INTERFACE MODE : JSON Additional")
 
 
-# TODO implement it
-"""
-def dispO2HelpMessage(cliMode):
-    logging.info("Only Select Configured as %s", cliMode)
-    if cliMode == "true":
-        logging.info("INTERFACE MODE : JSON Overrider")
-    if cliMode == "false":
-        logging.info("INTERFACE MODE : JSON Additional")
-"""
+
+
+def dispO2HelpMessage(argHelpO2, commandToRun):
+    """Display O2 helper message
+
+    Args:
+        argHelpO2 (bool): CLI helpO2 argument
+        commandToRun (str): commandToRun as string
+    """
+    if argHelpO2 is True:
+        commandToRun += " --help full"
+        os.system(commandToRun)
+        sys.exit()
+
 
 
 def debugSettings(argDebug: bool, argLogFile: bool, fileName: str) -> None:
@@ -182,20 +187,24 @@ def generateDescriptors(tablesToProduce: dict, tables: dict, writerConfigFileNam
     logging.info(f"{writerConfig}")
 
 
-def tableProducer(config: dict, taskNameInConfig: str, tablesToProduce: dict, commonTables: list, barrelCommonTables: list, muonCommonTables: list, specificTables: list, specificDeps: dict, runOverMC: bool) -> None:
+def tableProducer(config: dict, taskNameInConfig: str, commonTables: list, barrelCommonTables: list, muonCommonTables: list, specificTables: list, specificDeps: dict, runOverMC: bool) -> dict:
     """Table producer function for tableMaker/tableMakerMC
 
     Args:
         config (dict): Input as JSON config file
         taskNameInConfig (str): Taskname in config file (table-maker/table-maker-m-c)
-        tablesToProduce (dict): Input as which tables are needed
         commonTables (list): Common tables which are always be created
         barrelCommonTables (list): Barrel tables in reduced DQ data model
         muonCommonTables (list): Muon tables in reduced DQ data model
         specificTables (list): Specific Tables for specific tasks
         specificDeps (dict): Specific Dependencies for specific tasks
         runOverMC (bool): Checking to run over MC or Data
+        
+    Returns:
+        dict: Tables to produce dict
     """
+    
+    tablesToProduce = {}
     
     for table in commonTables:
         tablesToProduce[table] = 1
@@ -230,32 +239,22 @@ def tableProducer(config: dict, taskNameInConfig: str, tablesToProduce: dict, co
             for table in specificTables[processFunc]:
                 logging.info("%s", table)
                 tablesToProduce[table] = 1
+    return tablesToProduce
 
 
-def setProcessDummy(config: dict, dummyHasTasks = None) -> None:
+def setProcessDummy(config: dict, dummyHasTasks: list) -> None:
     """Dummy Automizer
 
     Args:
         config (dict): json config dict
-        dummyHasTasks (list, optional): Define dummy task list, if you don't define it, all task will checked
+        dummyHasTasks (list): Define dummy task list (get this from SetArgsToArgumentParser class)
         
-    Note:
-        For dummyHasTasks: If other tasks do not have the processDummy function, the workflow will fire. So if you don't have processDummy in each of your tasks, give them a list.
     """
     processFuncFound = ''
     
     for k, v in config.items(): # loop over number of keys
         if isinstance(v, dict): # iterate only possible items in dict keys
             for v, v2 in v.items():
-                if dummyHasTasks is None:
-                    if (not v.endswith("Dummy")) and (v.startswith("process")):
-                        if config[k][v] == "true":
-                            config[k]["processDummy"] = "false"
-                            #logging.debug(" - [%s] processDummy : false", k)
-                            break
-                        else:
-                            config[k]["processDummy"] = "true"
-                            #logging.debug(" - [%s] processDummy : true", k)
                 if dummyHasTasks is not None and len(dummyHasTasks) > 0:
                     for task in dummyHasTasks:
                         if processFuncFound == k:
@@ -273,12 +272,11 @@ def setProcessDummy(config: dict, dummyHasTasks = None) -> None:
                                 #logging.debug(" - [%s] processDummy : true", k)
 
 
-def setParallelismOnSkimming(commandToRun: str, taskNameInCommandLine: str, updatedConfigFileName: str, analysisTaskName: str, analysisTaskTempConfig: str, config: dict) -> str:
+def setParallelismOnSkimming(commandToRun: str, updatedConfigFileName: str, analysisTaskName: str, analysisTaskTempConfig: str, config: dict) -> str:
     """Setter method for activate parallel sesion run in O2
 
     Args:
         commandToRun (str): Command To Run
-        taskNameInCommandLine (str): Skimming task name
         updatedConfigFileName (str): Skimming task temp JSON config file name
         analysisTaskName (str): Command to Run for Analysis Task in O2
         analysisTaskTempConfig (dict): Analysis task temp JSON config file name
@@ -288,10 +286,10 @@ def setParallelismOnSkimming(commandToRun: str, taskNameInCommandLine: str, upda
         str: Command To Run for run analysis and skimming task at same time
     """
     
-    # For paralel session, we should define some tableReader parms
+    # save skimming task command to run string to another variable (not mandatory but more readable)
     skimmingTaskFullCommand = commandToRun
     
-    # open tablereader temp config
+    # open analysis temp config
     with open(analysisTaskTempConfig) as configAnalysisTask:
         config2 = json.load(configAnalysisTask)
     
@@ -301,7 +299,7 @@ def setParallelismOnSkimming(commandToRun: str, taskNameInCommandLine: str, upda
         **config
         }
     
-    #save merged configs
+    #save merged configs (skimming/analysis)
     with open(updatedConfigFileName, "w") as outputFile:
         json.dump(mergedConfigs, outputFile, indent = 2)
     
@@ -311,7 +309,7 @@ def setParallelismOnSkimming(commandToRun: str, taskNameInCommandLine: str, upda
 
 
 class SetArgsToArgumentParser(object):
-    """This class parses the json file and generates CLI arguments
+    """This class provides parsing the json file and generates CLI arguments from json config file
 
     Args:
         cfgJsonName (str): Path to Json config file for creating CLI arguments with parsing
@@ -489,4 +487,19 @@ def setConfigs(allArgs: dict, config: dict, climode: str) -> None:
                     actualConfig = config[taskname][configurable]
                     valueCfg = actualConfig + "," + valueCfg
                 config[taskname][configurable] = parameter
-                logging.debug(" - [%s] %s : %s", taskname, configurable, parameter)
+                logging.info(" - [%s] %s : %s", taskname, configurable, parameter)
+    
+def commonDepsToRun(commonDeps: list) -> dict:
+    """Produces common deps to run dict
+
+    Args:
+        commonDeps (list): common deps to run list
+
+    Returns:
+        dict: common deps to run dict
+    """
+           
+    depsToRun = {}
+    for dep in commonDeps:
+        depsToRun[dep] = 1
+    return depsToRun

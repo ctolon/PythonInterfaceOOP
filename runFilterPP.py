@@ -23,7 +23,7 @@ import logging
 import logging.config
 import os
 from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, jsonTypeChecker, mainTaskChecker, trackPropagationChecker
-from extramodules.configSetter import SetArgsToArgumentParser, dispInterfaceMode, setConfigs, setConverters, setProcessDummy, debugSettings, dispArgs
+from extramodules.configSetter import SetArgsToArgumentParser, commonDepsToRun, dispInterfaceMode, dispO2HelpMessage, setConfigs, setConverters, setProcessDummy, debugSettings, dispArgs
 from extramodules.pycacheRemover import runPycacheRemover
 from extramodules.utils import dumpJson, loadJson
 
@@ -76,25 +76,23 @@ def main():
     dumpJson(updatedConfigFileName, config)
     
     # Check which dependencies need to be run
-    depsToRun = {}
-    for dep in commonDeps:
-        depsToRun[dep] = 1
+    depsToRun = commonDepsToRun(commonDeps)
         
-        commandToRun = f"{taskNameInCommandLine} --configuration json://{updatedConfigFileName} --severity error --shm-segment-size 12000000000 -b"
+    commandToRun = f"{taskNameInCommandLine} --configuration json://{updatedConfigFileName} --severity error --shm-segment-size 12000000000 -b"
     for dep in depsToRun.keys():
         commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"
         logging.debug("%s added your workflow", dep)
     
     commandToRun = setConverters(allArgs, updatedConfigFileName, commandToRun)
     
-    if args.helpO2 is True:
-        commandToRun += " --help full"
-        os.system(commandToRun)
-        sys.exit()
+    dispO2HelpMessage(args.helpO2, commandToRun)
     
     print("====================================================================================================================")
     logging.info("Command to run:")
     logging.info(commandToRun)
+    print("====================================================================================================================")
+    logging.info("Deps to run:")
+    logging.info(depsToRun.keys())
     print("====================================================================================================================")
     dispArgs(allArgs) # Display all args
     os.system(commandToRun) # Execute O2 generated commands
