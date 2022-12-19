@@ -127,7 +127,8 @@ def setConverters(allArgs: dict, updatedConfigFileName: str, commandToRun: str) 
         "add_mc_conv": "o2-analysis-mc-converter",
         "add_fdd_conv": "o2-analysis-fdd-converter",
         "add_track_prop": "o2-analysis-track-propagation",
-        "add_weakdecay_ind": "o2-analysis-weak-decay-indices"
+        "add_weakdecay_ind": "o2-analysis-weak-decay-indices",
+        "add_col_conv": "o2-analysis-collision-converter"
         }
     
     for cliArg, cliValue in allArgs.items():
@@ -371,11 +372,8 @@ class SetArgsToArgumentParser(object):
                     arglist.append(task + ":" + argument) # Set CLI argument as --> taskname:config
                 
         self.parser.add_argument("cfgFileName", metavar = "Config.json", default = "config.json", help = "config JSON file name (mandatory)")
-        self.parser.add_argument("-runParallel", help = "Run parallel sessions", action = "store_true", default = False)
-        
-        # Special Configs
-        # parser.add_argument("-runData", help = "Run over Data", action = "store_true", default = True)
-        
+        self.parser.add_argument("-runParallel", help = "Run parallel in session", action = "store_true", default = False)
+                
         # GLOBAL OPTIONS
         # TODO extend them
         groupGlobal = self.parser.add_argument_group(title = f"Global workflow options")
@@ -389,6 +387,7 @@ class SetArgsToArgumentParser(object):
         groupO2Converters.add_argument("--add_fdd_conv", help = "Add the fdd converter (Adds your workflow o2-analysis-fdd-converter task)", action = "store_true",)
         groupO2Converters.add_argument("--add_track_prop", help = "Add track propagation to the innermost layer (TPC or ITS) (Adds your workflow o2-analysis-track-propagation task)", action = "store_true",)
         groupO2Converters.add_argument("--add_weakdecay_ind", help = "Add Converts V0 and cascade version 000 to 001 (Adds your workflow o2-analysis-weak-decay-indices task)", action = "store_true",)
+        groupO2Converters.add_argument("--add_col_conv", help = "Add the converter from collision to collision+001", action = "store_true")
         
         # Helper Options
         groupHelper = self.parser.add_argument_group(title = f"Helper Options")

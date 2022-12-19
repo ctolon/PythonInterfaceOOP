@@ -32,7 +32,7 @@ from extramodules.utils import dumpJson, loadJson
 def main():
 
     # Switch runOverMC to True if you want work on dqEfficiency for MC else it will run for tableReader for Data
-    runOverMC = True 
+    runOverMC = False
     
     # Simple protection
     if not isinstance(runOverMC, bool):
