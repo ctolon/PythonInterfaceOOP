@@ -40,7 +40,7 @@ def main():
     
     # All Dependencies
     commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table", "o2-analysis-trackselection", "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full", "o2-analysis-fwdtrackextension"]
-        
+    
     # if cliMode true, Overrider mode else additional mode
     cliMode = args.onlySelect
     
@@ -53,7 +53,7 @@ def main():
     
     # Load the configuration file provided as the first parameter
     config = loadJson(args.cfgFileName)
-        
+    
     taskNameInConfig = "d-q-filter-p-p-task"
     taskNameInCommandLine = "o2-analysis-dq-filter-pp"
     
@@ -66,7 +66,7 @@ def main():
     setConfigs(allArgs, config, cliMode)
     
     # process function automation based on cliMode
-    setSwitch(config ,processFuncs, allArgs, cliMode, ["processEventSelection"])
+    setSwitch(config, processFuncs, allArgs, cliMode, ["processEventSelection"])
     
     # Transactions
     aodFileChecker(allArgs["internal_dpl_aod_reader:aod_file"])
@@ -81,7 +81,7 @@ def main():
     
     # Check which dependencies need to be run
     depsToRun = commonDepsToRun(commonDeps)
-        
+    
     commandToRun = f"{taskNameInCommandLine} --configuration json://{updatedConfigFileName} --severity error --shm-segment-size 12000000000 -b"
     for dep in depsToRun.keys():
         commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"

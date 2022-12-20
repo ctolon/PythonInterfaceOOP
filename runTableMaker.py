@@ -42,14 +42,14 @@ def main():
     parsedJsonFile = "configs/configTableMakerDataRun3.json"
     if runOverMC is True:
         parsedJsonFile = "configs/configTableMakerMCRun3.json"
-
+    
     # Setting arguments for CLI
     setArgsToArgumentParser = SetArgsToArgumentParser(parsedJsonFile, ["timestamp-task", "tof-event-time", "bc-selection-task", "tof-pid-beta"])
     args = setArgsToArgumentParser.parser.parse_args()
     dummyHasTasks = setArgsToArgumentParser.dummyHasTasks
     processFuncs = setArgsToArgumentParser.processFuncs
     allArgs = vars(args) # for get args
-            
+    
     # All Dependencies
     commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table"]
     barrelDeps = ["o2-analysis-trackselection", "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full"]
@@ -76,7 +76,7 @@ def main():
         # "processFullWithCentWithV0Bits": ["o2-analysis-centrality-table","o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices"],
         # "processFullWithEventFilterWithV0Bits": ["o2-analysis-dq-filter-pp","o2-analysis-dq-v0-selector", "o2-analysis-weak-decay-indices"],
         }
-        
+    
     # yapf: disable
     # Definition of all the tables we may write
     tables = {
@@ -147,7 +147,7 @@ def main():
     
     # Load the configuration file provided as the first parameter
     config = loadJson(args.cfgFileName)
-
+    
     logging.info("runOverMC : %s, Reduced Tables will be produced...", runOverMC)
     
     taskNameInConfig = "table-maker"
@@ -165,7 +165,7 @@ def main():
     setConfigs(allArgs, config, cliMode)
     
     # process function automation based on cliMode
-    setSwitch(config ,processFuncs, allArgs, cliMode, ["processOnlyBCs"])
+    setSwitch(config, processFuncs, allArgs, cliMode, ["processOnlyBCs"])
     
     # Transactions
     aodFileChecker(allArgs["internal_dpl_aod_reader:aod_file"])
@@ -178,7 +178,7 @@ def main():
     if args.runParallel:
         updatedConfigFileName = "tempConfigFullAnalysisData.json"
     if runOverMC:
-        updatedConfigFileName ="tempConfigTableMakerMC.json"
+        updatedConfigFileName = "tempConfigTableMakerMC.json"
         if args.runParallel:
             updatedConfigFileName = "tempConfigFullAnalysisMC.json"
     

@@ -58,8 +58,6 @@ def dispInterfaceMode(cliMode: str):
         logging.info("INTERFACE MODE : JSON Additional")
 
 
-
-
 def dispO2HelpMessage(argHelpO2, commandToRun):
     """Display O2 helper message
 
@@ -71,7 +69,6 @@ def dispO2HelpMessage(argHelpO2, commandToRun):
         commandToRun += " --help full"
         os.system(commandToRun)
         sys.exit()
-
 
 
 def debugSettings(argDebug: bool, argLogFile: bool, fileName: str) -> None:
@@ -310,6 +307,7 @@ def setParallelismOnSkimming(commandToRun: str, updatedConfigFileName: str, anal
 
 
 class SetArgsToArgumentParser(object):
+    
     """This class provides parsing the json file and generates CLI arguments from json config file
 
     Args:
@@ -323,7 +321,6 @@ class SetArgsToArgumentParser(object):
         dict: namespace, argument
     """
     
-    
     def __init__(self, cfgJsonName, tasksToPassList: list, parser = None, dummyHasTasks = [], processFuncs = {}) -> dict:
         
         self.cfgJsonName = cfgJsonName
@@ -331,7 +328,7 @@ class SetArgsToArgumentParser(object):
         self.parser = argparse.ArgumentParser(description = 'Arguments to pass', formatter_class = argparse.ArgumentDefaultsHelpFormatter)
         self.dummyHasTasks = dummyHasTasks
         self.processFuncs = processFuncs
-            
+        
         # Load the configuration file for creating parser args (hard coded)
         configForParsing = {}
         with open(cfgJsonName) as configFile:
@@ -372,10 +369,10 @@ class SetArgsToArgumentParser(object):
             if isinstance(cfgValuePair, dict):
                 for argument in cfgValuePair.keys():
                     arglist.append(task + ":" + argument) # Set CLI argument as --> taskname:config
-                
+        
         self.parser.add_argument("cfgFileName", metavar = "Config.json", default = "config.json", help = "config JSON file name (mandatory)")
         self.parser.add_argument("-runParallel", help = "Run parallel in session", action = "store_true", default = False)
-                
+        
         # GLOBAL OPTIONS
         # TODO extend them
         groupGlobal = self.parser.add_argument_group(title = f"Global workflow options")
@@ -409,7 +406,7 @@ class SetArgsToArgumentParser(object):
             taskname = seperatedArg[0] # taskname as first index
             if "process" in configurable and "Dummy" not in configurable:
                 self.processFuncs.setdefault(taskname, []).append(configurable)
-                                        
+            
             # Tasks to pass
             if taskname in tasksToPassList:
                 continue
@@ -441,7 +438,7 @@ class SetArgsToArgumentParser(object):
             elif configurable == "cfgTPCpostCalib":
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
             #elif configurable == "processDummy": # NOTE we don't need configure processDummy since we have dummy automizer
-                #continue
+            #continue
             
             # NOTE maybe need define also task name except process for protection
             # Common Framework
@@ -452,7 +449,7 @@ class SetArgsToArgumentParser(object):
             elif configurable == "doVertexZeq":
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b").completer = ChoicesCompleter(binarySelection)
             elif configurable.startswith("pid-") or configurable.startswith("est"):
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs="*", type = str, metavar = "\b").completer = ChoicesCompleterList(tripletSelection)
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(tripletSelection)
             elif configurable == "muonSelection":
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b").completer = ChoicesCompleter(eventMuonSelections)
             elif configurable == "itsMatching":
@@ -465,7 +462,8 @@ class SetArgsToArgumentParser(object):
         # print(self.processFuncs.items())
         argcomplete.autocomplete(self.parser, always_complete_options = False)
         self.parser.parse_args()
-    
+
+
 def setConfigs(allArgs: dict, config: dict, climode: str) -> None:
     """Setter function for CLI arguments to JSON config file
 
@@ -494,8 +492,9 @@ def setConfigs(allArgs: dict, config: dict, climode: str) -> None:
                     valueCfg = actualConfig + "," + valueCfg
                 config[taskname][configurable] = parameter
                 logging.info(" - [%s] %s : %s", taskname, configurable, parameter)
-                
-def setSwitch(config: dict ,processFuncs: dict, allArgs: dict, cliMode: str, processFuncToPass = []) -> None:
+
+
+def setSwitch(config: dict, processFuncs: dict, allArgs: dict, cliMode: str, processFuncToPass = []) -> None:
     """This method providees Process function automation for overrider mode
 
     Args:
@@ -519,9 +518,9 @@ def setSwitch(config: dict ,processFuncs: dict, allArgs: dict, cliMode: str, pro
                 if taskName in processFuncs.keys() and processFunc in processFuncs[taskName] and parameter == "true":
                     #print("true: ",taskName, processFunc ,parameter)
                     processDepsDict.setdefault(taskName, []).append(processFunc)
-             
+        
         if len(processDepsDict.keys()) > 0:
-            logging.info("Process function automation for JSON overrider mode starting..")       
+            logging.info("Process function automation for JSON overrider mode starting..")
             for taskProcessPair, parameter in allArgs.items():
                 if "process" in taskProcessPair and (parameter == "true" or parameter == "false" or parameter is None):
                     taskProcessPairNew = [char.replace("_", "-") for char in taskProcessPair] # replace _ to - (list comprehension)
@@ -532,11 +531,8 @@ def setSwitch(config: dict ,processFuncs: dict, allArgs: dict, cliMode: str, pro
                     if taskName in processDepsDict.keys() and parameter != "true" and processFunc not in processFuncToPass and "Dummy" not in processFunc: # TODO fix duplicated messages for false
                         config[taskName][processFunc] = "false"
                         logging.info(" - [%s] %s : %s", taskName, processFunc, "false")
-                
-                
 
 
-    
 def commonDepsToRun(commonDeps: list) -> dict:
     """Produces common deps to run dict
 
@@ -546,7 +542,7 @@ def commonDepsToRun(commonDeps: list) -> dict:
     Returns:
         dict: common deps to run dict
     """
-           
+    
     depsToRun = {}
     for dep in commonDeps:
         depsToRun[dep] = 1

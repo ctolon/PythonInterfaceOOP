@@ -31,6 +31,7 @@ class TasknameNotFoundInConfigFileError(Exception):
     def __str__(self):
         return f"The JSON config does not include {self.taskName} task"
 
+
 class NotInAlienvError(Exception):
     
     """Exception raised for O2Physics Alienv Loading

@@ -36,7 +36,7 @@ def main():
     # Simple protection
     if not isinstance(runOverSkimmed, bool):
         raise TypeError(f"[FATAL] runOverSkimmeed have to True or False! (in bool type)")
-        
+    
     # Load json config file for create interface arguments as skimmed or not skimmed
     parsedJsonFile = "configs/configAnalysisMCEM.json"
     if runOverSkimmed is True:
@@ -63,7 +63,7 @@ def main():
     # Debug Settings
     fileName = "emEfficiencyEE.log"
     if runOverSkimmed is False:
-            fileName = "emEfficiencyEENotSkimmed.log"
+        fileName = "emEfficiencyEENotSkimmed.log"
     debugSettings(args.debug, args.logFile, fileName)
     
     # if cliMode true, Overrider mode else additional mode
@@ -75,7 +75,7 @@ def main():
     
     # Load the configuration file provided as the first parameter
     config = loadJson(args.cfgFileName)
-        
+    
     taskNameInCommandLine = "o2-analysis-em-efficiency-ee"
     taskNameInConfig = "analysis-event-selection"
     
@@ -88,7 +88,7 @@ def main():
     setConfigs(allArgs, config, cliMode)
     
     # process function automation based on cliMode
-    setSwitch(config ,processFuncs, allArgs, cliMode, [])
+    setSwitch(config, processFuncs, allArgs, cliMode, [])
     
     # Transactions
     aodFileChecker(allArgs["internal_dpl_aod_reader:aod_file"])
@@ -115,7 +115,7 @@ def main():
         for dep in depsToRun.keys():
             commandToRun += " | " + dep + " --configuration json://" + updatedConfigFileName + " -b"
             logging.debug("%s added your workflow", dep)
-            
+    
     commandToRun = setConverters(allArgs, updatedConfigFileName, commandToRun)
     
     dispO2HelpMessage(args.helpO2, commandToRun)

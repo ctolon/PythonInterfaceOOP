@@ -66,7 +66,7 @@ def main():
     setConfigs(allArgs, config, cliMode)
     
     # process function automation based on cliMode
-    setSwitch(config ,processFuncs, allArgs, cliMode)
+    setSwitch(config, processFuncs, allArgs, cliMode)
     
     # Transactions
     aodFileChecker(allArgs["internal_dpl_aod_reader:aod_file"])

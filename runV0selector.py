@@ -40,7 +40,7 @@ def main():
     
     # All Dependencies
     commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table", "o2-analysis-trackselection", "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full"]
-        
+    
     # Debug Settings
     debugSettings(args.debug, args.logFile, fileName = "v0selector.log")
     
@@ -66,7 +66,7 @@ def main():
     setConfigs(allArgs, config, cliMode)
     
     # process function automation based on cliMode
-    setSwitch(config ,processFuncs, allArgs, cliMode)
+    setSwitch(config, processFuncs, allArgs, cliMode)
     
     # Transactions
     aodFileChecker(allArgs["internal_dpl_aod_reader:aod_file"])

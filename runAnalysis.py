@@ -30,7 +30,7 @@ from extramodules.utils import dumpJson, loadJson
 
 
 def main():
-
+    
     # Switch runOverMC to True if you want work on dqEfficiency for MC else it will run for tableReader for Data
     runOverMC = False
     
@@ -93,7 +93,7 @@ def main():
     
     # Load the configuration file provided as the first parameter
     config = loadJson(args.cfgFileName)
-        
+    
     taskNameInCommandLine = "o2-analysis-dq-table-reader"
     taskNameInConfig = "analysis-event-selection"
     if runOverMC:
@@ -109,7 +109,7 @@ def main():
     setConfigs(allArgs, config, cliMode)
     
     # process function automation based on cliMode
-    setSwitch(config ,processFuncs, allArgs, cliMode, [])
+    setSwitch(config, processFuncs, allArgs, cliMode, [])
     
     # Transacations
     aodFileChecker(allArgs["internal_dpl_aod_reader:aod_file"])
@@ -129,7 +129,7 @@ def main():
     commandToRun = f"{taskNameInCommandLine} --configuration json://{updatedConfigFileName} -b"
     if args.writer is not None:
         commandToRun = f"{taskNameInCommandLine} --configuration json://{updatedConfigFileName} --aod-writer-json {args.writer} -b"
-        
+    
     dispO2HelpMessage(args.helpO2, commandToRun)
     
     print("====================================================================================================================")
