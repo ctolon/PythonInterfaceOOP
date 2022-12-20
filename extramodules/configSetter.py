@@ -317,18 +317,20 @@ class SetArgsToArgumentParser(object):
         tasksToPassList (list): If you don't want to include and provide some tasks from the JSON config file to CLI arguments you can define them in a list type
         parser (object): For getting args from ArgumentParser 
         dummyHasTasks (Optional, list): If there are tasks with processDummy in the json, it will save them to the list (for dummy automizer)
+        processFuncs: (dict): Creating task-processFunctions dependency tree for automations
 
     Returns:
         dict: namespace, argument
     """
     
     
-    def __init__(self, cfgJsonName, tasksToPassList: list, parser = None, dummyHasTasks = []) -> dict:
+    def __init__(self, cfgJsonName, tasksToPassList: list, parser = None, dummyHasTasks = [], processFuncs = {}) -> dict:
         
         self.cfgJsonName = cfgJsonName
         self.tasksToPassList = list(tasksToPassList)
         self.parser = argparse.ArgumentParser(description = 'Arguments to pass', formatter_class = argparse.ArgumentDefaultsHelpFormatter)
         self.dummyHasTasks = dummyHasTasks
+        self.processFuncs = processFuncs
             
         # Load the configuration file for creating parser args (hard coded)
         configForParsing = {}
@@ -400,12 +402,14 @@ class SetArgsToArgumentParser(object):
         
         # save args to parser(template --> --taskname:config)
         for arg in arglist:
-            
+            mylist = []
             # seperate the template to list --> taskname:config to [taskname, configurable]
             seperatedArg = stringToList(arg, ":")
             configurable = seperatedArg[1] # configurable as second index
             taskname = seperatedArg[0] # taskname as first index
-            
+            if "process" in configurable and "Dummy" not in configurable:
+                self.processFuncs.setdefault(taskname, []).append(configurable)
+                                        
             # Tasks to pass
             if taskname in tasksToPassList:
                 continue
@@ -458,6 +462,7 @@ class SetArgsToArgumentParser(object):
             else:
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b") # Has no autocompletion
         
+        # print(self.processFuncs.items())
         argcomplete.autocomplete(self.parser, always_complete_options = False)
         self.parser.parse_args()
     
@@ -489,6 +494,48 @@ def setConfigs(allArgs: dict, config: dict, climode: str) -> None:
                     valueCfg = actualConfig + "," + valueCfg
                 config[taskname][configurable] = parameter
                 logging.info(" - [%s] %s : %s", taskname, configurable, parameter)
+                
+def setSwitch(config: dict ,processFuncs: dict, allArgs: dict, cliMode: str, processFuncToPass = []) -> None:
+    """This method providees Process function automation for overrider mode
+
+    Args:
+        config (dict): Input as json config file
+        processFuncs (dict): All process function deps list
+        allArgs (dict): All provided args from CLI
+        cliMode (str): cliMode as argument
+        processFuncToPass (list, optional): List to pass configuration on mandatory arguments. Defaults to [].
+    """
+    
+    processDepsDict = {} # save all true configured task - process function pairs to dict
+    
+    if cliMode == "true":
+        for taskProcessPair, parameter in allArgs.items():
+            if "process" in taskProcessPair and (parameter == "true" or parameter == "false" or parameter is None):
+                taskProcessPairNew = [char.replace("_", "-") for char in taskProcessPair] # replace _ to - (list comprehension)
+                taskProcessPairNew = convertListToStr(taskProcessPairNew) # convert list to string after list comprehension
+                seperatedTaskProcessPair = stringToList(taskProcessPairNew, ":") # seperate as taskname process function
+                taskName = seperatedTaskProcessPair[0] # taskname in args
+                processFunc = seperatedTaskProcessPair[1] # processFunc in args
+                if taskName in processFuncs.keys() and processFunc in processFuncs[taskName] and parameter == "true":
+                    #print("true: ",taskName, processFunc ,parameter)
+                    processDepsDict.setdefault(taskName, []).append(processFunc)
+             
+        if len(processDepsDict.keys()) > 0:
+            logging.info("Process function automation for JSON overrider mode starting..")       
+            for taskProcessPair, parameter in allArgs.items():
+                if "process" in taskProcessPair and (parameter == "true" or parameter == "false" or parameter is None):
+                    taskProcessPairNew = [char.replace("_", "-") for char in taskProcessPair] # replace _ to - (list comprehension)
+                    taskProcessPairNew = convertListToStr(taskProcessPairNew) # convert list to string after list comprehension
+                    seperatedTaskProcessPair = stringToList(taskProcessPairNew, ":") # seperate as taskname process function
+                    taskName = seperatedTaskProcessPair[0] # taskname in args
+                    processFunc = seperatedTaskProcessPair[1] # processFunc in args
+                    if taskName in processDepsDict.keys() and parameter != "true" and processFunc not in processFuncToPass and "Dummy" not in processFunc: # TODO fix duplicated messages for false
+                        config[taskName][processFunc] = "false"
+                        logging.info(" - [%s] %s : %s", taskName, processFunc, "false")
+                
+                
+
+
     
 def commonDepsToRun(commonDeps: list) -> dict:
     """Produces common deps to run dict

@@ -24,7 +24,7 @@ import logging
 import logging.config
 import os
 from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, jsonTypeChecker, mainTaskChecker, trackPropagationChecker
-from extramodules.configSetter import SetArgsToArgumentParser, commonDepsToRun, dispInterfaceMode, dispO2HelpMessage, setConfigs, setParallelismOnSkimming, setProcessDummy, setConverters, debugSettings, dispArgs, generateDescriptors, tableProducer
+from extramodules.configSetter import SetArgsToArgumentParser, commonDepsToRun, dispInterfaceMode, dispO2HelpMessage, setConfigs, setParallelismOnSkimming, setProcessDummy, setConverters, debugSettings, dispArgs, generateDescriptors, setSwitch, tableProducer
 from extramodules.pycacheRemover import runPycacheRemover
 from extramodules.utils import dumpJson, loadJson
 
@@ -47,8 +47,9 @@ def main():
     setArgsToArgumentParser = SetArgsToArgumentParser(parsedJsonFile, ["timestamp-task", "tof-event-time", "bc-selection-task", "tof-pid-beta"])
     args = setArgsToArgumentParser.parser.parse_args()
     dummyHasTasks = setArgsToArgumentParser.dummyHasTasks
+    processFuncs = setArgsToArgumentParser.processFuncs
     allArgs = vars(args) # for get args
-        
+            
     # All Dependencies
     commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table"]
     barrelDeps = ["o2-analysis-trackselection", "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full"]
@@ -163,8 +164,11 @@ def main():
     # Set arguments to config json file
     setConfigs(allArgs, config, cliMode)
     
+    # process function automation based on cliMode
+    setSwitch(config ,processFuncs, allArgs, cliMode, ["processOnlyBCs"])
+    
     # Transactions
-    #aodFileChecker(allArgs["internal_dpl_aod_reader:aod_file"])
+    aodFileChecker(allArgs["internal_dpl_aod_reader:aod_file"])
     trackPropagationChecker(args.add_track_prop, barrelDeps)
     mandatoryArgChecker(config, taskNameInConfig, "processOnlyBCs")
     setProcessDummy(config, dummyHasTasks) # dummy automizer

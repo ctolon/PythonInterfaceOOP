@@ -24,7 +24,7 @@ import logging.config
 import os
 import sys
 from extramodules.dqTranscations import depsChecker, mandatoryArgChecker, aodFileChecker, jsonTypeChecker, mainTaskChecker
-from extramodules.configSetter import SetArgsToArgumentParser, dispInterfaceMode, dispO2HelpMessage, setConfigs, setProcessDummy, debugSettings, dispArgs
+from extramodules.configSetter import SetArgsToArgumentParser, dispInterfaceMode, dispO2HelpMessage, setConfigs, setProcessDummy, debugSettings, dispArgs, setSwitch
 from extramodules.pycacheRemover import runPycacheRemover
 from extramodules.utils import dumpJson, loadJson
 
@@ -48,6 +48,7 @@ def main():
     setArgsToArgumentParser = SetArgsToArgumentParser(parsedJsonFile, ["timestamp-task", "tof-event-time", "bc-selection-task", "tof-pid-beta"])
     args = setArgsToArgumentParser.parser.parse_args()
     dummyHasTasks = setArgsToArgumentParser.dummyHasTasks
+    processFuncs = setArgsToArgumentParser.processFuncs
     allArgs = vars(args) # for get args
     
     # yapf: disable
@@ -106,6 +107,9 @@ def main():
     
     # Set arguments to config json file
     setConfigs(allArgs, config, cliMode)
+    
+    # process function automation based on cliMode
+    setSwitch(config ,processFuncs, allArgs, cliMode, [])
     
     # Transacations
     aodFileChecker(allArgs["internal_dpl_aod_reader:aod_file"])
