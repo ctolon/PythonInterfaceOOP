@@ -26,6 +26,14 @@ Also We have PWG-EM Dilepton Task, prepared from @rbailhac
 * Analysis task for calculating single electron and dielectron efficiency, skimmed or not skimmed version.
 [`runEMEfficiency.py`](https://github.com/ctolon/PythonInterfaceOOP/blob/main/runEMEfficiency.py).
 
+They have standard template for running:
+
+`python3 <script.py> <config.json> --task-name:<configurable|processFunc> parameter ...`
+
+ex. for tableMaker:
+```ruby
+  python3 runTableMaker.py configs/configTableMakerDataRun3.json --internal-dpl-aod-reader:aod-file Datas/AO2D_ppDataRun3_LHC22c.root --table-maker:processMuonOnlyWithCov true --table-maker:processBarrelOnlyWithCov true --event-selection-task:syst pp --table-maker:cfgQA true --table-maker:cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --table-maker:cfgBarrelTrackCuts jpsiPID1 jpsiPID2 jpsiO2MCdebugCuts --add_track_prop --logFile
+```
 ## Config Files
 
 * Contains workflow configuration files

@@ -428,11 +428,11 @@ class SetArgsToArgumentParser(object):
                 for argument in cfgValuePair.keys():
                     arglist.append(task + ":" + argument) # Set CLI argument as --> taskname:config
         
+        # We can define hard coded global arguments
         self.parser.add_argument("cfgFileName", metavar = "Config.json", default = "config.json", help = "config JSON file name (mandatory)")
         self.parser.add_argument("-runParallel", help = "Run parallel in session", action = "store_true", default = False)
         
         # GLOBAL OPTIONS
-        # TODO extend them
         groupGlobal = self.parser.add_argument_group(title = f"Global workflow options")
         groupGlobal.add_argument("--aod-memory-rate-limit", help = "Rate limit AOD processing based on memory", action = "store", type = str)
         groupGlobal.add_argument("--writer", help = "Argument for producing extra reduced tables", action = "store", type = str).completer = ChoicesCompleter(booleanSelections)

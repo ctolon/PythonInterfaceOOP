@@ -69,6 +69,41 @@ Arg | Ref Type| Desc | Default | Real Type
 `--localPath` | String | Local: Configure your alice software folder name in your local home path. Default is alice. Example different configuration is --localpath alice-software --local --> home/user/alice-software | `alice` | str
 
 
+## Hardcoded Arguments
+
+These are helper hardcoded arguments for every run python scripts that do not directly manage configurations in json configuration files.
+
+```ruby
+positional arguments:
+  Config.json           config JSON file name (mandatory)
+
+options:
+  -h, --help            show this help message and exit
+  -runParallel          Run parallel in session (default: False)
+
+Global workflow options:
+  --aod-memory-rate-limit AOD_MEMORY_RATE_LIMIT
+                        Rate limit AOD processing based on memory (default: None)
+  --writer WRITER       Argument for producing extra reduced tables (default: None)
+  --helpO2              Display help message on O2 (default: False)
+
+Add to workflow O2 Converter task options:
+  --add_mc_conv         Add the converter from mcparticle to mcparticle+001 (Adds your workflow o2-analysis-mc-converter task) (default: False)
+  --add_fdd_conv        Add the fdd converter (Adds your workflow o2-analysis-fdd-converter task) (default: False)
+  --add_track_prop      Add track propagation to the innermost layer (TPC or ITS) (Adds your workflow o2-analysis-track-propagation task) (default: False)
+  --add_weakdecay_ind   Add Converts V0 and cascade version 000 to 001 (Adds your workflow o2-analysis-weak-decay-indices task) (default: False)
+  --add_col_conv        Add the converter from collision to collision+001 (default: False)
+
+Helper Options:
+  --debug {NOTSET,DEBUG,INFO,WARNING,ERROR,CRITICAL}
+                        execute with debug options (default: INFO)
+  --logFile             Enable logger for both file and CLI (default: False)
+  --override {true,false}
+                        If true JSON Overrider Interface If false JSON Additional Interface (default: true)
+```
+
+
+
 # Instructions for runTableMaker
 
 * Minimum Required Parameter List:
