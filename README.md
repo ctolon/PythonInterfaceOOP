@@ -32,7 +32,7 @@ ex. for tableMaker:
 * the runEMEfficiency.py an runEMEfficiencyNotSkimmed.py scripts have been merged into the the runEMEfficiency.py script.
   * IMPORTANT: You need Switch runOverSkimmed variable to True in the script if you want work on skimmed EM efficiency else it will run for not Skimmed EM efficiency
 
-* The argument parameter template has changed, now for each task, arguments in the form of doublets separated by separate columns are given, and then parameters are given (Template: `python3 <script.py> >config.json> --taskname:<configurable|processFunction> <parameters>`).
+* The argument parameter template has changed, now for each task, arguments in the form of doublets separated by separate colons are given, and then parameters are given (Template: `python3 <script.py> >config.json> --taskname:<configurable|processFunction> <parameters>`).
   * OLD TEMPLATE ex.: `python3 runTableMaker.py configs/configTableMakerDataRun3.json --table-maker:processBarrelOnly true --table-maker:cfgBarrelTrackCuts jpsiPID1 jpsiPID2 `
   * NEW TEMPLATE ex.: `python3 runTableMaker.py configs/configTableMakerDataRun3.json --table-maker:processBarrelOnly true --table-maker:cfgBarrelTrackCuts jpsiPID1 jpsiPID2 `
 
