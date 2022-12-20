@@ -71,20 +71,6 @@ Arg | Ref Type| Desc | Default | Real Type
 
 # Instructions for runTableMaker
 
-Add extrac tables and converters with:
-1. **--add_mc_conv**: conversion from o2mcparticle to o2mcparticle_001
-   * If you get error like this, you should added it in your workflow 
-   * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2mcparticle" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.`
-2. **--add_fdd_conv**: conversion o2fdd from o2fdd_001
-   * If you get error like this, you should added it in your workflow 
-   * `[ERROR] Exception caught: Couldn't get TTree "DF_2571958947001/O2fdd_001" from "YOURAOD.root". Please check https://aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfound.html for more information.` 
-3. **--add_track_prop**: conversion from o2track to o2track_iu ([link](https://aliceo2group.github.io/analysis-framework/docs/basics-usage/HelperTasks.html#track-propagation))
-   * If you get error like this, you should added it in your workflow 
-   * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2track" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.` 
-4. **--add_weakdecay_ind**: Converts V0 and cascade version 000 to 001
-   * If you get error like this, you should added it in your workflow 
-   * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2v0_001" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.`
-
 * Minimum Required Parameter List:
   * The runOverMC variable, which is just below the main function in the script, must be False for tableMaker and True for tableMakerMC
   * `python3`
@@ -112,7 +98,7 @@ Examples:
 
 In case of multiple configs example
   ```ruby
-python3 runTableMaker.py configs/configTableMakerMCRun3.json --table-maker-m-c:processMuonOnlyWithCov true --table-maker-m-c:processOnlyBCs true --table-maker-m-c:cfgMCsignals muFromJpsi Jpsi muFromPsi2S Psi2S --onlySelect true --internal-dpl-aod-reader:aod-file Datas/AO2D.root --table-maker-m-c:cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --event-selection-task:syst pp --onlySelect true --add_track_prop
+python3 runTableMaker.py configs/configTableMakerMCRun3.json --table-maker-m-c:processMuonOnlyWithCov true --table-maker-m-c:processOnlyBCs true --table-maker-m-c:cfgMCsignals muFromJpsi Jpsi muFromPsi2S Psi2S --overrider true --internal-dpl-aod-reader:aod-file Datas/AO2D.root --table-maker-m-c:cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --event-selection-task:syst pp --overrider true --add_track_prop
   ```
 # Instructions for runAnalysis.py
 * The runOverMC variable, which is just below the main function in the script, must be False for tableReader and True for dqEfficiency
@@ -175,20 +161,6 @@ python3 runFilterPP.py configs/configFilterPPDataRun3.json --internal-dpl-aod-re
   ```
 
 # Instructions for runDQFlow.py
-
-Add extrac tables and converters with:
-1. **--add_mc_conv**: conversion from o2mcparticle to o2mcparticle_001
-   * If you get error like this, you should added it in your workflow 
-   * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2mcparticle" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.`
-2. **--add_fdd_conv**: conversion o2fdd from o2fdd_001
-   * If you get error like this, you should added it in your workflow 
-   * `[ERROR] Exception caught: Couldn't get TTree "DF_2571958947001/O2fdd_001" from "YOURAOD.root". Please check https://aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfound.html for more information.` 
-3. **--add_track_prop**: conversion from o2track to o2track_iu ([link](https://aliceo2group.github.io/analysis-framework/docs/basics-usage/HelperTasks.html#track-propagation))
-   * If you get error like this, you should added it in your workflow 
-   * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2track" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.`
-4. **--add_weakdecay_ind**: Converts V0 and cascade version 000 to 001
-   * If you get error like this, you should added it in your workflow 
-   * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2v0_001" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.`
 
 * Minimum Required Parameter List:
   * `python3`

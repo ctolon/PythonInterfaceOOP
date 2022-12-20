@@ -337,10 +337,10 @@ python3 runTableMaker.py configs/configTableMakerMCRun3.json --internal-dpl-aod-
 Second Command To Run:
 
 ```ruby
-python3 runAnalysis.py configs/configAnalysisMC.json --internal-dpl-aod-reader:aod-file reducedAod.root --analysis-track-selection:processSkimmed false --analysis-muon-selection:processSkimmed true --analysis-same-event-pairing:processDecayToMuMuVertexing true --analysis-muon-selection:cfgQA true --analysis-muon-selection:cfgMuonCuts matchedGlobal --analysis-same-event-pairing:cfgMuonCuts matchedGlobal --analysis-muon-selection:cfgMuonMCSignals muon muFromJpsi muFromBc dimuon --analysis-same-event-pairing:cfgBarrelMCGenSignals Jpsi --analysis-same-event-pairing:cfgBarrelMCRecSignals mumuFromJpsi --logFile --writer configs/writerConfiguration_dileptonMC.json
+python3 runAnalysis.py configs/configAnalysisMC.json --internal-dpl-aod-reader:aod-file reducedAod.root --analysis-track-selection:processSkimmed false --analysis-muon-selection:processSkimmed true --analysis-same-event-pairing:processDecayToMuMuVertexing true --analysis-muon-selection:cfgQA true --analysis-muon-selection:cfgMuonCuts matchedGlobal --analysis-same-event-pairing:cfgMuonCuts matchedGlobal --analysis-muon-selection:cfgMuonMCSignals muon muFromJpsi muFromBc dimuon --analysis-same-event-pairing:cfgBarrelMCGenSignals Jpsi --analysis-same-event-pairing:cfgBarrelMCRecSignals mumuFromJpsi --logFile --writer true
 ```
 
-Note: We defined --writer argument with dileptonMC json configuration for producing extra dilepton tables from reducedAod. 
+Note: We defined --writer argument as true for producing extra dilepton tables into dileptonAod.root from reducedAod.root. 
 
 Third Command To Run:
 
@@ -371,5 +371,18 @@ Third Command To Run:
 ```ruby
 python3 runTableReader.py configs/configAnalysisData.json --aod dileptonAOD.root --analysis eventSelection trackSelection sameEventPairing dileptonHadron --process DecayToEE --cfgQA true --cfgTrackCuts jpsiPID1 jpsiPID2 --debug debug --logFile --reader configs/readerConfiguration_dileptons.json
 ```
+
+## Special Part : run tableMaker and tableReader at the same time
+
+Command To Run:
+
+```ruby
+python3 runAnalysis.py configs/configAnalysisData.json --analysis-same-event-pairing:processDecayToEESkimmed true -runParallel;python3 runTableMaker.py configs/configTableMakerDataRun3.json --internal-dpl-aod-reader:aod-file Datas/AO2D_ppDataRun3_LHC22c.root --table-maker:processBarrelOnly true -runParallel --add_track_prop
+```
+
+To run the tablemaker and the tablereader at the same time, you must first configure the tableReader with the runAnalysis.py script. then after adding the -runParallel argument `;` is put. Then the tableMaker is configured and the path of the AOD file must be given in the tableMaker script (again, given the -runParallel argument, don't forget for both scritps). Same goes for MC (for tableMakerMC and dqEfficiency, you need change runOverMC variables to False)
+
+This way it produces analysis results for both tableReader and tableMaker in AnalysisResults.root, and you get reducedAod.root (it contains reduced tables from DQ data model)
+
 
 [← Go back to Instructions For Python Scripts](5_InstructionsForPythonScripts.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Developer Guide →](7_DeveloperGuide.md)

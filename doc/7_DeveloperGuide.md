@@ -9,21 +9,18 @@ Tools used to add new configurable or new process functions in JSONs and more ar
 
 Main Tools:
 
-* setConfig:
-* setSelection:
+* setConfigs
+* SetArgsToArgumentParser:
 * setSwitch
 * setProcessDummy
 
 Helper Tools:
-* setPrefixSuffix
-* setFalseHasDeps
 * setConverters
 * mandatoryArgChecker
 * depsChecker
 * oneToMultiDepsChecker
 
 TODO Ongoing
-
 
 ## Naming Conventions
 
@@ -33,10 +30,5 @@ TODO Ongoing
 * Variables: Lower camelcase
 * Constants: Screaming camelcase
 * O2 converter arguments: Snake case
-
-### setProcessDummy
-
-// TODO explain interface modes
-        
 
 [← Go back to Instructions For Tutorials](6_Tutorials.md) | [↑ Go to the Table of Content ↑](../README.md) [Continue to TroubleshootingTreeNotFound →](8_TroubleshootingTreeNotFound.md)

@@ -24,9 +24,14 @@ import logging.config
 import os
 import sys
 from extramodules.dqTranscations import depsChecker, mandatoryArgChecker, aodFileChecker, jsonTypeChecker, mainTaskChecker
-from extramodules.configSetter import SetArgsToArgumentParser, dispInterfaceMode, dispO2HelpMessage, setConfigs, setProcessDummy, debugSettings, dispArgs, setSwitch
+from extramodules.configSetter import SetArgsToArgumentParser, dispInterfaceMode, dispO2HelpMessage, generateDescriptors, setConfigs, setProcessDummy, debugSettings, dispArgs, setSwitch, tableProducerAnalysis
 from extramodules.pycacheRemover import runPycacheRemover
 from extramodules.utils import dumpJson, loadJson
+
+# run template: `python3 runAnalysis.py <config.json> --task-name:<configurable|processFunc> parameter ...`
+# parameter can be multiple like this:
+# --analysis-track-selection:cfgTrackCuts jpsiPID1 jpsiPID2
+# For run over MC (run dqEfficiency instead of tableReader) You need to Set runOverMC variable to true, if you don't convert it will work for interface tableReader
 
 
 def main():
@@ -76,7 +81,46 @@ def main():
         "processDimuonMuonSkimmed": {"analysis-muon-selection": "processSkimmed"},
         "processDielectronKaonSkimmed": {"analysis-track-selection": "processSkimmed"}
         }
+    # yapf: disable
+    # Definition of all the tables we may write
+    tables = {
+        "ReducedEvents": {"table": "AOD/REDUCEDEVENT/0"},
+        "ReducedEventsExtended": {"table": "AOD/REEXTENDED/0"},
+        "ReducedEventsVtxCov": {"table": "AOD/REVTXCOV/0"},
+        "ReducedEventsQvector": {"table": "AOD/REQVECTOR/0"},
+        "ReducedMCEventLabels": {"table": "AOD/REMCCOLLBL/0"},
+        "ReducedMCEvents": {"table": "AOD/REDUCEDMCEVENT/0"},
+        "ReducedTracks": {"table": "AOD/REDUCEDTRACK/0"},
+        "ReducedTracksBarrel": {"table": "AOD/RTBARREL/0"},
+        "ReducedTracksBarrelCov": {"table": "AOD/RTBARRELCOV/0"},
+        "ReducedTracksBarrelPID": {"table": "AOD/RTBARRELPID/0"},
+        "ReducedTracksBarrelLabels": {"table": "AOD/RTBARRELLABELS/0"},
+        "ReducedMCTracks": {"table": "AOD/REDUCEDMCTRACK/0"},
+        "ReducedMuons": {"table": "AOD/RTMUON/0"},
+        "ReducedMuonsExtra": {"table": "AOD/RTMUONEXTRA/0"},
+        "ReducedMuonsCov": {"table": "AOD/RTMUONCOV/0"},
+        "ReducedMuonsLabels": {"table": "AOD/RTMUONSLABELS/0"},
+        "Dileptons": {"table": "AOD/RTDILEPTON/0"},
+        "DileptonsExtra": {"table": "AOD/RTDILEPTONEXTRA/0"},
+        "DileptonFlow": {"table": "AOD/RTDILEPTONFLOW/0"},
+        "DimuonsAll": {"table": "AOD/RTDIMUONALL/0"}
+        }
     # yapf: enable
+    # Tables to be written, per process function
+    commonTables = ["ReducedEvents", "ReducedEventsExtended", "ReducedEventsVtxCov", "Dileptons", "DileptonsExtra"]
+    barrelCommonTables = ["ReducedTracks", "ReducedTracksBarrel", "ReducedTracksBarrelPID"]
+    muonCommonTables = ["ReducedMuons", "ReducedMuonsExtra"]
+    specificTables = {
+        "processAllSkimmed": [],
+        "processDecayToEESkimmed": [],
+        "processDecayToEEVertexingSkimmed": ["ReducedTracksBarrelCov"],
+        "processDecayToEEPrefilterSkimmed": [],
+        "processDecayToMuMuSkimmed": [],
+        "processDecayToMuMuVertexingSkimmed": ["ReducedMuonsCov"],
+        "processVnDecayToEEskimmed": ["ReducedEventsQvector", "DileptonFlow"],
+        "processVnDecayToMuMuSkimmed": ["ReducedEventsQvector", "DileptonFlow"],
+        "processElectronMuonSkimmed": [],
+        }
     
     # Debug settings
     fileName = "tableReader.log"
@@ -85,7 +129,7 @@ def main():
     debugSettings(args.debug, args.logFile, fileName)
     
     # if cliMode true, Overrider mode else additional mode
-    cliMode = args.onlySelect
+    cliMode = args.override
     
     # Basic validations
     jsonTypeChecker(args.cfgFileName)
@@ -113,9 +157,9 @@ def main():
     
     # Transacations
     aodFileChecker(allArgs["internal_dpl_aod_reader:aod_file"])
-    #depsChecker(config, sameEventPairingDeps, sameEventPairingTaskName)
-    #depsChecker(config, eventMixingDeps, eventMixingTaskName)
-    #depsChecker(config, dileptonTrackDeps, dileptonTrackTaskName)
+    depsChecker(config, sameEventPairingDeps, sameEventPairingTaskName)
+    depsChecker(config, eventMixingDeps, eventMixingTaskName)
+    depsChecker(config, dileptonTrackDeps, dileptonTrackTaskName)
     mandatoryArgChecker(config, taskNameInConfig, "processSkimmed")
     setProcessDummy(config, dummyHasTasks) # dummy automizer
     
@@ -125,20 +169,36 @@ def main():
         updatedConfigFileName = "tempConfigDQEfficiency.json"
     
     dumpJson(updatedConfigFileName, config)
+    if args.writer == "true":
+        tablesToProduce = tableProducerAnalysis(config, "analysis-same-event-pairing", commonTables, barrelCommonTables, muonCommonTables, specificTables, runOverMC)
+        
+        writerConfigFileName = "aodWriterAnalysisTempConfig.json"
+        
+        # Generate the aod-writer output descriptor json file
+        generateDescriptors("dileptonAOD", tablesToProduce, tables, writerConfigFileName, kFlag = False)
     
     commandToRun = f"{taskNameInCommandLine} --configuration json://{updatedConfigFileName} -b"
-    if args.writer is not None:
-        commandToRun = f"{taskNameInCommandLine} --configuration json://{updatedConfigFileName} --aod-writer-json {args.writer} -b"
+    if args.writer == "true":
+        #if args.writer is not None:
+        #commandToRun = f"{taskNameInCommandLine} --configuration json://{updatedConfigFileName} --aod-writer-json {args.writer} -b"
+        commandToRun = f"{taskNameInCommandLine} --configuration json://{updatedConfigFileName} --aod-writer-json {writerConfigFileName} -b"
     
     dispO2HelpMessage(args.helpO2, commandToRun)
     
+    if args.runParallel is True:
+        dispArgs(allArgs)
+        sys.exit()
     print("====================================================================================================================")
     logging.info("Command to run:")
     logging.info(commandToRun)
     print("====================================================================================================================")
+    if args.writer == "true":
+        print("====================================================================================================================")
+        logging.info("Tables to produce:")
+        logging.info(tablesToProduce.keys())
+        print("====================================================================================================================")
     dispArgs(allArgs) # Display all args
-    if args.runParallel is True:
-        sys.exit()
+    
     os.system(commandToRun) # Execute O2 generated commands
     runPycacheRemover() # Run pycacheRemover
 

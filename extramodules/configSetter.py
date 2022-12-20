@@ -136,14 +136,15 @@ def setConverters(allArgs: dict, updatedConfigFileName: str, commandToRun: str) 
     return commandToRun
 
 
-def generateDescriptors(tablesToProduce: dict, tables: dict, writerConfigFileName = "aodWriterTempConfig.json", readerConfigFileName = "aodReaderTempConfig.json", kFlag = False) -> None:
+def generateDescriptors(resfilename: str, tablesToProduce: dict, tables: dict, writerConfigFileName: str, readerConfigFileName = 'aodReaderTempConfig', kFlag = False) -> None:
     """Generates Descriptors for Writing/Reading Tables from AO2D with json config file (input descriptor is optional)
 
     Args:
+        resfilename (str): Name of aod file which will be produced
         tablesToProduce (dict): Tables are required in the output
         tables (dict): Definition of all the tables can be produced
-        writerConfigFileName (str, optional): Output name of writer config. Defaults to "aodWriterTempConfig.json".
-        readerConfigFileName (str, optional): Output name of reader config. Defaults to "aodReaderTempConfig.json".
+        writerConfigFileName (str): Output name of writer config
+        readerConfigFileName (str, optional): Output name of reader config. Defaults to aodReaderTempConfig.json
         kFlag (bool, optional): if True also generates input descriptors. Defaults to False.
     """
     
@@ -159,7 +160,7 @@ def generateDescriptors(tablesToProduce: dict, tables: dict, writerConfigFileNam
     writerConfig = {}
     writerConfig["OutputDirector"] = {
         "debugmode": True,
-        "resfile": "reducedAod",
+        "resfile": resfilename,
         "resfilemode": "RECREATE",
         "ntfmerge": 1,
         "OutputDescriptors": [],
@@ -173,7 +174,7 @@ def generateDescriptors(tablesToProduce: dict, tables: dict, writerConfigFileNam
             readerConfig["InputDirector"]["InputDescriptors"].insert(iTableReader, tables[table])
             iTableReader += 1
     
-    writerConfigFileName = "aodWriterTempConfig.json"
+    # writerConfigFileName = "aodWriterTempConfig.json"
     with open(writerConfigFileName, "w") as writerConfigFile:
         json.dump(writerConfig, writerConfigFile, indent = 2)
     
@@ -185,7 +186,7 @@ def generateDescriptors(tablesToProduce: dict, tables: dict, writerConfigFileNam
     logging.info(f"{writerConfig}")
 
 
-def tableProducer(config: dict, taskNameInConfig: str, commonTables: list, barrelCommonTables: list, muonCommonTables: list, specificTables: list, specificDeps: dict, runOverMC: bool) -> dict:
+def tableProducerSkimming(config: dict, taskNameInConfig: str, commonTables: list, barrelCommonTables: list, muonCommonTables: list, specificTables: list, specificDeps: dict, runOverMC: bool) -> dict:
     """Table producer function for tableMaker/tableMakerMC
 
     Args:
@@ -231,6 +232,63 @@ def tableProducer(config: dict, taskNameInConfig: str, commonTables: list, barre
                     tablesToProduce[table] = 1
                 if runOverMC:
                     tablesToProduce["ReducedMuonsLabels"] = 1
+            if runOverMC:
+                tablesToProduce["ReducedMCTracks"] = 1
+            logging.info("specific tables==========")
+            for table in specificTables[processFunc]:
+                logging.info("%s", table)
+                tablesToProduce[table] = 1
+    return tablesToProduce
+
+
+def tableProducerAnalysis(config: dict, taskNameInConfig: str, commonTables: list, barrelCommonTables: list, muonCommonTables: list, specificTables: list, runOverMC: bool) -> dict:
+    """Table producer function for tableReader/dqEfficiency
+    This method allows produce extra dilepton tables.
+
+    Args:
+        config (dict): Input as JSON config file
+        taskNameInConfig (str): Taskname in config file (table-maker/table-maker-m-c)
+        commonTables (list): Common tables which are always be created
+        barrelCommonTables (list): Barrel tables in reduced DQ data model
+        muonCommonTables (list): Muon tables in reduced DQ data model
+        specificTables (list): Specific Tables for specific tasks
+        specificDeps (dict): Specific Dependencies for specific tasks
+        runOverMC (bool): Checking to run over MC or Data
+        
+    Returns:
+        dict: Tables to produce dict
+    """
+    
+    tablesToProduce = {}
+    
+    for table in commonTables:
+        tablesToProduce[table] = 1
+    
+    if runOverMC:
+        tablesToProduce["ReducedMCEvents"] = 1
+        tablesToProduce["ReducedMCEventLabels"] = 1
+    
+    for processFunc in specificTables.keys():
+        if processFunc not in config[taskNameInConfig].keys():
+            continue
+        if config[taskNameInConfig][processFunc] == "true":
+            logging.info("processFunc ========")
+            logging.info("%s", processFunc)
+            if "processAll" in processFunc or "processDecayToEE":
+                logging.info("common barrel tables==========")
+                for table in barrelCommonTables:
+                    logging.info("%s", table)
+                    tablesToProduce[table] = 1
+                if runOverMC:
+                    tablesToProduce["ReducedTracksBarrelLabels"] = 1
+            if "processAll" in processFunc or "processDecayToMuMu":
+                logging.info("common muon tables==========")
+                for table in muonCommonTables:
+                    logging.info("%s", table)
+                    tablesToProduce[table] = 1
+                if runOverMC:
+                    tablesToProduce["ReducedMuonsLabels"] = 1
+                    tablesToProduce["DimuonsAll"] = 1
             if runOverMC:
                 tablesToProduce["ReducedMCTracks"] = 1
             logging.info("specific tables==========")
@@ -300,10 +358,10 @@ def setParallelismOnSkimming(commandToRun: str, updatedConfigFileName: str, anal
     #save merged configs (skimming/analysis)
     with open(updatedConfigFileName, "w") as outputFile:
         json.dump(mergedConfigs, outputFile, indent = 2)
+    analysisjson = "aodWriterAnalysisTempConfig.json"
+    skimmingjson = "aodWriterSkimmingTempConfig.json"
     
-    #NOTE: Aod writer json config arg currently not working with parallelism
-    #return (analysisTaskName + " --configuration json://" + updatedConfigFileName + " --aod-writer-json aodWriterTempConfig.json " + " -b " + '| ' + skimmingTaskFullCommand)
-    return (analysisTaskName + " --configuration json://" + updatedConfigFileName + " -b " + '| ' + skimmingTaskFullCommand)
+    return f"{skimmingTaskFullCommand} | {analysisTaskName} --configuration json://{updatedConfigFileName} --aod-writer-json {skimmingjson} -b"
 
 
 class SetArgsToArgumentParser(object):
@@ -377,7 +435,7 @@ class SetArgsToArgumentParser(object):
         # TODO extend them
         groupGlobal = self.parser.add_argument_group(title = f"Global workflow options")
         groupGlobal.add_argument("--aod-memory-rate-limit", help = "Rate limit AOD processing based on memory", action = "store", type = str)
-        groupGlobal.add_argument("--writer", help = "Argument for producing extra reduced tables", action = "store", type = str)
+        groupGlobal.add_argument("--writer", help = "Argument for producing extra reduced tables", action = "store", type = str).completer = ChoicesCompleter(booleanSelections)
         groupGlobal.add_argument("--helpO2", help = "Display help message on O2", action = "store_true", default = False)
         
         # Converter Task Options
@@ -392,7 +450,7 @@ class SetArgsToArgumentParser(object):
         groupHelper = self.parser.add_argument_group(title = f"Helper Options")
         groupHelper.add_argument("--debug", help = "execute with debug options", action = "store", type = str.upper, default = "INFO", choices = debugLevelSelectionsList,).completer = ChoicesCompleterList(debugLevelSelectionsList)
         groupHelper.add_argument("--logFile", help = "Enable logger for both file and CLI", action = "store_true")
-        groupHelper.add_argument("--onlySelect", help = "If false JSON Overrider Interface If true JSON Additional Interface", action = "store", default = "true", type = str.lower, choices = booleanSelections,).completer = ChoicesCompleter(booleanSelections)
+        groupHelper.add_argument("--override", help = "If true JSON Overrider Interface If false JSON Additional Interface", action = "store", default = "true", type = str.lower, choices = booleanSelections,).completer = ChoicesCompleter(booleanSelections)
         
         # Create argument group for iterating json options
         groupJsonParser = self.parser.add_argument_group(title = f"JSON configuration options")
@@ -402,8 +460,8 @@ class SetArgsToArgumentParser(object):
             mylist = []
             # seperate the template to list --> taskname:config to [taskname, configurable]
             seperatedArg = stringToList(arg, ":")
-            configurable = seperatedArg[1] # configurable as second index
-            taskname = seperatedArg[0] # taskname as first index
+            configurable: str = seperatedArg[1] # configurable as second index
+            taskname: str = seperatedArg[0] # taskname as first index
             if "process" in configurable and "Dummy" not in configurable:
                 self.processFuncs.setdefault(taskname, []).append(configurable)
             
@@ -415,34 +473,45 @@ class SetArgsToArgumentParser(object):
             if configurable == "processDummy":
                 self.dummyHasTasks.append(taskname)
             
+            # Define some autocompletion rules for match-case (for O2-DQ Framework)
+            containsCuts = "Cuts" in configurable
+            containsSignals = configurable.endswith("Signals") or configurable.endswith("signals")
+            containsHistogram = "Histogram" in configurable
+            containsSels = configurable.endswith("BarrelSels") or configurable.endswith("MuonSels")
+            containsMixingVars = "MixingVars" in configurable
+            containsQA = configurable.startswith("cfg") and "QA" in configurable
+            containsAmbiguous = configurable == "cfgIsAmbiguous"
+            containsFillCandidateTable = configurable == "cfgFillCandidateTable"
+            containsFlatTables = configurable == "cfgFlatTables"
+            containsTPCpostCalib = configurable == "cfgTPCpostCalib"
+            containsProcess = configurable.startswith("process")
             # We may define posible all autocompletions as semi hard-coded with substring search (according to naming conventions)
             # DQ Framework
-            if "Cuts" in configurable:
+            if containsCuts:
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allAnalysisCuts)
-            elif configurable.endswith("Signals") or configurable.endswith("signals"):
+            elif containsSignals:
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allMCSignals)
-            elif "Histogram" in configurable:
+            elif containsHistogram:
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allHistos)
-            elif configurable.endswith("BarrelSels") or configurable.endswith("MuonSels"):
+            elif containsSels:
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allSels)
-            elif "MixingVars" in configurable:
+            elif containsMixingVars:
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allMixing)
-            elif configurable.startswith("cfg") and "QA" in configurable:
+            elif containsQA:
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
-            elif configurable == "cfgIsAmbiguous":
+            elif containsAmbiguous:
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
-            elif configurable == "cfgFillCandidateTable":
+            elif containsFillCandidateTable:
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
-            elif configurable == "cfgFlatTables":
+            elif containsFlatTables:
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
-            elif configurable == "cfgTPCpostCalib":
+            elif containsTPCpostCalib:
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
-            #elif configurable == "processDummy": # NOTE we don't need configure processDummy since we have dummy automizer
-            #continue
+            elif configurable == "processDummy": # NOTE we don't need configure processDummy since we have dummy automizer
+                continue
             
-            # NOTE maybe need define also task name except process for protection
             # Common Framework
-            elif configurable.startswith("process"):
+            elif containsProcess: # NOTE This is an global definition in O2 Analysis framework, all process functions startswith "process"
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
             elif configurable == "syst":
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b").completer = ChoicesCompleter(collisionSystemSelections)
@@ -459,18 +528,17 @@ class SetArgsToArgumentParser(object):
             else:
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b") # Has no autocompletion
         
-        # print(self.processFuncs.items())
         argcomplete.autocomplete(self.parser, always_complete_options = False)
         self.parser.parse_args()
 
 
-def setConfigs(allArgs: dict, config: dict, climode: str) -> None:
+def setConfigs(allArgs: dict, config: dict, cliMode: str) -> None:
     """Setter function for CLI arguments to JSON config file
 
     Args:
         allArgs (dict): All provided arguments from CLI
         config (dict): Input as JSON config file
-        climode (str): CLI mode selection (true or false in string type)
+        cliMode (str): CLI mode selection (true or false in string type)
     """
     for argument, parameter in allArgs.items():
         if parameter is not None: # NOTE We can't iterate in None types
@@ -487,9 +555,9 @@ def setConfigs(allArgs: dict, config: dict, climode: str) -> None:
                 
                 if isinstance(parameter, list): # for list to comma seperated strings
                     parameter = listToString(parameter)
-                if climode == "false":
+                if cliMode == "false":
                     actualConfig = config[taskname][configurable]
-                    valueCfg = actualConfig + "," + valueCfg
+                    parameter = actualConfig + "," + parameter
                 config[taskname][configurable] = parameter
                 logging.info(" - [%s] %s : %s", taskname, configurable, parameter)
 
@@ -516,7 +584,6 @@ def setSwitch(config: dict, processFuncs: dict, allArgs: dict, cliMode: str, pro
                 taskName = seperatedTaskProcessPair[0] # taskname in args
                 processFunc = seperatedTaskProcessPair[1] # processFunc in args
                 if taskName in processFuncs.keys() and processFunc in processFuncs[taskName] and parameter == "true":
-                    #print("true: ",taskName, processFunc ,parameter)
                     processDepsDict.setdefault(taskName, []).append(processFunc)
         
         if len(processDepsDict.keys()) > 0:

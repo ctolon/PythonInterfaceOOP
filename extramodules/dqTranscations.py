@@ -159,6 +159,8 @@ def depsChecker(config: dict, deps: dict, task: str):
         for processFunc, dep in deps.items():
             if isinstance(dep, dict):
                 for depTaskName, depProcessFunc in dep.items():
+                    if depTaskName not in config or task not in config or processFunc not in config[task] or depProcessFunc not in config[depTaskName]:
+                        continue
                     if config[task][processFunc] == "false":
                         continue
                     elif config[task][processFunc] == "true" and config[depTaskName][depProcessFunc] == "false":

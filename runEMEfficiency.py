@@ -18,6 +18,11 @@
 
 # Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/PWGEM/Dilepton/Tasks/emEfficiencyEE.cxx
 
+# run template: `python3 runEMEfficiency.py <config.json> --task-name:<configurable|processFunc> parameter ...`
+# parameter can be multiple like this:
+# --analysis-track-selection:cfgTrackCuts jpsiPID1 jpsiPID2
+# For run over Skimmed (run skimmed EM-Efficiency instead of not skimmed EM-Efficiency) You need to Set runOverSkimmed variable to true, if you don't convert it will work for interface not skimmed EM-Efficiency
+
 import sys
 import logging
 import logging.config
@@ -67,7 +72,7 @@ def main():
     debugSettings(args.debug, args.logFile, fileName)
     
     # if cliMode true, Overrider mode else additional mode
-    cliMode = args.onlySelect
+    cliMode = args.override
     
     # Basic validations
     jsonTypeChecker(args.cfgFileName)

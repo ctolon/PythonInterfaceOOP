@@ -19,12 +19,17 @@
 # Orginal Task for Data: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/TableProducer/tableMaker.cxx
 # Orginal Task for MC: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/TableProducer/tableMakerMC.cxx
 
+# run template: `python3 runTableMaker.py <config.json> --task-name:<configurable|processFunc> parameter ...`
+# parameter can be multiple like this:
+# --table-maker:cfgBarrelTrackCuts jpsiPID1 jpsiPID2
+# For run over MC (run tableMakerMC instead of tableMaker) You need to Set runOverMC variable to true, if you don't convert it will work for interface tableMaker
+
 import sys
 import logging
 import logging.config
 import os
 from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, jsonTypeChecker, mainTaskChecker, trackPropagationChecker
-from extramodules.configSetter import SetArgsToArgumentParser, commonDepsToRun, dispInterfaceMode, dispO2HelpMessage, setConfigs, setParallelismOnSkimming, setProcessDummy, setConverters, debugSettings, dispArgs, generateDescriptors, setSwitch, tableProducer
+from extramodules.configSetter import SetArgsToArgumentParser, commonDepsToRun, dispInterfaceMode, dispO2HelpMessage, setConfigs, setParallelismOnSkimming, setProcessDummy, setConverters, debugSettings, dispArgs, generateDescriptors, setSwitch, tableProducerSkimming
 from extramodules.pycacheRemover import runPycacheRemover
 from extramodules.utils import dumpJson, loadJson
 
@@ -139,7 +144,7 @@ def main():
     debugSettings(args.debug, args.logFile, fileName)
     
     # if cliMode true, Overrider mode else additional mode
-    cliMode = args.onlySelect
+    cliMode = args.override
     
     # Basic validations
     jsonTypeChecker(args.cfgFileName)
@@ -201,12 +206,12 @@ def main():
                 depsToRun[dep] = 1
     
     # Check which tables are required in the output
-    tablesToProduce = tableProducer(config, taskNameInConfig, commonTables, barrelCommonTables, muonCommonTables, specificTables, specificDeps, runOverMC)
+    tablesToProduce = tableProducerSkimming(config, taskNameInConfig, commonTables, barrelCommonTables, muonCommonTables, specificTables, specificDeps, runOverMC)
     
-    writerConfigFileName = "aodWriterTempConfig.json"
+    writerConfigFileName = "aodWriterSkimmingTempConfig.json"
     
     # Generate the aod-writer output descriptor json file
-    generateDescriptors(tablesToProduce, tables, writerConfigFileName, kFlag = False)
+    generateDescriptors("reducedAod", tablesToProduce, tables, writerConfigFileName, kFlag = False)
     
     commandToRun = f"{taskNameInCommandLine} --configuration json://{updatedConfigFileName} --severity error --shm-segment-size 12000000000 --aod-writer-json {writerConfigFileName} -b"
     if args.aod_memory_rate_limit:
@@ -221,9 +226,10 @@ def main():
     commandToRun = setConverters(allArgs, updatedConfigFileName, commandToRun)
     
     if args.runParallel is True:
-        commandToRun = setParallelismOnSkimming(commandToRun, taskNameInCommandLine, updatedConfigFileName, "o2-analysis-dq-efficiency", "tempConfigDQEfficiency.json", config)
+        if runOverMC is True:
+            commandToRun = setParallelismOnSkimming(commandToRun, updatedConfigFileName, "o2-analysis-dq-efficiency", "tempConfigDQEfficiency.json", config)
         if runOverMC is False:
-            commandToRun = setParallelismOnSkimming(commandToRun, taskNameInCommandLine, updatedConfigFileName, "o2-analysis-dq-table-reader", "tempConfigTableReader.json", config)
+            commandToRun = setParallelismOnSkimming(commandToRun, updatedConfigFileName, "o2-analysis-dq-table-reader", "tempConfigTableReader.json", config)
     
     dispO2HelpMessage(args.helpO2, commandToRun)
     

@@ -10,7 +10,7 @@ P.S The default values you see in the helper messages are the default values for
 
 ```ruby
 usage: runTableMaker.py [-h] [-runParallel] [--aod-memory-rate-limit AOD_MEMORY_RATE_LIMIT] [--writer WRITER] [--helpO2] [--add_mc_conv] [--add_fdd_conv] [--add_track_prop] [--add_weakdecay_ind]
-                        [--debug {NOTSET,DEBUG,INFO,WARNING,ERROR,CRITICAL}] [--logFile] [--onlySelect {true,false}] [--internal-dpl-aod-reader:time-limit]
+                        [--debug {NOTSET,DEBUG,INFO,WARNING,ERROR,CRITICAL}] [--logFile] [--override {true,false}] [--internal-dpl-aod-reader:time-limit]
                         [--internal-dpl-aod-reader:orbit-offset-enumeration] [--internal-dpl-aod-reader:orbit-multiplier-enumeration] [--internal-dpl-aod-reader:start-value-enumeration]
                         [--internal-dpl-aod-reader:end-value-enumeration] [--internal-dpl-aod-reader:step-value-enumeration] [--internal-dpl-aod-reader:aod-file] [--event-selection-task:syst]
                         [--event-selection-task:muonSelection] [--event-selection-task:customDeltaBC] [--event-selection-task:isMC] [--event-selection-task:processRun2]
@@ -82,7 +82,7 @@ Helper Options:
   --debug {NOTSET,DEBUG,INFO,WARNING,ERROR,CRITICAL}
                         execute with debug options (default: INFO)
   --logFile             Enable logger for both file and CLI (default: False)
-  --onlySelect {true,false}
+  --override {true,false}
                         If false JSON Overrider Interface If true JSON Additional Interface (default: true)
 
 JSON configuration options:
@@ -470,7 +470,7 @@ For example, when the file is logged, you should see a result like this when you
 [INFO] --add_weakdecay_ind : False 
 [INFO] --debug : DEBUG 
 [INFO] --logFile : True 
-[INFO] --onlySelect : true 
+[INFO] --override : true 
 [INFO] --internal_dpl_aod_reader:aod_file : Datas/AO2D_ppMCRun3_LHC21i3b.root 
 [INFO] --analysis_event_selection:processSkimmed : true 
 [INFO] --analysis_track_selection:cfgTrackCuts : ['jpsiO2MCdebugCuts'] 
@@ -483,8 +483,6 @@ For example, when the file is logged, you should see a result like this when you
 ## Some Things You Should Be Careful For Using and Development
 
 * The runAnalysis, runTableMaker, and runEmEfficiency scripts have some selections for MC/Data or skimmed/not skimmed. By changing them to boolean from True or False, we make choices like Data or MC and skimmed or not skimmed. Keep this in mind.
-* If the argument can take more than one value, when adding a new property choices is a list and the values
-must be converted to comma-separated strings
 * if your dataset is for run3, o2-analysis-trackextension will be automatically deleted from your workflow as if you define `--add_track_prop` argument for track-propagation. If the production of the data you want to analyze is new, you should add the o2-analysis-track-propagation task to your workflow with the `--add_track_prop` argument. You can found detalis from there [`Click Here`](https://aliceo2group.github.io/analysis-framework/docs/basics-usage/HelperTasks.html#track-selection)
 
 ## Some Notes Before The Instructions
@@ -497,10 +495,10 @@ must be converted to comma-separated strings
 
 The only select parameter gives you a choice depending on whether you want to keep your old configurations of the interface.
 
-If `--onlySelect` is configured to true, you will run in JSON overrider interface mode (default value of this parameter is true).
+If `--override` is configured to true, you will run in JSON overrider interface mode (default value of this parameter is true).
 only commands entered in the terminal for some parameters will preserved, while others are set to false.
 
-If --onlySelect is false, you will run in JSON additional interface mode. the values ​​in your original JSON file will be preserved, values ​​entered from the terminal will be appended to the JSON. It would be much better to explain this through an example.
+If --override is false, you will run in JSON additional interface mode. the values ​​in your original JSON file will be preserved, values ​​entered from the terminal will be appended to the JSON. It would be much better to explain this through an example.
 
 For example, let's say we're working on a tableMaker:
 
@@ -537,9 +535,9 @@ For example, let's say we're working on a tableMaker:
 As seen here, the process functions for Full, FullWithCov, and OnlyBCs are true. Let's assume that we made the following configuration for the interface in the terminal:
 
 ```ruby
-python3 runTableMaker.py configs/configTableMakerDataRun2.json --table-maker:processOnlyBCs true table-maker:processBarrelOnlyWithCent true --onlySelect true
+python3 runTableMaker.py configs/configTableMakerDataRun2.json --table-maker:processOnlyBCs true table-maker:processBarrelOnlyWithCent true --override true
 ```
-P.S. Since onlySelect is true (you don't need to add it to your workflow when configuring `--onlySelect` to true, its default value is true I just added it to show, JSON Overrider Mode):
+P.S. Since override is true (you don't need to add it to your workflow when configuring `--override` to true, its default value is true I just added it to show, JSON Overrider Mode):
 
   ```ruby
     "table-maker": {
@@ -573,10 +571,10 @@ P.S. Since onlySelect is true (you don't need to add it to your workflow when co
 
 As you can see, only the OnlyBCs and BarrelOnlyWithCent process functions are set to true, while all other process functions in the tableMaker are set to false.
 
-If we configured onlySelect to false (JSON Additional Mode):
+If we configured override to false (JSON Additional Mode):
 
 ```ruby
-python3 runTableMaker.py configs/configTableMakerDataRun2.json --table-maker:processOnlyBCs true table-maker:processBarrelOnlyWithCent true --onlySelect false
+python3 runTableMaker.py configs/configTableMakerDataRun2.json --table-maker:processOnlyBCs true table-maker:processBarrelOnlyWithCent true --override false
 ```
 
 Then our output would be:
@@ -633,7 +631,7 @@ Here we will configure the track cuts:
 python3 runAnalysis.py configs/configAnalysisData.json --analysis-track-selection:cfgTrackCuts jpsiPID1 jpsiPID2
 ```
 
-The JSON is in overrider mode as the default is onlySelect true and the equivalent of this configuration is:
+The JSON is in overrider mode as the default is override true and the equivalent of this configuration is:
 
   ```ruby
     "analysis-track-selection": {
@@ -647,10 +645,10 @@ The JSON is in overrider mode as the default is onlySelect true and the equivale
 
 As we can see, the old cut values ​​were deleted, the new cut values ​​were taken from the CLI.
 
-If onlySelect is False:
+If override is False:
 
 ```ruby
-python3 runAnalysis.py configs/configAnalysisData.json --analysis-track-selection:cfgTrackCuts jpsiPID1 jpsiPID2 --onlySelect false
+python3 runAnalysis.py configs/configAnalysisData.json --analysis-track-selection:cfgTrackCuts jpsiPID1 jpsiPID2 --override false
 ```
 
 Then the JSON is in additional mode and the equivalent of this configuration is:

@@ -18,6 +18,9 @@
 
 # Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/v0selector.cxx
 
+# run template: `python3 runV0selector.py <config.json> --task-name:<configurable|processFunc> parameter ...`
+# parameter can be multiple like this:
+
 import sys
 import logging
 import logging.config
@@ -45,7 +48,7 @@ def main():
     debugSettings(args.debug, args.logFile, fileName = "v0selector.log")
     
     # if cliMode true, Overrider mode else additional mode
-    cliMode = args.onlySelect
+    cliMode = args.override
     
     # Basic validations
     jsonTypeChecker(args.cfgFileName)

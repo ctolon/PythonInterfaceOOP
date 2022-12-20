@@ -18,6 +18,10 @@
 
 # Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/filterPP.cxx
 
+# run template: `python3 runFilterPP.py <config.json> --task-name:<configurable|processFunc> parameter ...`
+# parameter can be multiple like this:
+# --d-q-barrel-selection-task:cfgBarrelTrackCuts jpsiPID1 jpsiPID2
+
 import sys
 import logging
 import logging.config
@@ -42,7 +46,7 @@ def main():
     commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table", "o2-analysis-trackselection", "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full", "o2-analysis-fwdtrackextension"]
     
     # if cliMode true, Overrider mode else additional mode
-    cliMode = args.onlySelect
+    cliMode = args.override
     
     # Debug Settings
     debugSettings(args.debug, args.logFile, fileName = "filterPP.log")

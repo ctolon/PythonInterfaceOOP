@@ -18,6 +18,10 @@
 
 # Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/DalitzSelection.cxx
 
+# run template: `python3 runDalitzSelection.py <config.json> --task-name:<configurable|processFunc> parameter ...`
+# parameter can be multiple like this:
+# --dalitz-pairing:cfgDalitzTrackCuts jpsiPID1 jpsiPID2
+
 import sys
 import logging
 import logging.config
@@ -45,7 +49,7 @@ def main():
     debugSettings(args.debug, args.logFile, fileName = "dalitzSelection.log")
     
     # if cliMode true, Overrider mode else additional mode
-    cliMode = args.onlySelect
+    cliMode = args.override
     
     # Basic validations
     jsonTypeChecker(args.cfgFileName)

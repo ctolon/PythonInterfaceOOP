@@ -63,7 +63,7 @@ if you type like this and press TAB you will see all the parameters in the inter
 --analysis-qvector:cfgBarrelTrackCuts                   --multiplicity-table:doVertexZeq                        --tof-pid:pid-pr
 --analysis-qvector:cfgCutEta                            --multiplicity-table:processRun2                        --tof-pid:pid-tr
 --analysis-qvector:cfgCutPtMax                          --multiplicity-table:processRun3                        --tof-pid:processWoSlice
---analysis-qvector:cfgCutPtMin                          --onlySelect                                            --tof-pid:processWSlice
+--analysis-qvector:cfgCutPtMin                          --overrider                                             --tof-pid:processWSlice
 --analysis-qvector:cfgEfficiency                        --table-maker:ccdb-path-tpc                             --tpc-pid-full:autofetchNetworks
 --analysis-qvector:cfgEtaLimit                          --table-maker:ccdb-url                                  --tpc-pid-full:ccdbPath
 --analysis-qvector:cfgEventCuts                         --table-maker:cfgAddEventHistogram                      --tpc-pid-full:ccdb-timestamp
@@ -120,7 +120,7 @@ python3 runTableMaker.py configs/configTableMakerMCRun3.json --table-maker:cfgBa
 --analysis-qvector:cfgBarrelTrackCuts                   --multiplicity-table:doVertexZeq                        --tof-pid:pid-pr
 --analysis-qvector:cfgCutEta                            --multiplicity-table:processRun2                        --tof-pid:pid-tr
 --analysis-qvector:cfgCutPtMax                          --multiplicity-table:processRun3                        --tof-pid:processWoSlice
---analysis-qvector:cfgCutPtMin                          --onlySelect                                            --tof-pid:processWSlice
+--analysis-qvector:cfgCutPtMin                          --overrider                                             --tof-pid:processWSlice
 --analysis-qvector:cfgEfficiency                        --table-maker:ccdb-path-tpc                             --tpc-pid-full:autofetchNetworks
 --analysis-qvector:cfgEtaLimit                          --table-maker:ccdb-url                                  --tpc-pid-full:ccdbPath
 --analysis-qvector:cfgEventCuts                         --table-maker:cfgAddEventHistogram                      --tpc-pid-full:ccdb-timestamp

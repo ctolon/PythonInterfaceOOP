@@ -18,6 +18,10 @@
 
 # Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/dqFlow.cxx
 
+# run template: `python3 runDQFlow.py <config.json> --task-name:<configurable|processFunc> parameter ...`
+# parameter can be multiple like this:
+# --analysis-qvector:cfgBarrelTrackCuts jpsiPID1 jpsiPID2
+
 import sys
 import logging
 import logging.config
@@ -45,7 +49,7 @@ def main():
     debugSettings(args.debug, args.logFile, fileName = "dqFlow.log")
     
     # if cliMode true, Overrider mode else additional mode
-    cliMode = args.onlySelect
+    cliMode = args.override
     
     # Basic validations
     jsonTypeChecker(args.cfgFileName)
