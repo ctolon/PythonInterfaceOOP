@@ -156,7 +156,7 @@ The auto-completions for the parameters taken by the arguments are implemented w
 Below you can see all the autocompletions for O2-DQ Framework currently available:
 
 Naming Convention | Autocompletion | Type
---- | --- | --- | --- | --- |
+--- | --- | --- |
 `Cuts` in configuration name | All possible analysis cut definitions from [CutsLibrary.h](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/CutsLibrary.h) | Flexible
 Configuration name endswith `signals` or `Signals` | All possible MC Signal definitions from [MCSignalLibrary.h](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MCSignalLibrary.h) | Flexible 
 `Histogram` in configuration name |  All possible histogram definitions from [HistogramLibrary.h](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/HistogramsLibrary.h) | Flexbile
