@@ -103,9 +103,9 @@ Extra Script | Desc
 `configSetter.py`    | Contains methods that manage JSON configurations via interfaces and helper setter methods (developer package)
 `converters.py`     | Contains Interface arguments for O2 converters (ex. o2-analysis-trackpropagation)
 `dqExceptions.py`     | Contains some customized exceptions for transaction managements
-`dqLibGetter.py`     | To automatically download python libraries in run scripts
+`dqLibGetter.py`     | To automatically download DQ libraries as headers with dependency injection in run scripts
 `dqTranscations.py`     | To manage dependencies and misconfigurations in the DQ workflow
-`pycacheRemover.py`        | For automatically removing pycache files when workflow is finished
+`pycacheRemover.py`        | For automatically removing pycache files when workflow is finished (For cache protection)
 `utils.py`        | For managing basic operations with simple methods.
 
 [↑ Go to the Table of Content ↑](../README.md) | [Continue to Prerequisites →](2_Prerequisites.md)

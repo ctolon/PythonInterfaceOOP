@@ -135,12 +135,13 @@ JSON configuration options:
 ```
 </details>
 
-You will receive a message that. also you can run helper messages in O2 framework with  `--helpO2` argument :
+You will receive a message that. also you can run helper messages in O2 framework with  `--helpO2` argument e.g:
+
 ```ruby
  python3 runTableMakerMC.py configs/configTableMakerMCRun3.json --helpO2
  ```
 
-<details><summary>Result:</summary>
+<details><summary>You will displayed</summary>
 
  ```ruby
  ALICE O2 DPL workflow driver (full help)
@@ -685,7 +686,7 @@ If you are going to do an analysis from zero and you will prepare your JSON conf
 
 
 
-## Project Architecture For Per Script
+## Project Architecture
 
 TODO explain this
 

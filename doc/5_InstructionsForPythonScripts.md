@@ -6,11 +6,11 @@
 
 ## Download CutsLibrary, MCSignalLibrary, MixingLibrary From Github
 
-VERY IMPORTANT P.S: Downloading DQ libraries from Github is unstable and has a lot of issues. So use `DownloadLibs.py` script locally if you are working at local machine. It is highly recommended to skip this part directly and go to `Get CutsLibrary, MCSignalLibrary, MixingLibrary From Local Machine` (You cannot use the Local option for LXPLUS, use this part if you are working in LXPLUS).
+**VERY IMPORTANT P.S**: You cannot use the Local option for LXPLUS, use this part if you are working in LXPLUS.
 
-These libraries must be downloaded for validation and autocomplete. After the argscomplete package is installed and sourced, they will be downloaded automatically if you do an one time autocomplete operation with the TAB key and the name of the script in the terminal. If you cannot provide this, the `DownloadLibs.py` script in the NewAllWorkFlows folder can do it manually. To run this script, simply type the following on the command line.
+DQ Libraries (CutsLibrary.h, MCSignalLibrary.h, MixingLibrary.h, HistogramsLibrary.h) must be downloaded for auto-completion. After the argcomplete package is installed and sourced, they will be downloaded automatically if you do an one time autocomplete operation with the TAB key and the name of the script in the terminal. If you cannot provide this, the `DownloadLibs.py` script in the PythonInterfaceOOP folder can do it manually. To run this script, simply type the following on the command line.
 
-P.S. Don't forget source your argcomplete Before the using this script. --> `source argcomplete.sh`
+**P.S.** Don't forget source your argcomplete Before the using this script. --> `source argcomplete.sh`
 
 `python3 DownloadLibs.py`
 
@@ -26,7 +26,7 @@ If the libraries are downloaded successfully you will get this message:
 
 These libraries must be downloaded for validation and autocomplete. Instead of downloading libraries from github, you can configure the DownloadLibs.py script to pull the DQ libraries locally from the alice software on the existing computer. This option will not work on LXPLUS. if you are working on a local machine always use this option.
 
-P.S. Don't forget source your argcomplete Before the using this script. --> `source argcomplete.sh`
+**P.S.** Don't forget source your argcomplete Before the using this script. --> `source argcomplete.sh`
 
 Ex. Usage for Working Locally:
 
@@ -141,7 +141,8 @@ Examples:
   python3 runTableMaker.py configs/configTableMakerMCRun2.json --table-maker-m-c:processBarrelOnly true
   ```
 
-In case of multiple configs example
+In case of multiple configs example(**runOverMC have to be True** for run with **tableMakerMC**):
+
   ```ruby
 python3 runTableMaker.py configs/configTableMakerMCRun3.json --table-maker-m-c:processMuonOnlyWithCov true --table-maker-m-c:processOnlyBCs true --table-maker-m-c:cfgMCsignals muFromJpsi Jpsi muFromPsi2S Psi2S --overrider true --internal-dpl-aod-reader:aod-file Datas/AO2D.root --table-maker-m-c:cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --event-selection-task:syst pp --overrider true --add_track_prop
   ```
@@ -153,7 +154,7 @@ python3 runTableMaker.py configs/configTableMakerMCRun3.json --table-maker-m-c:p
   * JSON Config File
     * Example For Most common usages: configs/configAnalysisData.json or configs/configAnalysisMC.json
 
-Examples(in NewAllWorkFlows):
+Examples:
 - Run tableReader on Data run3 With Minimum Commands (in script, runOverMC must be False)
   ```ruby
   python3 runAnalysis.py configs/configAnalysisData.json
@@ -163,25 +164,12 @@ Examples(in NewAllWorkFlows):
   python3 runAnalysis.py configs/configAnalysisMC.json
   ```
 
-In case of multiple configs example:
+In case of multiple configs example (**runOverMC have to be False** for run with **tableReader**):
+
   ```ruby
   python3 runAnalysis.py configs/configAnalysisData.json --analysis-event-selection:processSkimmed true --analysis-track-selection:processSkimmed true --analysis-same-event-pairing:processDecayToEESkimmed true --analysis-track-selection:cfgTrackCuts jpsiO2MCdebugCuts --analysis-same-event-pairing:cfgTrackCuts jpsiO2MCdebugCuts --internal-dpl-aod-reader:aod-file Datas/reducedAod.root --debug debug --logFile
   ```
 # Instructions for runFilterPP.py
-
-Add extrac tables and converters with:
-1. **--add_mc_conv**: conversion from o2mcparticle to o2mcparticle_001
-   * If you get error like this, you should added it in your workflow 
-   * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2mcparticle" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.`
-2. **--add_fdd_conv**: conversion o2fdd from o2fdd_001
-   * If you get error like this, you should added it in your workflow 
-   * `[ERROR] Exception caught: Couldn't get TTree "DF_2571958947001/O2fdd_001" from "YOURAOD.root". Please check https://aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfound.html for more information.` 
-3. **--add_track_prop**: conversion from o2track to o2track_iu ([link](https://aliceo2group.github.io/analysis-framework/docs/basics-usage/HelperTasks.html#track-propagation))
-   * If you get error like this, you should added it in your workflow 
-   * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2track" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.`
-4. **--add_weakdecay_ind**: Converts V0 and cascade version 000 to 001
-   * If you get error like this, you should added it in your workflow 
-   * `[ERROR] Exception caught: Couldn't get TTree "DF_2660520692001/O2v0_001" from "Datas/AO2D.root". Please check https:/aliceo2group.github.io/analysis-framework/docs/troubleshooting/treenotfoundhtml for more information.`
 
 * Minimum Required Parameter List:
   * `python3`
@@ -189,7 +177,7 @@ Add extrac tables and converters with:
   * JSON Config File
     * Example For usage: configs/configFilterPPDataRun3.json 
 
-Examples(in NewAllWorkFlows):
+Examples:
 - Run filterPP on Data run3 With Minimum Commands
   ```ruby
   python3 runFilterPP.py configs/configFilterPPDataRun3.json
@@ -213,7 +201,7 @@ python3 runFilterPP.py configs/configFilterPPDataRun3.json --internal-dpl-aod-re
   * JSON Config File
     * Example For usage: configs/configFlowDataRun3.json
 
-Examples(in NewAllWorkFlows):
+Examples:
 - Run filterPP on Data run3 With Minimum Commands
   ```ruby
   python3 runDQFlow.py configs/configFlowDataRun3.json
@@ -226,14 +214,15 @@ Examples(in NewAllWorkFlows):
 
 In case of multiple configs example
   ```ruby
-python3 runDQFlow.py configs/configFlowDataRun3.json --internal-dpl-aod-reader:aod-file Datas/AO2D.root --event-selection-task:syst pp --analysis-qvector:cfgBarrelTrackCuts jpsiPID1 --analysis-qvector:cfgMuonCuts muonQualityCuts --analysis-qvector:cfgWithQA true --analysis-qvector:cfgCutPtMin 1 --analysis-qvector:cfgCutPtMax 15 
+python3 runDQFlow.py configs/configFlowDataRun3.json --internal-dpl-aod-reader:aod-file Datas/AO2D.root --event-selection-task:syst PbPb --analysis-qvector:cfgBarrelTrackCuts jpsiPID1 --analysis-qvector:cfgMuonCuts muonQualityCuts --analysis-qvector:cfgWithQA true --analysis-qvector:cfgCutPtMin 1 --analysis-qvector:cfgCutPtMax 15 
   ```
 
 TODO v0selector interface instructions will be added.
 TODO EMefficiency interface instructions will be added.
+TODO dalitzSelection interface instructions will be added.
 
 # Working with Histogram configurables and other configurables
 
-TODO Add desc
+ONGOING...
 
 [← Go back to Instructions For Techincal Informations](4_TechincalInformations.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Tutorials →](6_Tutorials.md)

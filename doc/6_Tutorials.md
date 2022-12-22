@@ -8,7 +8,7 @@ Firstly, clone repository in your workspace
 
 Before you start, you need to do the installations in the readme file
 
-P.S. Don't forget to install the O2 enviroment before running the scripts
+**P.S.** Don't forget to install the O2 enviroment before running the scripts
 
 Ex. `alienv enter O2Physics/latest,QualityControl/latest`
 
@@ -18,13 +18,13 @@ Assuming you have installed the argcomplete package, don't forget to source the 
 
 If you don't have time to read the documentation follow these steps:
 
-For Linux Based System:
+For **Linux** Based System:
 
 * `alienv enter O2Physics/latest,QualityControl/latest` (Load Your alienv, if you want you can install lxplus version without using QC)
 * `pip install argcomplete` and `pip3 install argcomplete`
 * `source argcomplete.sh`
 
-For MacOS Based System:
+For **MacOS** Based System:
 
 * `brew install bash`
 * `alienv enter O2Physics/latest,QualityControl/latest` (Load Your alienv, if you want you can install lxplus version without using QC)
@@ -56,7 +56,7 @@ You can found Real Data for PbPb at : [Click Here](https://alimonitor.cern.ch/pr
 
 or [Click Here](https://cernbox.cern.ch/index.php/s/6KLIdQdAlNXj5n1)
 
-P.S: Dont forget the change name of AO2D.root files for interface and Move this datas to you previously create Datas Folder.
+**P.S:** Dont forget the change name of AO2D.root files for interface and Move this datas to you previously create Datas Folder.
 
 For PbPb Data : AO2D.root to AO2D_PbPbDataRun2_LHC15o.root
 
@@ -184,7 +184,7 @@ P.S. Root files are inputs for JSON configs
 
 ## MC Part
 
-VERY IMPORTANT: For this section, you need convert runOverMC variable to True in python scripts (runAnalysis.py and runTableMaker.py).
+**VERY IMPORTANT:** For this section, you need convert runOverMC variable to True in python scripts (runAnalysis.py and runTableMaker.py).
 
 ### Run tableMakerMC on LHC21i3d2 (jpsi to MuMu pp Run3Simulation)
 
@@ -243,7 +243,7 @@ python3 runAnalysis.py configs/configAnalysisMC.json --internal-dpl-aod-reader:a
 
 ## Data Part
 
-VERY IMPORTANT: For this section, you need convert runOverMC variable is False in python scripts (runAnalysis.py and runTableMaker.py).
+**VERY IMPORTANT:** For this section, you need convert runOverMC variable is False in python scripts (runAnalysis.py and runTableMaker.py).
 ### Run tableMaker on LHC15o (LHC15o PbPb Run2Data)
 
 Command To Run:
@@ -315,7 +315,7 @@ Command To Run:
 python3 runAnalysis.py configs/configAnalysisData.json --internal-dpl-aod-reader:aod-file reducedAod.root --analysis-track-selection:processSkimmed true --analysis-muon-selection:processSkimmed true --analysis-same-event-pairing:processDecayToEESkimmed true --analysis-same-event-pairing:processDecayToMuMuVertexingSkimmed true --analysis-track-selection:cfgQA true --analysis-muon-selection:cfgQA true --analysis-muon-selection:cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --analysis-track-selection:cfgTrackCuts jpsiPID1 jpsiPID2 jpsiO2MCdebugCuts --analysis-same-event-pairing:cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --analysis-same-event-pairing:cfgTrackCuts jpsiPID1 jpsiPID2 jpsiO2MCdebugCuts --analysis-same-event-pairing:cfgAddSEPHistogram barrel dimuon vertexing-forward vertexing --logFile
 ```
 
-IMPORTANT NOTE: Here we used the cfgAddSEPHistogram argument (`--analysis:same-event-paring:cfgAddSEPHistogram barrel dimuon vertexing-forward vertexing`) to define same event pairing histograms. This is because by default, dielectron decay histograms for same event pairing are defined in the configAnalysisData.json config file, and since we are doing dimuon analysis here, we have to also add muon histogram groups to histogram configurations with the configuration for dimuon.
+**IMPORTANT NOTE:** Here we used the cfgAddSEPHistogram argument (`--analysis:same-event-paring:cfgAddSEPHistogram barrel dimuon vertexing-forward vertexing`) to define same event pairing histograms. This is because by default, dielectron decay histograms for same event pairing are defined in the configAnalysisData.json config file, and since we are doing dimuon analysis here, we have to also add muon histogram groups to histogram configurations with the configuration for dimuon.
 
 ### Run filterPP on fwdprompt(From Hands-on-Session II)
 
@@ -339,7 +339,7 @@ This section includes analysis with non-standard workflows in DQ workflows. Thes
 
 ### MC : Dilepton Track Analysis (On Bc Simulation)
 
-VERY IMPORTANT: For this section, you need convert runOverMC variable to True in python scripts (runAnalysis.py and runTableMaker.py).
+**VERY IMPORTANT:** For this section, you need convert runOverMC variable to True in python scripts (runAnalysis.py and runTableMaker.py).
 
 First Command To Run:
 
@@ -365,7 +365,7 @@ Note: We defined --reader argument for reading dilepton tables from dileptonAOD.
 
 ### Data : Dilepton Hadron Analysis (On PbPb Data LHC15o)
 
-VERY IMPORTANT: For this section, you need convert runOverMC variable to False in python scripts (runAnalysis.py and runTableMaker.py).
+**VERY IMPORTANT:** For this section, you need convert runOverMC variable to False in python scripts (runAnalysis.py and runTableMaker.py).
 
 First Command To Run:
 
@@ -393,7 +393,7 @@ Command To Run:
 python3 runAnalysis.py configs/configAnalysisData.json --analysis-same-event-pairing:processDecayToEESkimmed true -runParallel;python3 runTableMaker.py configs/configTableMakerDataRun3.json --internal-dpl-aod-reader:aod-file Datas/AO2D_ppDataRun3_LHC22c.root --table-maker:processBarrelOnly true -runParallel --add_track_prop
 ```
 
-To run the tablemaker and the tablereader at the same time, you must first configure the tableReader with the runAnalysis.py script. then after adding the -runParallel argument `;` is put. Then the tableMaker is configured and the path of the AOD file must be given in the tableMaker script (again, given the -runParallel argument, don't forget for both scritps). Same goes for MC (for tableMakerMC and dqEfficiency, you need change runOverMC variables to False)
+To run the tablemaker and the tablereader at the same time, you must first configure the tableReader with the runAnalysis.py script. then after adding the -runParallel argument `;` (it called as semi-colon) is put. Then the tableMaker is configured and the path of the AOD file must be given in the tableMaker script (again, given the -runParallel argument, don't forget for both scripts). Same goes for MC (for tableMakerMC and dqEfficiency, you need change runOverMC variables to False)
 
 This way it produces analysis results for both tableReader and tableMaker in AnalysisResults.root, and you get reducedAod.root (it contains reduced tables from DQ data model)
 

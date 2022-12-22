@@ -9,24 +9,24 @@ Tools used to add new configurable or new process functions in JSONs and more ar
 
 If you need a modification, you only need to modify the functions in the main tools. Helper tools are utility functions and you don't need to modify them. These are standard.
 
-Main Tools:
+**Main Tools:**
 
-* SetArgsToArgumentParser → An interface creator class that parses the JSON configuration file and creates the arguments for the CLI, defining possible autocompletes and defining hard coded arguments.
-* setConverters → This function that allows to include converter tasks given to the CLI into the workflow
+* **SetArgsToArgumentParser** → An interface creator class that parses the JSON configuration file and creates the arguments for the CLI, defining possible autocompletes and defining hard coded arguments.
+* **setConverters** → This function that allows to include converter tasks given to the CLI into the workflow
 
-Helper Tools:
+**Helper Tools:**
 
-* dispArgs → Prints each argument provided by the CLI to the screen for monitoring
+* **dispArgs** → Prints each argument provided by the CLI to the screen for monitoring
 * dispInterfaceMode →  Prints the mode in which the interface will work.
-* dispO2HelpMessage → Utility function to run `--help full` command in O2 with `--helpO2` argument in python scripts
-* debugSettings → Utility function to log terminal or file (or both)
-* generateDescriptors → Utility function that creates a descriptor json file for generating reduced tables
-* tableProducerSkimming/tableProducerAnalysis → It is a helper function for the generatorDescriptor utility function that saves the tables defined in the DQ data model to a hashmap data structure and then writes it to the descriptor json file.
-* setProcessDummy → if a task contains a processDummy function, processDummy must be true if no other process functions are true, and processDummy must be false if at least one process function is true. This is the auxiliary function that automatically manages the situation.
-* setParallelismOnSkimming → It is a helper function that allows to run tableMaker and tableReader or tableMakerMC and dqEfficiency workflows at the same time.
-* commonDepsToRun → It is the utility function used to set the dependencies required in the workflow.
-* setSwitch → It is a utility function that automates the process functions according to the JSON interface mode.
-* setConfigs → It is the utility function that allows to assign the argument parameter pairs provided by the CLI to the configurations in the json config file.
+* **dispO2HelpMessage** → Utility function to run `--help full` command in O2 with `--helpO2` argument in python scripts
+* **debugSettings** → Utility function to log terminal or file (or both)
+* **generateDescriptors** → Utility function that creates a descriptor json file for generating reduced tables
+* **tableProducerSkimming/tableProducerAnalysis** → They are helper functions for the generatorDescriptor utility function that saves the tables defined in the DQ data model to a hashmap data structure and then writes it to the descriptor json file.
+* **setProcessDummy** → if a task contains a processDummy function, processDummy must be true if no other process functions are true, and processDummy must be false if at least one process function is true. This is the auxiliary function that automatically manages the situation.
+* **setParallelismOnSkimming** → It is a helper function that allows to run tableMaker and tableReader or tableMakerMC and dqEfficiency workflows at the same time.
+* **commonDepsToRun** → It is the utility function used to set the dependencies required in the workflow.
+* **setSwitch** → It is a utility function that automates the process functions according to the JSON interface mode.
+* **setConfigs** → It is the utility function that allows to assign the argument parameter pairs provided by the CLI to the configurations in the json config file.
 
 ### How to modify O2-DQ task dependencies
 
