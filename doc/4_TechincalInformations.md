@@ -8,6 +8,9 @@ With the `python3 <scriptname> -h` command you will see a help message for all c
 
 P.S The default values you see in the helper messages are the default values for the interface. The values you see None will directly take the default values from JSON
 
+
+<details><summary>Example Helper Message:</summary>
+
 ```ruby
 usage: runTableMaker.py [-h] [-runParallel] [--aod-memory-rate-limit AOD_MEMORY_RATE_LIMIT] [--writer WRITER] [--helpO2] [--add_mc_conv] [--add_fdd_conv] [--add_track_prop] [--add_weakdecay_ind]
                         [--debug {NOTSET,DEBUG,INFO,WARNING,ERROR,CRITICAL}] [--logFile] [--override {true,false}] [--internal-dpl-aod-reader:time-limit]
@@ -130,13 +133,15 @@ JSON configuration options:
   --centrality-table:estNTPV 
   --centrality-table:ccdburl
 ```
+</details>
 
 You will receive a message that. also you can run helper messages in O2 framework with  `--helpO2` argument :
 ```ruby
  python3 runTableMakerMC.py configs/configTableMakerMCRun3.json --helpO2
  ```
 
- Result:
+<details><summary>Result:</summary>
+
  ```ruby
  ALICE O2 DPL workflow driver (full help)
 
@@ -412,6 +417,8 @@ Data processor options: analysis-dilepton-hadron:
   --processDummy                        Dummy function
  ```
  
+ </details>
+ 
 You will see helper messages again. As long as this command is added in the parameters, the script will not run and will only show a help message.
 
 ## Debug and Logging Options for O2DQWorkflows and DownloadLibs.py
@@ -447,6 +454,9 @@ Example usage for only logging to terminal:
 
 For example, when the file is logged, you should see a result like this when you open the relevant file.
 
+
+<details><summary>Log Message:</summary>
+
 ```ruby 
 [INFO] Only Select Configured as true
 [INFO] INTERFACE MODE : JSON Overrider
@@ -480,6 +490,8 @@ For example, when the file is logged, you should see a result like this when you
 [INFO] Inserting inside for pycache remove: /home/batu/PythonInterfaceOOP
 [INFO] pycaches removed succesfully
 ```
+ </details>
+
 ## Some Things You Should Be Careful For Using and Development
 
 * The runAnalysis, runTableMaker, and runEmEfficiency scripts have some selections for MC/Data or skimmed/not skimmed. By changing them to boolean from True or False, we make choices like Data or MC and skimmed or not skimmed. Keep this in mind.

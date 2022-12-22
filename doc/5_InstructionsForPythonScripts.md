@@ -50,6 +50,9 @@ We have many logger message for this interface. If you have a problem with confi
 
 ## Available configs in DownloadLibs.py Interface
 
+
+<details><summary>All Configs:</summary>
+
 Arg | Opt | Local/Online | nargs | ex. usage
 --- | --- | --- | --- | --- | 
 `-h` | No Param | `Online and Local` | 0 | `python3 DownloadLibs.py -h`
@@ -57,8 +60,10 @@ Arg | Opt | Local/Online | nargs | ex. usage
 `--debug` |<p> `NOTSET`<br> `DEBUG`<br>`INFO`<br>`WARNING` <br> `ERROR` <br>`CRITICAL` <br> </p> |  `Online and Local` | 1 |  `python3 DownloadLibs.py --debug INFO`
 `--local` | No Param |  `Local` | 1 |  `python3 DownloadLibs.py --local`
 `--localPath` | all |  `Local` | 1 |  `python3 DownloadLibs.py --local --localPath alice-software`
+</details>
 
-* More Details for `DownloadLibs.py` interface parameters
+
+<details><summary>More Details for DownloadLibs.py interface parameters</summary>
 
 Arg | Ref Type| Desc | Default | Real Type
 --- | --- | --- | --- | --- |
@@ -67,11 +72,15 @@ Arg | Ref Type| Desc | Default | Real Type
 `--debug` | string | Online and Local: execute with debug options" | `INFO` | str.upper
 `--local` | No Param |Local: Use Local Paths for getting DQ Libraries instead of online github download. If you are working LXPLUS, It will not working so don't configure with option | - | *
 `--localPath` | String | Local: Configure your alice software folder name in your local home path. Default is alice. Example different configuration is --localpath alice-software --local --> home/user/alice-software | `alice` | str
+</details>
 
 
 ## Hardcoded Arguments
 
 These are helper hardcoded arguments for every run python scripts that do not directly manage configurations in json configuration files.
+
+
+<details><summary>List of hard coded arguments:</summary>
 
 ```ruby
 positional arguments:
@@ -101,6 +110,7 @@ Helper Options:
   --override {true,false}
                         If true JSON Overrider Interface If false JSON Additional Interface (default: true)
 ```
+</details>
 
 
 

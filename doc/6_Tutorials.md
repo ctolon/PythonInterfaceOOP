@@ -66,7 +66,7 @@ If you downloaded these datasets, you can start.
 
 ## Workflows In Tutorials
 
-* For MC:
+<details><summary>For MC:</summary>
 
 Workflow | Dataset | Skimmed | Process | Type | Col Syst
 --- | --- | --- | --- | --- | --- |
@@ -76,8 +76,9 @@ Workflow | Dataset | Skimmed | Process | Type | Col Syst
 `dqEfficiency` | `LHC21i3b` | `Yes` | `DecayToEE` | J/ψ → e<sup>+</sup> e<sup>−</sup>  | `pp`
 `tableMakerMC` | `LHC21i3f2` | `No` | `BarrelOnly`<br>`OnlyBCs` | h<sub>B</sub> →  J/ψ + *X*, J/ψ → e<sup>+</sup> e<sup>−</sup>  | `pp`
 `dqEfficiency` | `LHC21i3f2` | `Yes` | `DecayToEE` | h<sub>B</sub> →  J/ψ + *X*, J/ψ → e<sup>+</sup> e<sup>−</sup>  | `pp`
+</details>
 
-* For Data:
+<details><summary>For Data:</summary>
 
 Workflow | Dataset | Skimmed | Process | Selection | Col Syst
 --- | --- | --- | --- | --- | --- |
@@ -90,23 +91,28 @@ Workflow | Dataset | Skimmed | Process | Selection | Col Syst
 `tableMaker` | `LHC22c` | `No` | `MuonOnlyWithCov`<br>`OnlyBCs` | J/ψ → μ<sup>+</sup> μ<sup>−</sup> | `pp`
 `tableReader` | `LHC22c` | `Yes`  | `DecayToMuMuVertexing` | J/ψ → μ<sup>+</sup> μ<sup>−</sup> | `pp`
 `filterPP` | `fwdprompt` | `No`  | `eventSelection` <br> `barrelTrackSelection`  <br> `muonSelection` | All Events | `pp`
+</details>
 
+<details><summary>For Dileptons:</summary>
 
 Workflow | Dataset | Process | Type | Col Syst
 --- | --- | --- | --- | --- |
 `dqEfficiency` | `AO2D_Bc100` | `DecayToMuMuVertexing`<br>`dileptonTrackDimuonMuonSelection`  | B<sub>c</sub> → J/ψ → (μ<sup>+</sup> μ<sup>−</sup>) + μ | `pp`
 `tableReader`  | `LHC15o` | `DecayToEE`<br>`dileptonHadron` | `dileptonhadron` | `PbPb`
+</details>
 
 
-TO BE ADDED IN TUTORIALS (Not Prepared Yet): 
+
+<details><summary>TO BE ADDED IN TUTORIALS (Not Prepared Yet):</summary>
 
 Workflow | Dataset | Process | Type | Col Syst
 --- | --- | --- | --- | --- |
 `dqEfficiency` | `AO2D_Bplus` | `DecayToMuMuVertexing`<br>`dileptonTrackDimuonMuonSelection`  |B<sup>+</sup> → J/ψ + K, → J/ψ → e<sup>+</sup> e<sup>−</sup> | `pp`
+</details>
 
 ## Skimmed Datas In Tutorials
 
-Reduced DQ skimmed data list created with tableMaker/tableMakerMC:
+<details><summary>Reduced DQ skimmed data list created with tableMaker/tableMakerMC:</summary>
 
 Data | Dataset | Used Workflow | Selected Processes (from tableMaker) |
 --- | --- | --- | --- |
@@ -118,19 +124,21 @@ Data | Dataset | Used Workflow | Selected Processes (from tableMaker) |
 `reducedAod_PbPbData_LHC15o_Flow.root` | `LHC15o` | `tableMaker` | `FullWithCent`<br>`BarrelOnlyWithQvector`<br>`OnlyBCs`
 `reducedAod_PbPbData_LHC15o_dileptonHadron.root` | `LHC15o` | `tableMaker` | `BarrelOnly`<br>`OnlyBCs`
 `reducedAod_ppData_LHC22c.root` | `LHC22c` | `tableMaker` | `MuonOnlyWithCov`<br>`OnlyBCs`
+</details>
 
-Reduced DQ Dileptons skimmed data list For Dilepton Analysis (dilepton-track and dilepton-hadron) created with tableReader/dqEfficiency:
+<details><summary>Reduced DQ Dileptons skimmed data list For Dilepton Analysis (dilepton-track and dilepton-hadron) created with tableReader/dqEfficiency:</summary>
 
 Data | Dataset | Used Workflow | Selected Processes (from tableMaker) |
 --- | --- | --- | --- |
 `dileptonAOD_ppMC_BC100.root` | `Bc100` | `dqEfficiency` | `MuonOnlyWithCov`<br>`OnlyBCs`
 `dileptonAOD_PbPbData_LHC15o_dileptonHadron.root` | `LHC15o` | `tableReader` | `BarrelOnly`<br>`OnlyBCs`
+</details>
 
 ## Pre-Made JSON configuration Files In Tutorials
 
 Config JSON list created with Scripts.
 
-Common JSON configs:
+<details><summary>Common JSON configs</summary>
 
 Config | For | Description
 --- | --- | --- |
@@ -147,16 +155,20 @@ Config | For | Description
 `ConfigTableMaker_LHC15o_Flow_DataRun2.json` | `DataRun2` | Run tableMaker on LHC15o For Flow Analysis → AO2D_PbPbDataRun2_LHC15o.root
 `ConfigTableMaker_LHC22c_DataRun3.json` | `DataRun3` | Run tableMaker on LHC22c Data → AO2D_ppDataRun3_LHC22c.root
 `configV0Selector_LHC15o_DataRun2.json` | `DataRun2` | Run v0Selector on LHC15o Data → AO2D_PbPbDataRun2_LHC15o.root
+</details>
 
-JSON configs for Single Workflows:
+<details><summary>JSON configs for Single Workflows</summary>
 
 Config | For | Description
 --- | --- | --- |
 `configFilterPP_fwdprompt_Run3.json` | `MCRun3` | Run filterPP on fwdprompt → AO2D_fwdprompt.root
 `configFlow_LHC15o_DataRun2.json` | `DataRun2` | Run dqFlow on LHC15o Data  → AO2D_PbPbDataRun2_LHC15o.root
 `configV0Selector_LHC15o_DataRun2.json` | `DataRun2` | Run v0Selector on LHC15o Data → AO2D_PbPbDataRun2_LHC15o.root
+</details>
 
 JSON configs for dilepton-hadron and dilepton-track analysis:
+<details><summary>
+JSON configs for dilepton-hadron and dilepton-track analysis:</summary>
 
 Config | For | Description
 --- | --- | --- |
@@ -166,6 +178,7 @@ Config | For | Description
 `configTableMaker_LHC15o_DileptonHadron_DataRun2.json` | `DataRun2` | Run tableMaker on LHC15o Data for prepare dilepton-hadron analysis → AO2D_PbPbDataRun2_LHC15o.root
 `configAnalysis_LHC15o_dileptonHadron_Data.json` | `DataRun2` | Run tableReader on LHC15o Data for prepare skimmed dileptons output → reducedAod_PbPbData_LHC15o_dileptonHadron.root
 `configAnalysisDilepton_LHC15o_dileptonHadron_Data.json` | `DataRun2` | Run tableReader on LHC15o Data for dilepton analysis → reducedAod_PbPbData_LHC15o_dileptonHadron.root
+</details>
 
 P.S. Root files are inputs for JSON configs
 
