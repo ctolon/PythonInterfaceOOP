@@ -43,6 +43,15 @@
       },
       {
         "table": "AOD/DALITZBITS/0",
+      },
+      {
+        "table": "AOD/RTDILEPTON/0",
+      },
+      {
+        "table": "AOD/RTDILEPTONEXTRA/0",
+      },
+      {
+        "table": "AOD/RTDILEPTONFLOW/0",
       }
     ]
   }

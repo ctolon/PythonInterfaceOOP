@@ -358,7 +358,7 @@ Note: We defined --writer argument as true for producing extra dilepton tables i
 Third Command To Run:
 
 ```ruby
-python3 runAnalysis.py configs/configAnalysisMC.json --internal-dpl-aod-reader:aod-file dileptonAOD.root --analysis-muon-selection:processSkimmed true --analysis-track-selection:processSkimmed false --analysis-dilepton-track:processDimuonMuonSkimmed true --analysis-same-event-pairing:processDecayToMuMuVertexingSkimmed true --analysis-muon-selection:cfgMuonCuts matchedGlobal --analysis-muon-selection:cfgMuonMCSignals muon muFromJpsi muFromBc dimuon --analysis-dilepton-track:cfgBarrelMCRecSignals mumuFromJpsiFromBc mumumuFromBc --analysis-dilepton-track:cfgBarrelMCGenSignals Jpsi --analysis-same-event-pairing:cfgBarrelMCRecSignals mumuFromJpsi dimuon --analysis-same-event-pairing:cfgMuonCuts matchedGlobal --logFile --internal-dpl-aod-reader:aod-reader-json configs/readerConfiguration_dileptonMC.json
+python3 runAnalysis.py configs/configAnalysisMC.json --internal-dpl-aod-reader:aod-file dileptonAOD.root --analysis-muon-selection:processSkimmed true --analysis-track-selection:processSkimmed false --analysis-dilepton-track:processDimuonMuonSkimmed true --analysis-same-event-pairing:processDecayToMuMuVertexingSkimmed true --analysis-muon-selection:cfgMuonCuts matchedGlobal --analysis-muon-selection:cfgMuonMCSignals muon muFromJpsi muFromBc dimuon --analysis-dilepton-track:cfgBarrelMCRecSignals mumuFromJpsiFromBc mumumuFromBc --analysis-dilepton-track:cfgBarrelMCGenSignals Jpsi --analysis-same-event-pairing:cfgBarrelMCRecSignals mumuFromJpsi dimuon --analysis-same-event-pairing:cfgMuonCuts matchedGlobal --logFile
 ```
 
 Note: We defined --reader argument for reading dilepton tables from dileptonAOD.
@@ -382,7 +382,7 @@ python3 runTableReader.py configs/configAnalysisData.json --aod reducedAod.root 
 Third Command To Run:
 
 ```ruby
-python3 runTableReader.py configs/configAnalysisData.json --aod dileptonAOD.root --analysis eventSelection trackSelection sameEventPairing dileptonHadron --process DecayToEE --cfgQA true --cfgTrackCuts jpsiPID1 jpsiPID2 --debug debug --logFile --reader configs/readerConfiguration_dileptons.json
+python3 runTableReader.py configs/configAnalysisData.json --aod dileptonAOD.root --analysis eventSelection trackSelection sameEventPairing dileptonHadron --process DecayToEE --cfgQA true --cfgTrackCuts jpsiPID1 jpsiPID2 --debug debug --logFile
 ```
 
 ## Special Part : run tableMaker and tableReader at the same time

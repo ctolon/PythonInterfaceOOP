@@ -76,12 +76,8 @@ Main File | Data Model | Description
 [`readerConfiguration_reducedEvent.json`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/configs/readerConfiguration_reducedEvent.json) | DQ Skimmed Data Model | For Data
 [`readerConfiguration_reducedEventMC.json`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/configs/readerConfiguration_reducedEventMC.json) | DQ Skimmed Data Model | For MC
 
-* JSON Reader Configuations for the DQ skimmed tables with extra dilepton tables:
+**NOTE**: JSON Reader Configuations also includes extra dilepton tables.
 
-Main File | Data Model | Description
---- | --- | ---
-[`readerConfiguration_dileptons`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/configs/readerConfiguration_dileptons.json) | DQ Skimmed Data Model With Extra Dilepton Tables | For Data
-[`readerConfiguration_dileptonMC`](https://github.com/ctolon/PythonInterfaceOOP/tree/main/configs/readerConfiguration_dileptonMC.json) | DQ Skimmed Data Model With Extra Dilepton Tables | For MC
 
 * JSON Writer Configuations for produce extra dilepton tables in DQ skimmed tables:
 
