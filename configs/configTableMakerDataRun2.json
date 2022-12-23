@@ -212,6 +212,7 @@
         "ccdb-path": "Users\/lm",
         "ccdb-no-later-than": "1660516676044",
         "processBarrelQvector": "true",
+        "processForwardQvector": "false",
         "processDummy": "false"
     },
     "d-q-barrel-track-selection-task": {
