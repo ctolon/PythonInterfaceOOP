@@ -1,8 +1,25 @@
 # User Python Based Interface for O2-DQ Framework
 
-\tableofcontents
+Repository Architecture:
 
-[![doxygen](https://img.shields.io/badge/doxygen-documentation-blue.svg)](https://dquserinterfaceoop.github.io/docs/html/)
+* **src**: Main python scripts folder (run Scripts)
+
+  * **src/configs**: JSON config files 
+
+  * **src/templibs**: DQ Libraries from O2-DQ Framework
+
+  * **src/extramodules**: All extramodules for manage many utils for python scripts
+
+* **doc**: Main Documentation files
+
+* `runYAPF.sh`: Python code re-formatter like clang
+
+* `.flake8`: Rules for flake8 as Lint wrapper for python
+
+* `.style.yapf`: YAPF rules file
+
+* `README.md`: Main readme file
+ 
 
 This project includes python based user interface development for PWG-DQ Workflows based on nightly-20222212. You can follow the instructions and you can find tutorials in table of contents at the end of the page (For prerequisites, Installation guide for argcomplete and Some Informations good to know).
 
@@ -16,7 +33,6 @@ Cevat Batuhan Tolon (Author Of Interface)
 * Contact: cevat.batuhan.tolon@cern.ch
 
 If you are having problems with scripts, you can first ask your questions on mattermost directly to @ctolon account or via e-mail at cevat.batuhan.tolon@cern.ch.
-
 
 ## Important
 
@@ -50,12 +66,12 @@ Switcher Variables (in boolean type): `runOverMC` and `runOverSkimmed` (you can 
 
 Variable in script | Workflow Script | Value | Selected Task | Taskname in config
 --- | --- | --- | --- | --- | 
-runOverMC | runTableMaker.py | `False` | tableMaker.cxx | table-maker
-runOverMC | runTableMaker.py | `True` | tableMakerMC.cxx | table-maker-m-c
+runOverMC | runTableMaker.py | `False` | tableMaker.cxx | table-maker (For Real Data Skimming)
+runOverMC | runTableMaker.py | `True` | tableMakerMC.cxx | table-maker-m-c (For MC Skimming)
 runOverMC | runAnalysis.py | `False` | tableReader.cxx | analysis-event-selection (For Real Data Analysis)
 runOverMC | runAnalysis.py | `True` | dqEfficiency.cxx | analysis-event-selection (For MC Analysis)
-runOverSkimmed | runEMEfficiency.py | `False` | emEfficiency.cxx | analysis-event-selection (It will run with not skimmed data)
-runOverSkimmed | runEMEfficiency.py | `True` | emEfficiency.cxx | analysis-event-selection (It will run with skimmed data)
+runOverSkimmed | runEMEfficiency.py | `False` | emEfficiency.cxx | analysis-event-selection (It will run with not skimmed MC)
+runOverSkimmed | runEMEfficiency.py | `True` | emEfficiency.cxx | analysis-event-selection (It will run with skimmed MC)
 
 **IMPORTANT NOTE:** It creates interface arguments by parsing the json before executing the script with dependency injection, so it is very important that you configure it correctly! 
 
@@ -90,11 +106,17 @@ You can refer to this chapter to modify scripts:
 
 [Developer Guide](doc/7_DeveloperGuide.md)
 
-## For Newcomers (NOT INTEGRATED YET!)
+## Before the Send PR: run YAPF
 
-If you don't know much about these python scripts or if you want to understand the structure of the scripts line by line, there are explanation documentation for each script, line by line or code blocks (Since utility functions are not explained in depth in this section, you can read and examine these functions directly from the doc strings of python scripts, or you can get short explanations from the developer guide section)
+For code re-formatting, we use [YAPF](https://github.com/google/yapf). It's based off of 'clang-format', developed by Daniel Jasper.
 
-- [runTableMaker Line-by-Line Explanation](doc/workflowscripts/1_runTableMaker.md)
+Install YAPF for code re-formatting
+
+`pip3 install yapf` or `pip install yapf`
+
+In root folder, execute runYAPF.sh bash script for code re-formatting:
+
+`bash runYAPF.sh`
 
 ## Table Of Contents
 - [Python Scripts And JSON Configs](doc/1_ScriptsAndConfigs.md)

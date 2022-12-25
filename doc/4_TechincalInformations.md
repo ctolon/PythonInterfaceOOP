@@ -1,6 +1,13 @@
 # Technical Informations
 
-@tableofcontents
+- [Technical Informations](#technical-informations)
+  - [Helper Command Functionality](#helper-command-functionality)
+  - [Debug and Logging Options for O2DQWorkflows and DownloadLibs.py](#debug-and-logging-options-for-o2dqworkflows-and-downloadlibspy)
+  - [Some Things You Should Be Careful For Using and Development](#some-things-you-should-be-careful-for-using-and-development)
+  - [Some Notes Before The Instructions](#some-notes-before-the-instructions)
+  - [Interface Modes: JSON Overrider and JSON Additional](#interface-modes-json-overrider-and-json-additional)
+  - [Project Architecture](#project-architecture)
+
 
 ## Helper Command Functionality
 
@@ -488,7 +495,7 @@ For example, when the file is logged, you should see a result like this when you
 [INFO] --analysis_track_selection:processSkimmed : true 
 [INFO] --analysis_same_event_pairing:cfgTrackCuts : ['jpsiO2MCdebugCuts'] 
 [INFO] --analysis_same_event_pairing:processDecayToEESkimmed : true 
-[INFO] Inserting inside for pycache remove: /home/batu/PythonInterfaceOOP
+[INFO] Inserting inside for pycache remove: /home/batu/PythonInterfaceOOP/src
 [INFO] pycaches removed succesfully
 ```
  </details>

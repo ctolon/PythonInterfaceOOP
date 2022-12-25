@@ -18,16 +18,17 @@
 import json
 import re
 import logging
+from typing import Any
 
 
-def listToString(s: list):
+def listToString(s: list[Any]):
     """
     ListToString provides converts lists to strings with commas.
     This function is written to save as string type instead of list
 
 
     Args:
-        s (list): Input as List
+        s (list[Any]): Input as List
 
     Returns:
         string: Comma seperated string
@@ -44,11 +45,11 @@ def listToString(s: list):
         return str1.join(s)
 
 
-def convertListToStr(s: list) -> str:
+def convertListToStr(s: list[Any]) -> str:
     """Alternative List to string method
 
     Args:
-        s (list): input as list
+        s (list[Any]): input as list
 
     Returns:
         str: returns string
@@ -86,23 +87,29 @@ def stringToList(string: str, charType: str) -> list:
     return li
 
 
-def writeFile(openFile, writeFile):
+def writeFile(openFile: str, writeFile: str):
+    """Write a file util function"""
+    
     with open(openFile, "wb") as f:
         f.write(writeFile)
     f.close()
 
 
-def loadJson(fileName: str):
+def loadJson(fileName: str) -> dict[str, dict]:
+    """JSON Loader util function"""
+    
     with open(fileName) as configFile:
         return json.load(configFile)
 
 
-def dumpJson(updatedConfigFileName: str, config: dict) -> None:
+def dumpJson(updatedConfigFileName: str, config: dict[str, Any]) -> None:
+    """JSON dump util function"""
     with open(updatedConfigFileName, "w") as outputFile:
         json.dump(config, outputFile, indent = 2)
 
 
-def getIfStartedInDoubleQuotes(headerFileName: str) -> list:
+def getIfStartedInDoubleQuotes(headerFileName: str) -> list[str]:
+    """Parse file lines get string in double quotes if line starts with 'if' """
     mylist = []
     with open(headerFileName) as f:
         stringIfSearch = [x for x in f if "if" in x]

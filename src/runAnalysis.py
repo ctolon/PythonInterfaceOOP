@@ -72,7 +72,7 @@ def main():
     eventMixingDeps = {
         "processBarrelSkimmed": {"analysis-track-selection": "processSkimmed"},
         "processMuonSkimmed": {"analysis-muon-selection": "processSkimmed"},
-        "processBarrelMuonSkimmed": {"analysis-track-selection": "processSkimmed","analysis-muon-selection": "processSkimmed"},
+        "processBarrelMuonSkimmed": {"analysis-track-selection": "processSkimmed", "analysis-muon-selection": "processSkimmed"},
         "processBarrelVnSkimmed": {"analysis-track-selection": "processSkimmed"},
         "processMuonVnSkimmed": {"analysis-muon-selection": "processSkimmed"}
         }

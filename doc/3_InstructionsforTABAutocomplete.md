@@ -1,6 +1,8 @@
 # Instructions for TAB Autocomplete
 
-@tableofcontents
+- [Instructions for TAB Autocomplete](#instructions-for-tab-autocomplete)
+  - [Possible Autocompletions](#possible-autocompletions)
+
 
 Before proceeding to this stage, you should make sure that you activate the O2 environment with alienv, then install the argcomplete package with `pip install argcomplete` and `pip3 install argcomplete` in O2, and then source the autocomplete bash script with `source argcomplete.sh`
 

@@ -85,7 +85,7 @@ class DQLibGetter(object):
         
         # Github Links for CutsLibrary and MCSignalsLibrary from PWG-DQ --> download from github
         # This condition solves performance issues
-        if (os.path.isfile("tempCutsLibrary.h") and os.path.isfile("tempMCSignalsLibrary.h") and os.path.isfile("tempMixingLibrary.h") and os.path.isfile("tempHistogramsLibrary.h")) is False:
+        if (os.path.isfile("templibs/tempCutsLibrary.h") and os.path.isfile("templibs/tempMCSignalsLibrary.h") and os.path.isfile("templibs/tempMixingLibrary.h") and os.path.isfile("templibs/tempHistogramsLibrary.h")) is False:
             print("[INFO] Some Libs are Missing. They will download.")
             
             # Dummy SSL Adder
@@ -105,19 +105,19 @@ class DQLibGetter(object):
             htmlHistogramsLibrary = urlopen(requestHistogramsLibrary, context = context).read()
             
             # Save Disk to temp DQ libs
-            writeFile("tempCutsLibrary.h", htmlCutsLibrary)
-            writeFile("tempMCSignalsLibrary.h", htmlMCSignalsLibrary)
-            writeFile("tempMixingLibrary.h", htmlMixingLibrary)
-            writeFile("tempHistogramsLibrary.h", htmlHistogramsLibrary)
+            writeFile("templibs/tempCutsLibrary.h", htmlCutsLibrary)
+            writeFile("templibs/tempMCSignalsLibrary.h", htmlMCSignalsLibrary)
+            writeFile("templibs/tempMixingLibrary.h", htmlMixingLibrary)
+            writeFile("templibs/tempHistogramsLibrary.h", htmlHistogramsLibrary)
             print("[INFO] Libs downloaded succesfully.")
         
         # Get MC Signals and Mixing vars from DQ Framework header files
-        self.allMCSignals = getIfStartedInDoubleQuotes("tempMCSignalsLibrary.h")
-        self.allMixing = getIfStartedInDoubleQuotes("tempMixingLibrary.h")
+        self.allMCSignals = getIfStartedInDoubleQuotes("templibs/tempMCSignalsLibrary.h")
+        self.allMixing = getIfStartedInDoubleQuotes("templibs/tempMixingLibrary.h")
         
         # TODO Reduce the complexity
         # Get All histograms with flags
-        with open("tempHistogramsLibrary.h") as f:
+        with open("templibs/tempHistogramsLibrary.h") as f:
             for line in f:
                 if "if" in line:
                     if "track" not in line and kEvents is True: # get event histos
@@ -154,7 +154,7 @@ class DQLibGetter(object):
         self.allPairHistos += pairHistos
         self.allDileptonHistos += dileptonHistos
         
-        self.allAnalysisCuts = getIfStartedInDoubleQuotes("tempCutsLibrary.h")
+        self.allAnalysisCuts = getIfStartedInDoubleQuotes("templibs/tempCutsLibrary.h")
         getPairCuts = [y for y in self.allAnalysisCuts if "pair" in y]
         if getPairCuts: # if pair cut list is not empty
             allPairCuts += getPairCuts # Get Only pair cuts from CutsLibrary.h

@@ -1,7 +1,5 @@
 # Converters (Special Additional Tasks For Workflows)
 
-@tableofcontents
-
 If you get an error about TTree not found, the following converter may fix the error you get:
 
 1. **--add_mc_conv**: conversion from o2mcparticle to o2mcparticle_001

@@ -1,11 +1,21 @@
 
 # Introduction to Modifying
 
+- [Introduction to Modifying](#introduction-to-modifying)
+  - [Developer Tools](#developer-tools)
+    - [How to modify O2-DQ task dependencies](#how-to-modify-o2-dq-task-dependencies)
+    - [How to modify or add new reduced tables](#how-to-modify-or-add-new-reduced-tables)
+    - [How to add new CLI arguments](#how-to-add-new-cli-arguments)
+    - [How to define new autocompletions](#how-to-define-new-autocompletions)
+    - [How to add new O2 converter tasks](#how-to-add-new-o2-converter-tasks)
+  - [Naming Conventions](#naming-conventions)
+
+
 This chapter will explain to you how to integrate these updates when there are new updates to common dependencies, configuration or process functions in O2-DQ Framework or in Common framework.
 
 ## Developer Tools
 
-Tools used to add new configurable or new process functions in JSONs and more are defined as functions in the `configSetter.py` script in the extramodules folder (You can found more information in doc strings).
+Tools used to add new configurable or new process functions in JSONs and more are defined as functions in the `src/extramodules/configSetter.py` script in the extramodules folder (You can found more information in doc strings).
 
 If you need a modification, you only need to modify the functions in the main tools. Helper tools are utility functions and you don't need to modify them. These are standard.
 

@@ -44,6 +44,9 @@ def main():
     
     # All Dependencies
     commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table", "o2-analysis-centrality-table", "o2-analysis-trackselection", "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full"]
+    #commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table", "o2-analysis-centrality-table"]
+    #barrelDeps = ["o2-analysis-trackselection", "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full"]
+    #muonDeps = ["o2-analysis-fwdtrackextension"]
     
     # Debug Settings
     debugSettings(args.debug, args.logFile, fileName = "dqFlow.log")
@@ -74,6 +77,7 @@ def main():
     
     # Transactions
     aodFileChecker(allArgs["internal_dpl_aod_reader:aod_file"])
+    #trackPropagationChecker(args.add_track_prop, barrelDeps)
     trackPropagationChecker(args.add_track_prop, commonDeps)
     setProcessDummy(config, dummyHasTasks) # dummy automizer
     
@@ -84,6 +88,18 @@ def main():
     
     # Check which dependencies need to be run
     depsToRun = commonDepsToRun(commonDeps)
+    """
+    for processFunc in processFuncs[taskNameInConfig]:
+        if processFunc not in config[taskNameInConfig].keys():
+            continue
+        if config[taskNameInConfig][processFunc] == "true":
+            if "processBarrel" in processFunc:
+                for dep in barrelDeps:
+                    depsToRun[dep] = 1
+            if "processForward" in processFunc:
+                for dep in muonDeps:
+                    depsToRun[dep] = 1
+    """
     
     commandToRun = f"{taskNameInCommandLine} --configuration json://{updatedConfigFileName} --severity error --shm-segment-size 12000000000 -b"
     for dep in depsToRun.keys():

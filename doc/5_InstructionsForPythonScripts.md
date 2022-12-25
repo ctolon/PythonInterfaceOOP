@@ -1,6 +1,17 @@
 # Instructions For Python Scripts
 
-@tableofcontents
+- [Instructions For Python Scripts](#instructions-for-python-scripts)
+- [Instructions for DownloadLibs.py](#instructions-for-downloadlibspy)
+  - [Download CutsLibrary, MCSignalLibrary, MixingLibrary From Github](#download-cutslibrary-mcsignallibrary-mixinglibrary-from-github)
+  - [Get CutsLibrary, MCSignalLibrary, MixingLibrary From Local Machine](#get-cutslibrary-mcsignallibrary-mixinglibrary-from-local-machine)
+  - [Available configs in DownloadLibs.py Interface](#available-configs-in-downloadlibspy-interface)
+  - [Hardcoded Arguments](#hardcoded-arguments)
+- [Instructions for runTableMaker](#instructions-for-runtablemaker)
+- [Instructions for runAnalysis.py](#instructions-for-runanalysispy)
+- [Instructions for runFilterPP.py](#instructions-for-runfilterpppy)
+- [Instructions for runDQFlow.py](#instructions-for-rundqflowpy)
+- [Working with Histogram configurables and other configurables](#working-with-histogram-configurables-and-other-configurables)
+
 
 # Instructions for DownloadLibs.py
 

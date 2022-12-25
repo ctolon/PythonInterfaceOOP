@@ -26,13 +26,14 @@ import argparse
 from extramodules.choicesHandler import ChoicesCompleterList
 import argcomplete
 from argcomplete.completers import ChoicesCompleter
+from typing import Any
 
 
-def dispArgs(allArgs: dict) -> None:
+def dispArgs(allArgs: dict[str, Any]) -> None:
     """Display all configured commands you provided in CLI
 
     Args:
-        allArgs (dict): configured commands in CLI
+        allArgs (dict[str, Any]): configured commands in CLI
     """
     logging.info("Args provided configurations List")
     print("====================================================================================================================")
@@ -58,7 +59,7 @@ def dispInterfaceMode(cliMode: str):
         logging.info("INTERFACE MODE : JSON Additional")
 
 
-def dispO2HelpMessage(argHelpO2, commandToRun):
+def dispO2HelpMessage(argHelpO2: bool, commandToRun: str):
     """Display O2 helper message
 
     Args:
@@ -109,11 +110,11 @@ def debugSettings(argDebug: bool, argLogFile: bool, fileName: str) -> None:
         log.addHandler(fh)
 
 
-def setConverters(allArgs: dict, updatedConfigFileName: str, commandToRun: str) -> str:
+def setConverters(allArgs: dict[str, Any], updatedConfigFileName: str, commandToRun: str) -> str:
     """Converter task setter function
 
     Args:
-        allArgs (dict): All provided args in CLI
+        allArgs (dict[str, Any]): All provided args in CLI
         updatedConfigFileName (str): Overrided json config file
         commandToRun (str): Generated command for running in O2
         
@@ -136,13 +137,13 @@ def setConverters(allArgs: dict, updatedConfigFileName: str, commandToRun: str) 
     return commandToRun
 
 
-def generateDescriptors(resfilename: str, tablesToProduce: dict, tables: dict, writerConfigFileName: str, readerConfigFileName = 'aodReaderTempConfig', kFlag = False) -> None:
+def generateDescriptors(resfilename: str, tablesToProduce: dict, tables: dict[str, dict], writerConfigFileName: str, readerConfigFileName = 'aodReaderTempConfig', kFlag = False) -> None:
     """Generates Descriptors for Writing/Reading Tables from AO2D with json config file (input descriptor is optional)
 
     Args:
         resfilename (str): Name of aod file which will be produced
         tablesToProduce (dict): Tables are required in the output
-        tables (dict): Definition of all the tables can be produced
+        tables (dict[str, dict]): Definition of all the tables can be produced
         writerConfigFileName (str): Output name of writer config
         readerConfigFileName (str, optional): Output name of reader config. Defaults to aodReaderTempConfig.json
         kFlag (bool, optional): if True also generates input descriptors. Defaults to False.
@@ -186,17 +187,17 @@ def generateDescriptors(resfilename: str, tablesToProduce: dict, tables: dict, w
     logging.info(f"{writerConfig}")
 
 
-def tableProducerSkimming(config: dict, taskNameInConfig: str, commonTables: list, barrelCommonTables: list, muonCommonTables: list, specificTables: list, specificDeps: dict, runOverMC: bool) -> dict:
+def tableProducerSkimming(config: dict[str, dict], taskNameInConfig: str, commonTables: list[str], barrelCommonTables: list[str], muonCommonTables: list[str], specificTables: list[str], specificDeps: dict[str, list], runOverMC: bool) -> dict:
     """Table producer function for tableMaker/tableMakerMC
 
     Args:
-        config (dict): Input as JSON config file
+        config (dict[str, dict]): Input as JSON config file
         taskNameInConfig (str): Taskname in config file (table-maker/table-maker-m-c)
-        commonTables (list): Common tables which are always be created
-        barrelCommonTables (list): Barrel tables in reduced DQ data model
-        muonCommonTables (list): Muon tables in reduced DQ data model
-        specificTables (list): Specific Tables for specific tasks
-        specificDeps (dict): Specific Dependencies for specific tasks
+        commonTables (list[str]): Common tables which are always be created
+        barrelCommonTables (list[str]): Barrel tables in reduced DQ data model
+        muonCommonTables (list[str]): Muon tables in reduced DQ data model
+        specificTables (list[str]): Specific Tables for specific tasks
+        specificDeps (dict[str, list]): Specific Dependencies for specific tasks
         runOverMC (bool): Checking to run over MC or Data
         
     Returns:
@@ -241,18 +242,18 @@ def tableProducerSkimming(config: dict, taskNameInConfig: str, commonTables: lis
     return tablesToProduce
 
 
-def tableProducerAnalysis(config: dict, taskNameInConfig: str, commonTables: list, barrelCommonTables: list, muonCommonTables: list, specificTables: list, runOverMC: bool) -> dict:
+def tableProducerAnalysis(config: dict[str, dict], taskNameInConfig: str, commonTables: list[str], barrelCommonTables: list[str], muonCommonTables: list[str], specificTables: dict[str, list], runOverMC: bool) -> dict:
     """Table producer function for tableReader/dqEfficiency
     This method allows produce extra dilepton tables.
 
     Args:
-        config (dict): Input as JSON config file
-        taskNameInConfig (str): Taskname in config file (table-maker/table-maker-m-c)
-        commonTables (list): Common tables which are always be created
-        barrelCommonTables (list): Barrel tables in reduced DQ data model
-        muonCommonTables (list): Muon tables in reduced DQ data model
-        specificTables (list): Specific Tables for specific tasks
-        specificDeps (dict): Specific Dependencies for specific tasks
+        config (dict[str, dict]): Input as JSON config file
+        taskNameInConfig (str): Taskname in config file (for tableReader and dqEfficiency)
+        commonTables (list[str]): Common tables which are always be created
+        barrelCommonTables (list[str]): Barrel tables in reduced DQ data model
+        muonCommonTables (list[str]): Muon tables in reduced DQ data model
+        specificTables (list[str]): Specific Tables for specific tasks
+        specificDeps (dict[str, list]): Specific Dependencies for specific tasks
         runOverMC (bool): Checking to run over MC or Data
         
     Returns:
@@ -298,12 +299,12 @@ def tableProducerAnalysis(config: dict, taskNameInConfig: str, commonTables: lis
     return tablesToProduce
 
 
-def setProcessDummy(config: dict, dummyHasTasks: list) -> None:
+def setProcessDummy(config: dict[str, dict], dummyHasTasks: list[str]) -> None:
     """Dummy Automizer
 
     Args:
-        config (dict): json config dict
-        dummyHasTasks (list): Define dummy task list (get this from SetArgsToArgumentParser class)
+        config (dict[str, dict]): json config dict
+        dummyHasTasks (list[str]): Define dummy task list (get this from SetArgsToArgumentParser class)
         
     """
     processFuncFound = ''
@@ -328,7 +329,7 @@ def setProcessDummy(config: dict, dummyHasTasks: list) -> None:
                                 #logging.debug(" - [%s] processDummy : true", k)
 
 
-def setParallelismOnSkimming(commandToRun: str, updatedConfigFileName: str, analysisTaskName: str, analysisTaskTempConfig: str, config: dict) -> str:
+def setParallelismOnSkimming(commandToRun: str, updatedConfigFileName: str, analysisTaskName: str, analysisTaskTempConfig: str, config: dict[str, dict]) -> str:
     """Setter method for activate parallel sesion run in O2
 
     Args:
@@ -370,16 +371,14 @@ class SetArgsToArgumentParser(object):
 
     Args:
         cfgJsonName (str): Path to Json config file for creating CLI arguments with parsing
-        tasksToPassList (list): If you don't want to include and provide some tasks from the JSON config file to CLI arguments you can define them in a list type
+        tasksToPassList (list[str]): If you don't want to include and provide some tasks from the JSON config file to CLI arguments you can define them in a list type
         parser (object): For getting args from ArgumentParser 
-        dummyHasTasks (Optional, list): If there are tasks with processDummy in the json, it will save them to the list (for dummy automizer)
-        processFuncs: (dict): Creating task-processFunctions dependency tree for automations
-
-    Returns:
-        dict: namespace, argument
+        dummyHasTasks (Optional, list[str]): If there are tasks with processDummy in the json, it will save them to the list (for dummy automizer)
+        processFuncs: (dict[str, list]): Creating task-processFunctions dependency tree for automations
+        
     """
     
-    def __init__(self, cfgJsonName, tasksToPassList: list, parser = None, dummyHasTasks = [], processFuncs = {}) -> dict:
+    def __init__(self, cfgJsonName: str, tasksToPassList: list, parser = None, dummyHasTasks: list[str] = [], processFuncs: dict[str, list] = {}) -> None:
         
         self.cfgJsonName = cfgJsonName
         self.tasksToPassList = list(tasksToPassList)
@@ -457,7 +456,6 @@ class SetArgsToArgumentParser(object):
         
         # save args to parser(template --> --taskname:config)
         for arg in arglist:
-            mylist = []
             # seperate the template to list --> taskname:config to [taskname, configurable]
             seperatedArg = stringToList(arg, ":")
             configurable: str = seperatedArg[1] # configurable as second index
@@ -473,6 +471,7 @@ class SetArgsToArgumentParser(object):
             if configurable == "processDummy":
                 self.dummyHasTasks.append(taskname)
             
+            # We may define posible all autocompletions as semi hard-coded with substring search (according to naming conventions)
             # Define some autocompletion rules for match-case (for O2-DQ Framework)
             containsCuts = "Cuts" in configurable
             containsSignals = configurable.endswith("Signals") or configurable.endswith("signals")
@@ -485,8 +484,8 @@ class SetArgsToArgumentParser(object):
             containsFlatTables = configurable == "cfgFlatTables"
             containsTPCpostCalib = configurable == "cfgTPCpostCalib"
             containsProcess = configurable.startswith("process")
-            # We may define posible all autocompletions as semi hard-coded with substring search (according to naming conventions)
-            # DQ Framework
+            
+            # Create arguments with possible autocompletions for DQ Framework
             if containsCuts:
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allAnalysisCuts)
             elif containsSignals:
@@ -510,7 +509,7 @@ class SetArgsToArgumentParser(object):
             elif configurable == "processDummy": # NOTE we don't need configure processDummy since we have dummy automizer
                 continue
             
-            # Common Framework
+            # Create arguments with possible autocompletions for Common Framework
             elif containsProcess: # NOTE This is an global definition in O2 Analysis framework, all process functions startswith "process"
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
             elif configurable == "syst":
@@ -526,18 +525,18 @@ class SetArgsToArgumentParser(object):
             elif configurable == "compatibilityIU":
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
             else:
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b") # Has no autocompletion
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b") # Create other arguments without autocompletion
         
         argcomplete.autocomplete(self.parser, always_complete_options = False)
         self.parser.parse_args()
 
 
-def setConfigs(allArgs: dict, config: dict, cliMode: str) -> None:
+def setConfigs(allArgs: dict[str, Any], config: dict[str, dict], cliMode: str) -> None:
     """Setter function for CLI arguments to JSON config file
 
     Args:
         allArgs (dict): All provided arguments from CLI
-        config (dict): Input as JSON config file
+        config (dict[str, dict]): Input as JSON config file
         cliMode (str): CLI mode selection (true or false in string type)
     """
     for argument, parameter in allArgs.items():
@@ -562,18 +561,18 @@ def setConfigs(allArgs: dict, config: dict, cliMode: str) -> None:
                 logging.info(" - [%s] %s : %s", taskname, configurable, parameter)
 
 
-def setSwitch(config: dict, processFuncs: dict, allArgs: dict, cliMode: str, processFuncToPass = []) -> None:
+def setSwitch(config: dict[str, dict], processFuncs: dict[str, list], allArgs: dict, cliMode: str, processFuncToPass: list[str] = []) -> None:
     """This method providees Process function automation for overrider mode
 
     Args:
         config (dict): Input as json config file
-        processFuncs (dict): All process function deps list
+        processFuncs (dict): All process function deps list (taskname - process Functions)
         allArgs (dict): All provided args from CLI
         cliMode (str): cliMode as argument
-        processFuncToPass (list, optional): List to pass configuration on mandatory arguments. Defaults to [].
+        processFuncToPass (list[str], optional): List to pass configuration on mandatory arguments. Defaults to [].
     """
     
-    processDepsDict = {} # save all true configured task - process function pairs to dict
+    processDepsDict = {} # save all true configured task - process function pairs to dict --> typeof dict[str, list]
     
     if cliMode == "true":
         for taskProcessPair, parameter in allArgs.items():
@@ -600,11 +599,11 @@ def setSwitch(config: dict, processFuncs: dict, allArgs: dict, cliMode: str, pro
                         logging.info(" - [%s] %s : %s", taskName, processFunc, "false")
 
 
-def commonDepsToRun(commonDeps: list) -> dict:
+def commonDepsToRun(commonDeps: list[str]) -> dict:
     """Produces common deps to run dict
 
     Args:
-        commonDeps (list): common deps to run list
+        commonDeps (list[str]): common deps to run list
 
     Returns:
         dict: common deps to run dict

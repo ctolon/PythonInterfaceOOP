@@ -196,7 +196,7 @@ def main():
         if processFunc not in config[taskNameInConfig].keys():
             continue
         if config[taskNameInConfig][processFunc] == "true":
-            if "processFull" in processFunc or "processBarrel" in processFunc or "processAmbiguousBarrel" in processFunc:
+            if "processFull" in processFunc or "processBarrel" in processFunc or "processAmbiguousBarrel" in processFunc or "Filter" in processFunc: # NOTE For event filter, we need run all dependencies
                 for dep in barrelDeps:
                     depsToRun[dep] = 1
             if "processFull" in processFunc or "processMuon" in processFunc or "processAmbiguousMuon" in processFunc:
