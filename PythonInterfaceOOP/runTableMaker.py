@@ -41,7 +41,7 @@ def main():
     
     # Simple protection
     if not isinstance(runOverMC, bool):
-        raise TypeError(f"[FATAL] runOverMC have to True or False! (in bool type)")
+        raise TypeError("[FATAL] runOverMC have to True or False! (in bool type)")
     
     # Load json config file for create interface arguments as MC or Data
     parsedJsonFile = "configs/configTableMakerDataRun3.json"

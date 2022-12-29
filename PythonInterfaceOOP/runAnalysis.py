@@ -41,8 +41,7 @@ def main():
     
     # Simple protection
     if not isinstance(runOverMC, bool):
-        print(f"[FATAL] runOverMC have to true or false!")
-        sys.exit()
+        raise TypeError("[FATAL] runOverMC have to True or False! (in bool type)")
     
     # Load json config file for create interface arguments as MC or Data
     parsedJsonFile = "configs/configAnalysisData.json"
@@ -60,13 +59,13 @@ def main():
     sameEventPairingTaskName = "analysis-same-event-pairing"
     sameEventPairingDeps = {
         "processDecayToEESkimmed": {"analysis-track-selection": "processSkimmed"},
-        "processDecayToEEPrefilterSkimmed": {"analysis-track-selection": "processSkimmed","analysis-prefilter-selection": "processBarrelSkimmed"},
+        "processDecayToEEPrefilterSkimmed": {"analysis-track-selection": "processSkimmed", "analysis-prefilter-selection": "processBarrelSkimmed"},
         "processDecayToMuMuSkimmed": {"analysis-muon-selection": "processSkimmed"},
         "processDecayToMuMuVertexingSkimmed": {"analysis-muon-selection": "processSkimmed"},
         "processVnDecayToEESkimmed": {"analysis-track-selection": "processSkimmed"},
         "processVnDecayToMuMuSkimmed": {"analysis-muon-selection": "processSkimmed"},
-        "processElectronMuonSkimmed": {"analysis-track-selection": "processSkimmed","analysis-muon-selection": "processSkimmed"},
-        "processAllSkimmed": {"analysis-track-selection": "processSkimmed","analysis-muon-selection": "processSkimmed"},
+        "processElectronMuonSkimmed": {"analysis-track-selection": "processSkimmed", "analysis-muon-selection": "processSkimmed"},
+        "processAllSkimmed": {"analysis-track-selection": "processSkimmed", "analysis-muon-selection": "processSkimmed"},
         }
     eventMixingTaskName = "analysis-event-mixing"
     eventMixingDeps = {

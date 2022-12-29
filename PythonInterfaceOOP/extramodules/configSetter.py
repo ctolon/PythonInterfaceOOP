@@ -359,7 +359,7 @@ def setParallelismOnSkimming(commandToRun: str, updatedConfigFileName: str, anal
     #save merged configs (skimming/analysis)
     with open(updatedConfigFileName, "w") as outputFile:
         json.dump(mergedConfigs, outputFile, indent = 2)
-    analysisjson = "aodWriterAnalysisTempConfig.json"
+    # analysisjson = "aodWriterAnalysisTempConfig.json"
     skimmingjson = "aodWriterSkimmingTempConfig.json"
     
     return f"{skimmingTaskFullCommand} | {analysisTaskName} --configuration json://{updatedConfigFileName} --aod-writer-json {skimmingjson} -b"
@@ -372,7 +372,7 @@ class SetArgsToArgumentParser(object):
     Args:
         cfgJsonName (str): Path to Json config file for creating CLI arguments with parsing
         tasksToPassList (list[str]): If you don't want to include and provide some tasks from the JSON config file to CLI arguments you can define them in a list type
-        parser (object): For getting args from ArgumentParser 
+        parser (object): For getting args from ArgumentParser
         dummyHasTasks (Optional, list[str]): If there are tasks with processDummy in the json, it will save them to the list (for dummy automizer)
         processFuncs: (dict[str, list]): Creating task-processFunctions dependency tree for automations
         
@@ -432,13 +432,13 @@ class SetArgsToArgumentParser(object):
         self.parser.add_argument("-runParallel", help = "Run parallel in session", action = "store_true", default = False)
         
         # GLOBAL OPTIONS
-        groupGlobal = self.parser.add_argument_group(title = f"Global workflow options")
+        groupGlobal = self.parser.add_argument_group(title = "Global workflow options")
         groupGlobal.add_argument("--aod-memory-rate-limit", help = "Rate limit AOD processing based on memory", action = "store", type = str)
         groupGlobal.add_argument("--writer", help = "Argument for producing extra reduced tables", action = "store", type = str).completer = ChoicesCompleter(booleanSelections)
         groupGlobal.add_argument("--helpO2", help = "Display help message on O2", action = "store_true", default = False)
         
         # Converter Task Options
-        groupO2Converters = self.parser.add_argument_group(title = f"Add to workflow O2 Converter task options")
+        groupO2Converters = self.parser.add_argument_group(title = "Add to workflow O2 Converter task options")
         groupO2Converters.add_argument("--add_mc_conv", help = "Add the converter from mcparticle to mcparticle+001 (Adds your workflow o2-analysis-mc-converter task)", action = "store_true",)
         groupO2Converters.add_argument("--add_fdd_conv", help = "Add the fdd converter (Adds your workflow o2-analysis-fdd-converter task)", action = "store_true",)
         groupO2Converters.add_argument("--add_track_prop", help = "Add track propagation to the innermost layer (TPC or ITS) (Adds your workflow o2-analysis-track-propagation task)", action = "store_true",)
@@ -446,13 +446,13 @@ class SetArgsToArgumentParser(object):
         groupO2Converters.add_argument("--add_col_conv", help = "Add the converter from collision to collision+001", action = "store_true")
         
         # Helper Options
-        groupHelper = self.parser.add_argument_group(title = f"Helper Options")
+        groupHelper = self.parser.add_argument_group(title = "Helper Options")
         groupHelper.add_argument("--debug", help = "execute with debug options", action = "store", type = str.upper, default = "INFO", choices = debugLevelSelectionsList,).completer = ChoicesCompleterList(debugLevelSelectionsList)
         groupHelper.add_argument("--logFile", help = "Enable logger for both file and CLI", action = "store_true")
         groupHelper.add_argument("--override", help = "If true JSON Overrider Interface If false JSON Additional Interface", action = "store", default = "true", type = str.lower, choices = booleanSelections,).completer = ChoicesCompleter(booleanSelections)
         
         # Create argument group for iterating json options
-        groupJsonParser = self.parser.add_argument_group(title = f"JSON configuration options")
+        groupJsonParser = self.parser.add_argument_group(title = "JSON configuration options")
         
         # save args to parser(template --> --taskname:config)
         for arg in arglist:
@@ -537,6 +537,7 @@ class SetArgsToArgumentParser(object):
         
         argcomplete.autocomplete(self.parser, always_complete_options = False)
         return self.parser.parse_args()
+
 
 def setConfigs(allArgs: dict[str, Any], config: dict[str, dict], cliMode: str) -> None:
     """Setter function for CLI arguments to JSON config file

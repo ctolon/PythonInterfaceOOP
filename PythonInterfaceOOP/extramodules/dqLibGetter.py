@@ -16,7 +16,6 @@
 # \Author: ionut.cristian.arsene@cern.ch
 # \Interface:  cevat.batuhan.tolon@cern.ch
 
-from itertools import chain
 import os
 import re
 from urllib.request import Request, urlopen
@@ -30,7 +29,7 @@ from .utils import getIfStartedInDoubleQuotes, writeFile
 class DQLibGetter(object):
     
     """
-    Class for Downloading DQ Libraries Github and It gets analysis selections 
+    Class for Downloading DQ Libraries Github and It gets analysis selections
     like analysis cuts, MC signals and event mixing variables
     Args:
         object (object): self
@@ -64,7 +63,7 @@ class DQLibGetter(object):
         kTracks = True
         kMCtruths = True
         kPairs = True
-        kDileptons = True
+        # kDileptons = True
         
         # Lists for saving Histograms
         eventHistos = []
