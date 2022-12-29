@@ -104,12 +104,14 @@ def loadJson(fileName: str) -> dict[str, dict]:
 
 def dumpJson(updatedConfigFileName: str, config: dict[str, Any]) -> None:
     """JSON dump util function"""
+    
     with open(updatedConfigFileName, "w") as outputFile:
         json.dump(config, outputFile, indent = 2)
 
 
 def getIfStartedInDoubleQuotes(headerFileName: str) -> list[str]:
     """Parse file lines get string in double quotes if line starts with 'if' """
+    
     mylist = []
     with open(headerFileName) as f:
         stringIfSearch = [x for x in f if "if" in x]

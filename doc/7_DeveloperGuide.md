@@ -15,7 +15,7 @@ This chapter will explain to you how to integrate these updates when there are n
 
 ## Developer Tools
 
-Tools used to add new configurable or new process functions in JSONs and more are defined as functions in the `src/extramodules/configSetter.py` script in the extramodules folder (You can found more information in doc strings).
+Tools used to add new configurable or new process functions in JSONs and more are defined as functions in the `PythonInterfaceOOP/extramodules/configSetter.py` script in the extramodules folder (You can found more information in doc strings).
 
 If you need a modification, you only need to modify the functions in the main tools. Helper tools are utility functions and you don't need to modify them. These are standard.
 
@@ -489,4 +489,4 @@ def setConverters(allArgs: dict, updatedConfigFileName: str, commandToRun: str) 
 * Constants: Screaming camelcase
 * O2 converter arguments: Snake case
 
-[← Go back to Instructions For Tutorials](6_Tutorials.md) | [↑ Go to the Table of Content ↑](../README.md) [Continue to TroubleshootingTreeNotFound →](8_TroubleshootingTreeNotFound.md)
+[← Go back to Instructions For Tutorials](6_Tutorials.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to TroubleshootingTreeNotFound →](8_TroubleshootingTreeNotFound.md)

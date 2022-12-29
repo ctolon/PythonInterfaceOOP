@@ -52,7 +52,7 @@ def main():
     
     # Setting arguments for CLI
     setArgsToArgumentParser = SetArgsToArgumentParser(parsedJsonFile, ["timestamp-task", "tof-event-time", "bc-selection-task", "tof-pid-beta"])
-    args = setArgsToArgumentParser.parser.parse_args()
+    args = setArgsToArgumentParser.parseArgs()
     dummyHasTasks = setArgsToArgumentParser.dummyHasTasks
     processFuncs = setArgsToArgumentParser.processFuncs
     allArgs = vars(args) # for get args

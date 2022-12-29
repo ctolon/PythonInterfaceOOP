@@ -179,6 +179,5 @@ cython_debug/
 !tempMCSignalsLibrary.h
 !tempMixingLibrary.h
 !tempHistogramsLibrary.h
-.github
 cfg
 

@@ -526,10 +526,17 @@ class SetArgsToArgumentParser(object):
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
             else:
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b") # Create other arguments without autocompletion
+    
+    def parseArgs(self, testString = None):
+        """
+        This function allows to save the obtained arguments to the parser_args() function
+        
+        Returns:
+            Namespace as argument, parameter: returns parse_args() with autocomplete generated arguments and parameters
+        """
         
         argcomplete.autocomplete(self.parser, always_complete_options = False)
-        self.parser.parse_args()
-
+        return self.parser.parse_args()
 
 def setConfigs(allArgs: dict[str, Any], config: dict[str, dict], cliMode: str) -> None:
     """Setter function for CLI arguments to JSON config file

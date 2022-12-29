@@ -16,18 +16,18 @@
 # \Author: ionut.cristian.arsene@cern.ch
 # \Interface:  cevat.batuhan.tolon@cern.ch
 
-# Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/DalitzSelection.cxx
+# Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/filterPP.cxx
 
-# run template: `python3 runDalitzSelection.py <config.json> --task-name:<configurable|processFunc> parameter ...`
+# run template: `python3 runFilterPP.py <config.json> --task-name:<configurable|processFunc> parameter ...`
 # parameter can be multiple like this:
-# --dalitz-pairing:cfgDalitzTrackCuts jpsiPID1 jpsiPID2
+# --d-q-barrel-selection-task:cfgBarrelTrackCuts jpsiPID1 jpsiPID2
 
 import sys
 import logging
 import logging.config
 import os
-from extramodules.dqTranscations import aodFileChecker, jsonTypeChecker, mainTaskChecker, trackPropagationChecker
-from extramodules.configSetter import SetArgsToArgumentParser, commonDepsToRun, dispInterfaceMode, dispO2HelpMessage, setConfigs, setConverters, debugSettings, dispArgs, setProcessDummy, setSwitch
+from extramodules.dqTranscations import mandatoryArgChecker, aodFileChecker, jsonTypeChecker, mainTaskChecker, trackPropagationChecker
+from extramodules.configSetter import SetArgsToArgumentParser, commonDepsToRun, dispInterfaceMode, dispO2HelpMessage, setConfigs, setConverters, setProcessDummy, debugSettings, dispArgs, setSwitch
 from extramodules.pycacheRemover import runPycacheRemover
 from extramodules.utils import dumpJson, loadJson
 
@@ -35,21 +35,21 @@ from extramodules.utils import dumpJson, loadJson
 def main():
     
     # Setting arguments for CLI
-    parsedJsonFile = "configs/configDalitzSelectionDataRun3.json"
+    parsedJsonFile = "configs/configFilterPPDataRun3.json"
     setArgsToArgumentParser = SetArgsToArgumentParser(parsedJsonFile, ["timestamp-task", "tof-event-time", "bc-selection-task", "tof-pid-beta"])
-    args = setArgsToArgumentParser.parser.parse_args()
+    args = setArgsToArgumentParser.parseArgs()
     dummyHasTasks = setArgsToArgumentParser.dummyHasTasks
     processFuncs = setArgsToArgumentParser.processFuncs
     allArgs = vars(args) # for get args
     
     # All Dependencies
-    commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table", "o2-analysis-centrality-table", "o2-analysis-trackselection", "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full"]
-    
-    # Debug Settings
-    debugSettings(args.debug, args.logFile, fileName = "dalitzSelection.log")
+    commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table", "o2-analysis-trackselection", "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full", "o2-analysis-fwdtrackextension"]
     
     # if cliMode true, Overrider mode else additional mode
     cliMode = args.override
+    
+    # Debug Settings
+    debugSettings(args.debug, args.logFile, fileName = "filterPP.log")
     
     # Basic validations
     jsonTypeChecker(args.cfgFileName)
@@ -58,8 +58,8 @@ def main():
     # Load the configuration file provided as the first parameter
     config = loadJson(args.cfgFileName)
     
-    taskNameInConfig = "dalitz-pairing"
-    taskNameInCommandLine = "o2-analysis-dq-dalitz-selection"
+    taskNameInConfig = "d-q-filter-p-p-task"
+    taskNameInCommandLine = "o2-analysis-dq-filter-pp"
     
     mainTaskChecker(config, taskNameInConfig)
     
@@ -70,15 +70,16 @@ def main():
     setConfigs(allArgs, config, cliMode)
     
     # process function automation based on cliMode
-    setSwitch(config, processFuncs, allArgs, cliMode)
+    setSwitch(config, processFuncs, allArgs, cliMode, ["processEventSelection"])
     
     # Transactions
     aodFileChecker(allArgs["internal_dpl_aod_reader:aod_file"])
     trackPropagationChecker(args.add_track_prop, commonDeps)
+    mandatoryArgChecker(config, "d-q-event-selection-task", "processEventSelection")
     setProcessDummy(config, dummyHasTasks) # dummy automizer
     
     # Write the updated configuration file into a temporary file
-    updatedConfigFileName = "tempConfigDalitzSelection.json"
+    updatedConfigFileName = "tempConfigFilterPP.json"
     
     dumpJson(updatedConfigFileName, config)
     

@@ -495,7 +495,7 @@ For example, when the file is logged, you should see a result like this when you
 [INFO] --analysis_track_selection:processSkimmed : true 
 [INFO] --analysis_same_event_pairing:cfgTrackCuts : ['jpsiO2MCdebugCuts'] 
 [INFO] --analysis_same_event_pairing:processDecayToEESkimmed : true 
-[INFO] Inserting inside for pycache remove: /home/batu/PythonInterfaceOOP/src
+[INFO] Inserting inside for pycache remove: /home/batu/PythonInterfaceOOP/PythonInterfaceOOP
 [INFO] pycaches removed succesfully
 ```
  </details>

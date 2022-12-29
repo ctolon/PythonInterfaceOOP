@@ -40,7 +40,7 @@ Ex. `alienv enter O2Physics/latest,QualityControl/latest`
 
 Assuming you have installed the argcomplete package, don't forget to source the bash script again in your O2 enviroment.
 
-`cd ~/PythonInterfaceOOP/src`
+`cd ~/PythonInterfaceOOP/PythonInterfaceOOP`
 
 `source argcomplete.sh`
 

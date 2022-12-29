@@ -16,11 +16,11 @@
 # \Author: ionut.cristian.arsene@cern.ch
 # \Interface:  cevat.batuhan.tolon@cern.ch
 
-# Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/dqFlow.cxx
+# Orginal Task: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/DalitzSelection.cxx
 
-# run template: `python3 runDQFlow.py <config.json> --task-name:<configurable|processFunc> parameter ...`
+# run template: `python3 runDalitzSelection.py <config.json> --task-name:<configurable|processFunc> parameter ...`
 # parameter can be multiple like this:
-# --analysis-qvector:cfgBarrelTrackCuts jpsiPID1 jpsiPID2
+# --dalitz-pairing:cfgDalitzTrackCuts jpsiPID1 jpsiPID2
 
 import sys
 import logging
@@ -35,21 +35,18 @@ from extramodules.utils import dumpJson, loadJson
 def main():
     
     # Setting arguments for CLI
-    parsedJsonFile = "configs/configFlowDataRun3.json"
+    parsedJsonFile = "configs/configDalitzSelectionDataRun3.json"
     setArgsToArgumentParser = SetArgsToArgumentParser(parsedJsonFile, ["timestamp-task", "tof-event-time", "bc-selection-task", "tof-pid-beta"])
-    args = setArgsToArgumentParser.parser.parse_args()
+    args = setArgsToArgumentParser.parseArgs()
     dummyHasTasks = setArgsToArgumentParser.dummyHasTasks
     processFuncs = setArgsToArgumentParser.processFuncs
     allArgs = vars(args) # for get args
     
     # All Dependencies
     commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table", "o2-analysis-centrality-table", "o2-analysis-trackselection", "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full"]
-    #commonDeps = ["o2-analysis-timestamp", "o2-analysis-event-selection", "o2-analysis-multiplicity-table", "o2-analysis-centrality-table"]
-    #barrelDeps = ["o2-analysis-trackselection", "o2-analysis-trackextension", "o2-analysis-pid-tof-base", "o2-analysis-pid-tof-full", "o2-analysis-pid-tof-beta", "o2-analysis-pid-tpc-full"]
-    #muonDeps = ["o2-analysis-fwdtrackextension"]
     
     # Debug Settings
-    debugSettings(args.debug, args.logFile, fileName = "dqFlow.log")
+    debugSettings(args.debug, args.logFile, fileName = "dalitzSelection.log")
     
     # if cliMode true, Overrider mode else additional mode
     cliMode = args.override
@@ -61,8 +58,8 @@ def main():
     # Load the configuration file provided as the first parameter
     config = loadJson(args.cfgFileName)
     
-    taskNameInConfig = "analysis-qvector"
-    taskNameInCommandLine = "o2-analysis-dq-flow"
+    taskNameInConfig = "dalitz-pairing"
+    taskNameInCommandLine = "o2-analysis-dq-dalitz-selection"
     
     mainTaskChecker(config, taskNameInConfig)
     
@@ -77,29 +74,16 @@ def main():
     
     # Transactions
     aodFileChecker(allArgs["internal_dpl_aod_reader:aod_file"])
-    #trackPropagationChecker(args.add_track_prop, barrelDeps)
     trackPropagationChecker(args.add_track_prop, commonDeps)
     setProcessDummy(config, dummyHasTasks) # dummy automizer
     
     # Write the updated configuration file into a temporary file
-    updatedConfigFileName = "tempConfigDQFlow.json"
+    updatedConfigFileName = "tempConfigDalitzSelection.json"
     
     dumpJson(updatedConfigFileName, config)
     
     # Check which dependencies need to be run
     depsToRun = commonDepsToRun(commonDeps)
-    """
-    for processFunc in processFuncs[taskNameInConfig]:
-        if processFunc not in config[taskNameInConfig].keys():
-            continue
-        if config[taskNameInConfig][processFunc] == "true":
-            if "processBarrel" in processFunc:
-                for dep in barrelDeps:
-                    depsToRun[dep] = 1
-            if "processForward" in processFunc:
-                for dep in muonDeps:
-                    depsToRun[dep] = 1
-    """
     
     commandToRun = f"{taskNameInCommandLine} --configuration json://{updatedConfigFileName} --severity error --shm-segment-size 12000000000 -b"
     for dep in depsToRun.keys():
