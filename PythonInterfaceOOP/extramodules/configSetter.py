@@ -538,6 +538,7 @@ class SetArgsToArgumentParser(object):
         argcomplete.autocomplete(self.parser, always_complete_options = False)
         return self.parser.parse_args()
 
+
 def setConfigs(allArgs: dict[str, Any], config: dict[str, dict], cliMode: str) -> None:
     """Setter function for CLI arguments to JSON config file
 
