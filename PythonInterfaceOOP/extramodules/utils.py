@@ -91,7 +91,7 @@ def writeFile(openFile: str, writeFile: str):
     """Write a file util function"""
     
     with open(openFile, "wb") as f:
-        f.write(writeFile)
+        f.write(writeFile )
     f.close()
 
 
