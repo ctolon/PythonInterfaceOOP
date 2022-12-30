@@ -10,7 +10,6 @@
 - [Instructions for runAnalysis.py](#instructions-for-runanalysispy)
 - [Instructions for runFilterPP.py](#instructions-for-runfilterpppy)
 - [Instructions for runDQFlow.py](#instructions-for-rundqflowpy)
-- [Working with Histogram configurables and other configurables](#working-with-histogram-configurables-and-other-configurables)
 
 
 # Instructions for DownloadLibs.py
@@ -57,7 +56,9 @@ If the DQ libraries are pulled from local alice software successfully you will g
 
 `[INFO] DQ Libraries pulled from local alice software successfully!`
 
-We have many logger message for this interface. If you have a problem with configuration, you can find the solution very easily by following the logger messages here. This solution is completely stable
+We have many logger message for this interface. If you have a problem with configuration, you can find the solution very easily by following the logger messages here. This solution is completely stable.
+
+**P.S.** For updating temp DQ libraries, you can remove `templibs` folder and then you can execute `DownloadLibs` script for re-retrieving DQ libraries. Alternatively when you provide an autocompletio with TAB key for workflow script (etc. `runTableMaker.py`) or when you execute directly a workflow script, these libraries will be retrieved automatically with argcomplete package.
 
 ## Available configs in DownloadLibs.py Interface
 
@@ -228,12 +229,5 @@ In case of multiple configs example
 python3 runDQFlow.py configs/configFlowDataRun3.json --internal-dpl-aod-reader:aod-file Datas/AO2D.root --event-selection-task:syst PbPb --analysis-qvector:cfgBarrelTrackCuts jpsiPID1 --analysis-qvector:cfgMuonCuts muonQualityCuts --analysis-qvector:cfgWithQA true --analysis-qvector:cfgCutPtMin 1 --analysis-qvector:cfgCutPtMax 15 
   ```
 
-TODO v0selector interface instructions will be added.
-TODO EMefficiency interface instructions will be added.
-TODO dalitzSelection interface instructions will be added.
 
-# Working with Histogram configurables and other configurables
-
-ONGOING...
-
-[← Go back to Instructions For Techincal Informations](4_TechincalInformations.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Tutorials →](6_Tutorials.md)
+[← Go back to Instructions For Techincal Informations](4_TechincalInformations.md) | [↑ Go to the Table of Content ↑](../README.md#table-of-contents) | [Continue to Tutorials →](6_Tutorials.md)

@@ -426,4 +426,4 @@ To run the tablemaker and the tablereader at the same time, you must first confi
 This way it produces analysis results for both tableReader and tableMaker in AnalysisResults.root, and you get reducedAod.root (it contains reduced tables from DQ data model)
 
 
-[← Go back to Instructions For Python Scripts](5_InstructionsForPythonScripts.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Developer Guide →](7_DeveloperGuide.md)
+[← Go back to Instructions For Python Scripts](5_InstructionsForPythonScripts.md) | [↑ Go to the Table of Content ↑](../README.md#table-of-contents) | [Continue to Developer Guide →](7_DeveloperGuide.md)

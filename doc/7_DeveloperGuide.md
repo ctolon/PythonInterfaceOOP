@@ -489,4 +489,4 @@ def setConverters(allArgs: dict, updatedConfigFileName: str, commandToRun: str) 
 * Constants: Screaming camelcase
 * O2 converter arguments: Snake case
 
-[← Go back to Instructions For Tutorials](6_Tutorials.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to TroubleshootingTreeNotFound →](8_TroubleshootingTreeNotFound.md)
+[← Go back to Instructions For Tutorials](6_Tutorials.md) | [↑ Go to the Table of Content ↑](../README.md#table-of-contents) | [Continue to TroubleshootingTreeNotFound →](8_TroubleshootingTreeNotFound.md)

@@ -173,4 +173,4 @@ Configuration name starts with `process` | `true` or `false` | Flexible
 
 If you want to know more autocompletion or for defining new autocompletions, you can visit [Developer guide](7_DeveloperGuide.md#how-to-define-new-autocompletions)
 
-[← Go back to Prerequisites](2_Prerequisites.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Techincal Informations →](4_TechincalInformations.md)
+[← Go back to Prerequisites](2_Prerequisites.md) | [↑ Go to the Table of Content ↑](../README.md#table-of-contents) | [Continue to Techincal Informations →](4_TechincalInformations.md)

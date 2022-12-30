@@ -240,4 +240,4 @@ source argcomplete.sh
 
 **VERY IMPORTANT P.S** This script must be re-sourced every time you re-enter the O2 environment!!! (For autocompletion with TAB key)
 
-[← Go back to Python Scripts And JSON Configs ](1_ScriptsAndConfigs.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Instructions for TAB Autocomplete →](3_InstructionsforTABAutocomplete.md)
+[← Go back to Python Scripts And JSON Configs ](1_ScriptsAndConfigs.md) | [↑ Go to the Table of Content ↑](../README.md#table-of-contents) | [Continue to Instructions for TAB Autocomplete →](3_InstructionsforTABAutocomplete.md)

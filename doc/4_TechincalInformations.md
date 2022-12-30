@@ -6,7 +6,6 @@
   - [Some Things You Should Be Careful For Using and Development](#some-things-you-should-be-careful-for-using-and-development)
   - [Some Notes Before The Instructions](#some-notes-before-the-instructions)
   - [Interface Modes: JSON Overrider and JSON Additional](#interface-modes-json-overrider-and-json-additional)
-  - [Project Architecture](#project-architecture)
 
 
 ## Helper Command Functionality
@@ -692,9 +691,4 @@ This is the main reason why Interface works in these two modes. If you already h
 If you are going to do an analysis from zero and you will prepare your JSON configuration file accordingly, or if you want to completely change your analysis values, then it makes sense to use JSON overrider mode. Because the default JSON files must be manipulated in accordance with the analysis (like configAnalysisData.json) or you choose this mode to change the complete analysis values
 
 
-
-## Project Architecture
-
-TODO explain this
-
-[← Go back to Instructions For Instructions for TAB Autocomplete](3_InstructionsforTABAutocomplete.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Instructions For Python Scripts →](5_InstructionsForPythonScripts.md)
+[← Go back to Instructions For Instructions for TAB Autocomplete](3_InstructionsforTABAutocomplete.md) | [↑ Go to the Table of Content ↑](../README.md#table-of-contents) | [Continue to Instructions For Python Scripts →](5_InstructionsForPythonScripts.md)

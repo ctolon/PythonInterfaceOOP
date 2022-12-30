@@ -6,7 +6,7 @@ Repository Architecture:
 
   * **PythonInterfaceOOP/configs**: JSON config files 
 
-  * **PythonInterfaceOOP/templibs**: DQ Libraries from O2-DQ Framework
+  * **PythonInterfaceOOP/templibs**: Temp DQ Libraries from O2-DQ Framework (for **auto-completion**)
 
   * **PythonInterfaceOOP/extramodules**: All extramodules for manage many utils for python scripts
 
@@ -20,6 +20,7 @@ Repository Architecture:
 
 * `README.md`: Main readme file
  
+* **.github/workflows**: CI integration (automated YAPF as Python formater and automated flake8 tests as Python Linter)
 
 This project includes python based user interface development for PWG-DQ Workflows based on nightly-20222212. You can follow the instructions and you can find tutorials in table of contents at the end of the page (For prerequisites, Installation guide for argcomplete and Some Informations good to know).
 

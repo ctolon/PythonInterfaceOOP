@@ -20,12 +20,11 @@ import os
 import re
 from urllib.request import Request, urlopen
 import ssl
+import pathlib
 
 from .utils import getIfStartedInDoubleQuotes, writeFile
 
 
-# TODO It should check first local path then it should try download
-# TODO implement functional programming for improve completer performance
 class DQLibGetter(object):
     
     """
@@ -82,6 +81,15 @@ class DQLibGetter(object):
         URL_MIXING_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MixingLibrary.h?raw=true"
         URL_HISTOGRAMS_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/HistogramsLibrary.h?raw=true"
         
+        # Create templibs directory if not exist
+        if not os.path.isdir("templibs"):
+            path = pathlib.Path(__file__).parent.parent.resolve()
+            pathWithFile = os.path.join(path, "templibs")
+            try:
+                os.mkdir(pathWithFile)
+            except OSError as error:
+                raise OSError(error)
+        
         # Github Links for CutsLibrary and MCSignalsLibrary from PWG-DQ --> download from github
         # This condition solves performance issues
         if (os.path.isfile("templibs/tempCutsLibrary.h") and os.path.isfile("templibs/tempMCSignalsLibrary.h") and os.path.isfile("templibs/tempMixingLibrary.h") and os.path.isfile("templibs/tempHistogramsLibrary.h")) is False:
@@ -114,7 +122,6 @@ class DQLibGetter(object):
         self.allMCSignals = getIfStartedInDoubleQuotes("templibs/tempMCSignalsLibrary.h")
         self.allMixing = getIfStartedInDoubleQuotes("templibs/tempMixingLibrary.h")
         
-        # TODO Reduce the complexity
         # Get All histograms with flags
         with open("templibs/tempHistogramsLibrary.h") as f:
             for line in f:

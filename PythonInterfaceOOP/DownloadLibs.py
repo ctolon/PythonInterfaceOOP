@@ -26,6 +26,7 @@ import logging
 import logging.config
 import shutil
 import argcomplete
+import pathlib
 
 # This script provides download to DQ libraries from O2Physics-DQ Manually with/without Production tag or get DQ libraries from alice-software in local machine
 
@@ -74,6 +75,17 @@ def main():
         if not isinstance(numeric_level, int):
             raise ValueError("Invalid log level: %s" % DEBUG_SELECTION)
         logging.basicConfig(format = "[%(levelname)s] %(message)s", level = DEBUG_SELECTION)
+        
+    # Create templibs directory if not exist
+    if not os.path.isdir("templibs"):
+        logging.info("templibs directory is missing. it will be created...")
+        path = pathlib.Path(__file__).parent.resolve()
+        pathWithFile = os.path.join(path, "templibs")
+        try:
+            os.mkdir(pathWithFile)
+            logging.info(f"templibs directory created successfully: {pathWithFile}")
+        except OSError as error:
+            raise OSError(error)
     
     if extrargs.version and extrargs.local is False:
         logging.info("DQ libs will downloaded from github. Your Version For Downloading DQ Libs From Github : %s", extrargs.version,)
