@@ -40,7 +40,7 @@ def main():
     
     # Simple protection
     if not isinstance(runOverSkimmed, bool):
-        raise TypeError("[FATAL] runOverSkimmeed have to True or False! (in bool type)")
+        raise TypeError("[FATAL] runOverSkimmeed have to True or False! (in bool type)")  
     
     # Load json config file for create interface arguments as skimmed or not skimmed
     parsedJsonFile = "configs/configAnalysisMCEM.json"
