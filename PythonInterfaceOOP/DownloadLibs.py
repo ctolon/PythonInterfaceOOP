@@ -75,7 +75,7 @@ def main():
         if not isinstance(numeric_level, int):
             raise ValueError("Invalid log level: %s" % DEBUG_SELECTION)
         logging.basicConfig(format = "[%(levelname)s] %(message)s", level = DEBUG_SELECTION)
-        
+    
     # Create templibs directory if not exist
     if not os.path.isdir("templibs"):
         logging.info("templibs directory is missing. it will be created...")
