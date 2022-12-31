@@ -3,7 +3,7 @@ extend-ignore = E501, C901, E203, E251, W293, E261, E265, E116
 exclude =
     .git,
     __pycache__,
-    html/source/conf.py,
+    docs/source/conf.py,
     old,
     build,
     dist
