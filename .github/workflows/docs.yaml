@@ -4,7 +4,7 @@ name: website
 on:
   push:
     branches:
-      - main
+      - feature/refactor_based_json_parse_strategy
     # Alternative: only build for tags.
     # tags:
     #   - '*'
