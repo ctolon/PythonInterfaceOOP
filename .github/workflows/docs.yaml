@@ -8,6 +8,11 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Building deps for sphinx
+      run: |
+        pip install dist/*.whl
+        pip install sphinx Pallets-Sphinx-Themes sphinx sphinx_rtd_theme
+
     - name: Build HTML
       uses: ammaraskar/sphinx-action@master
       with:
