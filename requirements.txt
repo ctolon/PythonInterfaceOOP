@@ -1,2 +1,4 @@
 argcomplete==1.8.1
 sphinx_rtd_theme
+yapf==0.32.0
+flake8==4.0.1
