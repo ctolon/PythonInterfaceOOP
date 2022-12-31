@@ -27,13 +27,19 @@ release = '1.0.0'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode', 'sphinx.ext.napoleon', 'sphinx.ext.githubpages', 'sphinx_rtd_theme', 'sphinx.ext.autosummary']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode', 'sphinx.ext.napoleon', 'sphinx.ext.githubpages', 'sphinx_rtd_theme', 'sphinx.ext.autosummary', 'autodocsumm']
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 autodoc_default_flags = ['members']
 autosummary_generate = True
+
+autodoc_default_options = {
+    'autosummary': True,
+}
+
+autodata_content = 'both'
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
