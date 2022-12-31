@@ -181,3 +181,5 @@ cython_debug/
 !tempHistogramsLibrary.h
 cfg
 
+!html/build
+
