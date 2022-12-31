@@ -1,49 +1,42 @@
-name: website
+release_sphinx:
+  needs: [build]
+  runs-on: ubuntu-latest
+  container:
+    image: python:3.6
+    volumes:
+      - dist:dist
+      - public:public
+  steps:
 
-# build the documentation whenever there are new commits on main
-on:
-  push:
-    branches:
-      - feature/refactor_based_json_parse_strategy
-    # Alternative: only build for tags.
-    # tags:
-    #   - '*'
+    # check out sources that will be used for autodocs, plus readme
+    - uses: actions/checkout@v1
 
-# security: restrict permissions for CI jobs.
-permissions:
-  contents: read
+    # download wheel that was build and uploaded in the build step
+    - uses: actions/download-artifact@v1
+      with:
+        name: distributions
+        path: dist
 
-jobs:
-  # Build the documentation and upload the static HTML files as an artifact.
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
+    # didn't need to change anything here, but had to add sphinx.ext.githubpages
+    # to my conf.py extensions list. that fixes the broken uploads
+    - name: Building documentation
+      run: |
+        pip install dist/*.whl
+        pip install sphinx Pallets-Sphinx-Themes
+        sphinx-apidoc --no-toc --module-first -o docs/autodoc src/stenotype
+        sphinx-build docs public -b dirhtml
 
-      # ADJUST THIS: install all dependencies (including pdoc)
-      - run: pip install -e .
-      # ADJUST THIS: build your documentation into docs/.
-      # We use a custom build script for pdoc itself, ideally you just run `pdoc -o docs/ ...` here.
-      - run: python docs/make.py
+    # still need to build and set the PAT to get a rebuild on the pages job,
+    # apart from that quite clean and nice 
+    - name: github pages deploy
+      uses: peaceiris/actions-gh-pages@v2.3.1
+      env:
+        PERSONAL_TOKEN: ${{ secrets.PAT }}
+        PUBLISH_BRANCH: gh-pages
+        PUBLISH_DIR: public
 
-      - uses: actions/upload-pages-artifact@v1
-        with:
-          path: docs/
-
-  # Deploy the artifact to GitHub pages.
-  # This is a separate job so that only actions/deploy-pages has the necessary permissions.
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v1
+    # since gh-pages has a history, this step might no longer be necessary.
+    - uses: actions/upload-artifact@v1
+      with:
+        name: documentation
+        path: public
