@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>extramodules package &mdash; O2-DQ Framework Python Based User Interface 1.0.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> O2-DQ Framework Python Based User Interface
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">extramodules package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-extramodules.choicesHandler">extramodules.choicesHandler module</a><ul>
+<li><a class="reference internal" href="#extramodules.choicesHandler.ChoicesCompleterList"><code class="docutils literal notranslate"><span class="pre">ChoicesCompleterList</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-extramodules.configSetter">extramodules.configSetter module</a><ul>
+<li><a class="reference internal" href="#extramodules.configSetter.SetArgsToArgumentParser"><code class="docutils literal notranslate"><span class="pre">SetArgsToArgumentParser</span></code></a><ul>
+<li><a class="reference internal" href="#extramodules.configSetter.SetArgsToArgumentParser.parseArgs"><code class="docutils literal notranslate"><span class="pre">SetArgsToArgumentParser.parseArgs()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#extramodules.configSetter.commonDepsToRun"><code class="docutils literal notranslate"><span class="pre">commonDepsToRun()</span></code></a></li>
+<li><a class="reference internal" href="#extramodules.configSetter.debugSettings"><code class="docutils literal notranslate"><span class="pre">debugSettings()</span></code></a></li>
+<li><a class="reference internal" href="#extramodules.configSetter.dispArgs"><code class="docutils literal notranslate"><span class="pre">dispArgs()</span></code></a></li>
+<li><a class="reference internal" href="#extramodules.configSetter.dispInterfaceMode"><code class="docutils literal notranslate"><span class="pre">dispInterfaceMode()</span></code></a></li>
+<li><a class="reference internal" href="#extramodules.configSetter.dispO2HelpMessage"><code class="docutils literal notranslate"><span class="pre">dispO2HelpMessage()</span></code></a></li>
+<li><a class="reference internal" href="#extramodules.configSetter.generateDescriptors"><code class="docutils literal notranslate"><span class="pre">generateDescriptors()</span></code></a></li>
+<li><a class="reference internal" href="#extramodules.configSetter.setConfigs"><code class="docutils literal notranslate"><span class="pre">setConfigs()</span></code></a></li>
+<li><a class="reference internal" href="#extramodules.configSetter.setConverters"><code class="docutils literal notranslate"><span class="pre">setConverters()</span></code></a></li>
+<li><a class="reference internal" href="#extramodules.configSetter.setParallelismOnSkimming"><code class="docutils literal notranslate"><span class="pre">setParallelismOnSkimming()</span></code></a></li>
+<li><a class="reference internal" href="#extramodules.configSetter.setProcessDummy"><code class="docutils literal notranslate"><span class="pre">setProcessDummy()</span></code></a></li>
+<li><a class="reference internal" href="#extramodules.configSetter.setSwitch"><code class="docutils literal notranslate"><span class="pre">setSwitch()</span></code></a></li>
+<li><a class="reference internal" href="#extramodules.configSetter.tableProducerAnalysis"><code class="docutils literal notranslate"><span class="pre">tableProducerAnalysis()</span></code></a></li>
+<li><a class="reference internal" href="#extramodules.configSetter.tableProducerSkimming"><code class="docutils literal notranslate"><span class="pre">tableProducerSkimming()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-extramodules.dqExceptions">extramodules.dqExceptions module</a><ul>
+<li><a class="reference internal" href="#extramodules.dqExceptions.DependencyNotFoundError"><code class="docutils literal notranslate"><span class="pre">DependencyNotFoundError</span></code></a><ul>
+<li><a class="reference internal" href="#extramodules.dqExceptions.DependencyNotFoundError.arg"><code class="docutils literal notranslate"><span class="pre">DependencyNotFoundError.arg</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#extramodules.dqExceptions.MandatoryArgNotFoundError"><code class="docutils literal notranslate"><span class="pre">MandatoryArgNotFoundError</span></code></a><ul>
+<li><a class="reference internal" href="#extramodules.dqExceptions.MandatoryArgNotFoundError.arg"><code class="docutils literal notranslate"><span class="pre">MandatoryArgNotFoundError.arg</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#extramodules.dqExceptions.NotInAlienvError"><code class="docutils literal notranslate"><span class="pre">NotInAlienvError</span></code></a><ul>
+<li><a class="reference internal" href="#extramodules.dqExceptions.NotInAlienvError.message"><code class="docutils literal notranslate"><span class="pre">NotInAlienvError.message</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#extramodules.dqExceptions.TasknameNotFoundInConfigFileError"><code class="docutils literal notranslate"><span class="pre">TasknameNotFoundInConfigFileError</span></code></a><ul>
+<li><a class="reference internal" href="#extramodules.dqExceptions.TasknameNotFoundInConfigFileError.taskName"><code class="docutils literal notranslate"><span class="pre">TasknameNotFoundInConfigFileError.taskName</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#extramodules.dqExceptions.TextListNotStartsWithAtError"><code class="docutils literal notranslate"><span class="pre">TextListNotStartsWithAtError</span></code></a><ul>
+<li><a class="reference internal" href="#extramodules.dqExceptions.TextListNotStartsWithAtError.arg"><code class="docutils literal notranslate"><span class="pre">TextListNotStartsWithAtError.arg</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-extramodules.dqLibGetter">extramodules.dqLibGetter module</a><ul>
+<li><a class="reference internal" href="#extramodules.dqLibGetter.DQLibGetter"><code class="docutils literal notranslate"><span class="pre">DQLibGetter</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-extramodules.dqTranscations">extramodules.dqTranscations module</a><ul>
+<li><a class="reference internal" href="#extramodules.dqTranscations.aodFileChecker"><code class="docutils literal notranslate"><span class="pre">aodFileChecker()</span></code></a></li>
+<li><a class="reference internal" href="#extramodules.dqTranscations.depsChecker"><code class="docutils literal notranslate"><span class="pre">depsChecker()</span></code></a></li>
+<li><a class="reference internal" href="#extramodules.dqTranscations.jsonTypeChecker"><code class="docutils literal notranslate"><span class="pre">jsonTypeChecker()</span></code></a></li>
+<li><a class="reference internal" href="#extramodules.dqTranscations.mainTaskChecker"><code class="docutils literal notranslate"><span class="pre">mainTaskChecker()</span></code></a></li>
+<li><a class="reference internal" href="#extramodules.dqTranscations.mandatoryArgChecker"><code class="docutils literal notranslate"><span class="pre">mandatoryArgChecker()</span></code></a></li>
+<li><a class="reference internal" href="#extramodules.dqTranscations.trackPropagationChecker"><code class="docutils literal notranslate"><span class="pre">trackPropagationChecker()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-extramodules.pycacheRemover">extramodules.pycacheRemover module</a><ul>
+<li><a class="reference internal" href="#extramodules.pycacheRemover.PycacheRemover"><code class="docutils literal notranslate"><span class="pre">PycacheRemover</span></code></a></li>
+<li><a class="reference internal" href="#extramodules.pycacheRemover.runPycacheRemover"><code class="docutils literal notranslate"><span class="pre">runPycacheRemover()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-extramodules.utils">extramodules.utils module</a><ul>
+<li><a class="reference internal" href="#extramodules.utils.convertListToStr"><code class="docutils literal notranslate"><span class="pre">convertListToStr()</span></code></a></li>
+<li><a class="reference internal" href="#extramodules.utils.dumpJson"><code class="docutils literal notranslate"><span class="pre">dumpJson()</span></code></a></li>
+<li><a class="reference internal" href="#extramodules.utils.getIfStartedInDoubleQuotes"><code class="docutils literal notranslate"><span class="pre">getIfStartedInDoubleQuotes()</span></code></a></li>
+<li><a class="reference internal" href="#extramodules.utils.listToString"><code class="docutils literal notranslate"><span class="pre">listToString()</span></code></a></li>
+<li><a class="reference internal" href="#extramodules.utils.loadJson"><code class="docutils literal notranslate"><span class="pre">loadJson()</span></code></a></li>
+<li><a class="reference internal" href="#extramodules.utils.stringToList"><code class="docutils literal notranslate"><span class="pre">stringToList()</span></code></a></li>
+<li><a class="reference internal" href="#extramodules.utils.writeFile"><code class="docutils literal notranslate"><span class="pre">writeFile()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-extramodules">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">O2-DQ Framework Python Based User Interface</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">extramodules package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/extramodules.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="extramodules-package">
+<h1>extramodules package<a class="headerlink" href="#extramodules-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-extramodules.choicesHandler">
+<span id="extramodules-choiceshandler-module"></span><h2>extramodules.choicesHandler module<a class="headerlink" href="#module-extramodules.choicesHandler" title="Permalink to this heading"></a></h2>
+<p><strong>Classes:</strong></p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#extramodules.choicesHandler.ChoicesCompleterList" title="extramodules.choicesHandler.ChoicesCompleterList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ChoicesCompleterList</span></code></a>(choices)</p></td>
+<td><p>For the ChoicesCompleterList package argcomplete, the TAB key is the class written for autocomplete and validation when an argument can take multiple values.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="extramodules.choicesHandler.ChoicesCompleterList">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">extramodules.choicesHandler.</span></span><span class="sig-name descname"><span class="pre">ChoicesCompleterList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">choices</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/extramodules/choicesHandler.html#ChoicesCompleterList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.choicesHandler.ChoicesCompleterList" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>For the ChoicesCompleterList package argcomplete,
+the TAB key is the class written for autocomplete and validation when an argument can take multiple values.
+By default, the argcomplete package has the ChoicesCompleter Class,
+which can only validate arguments that take an one value and allows autocomplete with the TAB key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>object</strong> (<em>list</em>) – parserargs choices object as a list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-extramodules.configSetter">
+<span id="extramodules-configsetter-module"></span><h2>extramodules.configSetter module<a class="headerlink" href="#module-extramodules.configSetter" title="Permalink to this heading"></a></h2>
+<p><strong>Classes:</strong></p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#extramodules.configSetter.SetArgsToArgumentParser" title="extramodules.configSetter.SetArgsToArgumentParser"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SetArgsToArgumentParser</span></code></a>(cfgJsonName, ...[, ...])</p></td>
+<td><p>This class provides parsing the json file and generates CLI arguments from json config file</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Functions:</strong></p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#extramodules.configSetter.commonDepsToRun" title="extramodules.configSetter.commonDepsToRun"><code class="xref py py-obj docutils literal notranslate"><span class="pre">commonDepsToRun</span></code></a>(commonDeps)</p></td>
+<td><p>Produces common deps to run dict</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#extramodules.configSetter.debugSettings" title="extramodules.configSetter.debugSettings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">debugSettings</span></code></a>(argDebug, argLogFile, fileName)</p></td>
+<td><p>Set Debug settings for CLI</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#extramodules.configSetter.dispArgs" title="extramodules.configSetter.dispArgs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dispArgs</span></code></a>(allArgs)</p></td>
+<td><p>Display all configured commands you provided in CLI</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#extramodules.configSetter.dispInterfaceMode" title="extramodules.configSetter.dispInterfaceMode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dispInterfaceMode</span></code></a>(cliMode)</p></td>
+<td><p>Display interface mode in CLI</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#extramodules.configSetter.dispO2HelpMessage" title="extramodules.configSetter.dispO2HelpMessage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dispO2HelpMessage</span></code></a>(argHelpO2, commandToRun)</p></td>
+<td><p>Display O2 helper message</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#extramodules.configSetter.generateDescriptors" title="extramodules.configSetter.generateDescriptors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generateDescriptors</span></code></a>(resfilename, ...[, ...])</p></td>
+<td><p>Generates Descriptors for Writing/Reading Tables from AO2D with json config file (input descriptor is optional)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#extramodules.configSetter.setConfigs" title="extramodules.configSetter.setConfigs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setConfigs</span></code></a>(allArgs, config, cliMode)</p></td>
+<td><p>Setter function for CLI arguments to JSON config file</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#extramodules.configSetter.setConverters" title="extramodules.configSetter.setConverters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setConverters</span></code></a>(allArgs, ...)</p></td>
+<td><p>Converter task setter function</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#extramodules.configSetter.setParallelismOnSkimming" title="extramodules.configSetter.setParallelismOnSkimming"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setParallelismOnSkimming</span></code></a>(commandToRun, ...)</p></td>
+<td><p>Setter method for activate parallel sesion run in O2</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#extramodules.configSetter.setProcessDummy" title="extramodules.configSetter.setProcessDummy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setProcessDummy</span></code></a>(config, dummyHasTasks)</p></td>
+<td><p>Dummy Automizer</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#extramodules.configSetter.setSwitch" title="extramodules.configSetter.setSwitch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setSwitch</span></code></a>(config, processFuncs, allArgs, cliMode)</p></td>
+<td><p>This method providees Process function automation for overrider mode</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#extramodules.configSetter.tableProducerAnalysis" title="extramodules.configSetter.tableProducerAnalysis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tableProducerAnalysis</span></code></a>(config, ...)</p></td>
+<td><p>Table producer function for tableReader/dqEfficiency This method allows produce extra dilepton tables.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#extramodules.configSetter.tableProducerSkimming" title="extramodules.configSetter.tableProducerSkimming"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tableProducerSkimming</span></code></a>(config, ...)</p></td>
+<td><p>Table producer function for tableMaker/tableMakerMC</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="extramodules.configSetter.SetArgsToArgumentParser">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">extramodules.configSetter.</span></span><span class="sig-name descname"><span class="pre">SetArgsToArgumentParser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfgJsonName</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tasksToPassList</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parser</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dummyHasTasks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">processFuncs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/extramodules/configSetter.html#SetArgsToArgumentParser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.configSetter.SetArgsToArgumentParser" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class provides parsing the json file and generates CLI arguments from json config file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cfgJsonName</strong> (<em>str</em>) – Path to Json config file for creating CLI arguments with parsing</p></li>
+<li><p><strong>tasksToPassList</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – If you don’t want to include and provide some tasks from the JSON config file to CLI arguments you can define them in a list type</p></li>
+<li><p><strong>parser</strong> (<em>object</em>) – For getting args from ArgumentParser</p></li>
+<li><p><strong>dummyHasTasks</strong> (<em>Optional</em><em>, </em><em>list</em><em>[</em><em>str</em><em>]</em>) – If there are tasks with processDummy in the json, it will save them to the list (for dummy automizer)</p></li>
+<li><p><strong>processFuncs</strong> – (dict[str, list]): Creating task-processFunctions dependency tree for automations</p></li>
+</ul>
+</dd>
+</dl>
+<p><strong>Methods:</strong></p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#extramodules.configSetter.SetArgsToArgumentParser.parseArgs" title="extramodules.configSetter.SetArgsToArgumentParser.parseArgs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parseArgs</span></code></a>([testString])</p></td>
+<td><p>This function allows to save the obtained arguments to the parser_args() function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="extramodules.configSetter.SetArgsToArgumentParser.parseArgs">
+<span class="sig-name descname"><span class="pre">parseArgs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">testString</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/extramodules/configSetter.html#SetArgsToArgumentParser.parseArgs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.configSetter.SetArgsToArgumentParser.parseArgs" title="Permalink to this definition"></a></dt>
+<dd><p>This function allows to save the obtained arguments to the parser_args() function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>returns parse_args() with autocomplete generated arguments and parameters</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Namespace as argument, parameter</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="extramodules.configSetter.commonDepsToRun">
+<span class="sig-prename descclassname"><span class="pre">extramodules.configSetter.</span></span><span class="sig-name descname"><span class="pre">commonDepsToRun</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">commonDeps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/extramodules/configSetter.html#commonDepsToRun"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.configSetter.commonDepsToRun" title="Permalink to this definition"></a></dt>
+<dd><p>Produces common deps to run dict</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>commonDeps</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – common deps to run list</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>common deps to run dict</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="extramodules.configSetter.debugSettings">
+<span class="sig-prename descclassname"><span class="pre">extramodules.configSetter.</span></span><span class="sig-name descname"><span class="pre">debugSettings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">argDebug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">argLogFile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fileName</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/extramodules/configSetter.html#debugSettings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.configSetter.debugSettings" title="Permalink to this definition"></a></dt>
+<dd><p>Set Debug settings for CLI</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>argDebug</strong> (<em>bool</em>) – Debug Level</p></li>
+<li><p><strong>argLogFile</strong> (<em>bool</em>) – CLI argument as logFile</p></li>
+<li><p><strong>fileName</strong> (<em>str</em>) – Output name of log file</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If selected invalid log level</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="extramodules.configSetter.dispArgs">
+<span class="sig-prename descclassname"><span class="pre">extramodules.configSetter.</span></span><span class="sig-name descname"><span class="pre">dispArgs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">allArgs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/extramodules/configSetter.html#dispArgs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.configSetter.dispArgs" title="Permalink to this definition"></a></dt>
+<dd><p>Display all configured commands you provided in CLI</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>allArgs</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – configured commands in CLI</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="extramodules.configSetter.dispInterfaceMode">
+<span class="sig-prename descclassname"><span class="pre">extramodules.configSetter.</span></span><span class="sig-name descname"><span class="pre">dispInterfaceMode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cliMode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/extramodules/configSetter.html#dispInterfaceMode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.configSetter.dispInterfaceMode" title="Permalink to this definition"></a></dt>
+<dd><p>Display interface mode in CLI</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cliMode</strong> (<em>str</em>) – Interface mode argument as bool str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="extramodules.configSetter.dispO2HelpMessage">
+<span class="sig-prename descclassname"><span class="pre">extramodules.configSetter.</span></span><span class="sig-name descname"><span class="pre">dispO2HelpMessage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">argHelpO2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">commandToRun</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/extramodules/configSetter.html#dispO2HelpMessage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.configSetter.dispO2HelpMessage" title="Permalink to this definition"></a></dt>
+<dd><p>Display O2 helper message</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>argHelpO2</strong> (<em>bool</em>) – CLI helpO2 argument</p></li>
+<li><p><strong>commandToRun</strong> (<em>str</em>) – commandToRun as string</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="extramodules.configSetter.generateDescriptors">
+<span class="sig-prename descclassname"><span class="pre">extramodules.configSetter.</span></span><span class="sig-name descname"><span class="pre">generateDescriptors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resfilename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tablesToProduce</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">writerConfigFileName</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">readerConfigFileName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'aodReaderTempConfig'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kFlag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/extramodules/configSetter.html#generateDescriptors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.configSetter.generateDescriptors" title="Permalink to this definition"></a></dt>
+<dd><p>Generates Descriptors for Writing/Reading Tables from AO2D with json config file (input descriptor is optional)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>resfilename</strong> (<em>str</em>) – Name of aod file which will be produced</p></li>
+<li><p><strong>tablesToProduce</strong> (<em>dict</em>) – Tables are required in the output</p></li>
+<li><p><strong>tables</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>dict</em><em>]</em>) – Definition of all the tables can be produced</p></li>
+<li><p><strong>writerConfigFileName</strong> (<em>str</em>) – Output name of writer config</p></li>
+<li><p><strong>readerConfigFileName</strong> (<em>str</em><em>, </em><em>optional</em>) – Output name of reader config. Defaults to aodReaderTempConfig.json</p></li>
+<li><p><strong>kFlag</strong> (<em>bool</em><em>, </em><em>optional</em>) – if True also generates input descriptors. Defaults to False.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="extramodules.configSetter.setConfigs">
+<span class="sig-prename descclassname"><span class="pre">extramodules.configSetter.</span></span><span class="sig-name descname"><span class="pre">setConfigs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">allArgs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cliMode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/extramodules/configSetter.html#setConfigs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.configSetter.setConfigs" title="Permalink to this definition"></a></dt>
+<dd><p>Setter function for CLI arguments to JSON config file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>allArgs</strong> (<em>dict</em>) – All provided arguments from CLI</p></li>
+<li><p><strong>config</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>dict</em><em>]</em>) – Input as JSON config file</p></li>
+<li><p><strong>cliMode</strong> (<em>str</em>) – CLI mode selection (true or false in string type)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="extramodules.configSetter.setConverters">
+<span class="sig-prename descclassname"><span class="pre">extramodules.configSetter.</span></span><span class="sig-name descname"><span class="pre">setConverters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">allArgs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updatedConfigFileName</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">commandToRun</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/extramodules/configSetter.html#setConverters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.configSetter.setConverters" title="Permalink to this definition"></a></dt>
+<dd><p>Converter task setter function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>allArgs</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – All provided args in CLI</p></li>
+<li><p><strong>updatedConfigFileName</strong> (<em>str</em>) – Overrided json config file</p></li>
+<li><p><strong>commandToRun</strong> (<em>str</em>) – Generated command for running in O2</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Command To Run with provided converter task options</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="extramodules.configSetter.setParallelismOnSkimming">
+<span class="sig-prename descclassname"><span class="pre">extramodules.configSetter.</span></span><span class="sig-name descname"><span class="pre">setParallelismOnSkimming</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">commandToRun</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updatedConfigFileName</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">analysisTaskName</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">analysisTaskTempConfig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/extramodules/configSetter.html#setParallelismOnSkimming"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.configSetter.setParallelismOnSkimming" title="Permalink to this definition"></a></dt>
+<dd><p>Setter method for activate parallel sesion run in O2</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>commandToRun</strong> (<em>str</em>) – Command To Run</p></li>
+<li><p><strong>updatedConfigFileName</strong> (<em>str</em>) – Skimming task temp JSON config file name</p></li>
+<li><p><strong>analysisTaskName</strong> (<em>str</em>) – Command to Run for Analysis Task in O2</p></li>
+<li><p><strong>analysisTaskTempConfig</strong> (<em>dict</em>) – Analysis task temp JSON config file name</p></li>
+<li><p><strong>config</strong> (<em>dict</em>) – Skimming task JSON config file</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Command To Run for run analysis and skimming task at same time</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="extramodules.configSetter.setProcessDummy">
+<span class="sig-prename descclassname"><span class="pre">extramodules.configSetter.</span></span><span class="sig-name descname"><span class="pre">setProcessDummy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dummyHasTasks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/extramodules/configSetter.html#setProcessDummy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.configSetter.setProcessDummy" title="Permalink to this definition"></a></dt>
+<dd><p>Dummy Automizer</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>dict</em><em>]</em>) – json config dict</p></li>
+<li><p><strong>dummyHasTasks</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – Define dummy task list (get this from SetArgsToArgumentParser class)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="extramodules.configSetter.setSwitch">
+<span class="sig-prename descclassname"><span class="pre">extramodules.configSetter.</span></span><span class="sig-name descname"><span class="pre">setSwitch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">processFuncs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allArgs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cliMode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">processFuncToPass</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/extramodules/configSetter.html#setSwitch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.configSetter.setSwitch" title="Permalink to this definition"></a></dt>
+<dd><p>This method providees Process function automation for overrider mode</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<em>dict</em>) – Input as json config file</p></li>
+<li><p><strong>processFuncs</strong> (<em>dict</em>) – All process function deps list (taskname - process Functions)</p></li>
+<li><p><strong>allArgs</strong> (<em>dict</em>) – All provided args from CLI</p></li>
+<li><p><strong>cliMode</strong> (<em>str</em>) – cliMode as argument</p></li>
+<li><p><strong>processFuncToPass</strong> (<em>list</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – List to pass configuration on mandatory arguments. Defaults to [].</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="extramodules.configSetter.tableProducerAnalysis">
+<span class="sig-prename descclassname"><span class="pre">extramodules.configSetter.</span></span><span class="sig-name descname"><span class="pre">tableProducerAnalysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">taskNameInConfig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">commonTables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">barrelCommonTables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">muonCommonTables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specificTables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">runOverMC</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/extramodules/configSetter.html#tableProducerAnalysis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.configSetter.tableProducerAnalysis" title="Permalink to this definition"></a></dt>
+<dd><p>Table producer function for tableReader/dqEfficiency
+This method allows produce extra dilepton tables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>dict</em><em>]</em>) – Input as JSON config file</p></li>
+<li><p><strong>taskNameInConfig</strong> (<em>str</em>) – Taskname in config file (for tableReader and dqEfficiency)</p></li>
+<li><p><strong>commonTables</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – Common tables which are always be created</p></li>
+<li><p><strong>barrelCommonTables</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – Barrel tables in reduced DQ data model</p></li>
+<li><p><strong>muonCommonTables</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – Muon tables in reduced DQ data model</p></li>
+<li><p><strong>specificTables</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – Specific Tables for specific tasks</p></li>
+<li><p><strong>specificDeps</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>list</em><em>]</em>) – Specific Dependencies for specific tasks</p></li>
+<li><p><strong>runOverMC</strong> (<em>bool</em>) – Checking to run over MC or Data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Tables to produce dict</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="extramodules.configSetter.tableProducerSkimming">
+<span class="sig-prename descclassname"><span class="pre">extramodules.configSetter.</span></span><span class="sig-name descname"><span class="pre">tableProducerSkimming</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">taskNameInConfig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">commonTables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">barrelCommonTables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">muonCommonTables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specificTables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">specificDeps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">runOverMC</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/extramodules/configSetter.html#tableProducerSkimming"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.configSetter.tableProducerSkimming" title="Permalink to this definition"></a></dt>
+<dd><p>Table producer function for tableMaker/tableMakerMC</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>dict</em><em>]</em>) – Input as JSON config file</p></li>
+<li><p><strong>taskNameInConfig</strong> (<em>str</em>) – Taskname in config file (table-maker/table-maker-m-c)</p></li>
+<li><p><strong>commonTables</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – Common tables which are always be created</p></li>
+<li><p><strong>barrelCommonTables</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – Barrel tables in reduced DQ data model</p></li>
+<li><p><strong>muonCommonTables</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – Muon tables in reduced DQ data model</p></li>
+<li><p><strong>specificTables</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – Specific Tables for specific tasks</p></li>
+<li><p><strong>specificDeps</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>list</em><em>]</em>) – Specific Dependencies for specific tasks</p></li>
+<li><p><strong>runOverMC</strong> (<em>bool</em>) – Checking to run over MC or Data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Tables to produce dict</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-extramodules.dqExceptions">
+<span id="extramodules-dqexceptions-module"></span><h2>extramodules.dqExceptions module<a class="headerlink" href="#module-extramodules.dqExceptions" title="Permalink to this heading"></a></h2>
+<p><strong>Exceptions:</strong></p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#extramodules.dqExceptions.DependencyNotFoundError" title="extramodules.dqExceptions.DependencyNotFoundError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DependencyNotFoundError</span></code></a>(checkedDep, task, cfg)</p></td>
+<td><p>Exception raised for if mandatory arg not found</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#extramodules.dqExceptions.MandatoryArgNotFoundError" title="extramodules.dqExceptions.MandatoryArgNotFoundError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MandatoryArgNotFoundError</span></code></a>(arg)</p></td>
+<td><p>Exception raised for if mandatory arg not found</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#extramodules.dqExceptions.NotInAlienvError" title="extramodules.dqExceptions.NotInAlienvError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NotInAlienvError</span></code></a>([message])</p></td>
+<td><p>Exception raised for O2Physics Alienv Loading</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#extramodules.dqExceptions.TasknameNotFoundInConfigFileError" title="extramodules.dqExceptions.TasknameNotFoundInConfigFileError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TasknameNotFoundInConfigFileError</span></code></a>(taskName)</p></td>
+<td><p>Exception raised if taskname not found in json config file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#extramodules.dqExceptions.TextListNotStartsWithAtError" title="extramodules.dqExceptions.TextListNotStartsWithAtError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TextListNotStartsWithAtError</span></code></a>(arg)</p></td>
+<td><p>Exception raised for if mandatory arg not found</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py exception">
+<dt class="sig sig-object py" id="extramodules.dqExceptions.DependencyNotFoundError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">extramodules.dqExceptions.</span></span><span class="sig-name descname"><span class="pre">DependencyNotFoundError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">checkedDep</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/extramodules/dqExceptions.html#DependencyNotFoundError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.dqExceptions.DependencyNotFoundError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Exception raised for if mandatory arg not found</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="extramodules.dqExceptions.DependencyNotFoundError.arg">
+<span class="sig-name descname"><span class="pre">arg</span></span><a class="headerlink" href="#extramodules.dqExceptions.DependencyNotFoundError.arg" title="Permalink to this definition"></a></dt>
+<dd><p>mandatory argument</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="extramodules.dqExceptions.MandatoryArgNotFoundError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">extramodules.dqExceptions.</span></span><span class="sig-name descname"><span class="pre">MandatoryArgNotFoundError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/extramodules/dqExceptions.html#MandatoryArgNotFoundError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.dqExceptions.MandatoryArgNotFoundError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Exception raised for if mandatory arg not found</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="extramodules.dqExceptions.MandatoryArgNotFoundError.arg">
+<span class="sig-name descname"><span class="pre">arg</span></span><a class="headerlink" href="#extramodules.dqExceptions.MandatoryArgNotFoundError.arg" title="Permalink to this definition"></a></dt>
+<dd><p>mandatory argument</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="extramodules.dqExceptions.NotInAlienvError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">extramodules.dqExceptions.</span></span><span class="sig-name descname"><span class="pre">NotInAlienvError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'You</span> <span class="pre">must</span> <span class="pre">load</span> <span class="pre">O2Physics</span> <span class="pre">with</span> <span class="pre">alienv'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/extramodules/dqExceptions.html#NotInAlienvError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.dqExceptions.NotInAlienvError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Exception raised for O2Physics Alienv Loading</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="extramodules.dqExceptions.NotInAlienvError.message">
+<span class="sig-name descname"><span class="pre">message</span></span><a class="headerlink" href="#extramodules.dqExceptions.NotInAlienvError.message" title="Permalink to this definition"></a></dt>
+<dd><p>error message for forgetting loading alienv</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="extramodules.dqExceptions.TasknameNotFoundInConfigFileError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">extramodules.dqExceptions.</span></span><span class="sig-name descname"><span class="pre">TasknameNotFoundInConfigFileError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">taskName</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/extramodules/dqExceptions.html#TasknameNotFoundInConfigFileError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.dqExceptions.TasknameNotFoundInConfigFileError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Exception raised if taskname not found in json config file.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="extramodules.dqExceptions.TasknameNotFoundInConfigFileError.taskName">
+<span class="sig-name descname"><span class="pre">taskName</span></span><a class="headerlink" href="#extramodules.dqExceptions.TasknameNotFoundInConfigFileError.taskName" title="Permalink to this definition"></a></dt>
+<dd><p>input main task name</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="extramodules.dqExceptions.TextListNotStartsWithAtError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">extramodules.dqExceptions.</span></span><span class="sig-name descname"><span class="pre">TextListNotStartsWithAtError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/extramodules/dqExceptions.html#TextListNotStartsWithAtError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.dqExceptions.TextListNotStartsWithAtError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Exception raised for if mandatory arg not found</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="extramodules.dqExceptions.TextListNotStartsWithAtError.arg">
+<span class="sig-name descname"><span class="pre">arg</span></span><a class="headerlink" href="#extramodules.dqExceptions.TextListNotStartsWithAtError.arg" title="Permalink to this definition"></a></dt>
+<dd><p>mandatory argument</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-extramodules.dqLibGetter">
+<span id="extramodules-dqlibgetter-module"></span><h2>extramodules.dqLibGetter module<a class="headerlink" href="#module-extramodules.dqLibGetter" title="Permalink to this heading"></a></h2>
+<p><strong>Classes:</strong></p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#extramodules.dqLibGetter.DQLibGetter" title="extramodules.dqLibGetter.DQLibGetter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DQLibGetter</span></code></a>([allAnalysisCuts, ...])</p></td>
+<td><p>Class for Downloading DQ Libraries Github and It gets analysis selections like analysis cuts, MC signals and event mixing variables :param object: self :type object: object</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="extramodules.dqLibGetter.DQLibGetter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">extramodules.dqLibGetter.</span></span><span class="sig-name descname"><span class="pre">DQLibGetter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">allAnalysisCuts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allOnlyPairCuts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allMCSignals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allSels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allMixing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allHistos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allEventHistos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allTrackHistos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allMCTruthHistos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allPairHistos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allDileptonHistos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/extramodules/dqLibGetter.html#DQLibGetter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.dqLibGetter.DQLibGetter" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for Downloading DQ Libraries Github and It gets analysis selections
+like analysis cuts, MC signals and event mixing variables
+:param object: self
+:type object: object</p>
+</dd></dl>
+
+</section>
+<section id="module-extramodules.dqTranscations">
+<span id="extramodules-dqtranscations-module"></span><h2>extramodules.dqTranscations module<a class="headerlink" href="#module-extramodules.dqTranscations" title="Permalink to this heading"></a></h2>
+<p><strong>Functions:</strong></p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#extramodules.dqTranscations.aodFileChecker" title="extramodules.dqTranscations.aodFileChecker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">aodFileChecker</span></code></a>(aod)</p></td>
+<td><p>This function checks path for AO2D (both for .root and .txt)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#extramodules.dqTranscations.depsChecker" title="extramodules.dqTranscations.depsChecker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">depsChecker</span></code></a>(config, deps, task)</p></td>
+<td><p>This function written to check dependencies for process function</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#extramodules.dqTranscations.jsonTypeChecker" title="extramodules.dqTranscations.jsonTypeChecker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jsonTypeChecker</span></code></a>(cfgFileName)</p></td>
+<td><p>Checks if the JSON config file assigned by the CLI is in the correct format</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#extramodules.dqTranscations.mainTaskChecker" title="extramodules.dqTranscations.mainTaskChecker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mainTaskChecker</span></code></a>(config, taskNameInConfig)</p></td>
+<td><p><ol class="arabic simple">
+<li><p>Checks whether the workflow you want to run in your JSON file has a main task.</p></li>
+</ol>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#extramodules.dqTranscations.mandatoryArgChecker" title="extramodules.dqTranscations.mandatoryArgChecker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mandatoryArgChecker</span></code></a>(config, taskname, ...)</p></td>
+<td><p>The process function, which must be included in the workflow, if it is missing, the transaction function to include it</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#extramodules.dqTranscations.trackPropagationChecker" title="extramodules.dqTranscations.trackPropagationChecker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trackPropagationChecker</span></code></a>(trackProp, deps)</p></td>
+<td><p>This method automatically deletes the o2-analysis-trackextension(for run2) task from your workflow when you add the o2-analysis-track-propagation (for run3) task to your workflow.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="extramodules.dqTranscations.aodFileChecker">
+<span class="sig-prename descclassname"><span class="pre">extramodules.dqTranscations.</span></span><span class="sig-name descname"><span class="pre">aodFileChecker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aod</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/extramodules/dqTranscations.html#aodFileChecker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.dqTranscations.aodFileChecker" title="Permalink to this definition"></a></dt>
+<dd><p>This function checks path for AO2D (both for .root and .txt)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>aod</strong> (<em>CLI argument</em>) – Provided arg for AO2D File or text file which includes AO2D list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="extramodules.dqTranscations.depsChecker">
+<span class="sig-prename descclassname"><span class="pre">extramodules.dqTranscations.</span></span><span class="sig-name descname"><span class="pre">depsChecker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/extramodules/dqTranscations.html#depsChecker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.dqTranscations.depsChecker" title="Permalink to this definition"></a></dt>
+<dd><p>This function written to check dependencies for process function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>dict</em><em>]</em>) – Input as JSON config file</p></li>
+<li><p><strong>deps</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>dict</em><em>]</em>) – Dependency dict</p></li>
+<li><p><strong>task</strong> (<em>str</em>) – Task name has dependencies</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#extramodules.dqExceptions.DependencyNotFoundError" title="extramodules.dqExceptions.DependencyNotFoundError"><strong>DependencyNotFoundError</strong></a> – If dependency is not found</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="extramodules.dqTranscations.jsonTypeChecker">
+<span class="sig-prename descclassname"><span class="pre">extramodules.dqTranscations.</span></span><span class="sig-name descname"><span class="pre">jsonTypeChecker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfgFileName</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/extramodules/dqTranscations.html#jsonTypeChecker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.dqTranscations.jsonTypeChecker" title="Permalink to this definition"></a></dt>
+<dd><p>Checks if the JSON config file assigned by the CLI is in the correct format</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cfgFileName</strong> (<em>str</em>) – CLI argument as your input json config file</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> – If the file format is not correct</p></li>
+<li><p><strong>FileNotFoundError</strong> – If file not found</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="extramodules.dqTranscations.mainTaskChecker">
+<span class="sig-prename descclassname"><span class="pre">extramodules.dqTranscations.</span></span><span class="sig-name descname"><span class="pre">mainTaskChecker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">taskNameInConfig</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/extramodules/dqTranscations.html#mainTaskChecker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.dqTranscations.mainTaskChecker" title="Permalink to this definition"></a></dt>
+<dd><ol class="arabic simple">
+<li><p>Checks whether the workflow you want to run in your JSON file has a main task.</p>
+<ol class="arabic simple" start="2">
+<li><p>Checks If you are running the O2Physics environment</p></li>
+</ol>
+</li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>dict</em><em>]</em>) – JSON config file</p></li>
+<li><p><strong>taskNameInConfig</strong> (<em>string</em>) – taskNameInConfig</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#extramodules.dqExceptions.TasknameNotFoundInConfigFileError" title="extramodules.dqExceptions.TasknameNotFoundInConfigFileError"><strong>TasknameNotFoundInConfigFileError</strong></a> – if taskname not found in json config</p></li>
+<li><p><a class="reference internal" href="#extramodules.dqExceptions.NotInAlienvError" title="extramodules.dqExceptions.NotInAlienvError"><strong>NotInAlienvError</strong></a> – if you are not in O2Physics environment</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="extramodules.dqTranscations.mandatoryArgChecker">
+<span class="sig-prename descclassname"><span class="pre">extramodules.dqTranscations.</span></span><span class="sig-name descname"><span class="pre">mandatoryArgChecker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">taskname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">processFunc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/extramodules/dqTranscations.html#mandatoryArgChecker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.dqTranscations.mandatoryArgChecker" title="Permalink to this definition"></a></dt>
+<dd><p>The process function, which must be included in the workflow, if it is missing, the transaction function to include it</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>dict</em><em>]</em>) – Input as JSON config file</p></li>
+<li><p><strong>taskname</strong> (<em>str</em>) – task</p></li>
+<li><p><strong>processFunc</strong> (<em>str</em>) – cfg</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="extramodules.dqTranscations.trackPropagationChecker">
+<span class="sig-prename descclassname"><span class="pre">extramodules.dqTranscations.</span></span><span class="sig-name descname"><span class="pre">trackPropagationChecker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trackProp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/extramodules/dqTranscations.html#trackPropagationChecker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.dqTranscations.trackPropagationChecker" title="Permalink to this definition"></a></dt>
+<dd><p>This method automatically deletes the o2-analysis-trackextension(for run2) task from your workflow
+when you add the o2-analysis-track-propagation (for run3)
+task to your workflow. Two tasks are not compatible at the same time</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>trackProp</strong> (<em>CLI argument</em>) – CLI argument to add the o2-analysis-track-propagation task</p></li>
+<li><p><strong>deps</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – Defined dependency list</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-extramodules.pycacheRemover">
+<span id="extramodules-pycacheremover-module"></span><h2>extramodules.pycacheRemover module<a class="headerlink" href="#module-extramodules.pycacheRemover" title="Permalink to this heading"></a></h2>
+<p><strong>Classes:</strong></p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#extramodules.pycacheRemover.PycacheRemover" title="extramodules.pycacheRemover.PycacheRemover"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PycacheRemover</span></code></a>()</p></td>
+<td><p>This class creates two python commands in order to remove pycache files recursively</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Functions:</strong></p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#extramodules.pycacheRemover.runPycacheRemover" title="extramodules.pycacheRemover.runPycacheRemover"><code class="xref py py-obj docutils literal notranslate"><span class="pre">runPycacheRemover</span></code></a>()</p></td>
+<td><p>This function run two python command and it provides recursively deletes pycache files</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="extramodules.pycacheRemover.PycacheRemover">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">extramodules.pycacheRemover.</span></span><span class="sig-name descname"><span class="pre">PycacheRemover</span></span><a class="reference internal" href="_modules/extramodules/pycacheRemover.html#PycacheRemover"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.pycacheRemover.PycacheRemover" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class creates two python commands in order to remove pycache files recursively</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>object</strong> (<em>str</em>) – Creates two python command for deleting pycache files</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="extramodules.pycacheRemover.runPycacheRemover">
+<span class="sig-prename descclassname"><span class="pre">extramodules.pycacheRemover.</span></span><span class="sig-name descname"><span class="pre">runPycacheRemover</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/extramodules/pycacheRemover.html#runPycacheRemover"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.pycacheRemover.runPycacheRemover" title="Permalink to this definition"></a></dt>
+<dd><p>This function run two python command and it provides recursively deletes pycache files</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>BaseException</strong> – If not path exists in OS</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-extramodules.utils">
+<span id="extramodules-utils-module"></span><h2>extramodules.utils module<a class="headerlink" href="#module-extramodules.utils" title="Permalink to this heading"></a></h2>
+<p><strong>Functions:</strong></p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#extramodules.utils.convertListToStr" title="extramodules.utils.convertListToStr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convertListToStr</span></code></a>(s)</p></td>
+<td><p>Alternative List to string method</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#extramodules.utils.dumpJson" title="extramodules.utils.dumpJson"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dumpJson</span></code></a>(updatedConfigFileName, config)</p></td>
+<td><p>JSON dump util function</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#extramodules.utils.getIfStartedInDoubleQuotes" title="extramodules.utils.getIfStartedInDoubleQuotes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getIfStartedInDoubleQuotes</span></code></a>(headerFileName)</p></td>
+<td><p>Parse file lines get string in double quotes if line starts with 'if'</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#extramodules.utils.listToString" title="extramodules.utils.listToString"><code class="xref py py-obj docutils literal notranslate"><span class="pre">listToString</span></code></a>(s)</p></td>
+<td><p>ListToString provides converts lists to strings with commas.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#extramodules.utils.loadJson" title="extramodules.utils.loadJson"><code class="xref py py-obj docutils literal notranslate"><span class="pre">loadJson</span></code></a>(fileName)</p></td>
+<td><p>JSON Loader util function</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#extramodules.utils.stringToList" title="extramodules.utils.stringToList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stringToList</span></code></a>(string, charType)</p></td>
+<td><p>stringToList provides converts strings to list with selected char.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#extramodules.utils.writeFile" title="extramodules.utils.writeFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">writeFile</span></code></a>(openFile, writeFile)</p></td>
+<td><p>Write a file util function</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="extramodules.utils.convertListToStr">
+<span class="sig-prename descclassname"><span class="pre">extramodules.utils.</span></span><span class="sig-name descname"><span class="pre">convertListToStr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/extramodules/utils.html#convertListToStr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.utils.convertListToStr" title="Permalink to this definition"></a></dt>
+<dd><p>Alternative List to string method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>s</strong> (<em>list</em><em>[</em><em>Any</em><em>]</em>) – input as list</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>returns string</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="extramodules.utils.dumpJson">
+<span class="sig-prename descclassname"><span class="pre">extramodules.utils.</span></span><span class="sig-name descname"><span class="pre">dumpJson</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">updatedConfigFileName</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/extramodules/utils.html#dumpJson"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.utils.dumpJson" title="Permalink to this definition"></a></dt>
+<dd><p>JSON dump util function</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="extramodules.utils.getIfStartedInDoubleQuotes">
+<span class="sig-prename descclassname"><span class="pre">extramodules.utils.</span></span><span class="sig-name descname"><span class="pre">getIfStartedInDoubleQuotes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">headerFileName</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/extramodules/utils.html#getIfStartedInDoubleQuotes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.utils.getIfStartedInDoubleQuotes" title="Permalink to this definition"></a></dt>
+<dd><p>Parse file lines get string in double quotes if line starts with ‘if’</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="extramodules.utils.listToString">
+<span class="sig-prename descclassname"><span class="pre">extramodules.utils.</span></span><span class="sig-name descname"><span class="pre">listToString</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/extramodules/utils.html#listToString"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.utils.listToString" title="Permalink to this definition"></a></dt>
+<dd><p>ListToString provides converts lists to strings with commas.
+This function is written to save as string type instead of list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>s</strong> (<em>list</em><em>[</em><em>Any</em><em>]</em>) – Input as List</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Comma seperated string</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="extramodules.utils.loadJson">
+<span class="sig-prename descclassname"><span class="pre">extramodules.utils.</span></span><span class="sig-name descname"><span class="pre">loadJson</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fileName</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/extramodules/utils.html#loadJson"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.utils.loadJson" title="Permalink to this definition"></a></dt>
+<dd><p>JSON Loader util function</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="extramodules.utils.stringToList">
+<span class="sig-prename descclassname"><span class="pre">extramodules.utils.</span></span><span class="sig-name descname"><span class="pre">stringToList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charType</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="_modules/extramodules/utils.html#stringToList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.utils.stringToList" title="Permalink to this definition"></a></dt>
+<dd><p>stringToList provides converts strings to list with selected char.
+This function is written to save as list type instead of string</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>string</strong> (<em>st</em>) – Input as String</p></li>
+<li><p><strong>charType</strong> (<em>str</em>) – split character as string</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>merge string elements with selected char</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="extramodules.utils.writeFile">
+<span class="sig-prename descclassname"><span class="pre">extramodules.utils.</span></span><span class="sig-name descname"><span class="pre">writeFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">openFile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">writeFile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/extramodules/utils.html#writeFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#extramodules.utils.writeFile" title="Permalink to this definition"></a></dt>
+<dd><p>Write a file util function</p>
+</dd></dl>
+
+</section>
+<section id="module-extramodules">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-extramodules" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Ionut Cristian Arsene, Cevat Batuhan Tolon.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

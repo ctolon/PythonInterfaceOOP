@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>extramodules.dqExceptions &mdash; O2-DQ Framework Python Based User Interface 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> O2-DQ Framework Python Based User Interface
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">O2-DQ Framework Python Based User Interface</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">extramodules.dqExceptions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for extramodules.dqExceptions</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># PYTHON_ARGCOMPLETE_OK</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1"># Copyright 2019-2020 CERN and copyright holders of ALICE O2.</span>
+<span class="c1"># See https://alice-o2.web.cern.ch/copyright for details of the copyright holders.</span>
+<span class="c1"># All rights not expressly granted are reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># This software is distributed under the terms of the GNU General Public</span>
+<span class="c1"># License v3 (GPL Version 3), copied verbatim in the file &quot;COPYING&quot;.</span>
+<span class="c1">#</span>
+<span class="c1"># In applying this license CERN does not waive the privileges and immunities</span>
+<span class="c1"># granted to it by virtue of its status as an Intergovernmental Organization</span>
+<span class="c1"># or submit itself to any jurisdiction.</span>
+
+<span class="c1"># This script includes some exceptions for DQ Workflows</span>
+
+
+<div class="viewcode-block" id="TasknameNotFoundInConfigFileError"><a class="viewcode-back" href="../../extramodules.html#extramodules.dqExceptions.TasknameNotFoundInConfigFileError">[docs]</a><span class="k">class</span> <span class="nc">TasknameNotFoundInConfigFileError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot;Exception raised if taskname not found in json config file.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        taskName: input main task name</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">taskName</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">taskName</span> <span class="o">=</span> <span class="n">taskName</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;The JSON config does not include </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">taskName</span><span class="si">}</span><span class="s2"> task&quot;</span></div>
+
+
+<div class="viewcode-block" id="NotInAlienvError"><a class="viewcode-back" href="../../extramodules.html#extramodules.dqExceptions.NotInAlienvError">[docs]</a><span class="k">class</span> <span class="nc">NotInAlienvError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot;Exception raised for O2Physics Alienv Loading</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        message: error message for forgetting loading alienv</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;You must load O2Physics with alienv&quot;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MandatoryArgNotFoundError"><a class="viewcode-back" href="../../extramodules.html#extramodules.dqExceptions.MandatoryArgNotFoundError">[docs]</a><span class="k">class</span> <span class="nc">MandatoryArgNotFoundError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot;Exception raised for if mandatory arg not found</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        arg: mandatory argument</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arg</span> <span class="o">=</span> <span class="n">arg</span>
+    
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Mandatory args not found: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">arg</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+<div class="viewcode-block" id="TextListNotStartsWithAtError"><a class="viewcode-back" href="../../extramodules.html#extramodules.dqExceptions.TextListNotStartsWithAtError">[docs]</a><span class="k">class</span> <span class="nc">TextListNotStartsWithAtError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot;Exception raised for if mandatory arg not found</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        arg: mandatory argument</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">arg</span> <span class="o">=</span> <span class="n">arg</span>
+    
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">arg</span><span class="si">}</span><span class="s2"> AO2D text lists have to start with @ symbol&quot;</span></div>
+
+
+<div class="viewcode-block" id="DependencyNotFoundError"><a class="viewcode-back" href="../../extramodules.html#extramodules.dqExceptions.DependencyNotFoundError">[docs]</a><span class="k">class</span> <span class="nc">DependencyNotFoundError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot;Exception raised for if mandatory arg not found</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        arg: mandatory argument</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkedDep</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">cfg</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkedDep</span> <span class="o">=</span> <span class="n">checkedDep</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task</span> <span class="o">=</span> <span class="n">task</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfg</span> <span class="o">=</span> <span class="n">cfg</span>
+    
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;For configuring </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">checkedDep</span><span class="si">}</span><span class="s2">, you have to specify [</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cfg</span><span class="si">}</span><span class="s2"> function as true&quot;</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Ionut Cristian Arsene, Cevat Batuhan Tolon.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

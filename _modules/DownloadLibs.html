@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DownloadLibs &mdash; O2-DQ Framework Python Based User Interface 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> O2-DQ Framework Python Based User Interface
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">O2-DQ Framework Python Based User Interface</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">DownloadLibs</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for DownloadLibs</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># PYTHON_ARGCOMPLETE_OK</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1"># Copyright 2019-2020 CERN and copyright holders of ALICE O2.</span>
+<span class="c1"># See https://alice-o2.web.cern.ch/copyright for details of the copyright holders.</span>
+<span class="c1"># All rights not expressly granted are reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># This software is distributed under the terms of the GNU General Public</span>
+<span class="c1"># License v3 (GPL Version 3), copied verbatim in the file &quot;COPYING&quot;.</span>
+<span class="c1">#</span>
+<span class="c1"># In applying this license CERN does not waive the privileges and immunities</span>
+<span class="c1"># granted to it by virtue of its status as an Intergovernmental Organization</span>
+<span class="c1"># or submit itself to any jurisdiction.</span>
+
+<span class="c1"># \Author: ionut.cristian.arsene@cern.ch</span>
+<span class="c1"># \Interface:  cevat.batuhan.tolon@cern.ch</span>
+
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">Request</span><span class="p">,</span> <span class="n">urlopen</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">ssl</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">logging.config</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">argcomplete</span>
+<span class="kn">import</span> <span class="nn">pathlib</span>
+
+<span class="c1"># This script provides download to DQ libraries from O2Physics-DQ Manually with/without Production tag or get DQ libraries from alice-software in local machine</span>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../DownloadLibs.html#DownloadLibs.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    
+    <span class="c1"># header for github download</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36&quot;</span>
+        <span class="p">}</span>
+    
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Arguments to pass&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--version&quot;</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Online: Your Production tag for O2Physics example: for nightly-20220619, just enter as 20220619&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">lower</span><span class="p">,)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--debug&quot;</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Online and Local: execute with debug options&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span> <span class="n">choices</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;NOTSET&quot;</span><span class="p">,</span> <span class="s2">&quot;DEBUG&quot;</span><span class="p">,</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="s2">&quot;WARNING&quot;</span><span class="p">,</span> <span class="s2">&quot;ERROR&quot;</span><span class="p">,</span> <span class="s2">&quot;CRITICAL&quot;</span><span class="p">],</span> <span class="n">default</span> <span class="o">=</span> <span class="s2">&quot;DEBUG&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">upper</span><span class="p">,)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--local&quot;</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Local: Use Local Paths for getting DQ Libraries instead of online github download. If you are working LXPLUS, It will not working so don&#39;t configure with option&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store_true&quot;</span><span class="p">,)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--localPath&quot;</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Local: Configure your alice software folder name in your local home path (prefix: home/&lt;user&gt;). Default is home/&lt;user&gt;/alice. Example different configuration is --localpath alice-software --local --&gt; home/&lt;user&gt;/alice-software&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">)</span>
+    
+    <span class="n">argcomplete</span><span class="o">.</span><span class="n">autocomplete</span><span class="p">(</span><span class="n">parser</span><span class="p">)</span>
+    <span class="n">extrargs</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    
+    <span class="n">MY_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">())</span>
+    <span class="n">TEMP_LIB_PATH</span> <span class="o">=</span> <span class="s1">&#39;/templibs/&#39;</span>
+    <span class="c1"># HOME_PATH = os.environ[&quot;HOME&quot;]</span>
+    
+    <span class="n">ALICE_SOFTWARE_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;HOME&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;/alice&quot;</span>
+    
+    <span class="n">localPathCutsLibrary</span> <span class="o">=</span> <span class="n">ALICE_SOFTWARE_PATH</span> <span class="o">+</span> <span class="s2">&quot;/O2Physics/PWGDQ/Core/CutsLibrary.h&quot;</span>
+    <span class="n">localPathMCSignalsLibrary</span> <span class="o">=</span> <span class="n">ALICE_SOFTWARE_PATH</span> <span class="o">+</span> <span class="s2">&quot;/O2Physics/PWGDQ/Core/MCSignalLibrary.h&quot;</span>
+    <span class="n">localPathEventMixing</span> <span class="o">=</span> <span class="n">ALICE_SOFTWARE_PATH</span> <span class="o">+</span> <span class="s2">&quot;/O2Physics/PWGDQ/Core/MixingLibrary.h&quot;</span>
+    <span class="n">localPathHistogramsLibrary</span> <span class="o">=</span> <span class="n">ALICE_SOFTWARE_PATH</span> <span class="o">+</span> <span class="s2">&quot;/O2Physics/PWGDQ/Core/HistogramsLibrary.h&quot;</span>
+    
+    <span class="n">URL_CUTS_LIBRARY</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/CutsLibrary.h?raw=true&quot;</span><span class="p">)</span>
+    <span class="n">URL_MCSIGNALS_LIBRARY</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MCSignalLibrary.h?raw=true&quot;</span><span class="p">)</span>
+    <span class="n">URL_MIXING_LIBRARY</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MixingLibrary.h?raw=true&quot;</span><span class="p">)</span>
+    <span class="n">URL_HISTOGRAMS_LIBRARY</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/HistogramsLibrary.h?raw=true&quot;</span>
+    
+    <span class="n">isLibsExist</span> <span class="o">=</span> <span class="kc">True</span>
+    
+    <span class="k">if</span> <span class="n">extrargs</span><span class="o">.</span><span class="n">version</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">prefix_version</span> <span class="o">=</span> <span class="s2">&quot;nightly-&quot;</span>
+        <span class="n">extrargs</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="n">prefix_version</span> <span class="o">+</span> <span class="n">extrargs</span><span class="o">.</span><span class="n">version</span>
+    
+    <span class="k">if</span> <span class="n">extrargs</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+        <span class="n">DEBUG_SELECTION</span> <span class="o">=</span> <span class="n">extrargs</span><span class="o">.</span><span class="n">debug</span>
+        <span class="n">numeric_level</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">logging</span><span class="p">,</span> <span class="n">DEBUG_SELECTION</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">numeric_level</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid log level: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">DEBUG_SELECTION</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;[</span><span class="si">%(levelname)s</span><span class="s2">] </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">level</span> <span class="o">=</span> <span class="n">DEBUG_SELECTION</span><span class="p">)</span>
+    
+    <span class="c1"># Create templibs directory if not exist</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="s2">&quot;templibs&quot;</span><span class="p">):</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;templibs directory is missing. it will be created...&quot;</span><span class="p">)</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+        <span class="n">pathWithFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;templibs&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">pathWithFile</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;templibs directory created successfully: </span><span class="si">{</span><span class="n">pathWithFile</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">extrargs</span><span class="o">.</span><span class="n">version</span> <span class="ow">and</span> <span class="n">extrargs</span><span class="o">.</span><span class="n">local</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;DQ libs will downloaded from github. Your Version For Downloading DQ Libs From Github : </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">extrargs</span><span class="o">.</span><span class="n">version</span><span class="p">,)</span>
+        
+        <span class="n">URL_CUTS_LIBRARY</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;https://github.com/AliceO2Group/O2Physics/blob/&quot;</span> <span class="o">+</span> <span class="n">extrargs</span><span class="o">.</span><span class="n">version</span> <span class="o">+</span> <span class="s2">&quot;/PWGDQ/Core/CutsLibrary.h?raw=true&quot;</span><span class="p">)</span>
+        <span class="n">URL_MCSIGNALS_LIBRARY</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;https://github.com/AliceO2Group/O2Physics/blob/&quot;</span> <span class="o">+</span> <span class="n">extrargs</span><span class="o">.</span><span class="n">version</span> <span class="o">+</span> <span class="s2">&quot;/PWGDQ/Core/MCSignalLibrary.h?raw=true&quot;</span><span class="p">)</span>
+        <span class="n">URL_MIXING_LIBRARY</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;https://github.com/AliceO2Group/O2Physics/blob/&quot;</span> <span class="o">+</span> <span class="n">extrargs</span><span class="o">.</span><span class="n">version</span> <span class="o">+</span> <span class="s2">&quot;/PWGDQ/Core/MixingLibrary.h?raw=true&quot;</span><span class="p">)</span>
+        <span class="n">URL_HISTOGRAMS_LIBRARY</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;https://github.com/AliceO2Group/O2Physics/blob/&quot;</span> <span class="o">+</span> <span class="n">extrargs</span><span class="o">.</span><span class="n">version</span> <span class="o">+</span> <span class="s2">&quot;/PWGDQ/Core/HistogramsLibrary.h?raw=true&quot;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">extrargs</span><span class="o">.</span><span class="n">local</span> <span class="ow">and</span> <span class="n">extrargs</span><span class="o">.</span><span class="n">version</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Your provided configuration for getting DQ libs in locally. You don&#39;t need to configure your github nightly version. It&#39;s for Online Downloading&quot;</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> nightly version will not used in interface. Local working on going&quot;</span><span class="p">,</span> <span class="n">extrargs</span><span class="o">.</span><span class="n">version</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">extrargs</span><span class="o">.</span><span class="n">localPath</span> <span class="ow">and</span> <span class="n">extrargs</span><span class="o">.</span><span class="n">local</span><span class="p">:</span>
+        <span class="n">ALICE_SOFTWARE_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;HOME&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">extrargs</span><span class="o">.</span><span class="n">localPath</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Alice software Local Path is Changed. New Local Path is </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ALICE_SOFTWARE_PATH</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">ALICE_SOFTWARE_PATH</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Alice software found at </span><span class="si">%s</span><span class="s2"> local Path change is true&quot;</span><span class="p">,</span> <span class="n">ALICE_SOFTWARE_PATH</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Alice software not found in path!!! Fatal Error. Check your Alice software path configuration&quot;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+    
+    <span class="k">if</span> <span class="n">extrargs</span><span class="o">.</span><span class="n">localPath</span> <span class="ow">and</span> <span class="n">extrargs</span><span class="o">.</span><span class="n">local</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Misconfiguration. You forget to add --local option interface for working localy. You need add this parameter to workflow&quot;</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Example usage: python3 DownloadLibs.py --local --localPath alice&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+    
+    <span class="k">if</span> <span class="n">extrargs</span><span class="o">.</span><span class="n">local</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">extrargs</span><span class="o">.</span><span class="n">localPath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Default Path will used for Alice Software. Default Path : </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ALICE_SOFTWARE_PATH</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">ALICE_SOFTWARE_PATH</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Default Path: </span><span class="si">%s</span><span class="s2"> is Valid&quot;</span><span class="p">,</span> <span class="n">ALICE_SOFTWARE_PATH</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">ALICE_SOFTWARE_PATH</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Default Path: </span><span class="si">%s</span><span class="s2"> is invalid!! Fatal Error. Check your Alice software path configuration&quot;</span><span class="p">,</span> <span class="n">ALICE_SOFTWARE_PATH</span><span class="p">,)</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+        
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;DQ libs will be getting from local folders. You alice software path : </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">ALICE_SOFTWARE_PATH</span><span class="p">,)</span>
+        
+        <span class="n">localPathCutsLibrary</span> <span class="o">=</span> <span class="n">ALICE_SOFTWARE_PATH</span> <span class="o">+</span> <span class="s2">&quot;/O2Physics/PWGDQ/Core/CutsLibrary.h&quot;</span>
+        <span class="n">localPathMCSignalsLibrary</span> <span class="o">=</span> <span class="n">ALICE_SOFTWARE_PATH</span> <span class="o">+</span> <span class="s2">&quot;/O2Physics/PWGDQ/Core/MCSignalLibrary.h&quot;</span>
+        <span class="n">localPathEventMixing</span> <span class="o">=</span> <span class="n">ALICE_SOFTWARE_PATH</span> <span class="o">+</span> <span class="s2">&quot;/O2Physics/PWGDQ/Core/MixingLibrary.h&quot;</span>
+        <span class="n">localPathHistogramsLibrary</span> <span class="o">=</span> <span class="n">ALICE_SOFTWARE_PATH</span> <span class="o">+</span> <span class="s2">&quot;/O2Physics/PWGDQ/Core/HistogramsLibrary.h&quot;</span>
+        
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Local CutsLibrary.h Path: </span><span class="si">%s</span><span class="s2"> &quot;</span><span class="p">,</span> <span class="n">localPathCutsLibrary</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Local MCSignalsLibrary.h Path: </span><span class="si">%s</span><span class="s2"> &quot;</span><span class="p">,</span> <span class="n">localPathMCSignalsLibrary</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Local MixingLibrary.h Path: </span><span class="si">%s</span><span class="s2"> &quot;</span><span class="p">,</span> <span class="n">localPathEventMixing</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Local HistogramsLibrary.h Path: </span><span class="si">%s</span><span class="s2"> &quot;</span><span class="p">,</span> <span class="n">localPathHistogramsLibrary</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">MY_PATH</span> <span class="o">+</span> <span class="n">TEMP_LIB_PATH</span> <span class="o">+</span> <span class="s2">&quot;tempCutsLibrary.h&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">localPathCutsLibrary</span><span class="p">,</span> <span class="n">MY_PATH</span> <span class="o">+</span> <span class="n">TEMP_LIB_PATH</span> <span class="o">+</span> <span class="s2">&quot;tempCutsLibrary.h&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;templibs/tempCutsLibrary.h&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;tempCutsLibrary.h created at </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">MY_PATH</span> <span class="o">+</span> <span class="n">TEMP_LIB_PATH</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;tempCutsLibrary.h not created at </span><span class="si">%s</span><span class="s2"> Fatal Error&quot;</span><span class="p">,</span> <span class="n">MY_PATH</span> <span class="o">+</span> <span class="n">TEMP_LIB_PATH</span><span class="p">)</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> not found in your provided alice-software path!!! Check your alice software path&quot;</span><span class="p">,</span> <span class="n">localPathCutsLibrary</span><span class="p">,)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">MY_PATH</span> <span class="o">+</span> <span class="n">TEMP_LIB_PATH</span> <span class="o">+</span> <span class="s2">&quot;tempMCSignalsLibrary.h&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">localPathMCSignalsLibrary</span><span class="p">,</span> <span class="n">MY_PATH</span> <span class="o">+</span> <span class="n">TEMP_LIB_PATH</span> <span class="o">+</span> <span class="s2">&quot;tempMCSignalsLibrary.h&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;templibs/tempMCSignalsLibrary.h&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;tempMCSignalsLibrary.h created at </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">MY_PATH</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;tempMCSignalsLibrary.h not created at </span><span class="si">%s</span><span class="s2"> Fatal Error&quot;</span><span class="p">,</span> <span class="n">MY_PATH</span> <span class="o">+</span> <span class="n">TEMP_LIB_PATH</span><span class="p">)</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> not found in your provided alice-software path!!! Check your alice software path&quot;</span><span class="p">,</span> <span class="n">localPathMCSignalsLibrary</span><span class="p">,)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">MY_PATH</span> <span class="o">+</span> <span class="n">TEMP_LIB_PATH</span> <span class="o">+</span> <span class="s2">&quot;tempMixingLibrary.h&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">localPathEventMixing</span><span class="p">,</span> <span class="n">MY_PATH</span> <span class="o">+</span> <span class="n">TEMP_LIB_PATH</span> <span class="o">+</span> <span class="s2">&quot;tempMixingLibrary.h&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;templibs/tempMixingLibrary.h&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;tempMixingLibrary.h created at </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">MY_PATH</span> <span class="o">+</span> <span class="n">TEMP_LIB_PATH</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;tempMixingLibrary.h not created at </span><span class="si">%s</span><span class="s2"> Fatal Error&quot;</span><span class="p">,</span> <span class="n">MY_PATH</span> <span class="o">+</span> <span class="n">TEMP_LIB_PATH</span><span class="p">)</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> not found in your provided alice-software path!!! Check your alice software path&quot;</span><span class="p">,</span> <span class="n">localPathEventMixing</span><span class="p">,)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">MY_PATH</span> <span class="o">+</span> <span class="n">TEMP_LIB_PATH</span> <span class="o">+</span> <span class="s2">&quot;tempHistogramsLibrary.h&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">localPathHistogramsLibrary</span><span class="p">,</span> <span class="n">MY_PATH</span> <span class="o">+</span> <span class="n">TEMP_LIB_PATH</span> <span class="o">+</span> <span class="s2">&quot;tempHistogramsLibrary.h&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;templibs/tempHistogramsLibrary.h&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;tempHistogramsLibrary.h created at </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">MY_PATH</span> <span class="o">+</span> <span class="n">TEMP_LIB_PATH</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;tempHistogramsLibrary.h not created at </span><span class="si">%s</span><span class="s2"> Fatal Error&quot;</span><span class="p">,</span> <span class="n">MY_PATH</span> <span class="o">+</span> <span class="n">TEMP_LIB_PATH</span><span class="p">)</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> not found in your provided alice-software path!!! Check your alice software path&quot;</span><span class="p">,</span> <span class="n">localPathHistogramsLibrary</span><span class="p">,)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+        
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;DQ Libraries pulled from local alice software successfully!&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+    
+    <span class="k">if</span> <span class="n">extrargs</span><span class="o">.</span><span class="n">local</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;tempCutsLibrary.h&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;tempMCSignalsLibrary.h&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;tempMixingLibrary.h&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;tempHistogramsLibrary.h&quot;</span><span class="p">))</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Some Libs are Missing. All DQ libs will download&quot;</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Github CutsLibrary.h Path: </span><span class="si">%s</span><span class="s2"> &quot;</span><span class="p">,</span> <span class="n">URL_CUTS_LIBRARY</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Github MCSignalsLibrary.h Path: </span><span class="si">%s</span><span class="s2"> &quot;</span><span class="p">,</span> <span class="n">URL_MCSIGNALS_LIBRARY</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Github MixingLibrary.h Path: </span><span class="si">%s</span><span class="s2"> &quot;</span><span class="p">,</span> <span class="n">URL_MIXING_LIBRARY</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Github HistogramsLibrary.h Path: </span><span class="si">%s</span><span class="s2"> &quot;</span><span class="p">,</span> <span class="n">URL_HISTOGRAMS_LIBRARY</span><span class="p">)</span>
+            <span class="n">isLibsExist</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="n">extrargs</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">context</span> <span class="o">=</span> <span class="n">ssl</span><span class="o">.</span><span class="n">_create_unverified_context</span><span class="p">()</span> <span class="c1"># prevent ssl problems</span>
+                    <span class="c1"># request = urllib.request.urlopen(URL_CUTS_LIBRARY, context = context)</span>
+                    <span class="c1"># request = urllib.request.urlopen(URL_MCSIGNALS_LIBRARY, context = context)</span>
+                    <span class="c1"># request = urllib.request.urlopen(URL_MIXING_LIBRARY, context = context)</span>
+                    <span class="c1"># request = urllib.request.urlopen(URL_HISTOGRAMS_LIBRARY, context = context)</span>
+                <span class="k">except</span> <span class="n">urllib</span><span class="o">.</span><span class="n">error</span><span class="o">.</span><span class="n">HTTPError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Dummy SSL Adder</span>
+                <span class="n">context</span> <span class="o">=</span> <span class="n">ssl</span><span class="o">.</span><span class="n">_create_unverified_context</span><span class="p">()</span> <span class="c1"># prevent ssl problems</span>
+                <span class="c1"># request = urllib.request.urlopen(URL_CUTS_LIBRARY, context = context)</span>
+            
+            <span class="c1"># HTTP Request</span>
+            <span class="n">requestCutsLibrary</span> <span class="o">=</span> <span class="n">Request</span><span class="p">(</span><span class="n">URL_CUTS_LIBRARY</span><span class="p">,</span> <span class="n">headers</span> <span class="o">=</span> <span class="n">headers</span><span class="p">)</span>
+            <span class="n">requestMCSignalsLibrary</span> <span class="o">=</span> <span class="n">Request</span><span class="p">(</span><span class="n">URL_MCSIGNALS_LIBRARY</span><span class="p">,</span> <span class="n">headers</span> <span class="o">=</span> <span class="n">headers</span><span class="p">)</span>
+            <span class="n">requestMixingLibrary</span> <span class="o">=</span> <span class="n">Request</span><span class="p">(</span><span class="n">URL_MIXING_LIBRARY</span><span class="p">,</span> <span class="n">headers</span> <span class="o">=</span> <span class="n">headers</span><span class="p">)</span>
+            <span class="n">requestHistogramsLibrary</span> <span class="o">=</span> <span class="n">Request</span><span class="p">(</span><span class="n">URL_HISTOGRAMS_LIBRARY</span><span class="p">,</span> <span class="n">headers</span> <span class="o">=</span> <span class="n">headers</span><span class="p">)</span>
+            
+            <span class="c1"># Get Files With Http Requests</span>
+            <span class="n">htmlCutsLibrary</span> <span class="o">=</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">requestCutsLibrary</span><span class="p">,</span> <span class="n">context</span> <span class="o">=</span> <span class="n">context</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="n">htmlMCSignalsLibrary</span> <span class="o">=</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">requestMCSignalsLibrary</span><span class="p">,</span> <span class="n">context</span> <span class="o">=</span> <span class="n">context</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="n">htmlMixingLibrary</span> <span class="o">=</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">requestMixingLibrary</span><span class="p">,</span> <span class="n">context</span> <span class="o">=</span> <span class="n">context</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="n">htmlHistogramsLibrary</span> <span class="o">=</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">requestHistogramsLibrary</span><span class="p">,</span> <span class="n">context</span> <span class="o">=</span> <span class="n">context</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;templibs/tempCutsLibrary.h&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">htmlCutsLibrary</span><span class="p">)</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;tempCutsLibrary.h downloaded successfully from github&quot;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;templibs/tempMCSignalsLibrary.h&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">htmlMCSignalsLibrary</span><span class="p">)</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;tempMCSignalsLibrary.h downloaded successfully from github&quot;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;templibs/tempMixingLibrary.h&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">htmlMixingLibrary</span><span class="p">)</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;tempMixingLibrary.h downloaded successfully from github&quot;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;templibs/tempHistogramsLibrary.h&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">htmlHistogramsLibrary</span><span class="p">)</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;tempHistogramsLibrary.h downloaded successfully from github&quot;</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">isLibsExist</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;DQ Libraries have been downloaded before. If you want to update, delete they manually and run this script again.&quot;</span><span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;DQ Libraries downloaded from github successfully!&quot;</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Ionut Cristian Arsene, Cevat Batuhan Tolon.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,69 @@
+extramodules package
+====================
+
+Submodules
+----------
+
+extramodules.choicesHandler module
+----------------------------------
+
+.. automodule:: extramodules.choicesHandler
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+extramodules.configSetter module
+--------------------------------
+
+.. automodule:: extramodules.configSetter
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+extramodules.dqExceptions module
+--------------------------------
+
+.. automodule:: extramodules.dqExceptions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+extramodules.dqLibGetter module
+-------------------------------
+
+.. automodule:: extramodules.dqLibGetter
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+extramodules.dqTranscations module
+----------------------------------
+
+.. automodule:: extramodules.dqTranscations
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+extramodules.pycacheRemover module
+----------------------------------
+
+.. automodule:: extramodules.pycacheRemover
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+extramodules.utils module
+-------------------------
+
+.. automodule:: extramodules.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: extramodules
+   :members:
+   :undoc-members:
+   :show-inheritance:

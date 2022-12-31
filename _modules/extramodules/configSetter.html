@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>extramodules.configSetter &mdash; O2-DQ Framework Python Based User Interface 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> O2-DQ Framework Python Based User Interface
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">O2-DQ Framework Python Based User Interface</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">extramodules.configSetter</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for extramodules.configSetter</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># PYTHON_ARGCOMPLETE_OK</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1"># Copyright 2019-2020 CERN and copyright holders of ALICE O2.</span>
+<span class="c1"># See https://alice-o2.web.cern.ch/copyright for details of the copyright holders.</span>
+<span class="c1"># All rights not expressly granted are reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># This software is distributed under the terms of the GNU General Public</span>
+<span class="c1"># License v3 (GPL Version 3), copied verbatim in the file &quot;COPYING&quot;.</span>
+<span class="c1">#</span>
+<span class="c1"># In applying this license CERN does not waive the privileges and immunities</span>
+<span class="c1"># granted to it by virtue of its status as an Intergovernmental Organization</span>
+<span class="c1"># or submit itself to any jurisdiction.</span>
+
+<span class="c1"># This script includes setter functions for configurables (Developer package)</span>
+
+<span class="kn">from</span> <span class="nn">extramodules.dqLibGetter</span> <span class="kn">import</span> <span class="n">DQLibGetter</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">convertListToStr</span><span class="p">,</span> <span class="n">listToString</span><span class="p">,</span> <span class="n">stringToList</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">logging</span> <span class="kn">import</span> <span class="n">handlers</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">from</span> <span class="nn">extramodules.choicesHandler</span> <span class="kn">import</span> <span class="n">ChoicesCompleterList</span>
+<span class="kn">import</span> <span class="nn">argcomplete</span>
+<span class="kn">from</span> <span class="nn">argcomplete.completers</span> <span class="kn">import</span> <span class="n">ChoicesCompleter</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+
+
+<div class="viewcode-block" id="dispArgs"><a class="viewcode-back" href="../../extramodules.html#extramodules.configSetter.dispArgs">[docs]</a><span class="k">def</span> <span class="nf">dispArgs</span><span class="p">(</span><span class="n">allArgs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Display all configured commands you provided in CLI</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        allArgs (dict[str, Any]): configured commands in CLI</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Args provided configurations List&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;====================================================================================================================&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">task</span><span class="p">,</span> <span class="n">cfg</span> <span class="ow">in</span> <span class="n">allArgs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">cfg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">listToString</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;--</span><span class="si">%s</span><span class="s2"> : </span><span class="si">%s</span><span class="s2"> &quot;</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">cfg</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;====================================================================================================================&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="dispInterfaceMode"><a class="viewcode-back" href="../../extramodules.html#extramodules.configSetter.dispInterfaceMode">[docs]</a><span class="k">def</span> <span class="nf">dispInterfaceMode</span><span class="p">(</span><span class="n">cliMode</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Display interface mode in CLI</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cliMode (str): Interface mode argument as bool str</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Only Select Configured as </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">cliMode</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cliMode</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;INTERFACE MODE : JSON Overrider&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cliMode</span> <span class="o">==</span> <span class="s2">&quot;false&quot;</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;INTERFACE MODE : JSON Additional&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="dispO2HelpMessage"><a class="viewcode-back" href="../../extramodules.html#extramodules.configSetter.dispO2HelpMessage">[docs]</a><span class="k">def</span> <span class="nf">dispO2HelpMessage</span><span class="p">(</span><span class="n">argHelpO2</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">commandToRun</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Display O2 helper message</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        argHelpO2 (bool): CLI helpO2 argument</span>
+<span class="sd">        commandToRun (str): commandToRun as string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">argHelpO2</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">commandToRun</span> <span class="o">+=</span> <span class="s2">&quot; --help full&quot;</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">commandToRun</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="debugSettings"><a class="viewcode-back" href="../../extramodules.html#extramodules.configSetter.debugSettings">[docs]</a><span class="k">def</span> <span class="nf">debugSettings</span><span class="p">(</span><span class="n">argDebug</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">argLogFile</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">fileName</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Set Debug settings for CLI</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        argDebug (bool): Debug Level</span>
+<span class="sd">        argLogFile (bool): CLI argument as logFile</span>
+<span class="sd">        fileName (str): Output name of log file</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If selected invalid log level</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="n">argDebug</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">argLogFile</span><span class="p">):</span>
+        <span class="n">DEBUG_SELECTION</span> <span class="o">=</span> <span class="n">argDebug</span>
+        <span class="n">numeric_level</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">logging</span><span class="p">,</span> <span class="n">DEBUG_SELECTION</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">numeric_level</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid log level: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">DEBUG_SELECTION</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;[</span><span class="si">%(levelname)s</span><span class="s2">] </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">level</span> <span class="o">=</span> <span class="n">DEBUG_SELECTION</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">argLogFile</span> <span class="ow">and</span> <span class="n">argDebug</span><span class="p">:</span>
+        <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">level</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLevelName</span><span class="p">(</span><span class="n">argDebug</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
+        <span class="nb">format</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="s2">&quot;[</span><span class="si">%(levelname)s</span><span class="s2">] </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">)</span>
+        
+        <span class="n">ch</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+        <span class="n">ch</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="nb">format</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span>
+        
+        <span class="n">loggerFile</span> <span class="o">=</span> <span class="n">fileName</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">loggerFile</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">loggerFile</span><span class="p">)</span>
+        
+        <span class="n">fh</span> <span class="o">=</span> <span class="n">handlers</span><span class="o">.</span><span class="n">RotatingFileHandler</span><span class="p">(</span><span class="n">loggerFile</span><span class="p">,</span> <span class="n">maxBytes</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1048576</span> <span class="o">*</span> <span class="mi">5</span><span class="p">),</span> <span class="n">backupCount</span> <span class="o">=</span> <span class="mi">7</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span>
+        <span class="n">fh</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="nb">format</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="setConverters"><a class="viewcode-back" href="../../extramodules.html#extramodules.configSetter.setConverters">[docs]</a><span class="k">def</span> <span class="nf">setConverters</span><span class="p">(</span><span class="n">allArgs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">updatedConfigFileName</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">commandToRun</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Converter task setter function</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        allArgs (dict[str, Any]): All provided args in CLI</span>
+<span class="sd">        updatedConfigFileName (str): Overrided json config file</span>
+<span class="sd">        commandToRun (str): Generated command for running in O2</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Command To Run with provided converter task options</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">specificTasks</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;add_mc_conv&quot;</span><span class="p">:</span> <span class="s2">&quot;o2-analysis-mc-converter&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;add_fdd_conv&quot;</span><span class="p">:</span> <span class="s2">&quot;o2-analysis-fdd-converter&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;add_track_prop&quot;</span><span class="p">:</span> <span class="s2">&quot;o2-analysis-track-propagation&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;add_weakdecay_ind&quot;</span><span class="p">:</span> <span class="s2">&quot;o2-analysis-weak-decay-indices&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;add_col_conv&quot;</span><span class="p">:</span> <span class="s2">&quot;o2-analysis-collision-converter&quot;</span>
+        <span class="p">}</span>
+    
+    <span class="k">for</span> <span class="n">cliArg</span><span class="p">,</span> <span class="n">cliValue</span> <span class="ow">in</span> <span class="n">allArgs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">converterArg</span><span class="p">,</span> <span class="n">taskName</span> <span class="ow">in</span> <span class="n">specificTasks</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">converterArg</span> <span class="o">==</span> <span class="n">cliArg</span> <span class="ow">and</span> <span class="n">cliValue</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">taskName</span> <span class="o">+</span> <span class="s2">&quot; added your workflow&quot;</span><span class="p">)</span>
+                <span class="n">commandToRun</span> <span class="o">+=</span> <span class="p">(</span><span class="s2">&quot; | &quot;</span> <span class="o">+</span> <span class="n">taskName</span> <span class="o">+</span> <span class="s2">&quot; --configuration json://&quot;</span> <span class="o">+</span> <span class="n">updatedConfigFileName</span> <span class="o">+</span> <span class="s2">&quot; -b&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">commandToRun</span></div>
+
+
+<div class="viewcode-block" id="generateDescriptors"><a class="viewcode-back" href="../../extramodules.html#extramodules.configSetter.generateDescriptors">[docs]</a><span class="k">def</span> <span class="nf">generateDescriptors</span><span class="p">(</span><span class="n">resfilename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tablesToProduce</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">tables</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span> <span class="n">writerConfigFileName</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">readerConfigFileName</span> <span class="o">=</span> <span class="s1">&#39;aodReaderTempConfig&#39;</span><span class="p">,</span> <span class="n">kFlag</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Generates Descriptors for Writing/Reading Tables from AO2D with json config file (input descriptor is optional)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        resfilename (str): Name of aod file which will be produced</span>
+<span class="sd">        tablesToProduce (dict): Tables are required in the output</span>
+<span class="sd">        tables (dict[str, dict]): Definition of all the tables can be produced</span>
+<span class="sd">        writerConfigFileName (str): Output name of writer config</span>
+<span class="sd">        readerConfigFileName (str, optional): Output name of reader config. Defaults to aodReaderTempConfig.json</span>
+<span class="sd">        kFlag (bool, optional): if True also generates input descriptors. Defaults to False.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">iTable</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">iTableReader</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1"># Generate the aod-reader output descriptor json file</span>
+    <span class="n">readerConfig</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">readerConfig</span><span class="p">[</span><span class="s2">&quot;InputDirector&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;debugmode&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;InputDescriptors&quot;</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">}</span>
+    <span class="c1"># Generate the aod-writer output descriptor json file</span>
+    <span class="n">writerConfig</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">writerConfig</span><span class="p">[</span><span class="s2">&quot;OutputDirector&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;debugmode&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s2">&quot;resfile&quot;</span><span class="p">:</span> <span class="n">resfilename</span><span class="p">,</span>
+        <span class="s2">&quot;resfilemode&quot;</span><span class="p">:</span> <span class="s2">&quot;RECREATE&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ntfmerge&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;OutputDescriptors&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="p">}</span>
+    
+    <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">tablesToProduce</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">writerConfig</span><span class="p">[</span><span class="s2">&quot;OutputDirector&quot;</span><span class="p">][</span><span class="s2">&quot;OutputDescriptors&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">iTable</span><span class="p">,</span> <span class="n">tables</span><span class="p">[</span><span class="n">table</span><span class="p">])</span>
+        <span class="n">iTable</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">kFlag</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">tablesToProduce</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">readerConfig</span><span class="p">[</span><span class="s2">&quot;InputDirector&quot;</span><span class="p">][</span><span class="s2">&quot;InputDescriptors&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">iTableReader</span><span class="p">,</span> <span class="n">tables</span><span class="p">[</span><span class="n">table</span><span class="p">])</span>
+            <span class="n">iTableReader</span> <span class="o">+=</span> <span class="mi">1</span>
+    
+    <span class="c1"># writerConfigFileName = &quot;aodWriterTempConfig.json&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">writerConfigFileName</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">writerConfigFile</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">writerConfig</span><span class="p">,</span> <span class="n">writerConfigFile</span><span class="p">,</span> <span class="n">indent</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">kFlag</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">readerConfigFileName</span> <span class="o">=</span> <span class="s2">&quot;aodReaderTempConfig.json&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">readerConfigFileName</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">readerConfigFile</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">readerConfig</span><span class="p">,</span> <span class="n">readerConfigFile</span><span class="p">,</span> <span class="n">indent</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;aodWriterTempConfig==========&quot;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">writerConfig</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="tableProducerSkimming"><a class="viewcode-back" href="../../extramodules.html#extramodules.configSetter.tableProducerSkimming">[docs]</a><span class="k">def</span> <span class="nf">tableProducerSkimming</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span> <span class="n">taskNameInConfig</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">commonTables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">barrelCommonTables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">muonCommonTables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">specificTables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">specificDeps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span> <span class="n">runOverMC</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Table producer function for tableMaker/tableMakerMC</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config (dict[str, dict]): Input as JSON config file</span>
+<span class="sd">        taskNameInConfig (str): Taskname in config file (table-maker/table-maker-m-c)</span>
+<span class="sd">        commonTables (list[str]): Common tables which are always be created</span>
+<span class="sd">        barrelCommonTables (list[str]): Barrel tables in reduced DQ data model</span>
+<span class="sd">        muonCommonTables (list[str]): Muon tables in reduced DQ data model</span>
+<span class="sd">        specificTables (list[str]): Specific Tables for specific tasks</span>
+<span class="sd">        specificDeps (dict[str, list]): Specific Dependencies for specific tasks</span>
+<span class="sd">        runOverMC (bool): Checking to run over MC or Data</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: Tables to produce dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">tablesToProduce</span> <span class="o">=</span> <span class="p">{}</span>
+    
+    <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">commonTables</span><span class="p">:</span>
+        <span class="n">tablesToProduce</span><span class="p">[</span><span class="n">table</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    
+    <span class="k">if</span> <span class="n">runOverMC</span><span class="p">:</span>
+        <span class="n">tablesToProduce</span><span class="p">[</span><span class="s2">&quot;ReducedMCEvents&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">tablesToProduce</span><span class="p">[</span><span class="s2">&quot;ReducedMCEventLabels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    
+    <span class="k">for</span> <span class="n">processFunc</span> <span class="ow">in</span> <span class="n">specificDeps</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">processFunc</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config</span><span class="p">[</span><span class="n">taskNameInConfig</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="n">taskNameInConfig</span><span class="p">][</span><span class="n">processFunc</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;processFunc ========&quot;</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">processFunc</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;processFull&quot;</span> <span class="ow">in</span> <span class="n">processFunc</span> <span class="ow">or</span> <span class="s2">&quot;processBarrel&quot;</span> <span class="ow">in</span> <span class="n">processFunc</span> <span class="ow">or</span> <span class="s2">&quot;processAmbiguousBarrel&quot;</span> <span class="ow">in</span> <span class="n">processFunc</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;common barrel tables==========&quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">barrelCommonTables</span><span class="p">:</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span>
+                    <span class="n">tablesToProduce</span><span class="p">[</span><span class="n">table</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">runOverMC</span><span class="p">:</span>
+                    <span class="n">tablesToProduce</span><span class="p">[</span><span class="s2">&quot;ReducedTracksBarrelLabels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="s2">&quot;processFull&quot;</span> <span class="ow">in</span> <span class="n">processFunc</span> <span class="ow">or</span> <span class="s2">&quot;processMuon&quot;</span> <span class="ow">in</span> <span class="n">processFunc</span> <span class="ow">or</span> <span class="s2">&quot;processAmbiguousMuon&quot;</span> <span class="ow">in</span> <span class="n">processFunc</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;common muon tables==========&quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">muonCommonTables</span><span class="p">:</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span>
+                    <span class="n">tablesToProduce</span><span class="p">[</span><span class="n">table</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">runOverMC</span><span class="p">:</span>
+                    <span class="n">tablesToProduce</span><span class="p">[</span><span class="s2">&quot;ReducedMuonsLabels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">runOverMC</span><span class="p">:</span>
+                <span class="n">tablesToProduce</span><span class="p">[</span><span class="s2">&quot;ReducedMCTracks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;specific tables==========&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">specificTables</span><span class="p">[</span><span class="n">processFunc</span><span class="p">]:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span>
+                <span class="n">tablesToProduce</span><span class="p">[</span><span class="n">table</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">tablesToProduce</span></div>
+
+
+<div class="viewcode-block" id="tableProducerAnalysis"><a class="viewcode-back" href="../../extramodules.html#extramodules.configSetter.tableProducerAnalysis">[docs]</a><span class="k">def</span> <span class="nf">tableProducerAnalysis</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span> <span class="n">taskNameInConfig</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">commonTables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">barrelCommonTables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">muonCommonTables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">specificTables</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span> <span class="n">runOverMC</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Table producer function for tableReader/dqEfficiency</span>
+<span class="sd">    This method allows produce extra dilepton tables.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config (dict[str, dict]): Input as JSON config file</span>
+<span class="sd">        taskNameInConfig (str): Taskname in config file (for tableReader and dqEfficiency)</span>
+<span class="sd">        commonTables (list[str]): Common tables which are always be created</span>
+<span class="sd">        barrelCommonTables (list[str]): Barrel tables in reduced DQ data model</span>
+<span class="sd">        muonCommonTables (list[str]): Muon tables in reduced DQ data model</span>
+<span class="sd">        specificTables (list[str]): Specific Tables for specific tasks</span>
+<span class="sd">        specificDeps (dict[str, list]): Specific Dependencies for specific tasks</span>
+<span class="sd">        runOverMC (bool): Checking to run over MC or Data</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: Tables to produce dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">tablesToProduce</span> <span class="o">=</span> <span class="p">{}</span>
+    
+    <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">commonTables</span><span class="p">:</span>
+        <span class="n">tablesToProduce</span><span class="p">[</span><span class="n">table</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    
+    <span class="k">if</span> <span class="n">runOverMC</span><span class="p">:</span>
+        <span class="n">tablesToProduce</span><span class="p">[</span><span class="s2">&quot;ReducedMCEvents&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">tablesToProduce</span><span class="p">[</span><span class="s2">&quot;ReducedMCEventLabels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    
+    <span class="k">for</span> <span class="n">processFunc</span> <span class="ow">in</span> <span class="n">specificTables</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">processFunc</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config</span><span class="p">[</span><span class="n">taskNameInConfig</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="n">taskNameInConfig</span><span class="p">][</span><span class="n">processFunc</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;processFunc ========&quot;</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">processFunc</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;processAll&quot;</span> <span class="ow">in</span> <span class="n">processFunc</span> <span class="ow">or</span> <span class="s2">&quot;processDecayToEE&quot;</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;common barrel tables==========&quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">barrelCommonTables</span><span class="p">:</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span>
+                    <span class="n">tablesToProduce</span><span class="p">[</span><span class="n">table</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">runOverMC</span><span class="p">:</span>
+                    <span class="n">tablesToProduce</span><span class="p">[</span><span class="s2">&quot;ReducedTracksBarrelLabels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="s2">&quot;processAll&quot;</span> <span class="ow">in</span> <span class="n">processFunc</span> <span class="ow">or</span> <span class="s2">&quot;processDecayToMuMu&quot;</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;common muon tables==========&quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">muonCommonTables</span><span class="p">:</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span>
+                    <span class="n">tablesToProduce</span><span class="p">[</span><span class="n">table</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">runOverMC</span><span class="p">:</span>
+                    <span class="n">tablesToProduce</span><span class="p">[</span><span class="s2">&quot;ReducedMuonsLabels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="n">tablesToProduce</span><span class="p">[</span><span class="s2">&quot;DimuonsAll&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">runOverMC</span><span class="p">:</span>
+                <span class="n">tablesToProduce</span><span class="p">[</span><span class="s2">&quot;ReducedMCTracks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;specific tables==========&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">specificTables</span><span class="p">[</span><span class="n">processFunc</span><span class="p">]:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span>
+                <span class="n">tablesToProduce</span><span class="p">[</span><span class="n">table</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">tablesToProduce</span></div>
+
+
+<div class="viewcode-block" id="setProcessDummy"><a class="viewcode-back" href="../../extramodules.html#extramodules.configSetter.setProcessDummy">[docs]</a><span class="k">def</span> <span class="nf">setProcessDummy</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span> <span class="n">dummyHasTasks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Dummy Automizer</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config (dict[str, dict]): json config dict</span>
+<span class="sd">        dummyHasTasks (list[str]): Define dummy task list (get this from SetArgsToArgumentParser class)</span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">processFuncFound</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">():</span> <span class="c1"># loop over number of keys</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span> <span class="c1"># iterate only possible items in dict keys</span>
+            <span class="k">for</span> <span class="n">v</span><span class="p">,</span> <span class="n">v2</span> <span class="ow">in</span> <span class="n">v</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">dummyHasTasks</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">dummyHasTasks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">dummyHasTasks</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">processFuncFound</span> <span class="o">==</span> <span class="n">k</span><span class="p">:</span>
+                            <span class="k">continue</span>
+                        <span class="k">if</span> <span class="n">task</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dummyHasTasks</span><span class="p">:</span>
+                            <span class="k">continue</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">v</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;Dummy&quot;</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;process&quot;</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span><span class="n">task</span> <span class="o">==</span> <span class="n">k</span><span class="p">):</span>
+                            <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">v</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
+                                <span class="n">config</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s2">&quot;processDummy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;false&quot;</span>
+                                <span class="c1">#logging.debug(&quot; - [%s] processDummy : false&quot;, k)</span>
+                                <span class="n">processFuncFound</span> <span class="o">=</span> <span class="n">k</span> <span class="c1"># save the task and not check in iteration</span>
+                                <span class="k">break</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">config</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="s2">&quot;processDummy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;true&quot;</span></div>
+                                <span class="c1">#logging.debug(&quot; - [%s] processDummy : true&quot;, k)</span>
+
+
+<div class="viewcode-block" id="setParallelismOnSkimming"><a class="viewcode-back" href="../../extramodules.html#extramodules.configSetter.setParallelismOnSkimming">[docs]</a><span class="k">def</span> <span class="nf">setParallelismOnSkimming</span><span class="p">(</span><span class="n">commandToRun</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">updatedConfigFileName</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">analysisTaskName</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">analysisTaskTempConfig</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Setter method for activate parallel sesion run in O2</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        commandToRun (str): Command To Run</span>
+<span class="sd">        updatedConfigFileName (str): Skimming task temp JSON config file name</span>
+<span class="sd">        analysisTaskName (str): Command to Run for Analysis Task in O2</span>
+<span class="sd">        analysisTaskTempConfig (dict): Analysis task temp JSON config file name</span>
+<span class="sd">        config (dict): Skimming task JSON config file</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: Command To Run for run analysis and skimming task at same time</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># save skimming task command to run string to another variable (not mandatory but more readable)</span>
+    <span class="n">skimmingTaskFullCommand</span> <span class="o">=</span> <span class="n">commandToRun</span>
+    
+    <span class="c1"># open analysis temp config</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">analysisTaskTempConfig</span><span class="p">)</span> <span class="k">as</span> <span class="n">configAnalysisTask</span><span class="p">:</span>
+        <span class="n">config2</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">configAnalysisTask</span><span class="p">)</span>
+    
+    <span class="c1"># merge configs</span>
+    <span class="n">mergedConfigs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="o">**</span><span class="n">config2</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">config</span>
+        <span class="p">}</span>
+    
+    <span class="c1">#save merged configs (skimming/analysis)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">updatedConfigFileName</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outputFile</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">mergedConfigs</span><span class="p">,</span> <span class="n">outputFile</span><span class="p">,</span> <span class="n">indent</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># analysisjson = &quot;aodWriterAnalysisTempConfig.json&quot;</span>
+    <span class="n">skimmingjson</span> <span class="o">=</span> <span class="s2">&quot;aodWriterSkimmingTempConfig.json&quot;</span>
+    
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">skimmingTaskFullCommand</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="n">analysisTaskName</span><span class="si">}</span><span class="s2"> --configuration json://</span><span class="si">{</span><span class="n">updatedConfigFileName</span><span class="si">}</span><span class="s2"> --aod-writer-json </span><span class="si">{</span><span class="n">skimmingjson</span><span class="si">}</span><span class="s2"> -b&quot;</span></div>
+
+
+<div class="viewcode-block" id="SetArgsToArgumentParser"><a class="viewcode-back" href="../../extramodules.html#extramodules.configSetter.SetArgsToArgumentParser">[docs]</a><span class="k">class</span> <span class="nc">SetArgsToArgumentParser</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot;This class provides parsing the json file and generates CLI arguments from json config file</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cfgJsonName (str): Path to Json config file for creating CLI arguments with parsing</span>
+<span class="sd">        tasksToPassList (list[str]): If you don&#39;t want to include and provide some tasks from the JSON config file to CLI arguments you can define them in a list type</span>
+<span class="sd">        parser (object): For getting args from ArgumentParser</span>
+<span class="sd">        dummyHasTasks (Optional, list[str]): If there are tasks with processDummy in the json, it will save them to the list (for dummy automizer)</span>
+<span class="sd">        processFuncs: (dict[str, list]): Creating task-processFunctions dependency tree for automations</span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cfgJsonName</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tasksToPassList</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">parser</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dummyHasTasks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">processFuncs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="p">{})</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfgJsonName</span> <span class="o">=</span> <span class="n">cfgJsonName</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tasksToPassList</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tasksToPassList</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;Arguments to pass&#39;</span><span class="p">,</span> <span class="n">formatter_class</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentDefaultsHelpFormatter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dummyHasTasks</span> <span class="o">=</span> <span class="n">dummyHasTasks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">processFuncs</span> <span class="o">=</span> <span class="n">processFuncs</span>
+        
+        <span class="c1"># Load the configuration file for creating parser args (hard coded)</span>
+        <span class="n">configForParsing</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cfgJsonName</span><span class="p">)</span> <span class="k">as</span> <span class="n">configFile</span><span class="p">:</span>
+            <span class="n">configForParsing</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">configFile</span><span class="p">)</span>
+        
+        <span class="c1"># Dependency injection</span>
+        <span class="n">dqLibGetter</span> <span class="o">=</span> <span class="n">DQLibGetter</span><span class="p">()</span>
+        
+        <span class="c1"># Get All Configurables for DQ Framework from DQ header files</span>
+        <span class="n">allAnalysisCuts</span> <span class="o">=</span> <span class="n">dqLibGetter</span><span class="o">.</span><span class="n">allAnalysisCuts</span>
+        <span class="n">allMCSignals</span> <span class="o">=</span> <span class="n">dqLibGetter</span><span class="o">.</span><span class="n">allMCSignals</span>
+        <span class="n">allSels</span> <span class="o">=</span> <span class="n">dqLibGetter</span><span class="o">.</span><span class="n">allSels</span>
+        <span class="n">allMixing</span> <span class="o">=</span> <span class="n">dqLibGetter</span><span class="o">.</span><span class="n">allMixing</span>
+        
+        <span class="c1"># Get all histogram groups for DQ Framework from histogram library</span>
+        <span class="c1"># NOTE Now we use only all histos for backward comp.</span>
+        <span class="n">allHistos</span> <span class="o">=</span> <span class="n">dqLibGetter</span><span class="o">.</span><span class="n">allHistos</span>
+        <span class="c1"># allEventHistos = dqLibGetter.allEventHistos</span>
+        <span class="c1"># allTrackHistos = dqLibGetter.allTrackHistos</span>
+        <span class="c1"># allMCTruthHistos = dqLibGetter.allMCTruthHistos</span>
+        <span class="c1"># allPairHistos = dqLibGetter.allPairHistos</span>
+        <span class="c1"># allDileptonHistos = dqLibGetter.allDileptonHistos</span>
+        
+        <span class="c1"># Predefined lists for autocompletion</span>
+        <span class="n">booleanSelections</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;true&quot;</span><span class="p">,</span> <span class="s2">&quot;false&quot;</span><span class="p">]</span>
+        <span class="n">itsMatchingSelections</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;3&quot;</span><span class="p">]</span>
+        <span class="n">binarySelection</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">]</span>
+        <span class="n">tripletSelection</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;-1&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">]</span>
+        <span class="n">collisionSystemSelections</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;PbPb&quot;</span><span class="p">,</span> <span class="s2">&quot;pp&quot;</span><span class="p">,</span> <span class="s2">&quot;pPb&quot;</span><span class="p">,</span> <span class="s2">&quot;Pbp&quot;</span><span class="p">,</span> <span class="s2">&quot;XeXe&quot;</span><span class="p">]</span>
+        <span class="n">eventMuonSelections</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">]</span>
+        <span class="n">debugLevelSelectionsList</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;NOTSET&quot;</span><span class="p">,</span> <span class="s2">&quot;DEBUG&quot;</span><span class="p">,</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="s2">&quot;WARNING&quot;</span><span class="p">,</span> <span class="s2">&quot;ERROR&quot;</span><span class="p">,</span> <span class="s2">&quot;CRITICAL&quot;</span><span class="p">]</span>
+        
+        <span class="c1"># list for save all arguments (template --&gt; taskname:configuration)</span>
+        <span class="n">arglist</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="c1"># Iterating in JSON config file</span>
+        <span class="k">for</span> <span class="n">task</span><span class="p">,</span> <span class="n">cfgValuePair</span> <span class="ow">in</span> <span class="n">configForParsing</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cfgValuePair</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">argument</span> <span class="ow">in</span> <span class="n">cfgValuePair</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">arglist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">task</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="n">argument</span><span class="p">)</span> <span class="c1"># Set CLI argument as --&gt; taskname:config</span>
+        
+        <span class="c1"># We can define hard coded global arguments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;cfgFileName&quot;</span><span class="p">,</span> <span class="n">metavar</span> <span class="o">=</span> <span class="s2">&quot;Config.json&quot;</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="s2">&quot;config.json&quot;</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;config JSON file name (mandatory)&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-runParallel&quot;</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Run parallel in session&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+        
+        <span class="c1"># GLOBAL OPTIONS</span>
+        <span class="n">groupGlobal</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Global workflow options&quot;</span><span class="p">)</span>
+        <span class="n">groupGlobal</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--aod-memory-rate-limit&quot;</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Rate limit AOD processing based on memory&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="n">groupGlobal</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--writer&quot;</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Argument for producing extra reduced tables&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">completer</span> <span class="o">=</span> <span class="n">ChoicesCompleter</span><span class="p">(</span><span class="n">booleanSelections</span><span class="p">)</span>
+        <span class="n">groupGlobal</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--helpO2&quot;</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Display help message on O2&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+        
+        <span class="c1"># Converter Task Options</span>
+        <span class="n">groupO2Converters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Add to workflow O2 Converter task options&quot;</span><span class="p">)</span>
+        <span class="n">groupO2Converters</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--add_mc_conv&quot;</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Add the converter from mcparticle to mcparticle+001 (Adds your workflow o2-analysis-mc-converter task)&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store_true&quot;</span><span class="p">,)</span>
+        <span class="n">groupO2Converters</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--add_fdd_conv&quot;</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Add the fdd converter (Adds your workflow o2-analysis-fdd-converter task)&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store_true&quot;</span><span class="p">,)</span>
+        <span class="n">groupO2Converters</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--add_track_prop&quot;</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Add track propagation to the innermost layer (TPC or ITS) (Adds your workflow o2-analysis-track-propagation task)&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store_true&quot;</span><span class="p">,)</span>
+        <span class="n">groupO2Converters</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--add_weakdecay_ind&quot;</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Add Converts V0 and cascade version 000 to 001 (Adds your workflow o2-analysis-weak-decay-indices task)&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store_true&quot;</span><span class="p">,)</span>
+        <span class="n">groupO2Converters</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--add_col_conv&quot;</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Add the converter from collision to collision+001&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store_true&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># Helper Options</span>
+        <span class="n">groupHelper</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Helper Options&quot;</span><span class="p">)</span>
+        <span class="n">groupHelper</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--debug&quot;</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;execute with debug options&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">upper</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="s2">&quot;INFO&quot;</span><span class="p">,</span> <span class="n">choices</span> <span class="o">=</span> <span class="n">debugLevelSelectionsList</span><span class="p">,)</span><span class="o">.</span><span class="n">completer</span> <span class="o">=</span> <span class="n">ChoicesCompleterList</span><span class="p">(</span><span class="n">debugLevelSelectionsList</span><span class="p">)</span>
+        <span class="n">groupHelper</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--logFile&quot;</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;Enable logger for both file and CLI&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store_true&quot;</span><span class="p">)</span>
+        <span class="n">groupHelper</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--override&quot;</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;If true JSON Overrider Interface If false JSON Additional Interface&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span> <span class="n">choices</span> <span class="o">=</span> <span class="n">booleanSelections</span><span class="p">,)</span><span class="o">.</span><span class="n">completer</span> <span class="o">=</span> <span class="n">ChoicesCompleter</span><span class="p">(</span><span class="n">booleanSelections</span><span class="p">)</span>
+        
+        <span class="c1"># Create argument group for iterating json options</span>
+        <span class="n">groupJsonParser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;JSON configuration options&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># save args to parser(template --&gt; --taskname:config)</span>
+        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">arglist</span><span class="p">:</span>
+            <span class="c1"># seperate the template to list --&gt; taskname:config to [taskname, configurable]</span>
+            <span class="n">seperatedArg</span> <span class="o">=</span> <span class="n">stringToList</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="s2">&quot;:&quot;</span><span class="p">)</span>
+            <span class="n">configurable</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">seperatedArg</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># configurable as second index</span>
+            <span class="n">taskname</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">seperatedArg</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># taskname as first index</span>
+            <span class="k">if</span> <span class="s2">&quot;process&quot;</span> <span class="ow">in</span> <span class="n">configurable</span> <span class="ow">and</span> <span class="s2">&quot;Dummy&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">configurable</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">processFuncs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">taskname</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">configurable</span><span class="p">)</span>
+            
+            <span class="c1"># Tasks to pass</span>
+            <span class="k">if</span> <span class="n">taskname</span> <span class="ow">in</span> <span class="n">tasksToPassList</span><span class="p">:</span>
+                <span class="k">continue</span>
+            
+            <span class="c1"># Get has processDummy tasks from json</span>
+            <span class="k">if</span> <span class="n">configurable</span> <span class="o">==</span> <span class="s2">&quot;processDummy&quot;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dummyHasTasks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">taskname</span><span class="p">)</span>
+            
+            <span class="c1"># We may define posible all autocompletions as semi hard-coded with substring search (according to naming conventions)</span>
+            <span class="c1"># Define some autocompletion rules for match-case (for O2-DQ Framework)</span>
+            <span class="n">containsCuts</span> <span class="o">=</span> <span class="s2">&quot;Cuts&quot;</span> <span class="ow">in</span> <span class="n">configurable</span>
+            <span class="n">containsSignals</span> <span class="o">=</span> <span class="n">configurable</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;Signals&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">configurable</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;signals&quot;</span><span class="p">)</span>
+            <span class="n">containsHistogram</span> <span class="o">=</span> <span class="s2">&quot;Histogram&quot;</span> <span class="ow">in</span> <span class="n">configurable</span>
+            <span class="n">containsSels</span> <span class="o">=</span> <span class="n">configurable</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;BarrelSels&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">configurable</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;MuonSels&quot;</span><span class="p">)</span>
+            <span class="n">containsMixingVars</span> <span class="o">=</span> <span class="s2">&quot;MixingVars&quot;</span> <span class="ow">in</span> <span class="n">configurable</span>
+            <span class="n">containsQA</span> <span class="o">=</span> <span class="n">configurable</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;cfg&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;QA&quot;</span> <span class="ow">in</span> <span class="n">configurable</span>
+            <span class="n">containsAmbiguous</span> <span class="o">=</span> <span class="n">configurable</span> <span class="o">==</span> <span class="s2">&quot;cfgIsAmbiguous&quot;</span>
+            <span class="n">containsFillCandidateTable</span> <span class="o">=</span> <span class="n">configurable</span> <span class="o">==</span> <span class="s2">&quot;cfgFillCandidateTable&quot;</span>
+            <span class="n">containsFlatTables</span> <span class="o">=</span> <span class="n">configurable</span> <span class="o">==</span> <span class="s2">&quot;cfgFlatTables&quot;</span>
+            <span class="n">containsTPCpostCalib</span> <span class="o">=</span> <span class="n">configurable</span> <span class="o">==</span> <span class="s2">&quot;cfgTPCpostCalib&quot;</span>
+            <span class="n">containsProcess</span> <span class="o">=</span> <span class="n">configurable</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;process&quot;</span><span class="p">)</span>
+            
+            <span class="c1"># Create arguments with possible autocompletions for DQ Framework</span>
+            <span class="k">if</span> <span class="n">containsCuts</span><span class="p">:</span>
+                <span class="n">groupJsonParser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--&quot;</span> <span class="o">+</span> <span class="n">arg</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span> <span class="n">nargs</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\b</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">completer</span> <span class="o">=</span> <span class="n">ChoicesCompleterList</span><span class="p">(</span><span class="n">allAnalysisCuts</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">containsSignals</span><span class="p">:</span>
+                <span class="n">groupJsonParser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--&quot;</span> <span class="o">+</span> <span class="n">arg</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span> <span class="n">nargs</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\b</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">completer</span> <span class="o">=</span> <span class="n">ChoicesCompleterList</span><span class="p">(</span><span class="n">allMCSignals</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">containsHistogram</span><span class="p">:</span>
+                <span class="n">groupJsonParser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--&quot;</span> <span class="o">+</span> <span class="n">arg</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span> <span class="n">nargs</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\b</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">completer</span> <span class="o">=</span> <span class="n">ChoicesCompleterList</span><span class="p">(</span><span class="n">allHistos</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">containsSels</span><span class="p">:</span>
+                <span class="n">groupJsonParser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--&quot;</span> <span class="o">+</span> <span class="n">arg</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span> <span class="n">nargs</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\b</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">completer</span> <span class="o">=</span> <span class="n">ChoicesCompleterList</span><span class="p">(</span><span class="n">allSels</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">containsMixingVars</span><span class="p">:</span>
+                <span class="n">groupJsonParser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--&quot;</span> <span class="o">+</span> <span class="n">arg</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span> <span class="n">nargs</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\b</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">completer</span> <span class="o">=</span> <span class="n">ChoicesCompleterList</span><span class="p">(</span><span class="n">allMixing</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">containsQA</span><span class="p">:</span>
+                <span class="n">groupJsonParser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--&quot;</span> <span class="o">+</span> <span class="n">arg</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span> <span class="n">metavar</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\b</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">completer</span> <span class="o">=</span> <span class="n">ChoicesCompleter</span><span class="p">(</span><span class="n">booleanSelections</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">containsAmbiguous</span><span class="p">:</span>
+                <span class="n">groupJsonParser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--&quot;</span> <span class="o">+</span> <span class="n">arg</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span> <span class="n">metavar</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\b</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">completer</span> <span class="o">=</span> <span class="n">ChoicesCompleter</span><span class="p">(</span><span class="n">booleanSelections</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">containsFillCandidateTable</span><span class="p">:</span>
+                <span class="n">groupJsonParser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--&quot;</span> <span class="o">+</span> <span class="n">arg</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span> <span class="n">metavar</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\b</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">completer</span> <span class="o">=</span> <span class="n">ChoicesCompleter</span><span class="p">(</span><span class="n">booleanSelections</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">containsFlatTables</span><span class="p">:</span>
+                <span class="n">groupJsonParser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--&quot;</span> <span class="o">+</span> <span class="n">arg</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span> <span class="n">metavar</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\b</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">completer</span> <span class="o">=</span> <span class="n">ChoicesCompleter</span><span class="p">(</span><span class="n">booleanSelections</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">containsTPCpostCalib</span><span class="p">:</span>
+                <span class="n">groupJsonParser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--&quot;</span> <span class="o">+</span> <span class="n">arg</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span> <span class="n">metavar</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\b</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">completer</span> <span class="o">=</span> <span class="n">ChoicesCompleter</span><span class="p">(</span><span class="n">booleanSelections</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">configurable</span> <span class="o">==</span> <span class="s2">&quot;processDummy&quot;</span><span class="p">:</span> <span class="c1"># NOTE we don&#39;t need configure processDummy since we have dummy automizer</span>
+                <span class="k">continue</span>
+            
+            <span class="c1"># Create arguments with possible autocompletions for Common Framework</span>
+            <span class="k">elif</span> <span class="n">containsProcess</span><span class="p">:</span> <span class="c1"># NOTE This is an global definition in O2 Analysis framework, all process functions startswith &quot;process&quot;</span>
+                <span class="n">groupJsonParser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--&quot;</span> <span class="o">+</span> <span class="n">arg</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span> <span class="n">metavar</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\b</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">completer</span> <span class="o">=</span> <span class="n">ChoicesCompleter</span><span class="p">(</span><span class="n">booleanSelections</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">configurable</span> <span class="o">==</span> <span class="s2">&quot;syst&quot;</span><span class="p">:</span>
+                <span class="n">groupJsonParser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--&quot;</span> <span class="o">+</span> <span class="n">arg</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\b</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">completer</span> <span class="o">=</span> <span class="n">ChoicesCompleter</span><span class="p">(</span><span class="n">collisionSystemSelections</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">configurable</span> <span class="o">==</span> <span class="s2">&quot;doVertexZeq&quot;</span><span class="p">:</span>
+                <span class="n">groupJsonParser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--&quot;</span> <span class="o">+</span> <span class="n">arg</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\b</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">completer</span> <span class="o">=</span> <span class="n">ChoicesCompleter</span><span class="p">(</span><span class="n">binarySelection</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">configurable</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;pid-&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">configurable</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;est&quot;</span><span class="p">):</span>
+                <span class="n">groupJsonParser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--&quot;</span> <span class="o">+</span> <span class="n">arg</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span> <span class="n">nargs</span> <span class="o">=</span> <span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\b</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">completer</span> <span class="o">=</span> <span class="n">ChoicesCompleterList</span><span class="p">(</span><span class="n">tripletSelection</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">configurable</span> <span class="o">==</span> <span class="s2">&quot;muonSelection&quot;</span><span class="p">:</span>
+                <span class="n">groupJsonParser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--&quot;</span> <span class="o">+</span> <span class="n">arg</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\b</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">completer</span> <span class="o">=</span> <span class="n">ChoicesCompleter</span><span class="p">(</span><span class="n">eventMuonSelections</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">configurable</span> <span class="o">==</span> <span class="s2">&quot;itsMatching&quot;</span><span class="p">:</span>
+                <span class="n">groupJsonParser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--&quot;</span> <span class="o">+</span> <span class="n">arg</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\b</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">completer</span> <span class="o">=</span> <span class="n">ChoicesCompleter</span><span class="p">(</span><span class="n">itsMatchingSelections</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">configurable</span> <span class="o">==</span> <span class="s2">&quot;compatibilityIU&quot;</span><span class="p">:</span>
+                <span class="n">groupJsonParser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--&quot;</span> <span class="o">+</span> <span class="n">arg</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span> <span class="n">metavar</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\b</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">completer</span> <span class="o">=</span> <span class="n">ChoicesCompleter</span><span class="p">(</span><span class="n">booleanSelections</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">groupJsonParser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--&quot;</span> <span class="o">+</span> <span class="n">arg</span><span class="p">,</span> <span class="n">help</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;store&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">,</span> <span class="n">metavar</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\b</span><span class="s2">&quot;</span><span class="p">)</span> <span class="c1"># Create other arguments without autocompletion</span>
+    
+<div class="viewcode-block" id="SetArgsToArgumentParser.parseArgs"><a class="viewcode-back" href="../../extramodules.html#extramodules.configSetter.SetArgsToArgumentParser.parseArgs">[docs]</a>    <span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">testString</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function allows to save the obtained arguments to the parser_args() function</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Namespace as argument, parameter: returns parse_args() with autocomplete generated arguments and parameters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">argcomplete</span><span class="o">.</span><span class="n">autocomplete</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="p">,</span> <span class="n">always_complete_options</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="setConfigs"><a class="viewcode-back" href="../../extramodules.html#extramodules.configSetter.setConfigs">[docs]</a><span class="k">def</span> <span class="nf">setConfigs</span><span class="p">(</span><span class="n">allArgs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span> <span class="n">cliMode</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Setter function for CLI arguments to JSON config file</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        allArgs (dict): All provided arguments from CLI</span>
+<span class="sd">        config (dict[str, dict]): Input as JSON config file</span>
+<span class="sd">        cliMode (str): CLI mode selection (true or false in string type)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">argument</span><span class="p">,</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="n">allArgs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">parameter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># NOTE We can&#39;t iterate in None types</span>
+            <span class="k">if</span> <span class="s2">&quot;:&quot;</span> <span class="ow">in</span> <span class="n">argument</span><span class="p">:</span> <span class="c1"># protection, we need seperate only core O2 interface args</span>
+                
+                <span class="c1"># Seperating for taskname and configurable</span>
+                <span class="n">tasknameConfigurablePair</span> <span class="o">=</span> <span class="n">stringToList</span><span class="p">(</span><span class="n">argument</span><span class="p">,</span> <span class="s2">&quot;:&quot;</span><span class="p">)</span> <span class="c1"># taskname:Configurable --&gt; [taskname, configurable]</span>
+                <span class="n">taskname</span> <span class="o">=</span> <span class="n">tasknameConfigurablePair</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># get taskname as first index</span>
+                <span class="n">configurable</span> <span class="o">=</span> <span class="n">tasknameConfigurablePair</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># get configurable as second index</span>
+                <span class="n">taskname</span> <span class="o">=</span> <span class="p">[</span><span class="n">char</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">taskname</span><span class="p">]</span> <span class="c1"># replace _ to - (list comprehension)</span>
+                <span class="n">taskname</span> <span class="o">=</span> <span class="n">convertListToStr</span><span class="p">(</span><span class="n">taskname</span><span class="p">)</span> <span class="c1"># convert list to string after list comprehension</span>
+                <span class="n">configurable</span> <span class="o">=</span> <span class="p">[</span><span class="n">char</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">configurable</span><span class="p">]</span> <span class="c1"># replace _ to - (list comprehension)</span>
+                <span class="n">configurable</span> <span class="o">=</span> <span class="n">convertListToStr</span><span class="p">(</span><span class="n">configurable</span><span class="p">)</span> <span class="c1"># convert list to string after list comprehension</span>
+                
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span> <span class="c1"># for list to comma seperated strings</span>
+                    <span class="n">parameter</span> <span class="o">=</span> <span class="n">listToString</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">cliMode</span> <span class="o">==</span> <span class="s2">&quot;false&quot;</span><span class="p">:</span>
+                    <span class="n">actualConfig</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="n">taskname</span><span class="p">][</span><span class="n">configurable</span><span class="p">]</span>
+                    <span class="n">parameter</span> <span class="o">=</span> <span class="n">actualConfig</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span> <span class="o">+</span> <span class="n">parameter</span>
+                <span class="n">config</span><span class="p">[</span><span class="n">taskname</span><span class="p">][</span><span class="n">configurable</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameter</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot; - [</span><span class="si">%s</span><span class="s2">] </span><span class="si">%s</span><span class="s2"> : </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">taskname</span><span class="p">,</span> <span class="n">configurable</span><span class="p">,</span> <span class="n">parameter</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="setSwitch"><a class="viewcode-back" href="../../extramodules.html#extramodules.configSetter.setSwitch">[docs]</a><span class="k">def</span> <span class="nf">setSwitch</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span> <span class="n">processFuncs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span> <span class="n">allArgs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">cliMode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">processFuncToPass</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;This method providees Process function automation for overrider mode</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        config (dict): Input as json config file</span>
+<span class="sd">        processFuncs (dict): All process function deps list (taskname - process Functions)</span>
+<span class="sd">        allArgs (dict): All provided args from CLI</span>
+<span class="sd">        cliMode (str): cliMode as argument</span>
+<span class="sd">        processFuncToPass (list[str], optional): List to pass configuration on mandatory arguments. Defaults to [].</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">processDepsDict</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1"># save all true configured task - process function pairs to dict --&gt; typeof dict[str, list]</span>
+    
+    <span class="k">if</span> <span class="n">cliMode</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">taskProcessPair</span><span class="p">,</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="n">allArgs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s2">&quot;process&quot;</span> <span class="ow">in</span> <span class="n">taskProcessPair</span> <span class="ow">and</span> <span class="p">(</span><span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span> <span class="ow">or</span> <span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;false&quot;</span> <span class="ow">or</span> <span class="n">parameter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="n">taskProcessPairNew</span> <span class="o">=</span> <span class="p">[</span><span class="n">char</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">taskProcessPair</span><span class="p">]</span> <span class="c1"># replace _ to - (list comprehension)</span>
+                <span class="n">taskProcessPairNew</span> <span class="o">=</span> <span class="n">convertListToStr</span><span class="p">(</span><span class="n">taskProcessPairNew</span><span class="p">)</span> <span class="c1"># convert list to string after list comprehension</span>
+                <span class="n">seperatedTaskProcessPair</span> <span class="o">=</span> <span class="n">stringToList</span><span class="p">(</span><span class="n">taskProcessPairNew</span><span class="p">,</span> <span class="s2">&quot;:&quot;</span><span class="p">)</span> <span class="c1"># seperate as taskname process function</span>
+                <span class="n">taskName</span> <span class="o">=</span> <span class="n">seperatedTaskProcessPair</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># taskname in args</span>
+                <span class="n">processFunc</span> <span class="o">=</span> <span class="n">seperatedTaskProcessPair</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># processFunc in args</span>
+                <span class="k">if</span> <span class="n">taskName</span> <span class="ow">in</span> <span class="n">processFuncs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="n">processFunc</span> <span class="ow">in</span> <span class="n">processFuncs</span><span class="p">[</span><span class="n">taskName</span><span class="p">]</span> <span class="ow">and</span> <span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
+                    <span class="n">processDepsDict</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">taskName</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">processFunc</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">processDepsDict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Process function automation for JSON overrider mode starting..&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">taskProcessPair</span><span class="p">,</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="n">allArgs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="s2">&quot;process&quot;</span> <span class="ow">in</span> <span class="n">taskProcessPair</span> <span class="ow">and</span> <span class="p">(</span><span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span> <span class="ow">or</span> <span class="n">parameter</span> <span class="o">==</span> <span class="s2">&quot;false&quot;</span> <span class="ow">or</span> <span class="n">parameter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+                    <span class="n">taskProcessPairNew</span> <span class="o">=</span> <span class="p">[</span><span class="n">char</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">taskProcessPair</span><span class="p">]</span> <span class="c1"># replace _ to - (list comprehension)</span>
+                    <span class="n">taskProcessPairNew</span> <span class="o">=</span> <span class="n">convertListToStr</span><span class="p">(</span><span class="n">taskProcessPairNew</span><span class="p">)</span> <span class="c1"># convert list to string after list comprehension</span>
+                    <span class="n">seperatedTaskProcessPair</span> <span class="o">=</span> <span class="n">stringToList</span><span class="p">(</span><span class="n">taskProcessPairNew</span><span class="p">,</span> <span class="s2">&quot;:&quot;</span><span class="p">)</span> <span class="c1"># seperate as taskname process function</span>
+                    <span class="n">taskName</span> <span class="o">=</span> <span class="n">seperatedTaskProcessPair</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># taskname in args</span>
+                    <span class="n">processFunc</span> <span class="o">=</span> <span class="n">seperatedTaskProcessPair</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># processFunc in args</span>
+                    <span class="k">if</span> <span class="n">taskName</span> <span class="ow">in</span> <span class="n">processDepsDict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">and</span> <span class="n">parameter</span> <span class="o">!=</span> <span class="s2">&quot;true&quot;</span> <span class="ow">and</span> <span class="n">processFunc</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">processFuncToPass</span> <span class="ow">and</span> <span class="s2">&quot;Dummy&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">processFunc</span><span class="p">:</span> <span class="c1"># TODO fix duplicated messages for false</span>
+                        <span class="n">config</span><span class="p">[</span><span class="n">taskName</span><span class="p">][</span><span class="n">processFunc</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;false&quot;</span>
+                        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot; - [</span><span class="si">%s</span><span class="s2">] </span><span class="si">%s</span><span class="s2"> : </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">taskName</span><span class="p">,</span> <span class="n">processFunc</span><span class="p">,</span> <span class="s2">&quot;false&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="commonDepsToRun"><a class="viewcode-back" href="../../extramodules.html#extramodules.configSetter.commonDepsToRun">[docs]</a><span class="k">def</span> <span class="nf">commonDepsToRun</span><span class="p">(</span><span class="n">commonDeps</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Produces common deps to run dict</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        commonDeps (list[str]): common deps to run list</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: common deps to run dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">depsToRun</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">commonDeps</span><span class="p">:</span>
+        <span class="n">depsToRun</span><span class="p">[</span><span class="n">dep</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">depsToRun</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Ionut Cristian Arsene, Cevat Batuhan Tolon.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

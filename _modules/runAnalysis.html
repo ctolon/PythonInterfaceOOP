@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>runAnalysis &mdash; O2-DQ Framework Python Based User Interface 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> O2-DQ Framework Python Based User Interface
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">O2-DQ Framework Python Based User Interface</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">runAnalysis</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for runAnalysis</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python3</span>
+<span class="c1"># PYTHON_ARGCOMPLETE_OK</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1"># Copyright 2019-2020 CERN and copyright holders of ALICE O2.</span>
+<span class="c1"># See https://alice-o2.web.cern.ch/copyright for details of the copyright holders.</span>
+<span class="c1"># All rights not expressly granted are reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># This software is distributed under the terms of the GNU General Public</span>
+<span class="c1"># License v3 (GPL Version 3), copied verbatim in the file &quot;COPYING&quot;.</span>
+<span class="c1">#</span>
+<span class="c1"># In applying this license CERN does not waive the privileges and immunities</span>
+<span class="c1"># granted to it by virtue of its status as an Intergovernmental Organization</span>
+<span class="c1"># or submit itself to any jurisdiction.</span>
+
+<span class="c1"># \Author: ionut.cristian.arsene@cern.ch</span>
+<span class="c1"># \Interface:  cevat.batuhan.tolon@cern.ch</span>
+
+<span class="c1"># Orginal Task for Data: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/tableReader.cxx</span>
+<span class="c1"># Orginal Task for MC: https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Tasks/dqEfficiency.cxx</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">logging.config</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">extramodules.dqTranscations</span> <span class="kn">import</span> <span class="n">depsChecker</span><span class="p">,</span> <span class="n">mandatoryArgChecker</span><span class="p">,</span> <span class="n">aodFileChecker</span><span class="p">,</span> <span class="n">jsonTypeChecker</span><span class="p">,</span> <span class="n">mainTaskChecker</span>
+<span class="kn">from</span> <span class="nn">extramodules.configSetter</span> <span class="kn">import</span> <span class="n">SetArgsToArgumentParser</span><span class="p">,</span> <span class="n">dispInterfaceMode</span><span class="p">,</span> <span class="n">dispO2HelpMessage</span><span class="p">,</span> <span class="n">generateDescriptors</span><span class="p">,</span> <span class="n">setConfigs</span><span class="p">,</span> <span class="n">setProcessDummy</span><span class="p">,</span> <span class="n">debugSettings</span><span class="p">,</span> <span class="n">dispArgs</span><span class="p">,</span> <span class="n">setSwitch</span><span class="p">,</span> <span class="n">tableProducerAnalysis</span>
+<span class="kn">from</span> <span class="nn">extramodules.pycacheRemover</span> <span class="kn">import</span> <span class="n">runPycacheRemover</span>
+<span class="kn">from</span> <span class="nn">extramodules.utils</span> <span class="kn">import</span> <span class="n">dumpJson</span><span class="p">,</span> <span class="n">loadJson</span>
+
+<span class="c1"># run template: `python3 runAnalysis.py &lt;config.json&gt; --task-name:&lt;configurable|processFunc&gt; parameter ...`</span>
+<span class="c1"># parameter can be multiple like this:</span>
+<span class="c1"># --analysis-track-selection:cfgTrackCuts jpsiPID1 jpsiPID2</span>
+<span class="c1"># For run over MC (run dqEfficiency instead of tableReader) You need to Set runOverMC variable to true, if you don&#39;t convert it will work for interface tableReader</span>
+
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../runAnalysis.html#runAnalysis.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    
+    <span class="c1"># Switch runOverMC to True if you want work on dqEfficiency for MC else it will run for tableReader for Data</span>
+    <span class="n">runOverMC</span> <span class="o">=</span> <span class="kc">False</span>
+    
+    <span class="c1"># Simple protection</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">runOverMC</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;[FATAL] runOverMC have to True or False! (in bool type)&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># Load json config file for create interface arguments as MC or Data</span>
+    <span class="n">parsedJsonFile</span> <span class="o">=</span> <span class="s2">&quot;configs/configAnalysisData.json&quot;</span>
+    <span class="k">if</span> <span class="n">runOverMC</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">parsedJsonFile</span> <span class="o">=</span> <span class="s2">&quot;configs/configAnalysisMC.json&quot;</span>
+    
+    <span class="c1"># Setting arguments for CLI</span>
+    <span class="n">setArgsToArgumentParser</span> <span class="o">=</span> <span class="n">SetArgsToArgumentParser</span><span class="p">(</span><span class="n">parsedJsonFile</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;timestamp-task&quot;</span><span class="p">,</span> <span class="s2">&quot;tof-event-time&quot;</span><span class="p">,</span> <span class="s2">&quot;bc-selection-task&quot;</span><span class="p">,</span> <span class="s2">&quot;tof-pid-beta&quot;</span><span class="p">])</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">setArgsToArgumentParser</span><span class="o">.</span><span class="n">parseArgs</span><span class="p">()</span>
+    <span class="n">dummyHasTasks</span> <span class="o">=</span> <span class="n">setArgsToArgumentParser</span><span class="o">.</span><span class="n">dummyHasTasks</span>
+    <span class="n">processFuncs</span> <span class="o">=</span> <span class="n">setArgsToArgumentParser</span><span class="o">.</span><span class="n">processFuncs</span>
+    <span class="n">allArgs</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="c1"># for get args</span>
+    
+    <span class="c1"># yapf: disable</span>
+    <span class="n">sameEventPairingTaskName</span> <span class="o">=</span> <span class="s2">&quot;analysis-same-event-pairing&quot;</span>
+    <span class="n">sameEventPairingDeps</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;processDecayToEESkimmed&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;analysis-track-selection&quot;</span><span class="p">:</span> <span class="s2">&quot;processSkimmed&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;processDecayToEEPrefilterSkimmed&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;analysis-track-selection&quot;</span><span class="p">:</span> <span class="s2">&quot;processSkimmed&quot;</span><span class="p">,</span> <span class="s2">&quot;analysis-prefilter-selection&quot;</span><span class="p">:</span> <span class="s2">&quot;processBarrelSkimmed&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;processDecayToMuMuSkimmed&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;analysis-muon-selection&quot;</span><span class="p">:</span> <span class="s2">&quot;processSkimmed&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;processDecayToMuMuVertexingSkimmed&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;analysis-muon-selection&quot;</span><span class="p">:</span> <span class="s2">&quot;processSkimmed&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;processVnDecayToEESkimmed&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;analysis-track-selection&quot;</span><span class="p">:</span> <span class="s2">&quot;processSkimmed&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;processVnDecayToMuMuSkimmed&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;analysis-muon-selection&quot;</span><span class="p">:</span> <span class="s2">&quot;processSkimmed&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;processElectronMuonSkimmed&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;analysis-track-selection&quot;</span><span class="p">:</span> <span class="s2">&quot;processSkimmed&quot;</span><span class="p">,</span> <span class="s2">&quot;analysis-muon-selection&quot;</span><span class="p">:</span> <span class="s2">&quot;processSkimmed&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;processAllSkimmed&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;analysis-track-selection&quot;</span><span class="p">:</span> <span class="s2">&quot;processSkimmed&quot;</span><span class="p">,</span> <span class="s2">&quot;analysis-muon-selection&quot;</span><span class="p">:</span> <span class="s2">&quot;processSkimmed&quot;</span><span class="p">},</span>
+        <span class="p">}</span>
+    <span class="n">eventMixingTaskName</span> <span class="o">=</span> <span class="s2">&quot;analysis-event-mixing&quot;</span>
+    <span class="n">eventMixingDeps</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;processBarrelSkimmed&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;analysis-track-selection&quot;</span><span class="p">:</span> <span class="s2">&quot;processSkimmed&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;processMuonSkimmed&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;analysis-muon-selection&quot;</span><span class="p">:</span> <span class="s2">&quot;processSkimmed&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;processBarrelMuonSkimmed&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;analysis-track-selection&quot;</span><span class="p">:</span> <span class="s2">&quot;processSkimmed&quot;</span><span class="p">,</span> <span class="s2">&quot;analysis-muon-selection&quot;</span><span class="p">:</span> <span class="s2">&quot;processSkimmed&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;processBarrelVnSkimmed&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;analysis-track-selection&quot;</span><span class="p">:</span> <span class="s2">&quot;processSkimmed&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;processMuonVnSkimmed&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;analysis-muon-selection&quot;</span><span class="p">:</span> <span class="s2">&quot;processSkimmed&quot;</span><span class="p">}</span>
+        <span class="p">}</span>
+    <span class="n">dileptonTrackTaskName</span> <span class="o">=</span> <span class="s2">&quot;analysis-dilepton-track&quot;</span>
+    <span class="n">dileptonTrackDeps</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;processDimuonMuonSkimmed&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;analysis-muon-selection&quot;</span><span class="p">:</span> <span class="s2">&quot;processSkimmed&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;processDielectronKaonSkimmed&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;analysis-track-selection&quot;</span><span class="p">:</span> <span class="s2">&quot;processSkimmed&quot;</span><span class="p">}</span>
+        <span class="p">}</span>
+    <span class="c1"># yapf: disable</span>
+    <span class="c1"># Definition of all the tables we may write</span>
+    <span class="n">tables</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;ReducedEvents&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="s2">&quot;AOD/REDUCEDEVENT/0&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;ReducedEventsExtended&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="s2">&quot;AOD/REEXTENDED/0&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;ReducedEventsVtxCov&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="s2">&quot;AOD/REVTXCOV/0&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;ReducedEventsQvector&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="s2">&quot;AOD/REQVECTOR/0&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;ReducedMCEventLabels&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="s2">&quot;AOD/REMCCOLLBL/0&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;ReducedMCEvents&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="s2">&quot;AOD/REDUCEDMCEVENT/0&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;ReducedTracks&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="s2">&quot;AOD/REDUCEDTRACK/0&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;ReducedTracksBarrel&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="s2">&quot;AOD/RTBARREL/0&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;ReducedTracksBarrelCov&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="s2">&quot;AOD/RTBARRELCOV/0&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;ReducedTracksBarrelPID&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="s2">&quot;AOD/RTBARRELPID/0&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;ReducedTracksBarrelLabels&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="s2">&quot;AOD/RTBARRELLABELS/0&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;ReducedMCTracks&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="s2">&quot;AOD/REDUCEDMCTRACK/0&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;ReducedMuons&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="s2">&quot;AOD/RTMUON/0&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;ReducedMuonsExtra&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="s2">&quot;AOD/RTMUONEXTRA/0&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;ReducedMuonsCov&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="s2">&quot;AOD/RTMUONCOV/0&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;ReducedMuonsLabels&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="s2">&quot;AOD/RTMUONSLABELS/0&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;Dileptons&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="s2">&quot;AOD/RTDILEPTON/0&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;DileptonsExtra&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="s2">&quot;AOD/RTDILEPTONEXTRA/0&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;DileptonFlow&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="s2">&quot;AOD/RTDILEPTONFLOW/0&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;DimuonsAll&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;table&quot;</span><span class="p">:</span> <span class="s2">&quot;AOD/RTDIMUONALL/0&quot;</span><span class="p">}</span>
+        <span class="p">}</span>
+    <span class="c1"># yapf: enable</span>
+    <span class="c1"># Tables to be written, per process function</span>
+    <span class="n">commonTables</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ReducedEvents&quot;</span><span class="p">,</span> <span class="s2">&quot;ReducedEventsExtended&quot;</span><span class="p">,</span> <span class="s2">&quot;ReducedEventsVtxCov&quot;</span><span class="p">,</span> <span class="s2">&quot;Dileptons&quot;</span><span class="p">,</span> <span class="s2">&quot;DileptonsExtra&quot;</span><span class="p">]</span>
+    <span class="n">barrelCommonTables</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ReducedTracks&quot;</span><span class="p">,</span> <span class="s2">&quot;ReducedTracksBarrel&quot;</span><span class="p">,</span> <span class="s2">&quot;ReducedTracksBarrelPID&quot;</span><span class="p">]</span>
+    <span class="n">muonCommonTables</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ReducedMuons&quot;</span><span class="p">,</span> <span class="s2">&quot;ReducedMuonsExtra&quot;</span><span class="p">]</span>
+    <span class="n">specificTables</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;processAllSkimmed&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;processDecayToEESkimmed&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;processDecayToEEVertexingSkimmed&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;ReducedTracksBarrelCov&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;processDecayToEEPrefilterSkimmed&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;processDecayToMuMuSkimmed&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="s2">&quot;processDecayToMuMuVertexingSkimmed&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;ReducedMuonsCov&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;processVnDecayToEEskimmed&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;ReducedEventsQvector&quot;</span><span class="p">,</span> <span class="s2">&quot;DileptonFlow&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;processVnDecayToMuMuSkimmed&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;ReducedEventsQvector&quot;</span><span class="p">,</span> <span class="s2">&quot;DileptonFlow&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;processElectronMuonSkimmed&quot;</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="p">}</span>
+    
+    <span class="c1"># Debug settings</span>
+    <span class="n">fileName</span> <span class="o">=</span> <span class="s2">&quot;tableReader.log&quot;</span>
+    <span class="k">if</span> <span class="n">runOverMC</span><span class="p">:</span>
+        <span class="n">fileName</span> <span class="o">=</span> <span class="s2">&quot;dqEfficiency.log&quot;</span>
+    <span class="n">debugSettings</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">debug</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">logFile</span><span class="p">,</span> <span class="n">fileName</span><span class="p">)</span>
+    
+    <span class="c1"># if cliMode true, Overrider mode else additional mode</span>
+    <span class="n">cliMode</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">override</span>
+    
+    <span class="c1"># Basic validations</span>
+    <span class="n">jsonTypeChecker</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">cfgFileName</span><span class="p">)</span>
+    <span class="n">jsonTypeChecker</span><span class="p">(</span><span class="n">parsedJsonFile</span><span class="p">)</span>
+    
+    <span class="c1"># Load the configuration file provided as the first parameter</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">loadJson</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">cfgFileName</span><span class="p">)</span>
+    
+    <span class="n">taskNameInCommandLine</span> <span class="o">=</span> <span class="s2">&quot;o2-analysis-dq-table-reader&quot;</span>
+    <span class="n">taskNameInConfig</span> <span class="o">=</span> <span class="s2">&quot;analysis-event-selection&quot;</span>
+    <span class="k">if</span> <span class="n">runOverMC</span><span class="p">:</span>
+        <span class="n">taskNameInCommandLine</span> <span class="o">=</span> <span class="s2">&quot;o2-analysis-dq-efficiency&quot;</span>
+    
+    <span class="c1"># Transaction</span>
+    <span class="n">mainTaskChecker</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">taskNameInConfig</span><span class="p">)</span>
+    
+    <span class="c1"># Interface Mode message</span>
+    <span class="n">dispInterfaceMode</span><span class="p">(</span><span class="n">cliMode</span><span class="p">)</span>
+    
+    <span class="c1"># Set arguments to config json file</span>
+    <span class="n">setConfigs</span><span class="p">(</span><span class="n">allArgs</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">cliMode</span><span class="p">)</span>
+    
+    <span class="c1"># process function automation based on cliMode</span>
+    <span class="n">setSwitch</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">processFuncs</span><span class="p">,</span> <span class="n">allArgs</span><span class="p">,</span> <span class="n">cliMode</span><span class="p">,</span> <span class="p">[])</span>
+    
+    <span class="c1"># Transacations</span>
+    <span class="n">aodFileChecker</span><span class="p">(</span><span class="n">allArgs</span><span class="p">[</span><span class="s2">&quot;internal_dpl_aod_reader:aod_file&quot;</span><span class="p">])</span>
+    <span class="n">depsChecker</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">sameEventPairingDeps</span><span class="p">,</span> <span class="n">sameEventPairingTaskName</span><span class="p">)</span>
+    <span class="n">depsChecker</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">eventMixingDeps</span><span class="p">,</span> <span class="n">eventMixingTaskName</span><span class="p">)</span>
+    <span class="n">depsChecker</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">dileptonTrackDeps</span><span class="p">,</span> <span class="n">dileptonTrackTaskName</span><span class="p">)</span>
+    <span class="n">mandatoryArgChecker</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">taskNameInConfig</span><span class="p">,</span> <span class="s2">&quot;processSkimmed&quot;</span><span class="p">)</span>
+    <span class="n">setProcessDummy</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">dummyHasTasks</span><span class="p">)</span> <span class="c1"># dummy automizer</span>
+    
+    <span class="c1"># Write the updated configuration file into a temporary file</span>
+    <span class="n">updatedConfigFileName</span> <span class="o">=</span> <span class="s2">&quot;tempConfigTableReader.json&quot;</span>
+    <span class="k">if</span> <span class="n">runOverMC</span><span class="p">:</span>
+        <span class="n">updatedConfigFileName</span> <span class="o">=</span> <span class="s2">&quot;tempConfigDQEfficiency.json&quot;</span>
+    
+    <span class="n">dumpJson</span><span class="p">(</span><span class="n">updatedConfigFileName</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">writer</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
+        <span class="n">tablesToProduce</span> <span class="o">=</span> <span class="n">tableProducerAnalysis</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="s2">&quot;analysis-same-event-pairing&quot;</span><span class="p">,</span> <span class="n">commonTables</span><span class="p">,</span> <span class="n">barrelCommonTables</span><span class="p">,</span> <span class="n">muonCommonTables</span><span class="p">,</span> <span class="n">specificTables</span><span class="p">,</span> <span class="n">runOverMC</span><span class="p">)</span>
+        
+        <span class="n">writerConfigFileName</span> <span class="o">=</span> <span class="s2">&quot;aodWriterAnalysisTempConfig.json&quot;</span>
+        
+        <span class="c1"># Generate the aod-writer output descriptor json file</span>
+        <span class="n">generateDescriptors</span><span class="p">(</span><span class="s2">&quot;dileptonAOD&quot;</span><span class="p">,</span> <span class="n">tablesToProduce</span><span class="p">,</span> <span class="n">tables</span><span class="p">,</span> <span class="n">writerConfigFileName</span><span class="p">,</span> <span class="n">kFlag</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    
+    <span class="n">commandToRun</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">taskNameInCommandLine</span><span class="si">}</span><span class="s2"> --configuration json://</span><span class="si">{</span><span class="n">updatedConfigFileName</span><span class="si">}</span><span class="s2"> -b&quot;</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">writer</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
+        <span class="c1">#if args.writer is not None:</span>
+        <span class="c1">#commandToRun = f&quot;{taskNameInCommandLine} --configuration json://{updatedConfigFileName} --aod-writer-json {args.writer} -b&quot;</span>
+        <span class="n">commandToRun</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">taskNameInCommandLine</span><span class="si">}</span><span class="s2"> --configuration json://</span><span class="si">{</span><span class="n">updatedConfigFileName</span><span class="si">}</span><span class="s2"> --aod-writer-json </span><span class="si">{</span><span class="n">writerConfigFileName</span><span class="si">}</span><span class="s2"> -b&quot;</span>
+    
+    <span class="n">dispO2HelpMessage</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">helpO2</span><span class="p">,</span> <span class="n">commandToRun</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">runParallel</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">dispArgs</span><span class="p">(</span><span class="n">allArgs</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;====================================================================================================================&quot;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Command to run:&quot;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">commandToRun</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;====================================================================================================================&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">writer</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;====================================================================================================================&quot;</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Tables to produce:&quot;</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">tablesToProduce</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;====================================================================================================================&quot;</span><span class="p">)</span>
+    <span class="n">dispArgs</span><span class="p">(</span><span class="n">allArgs</span><span class="p">)</span> <span class="c1"># Display all args</span>
+    
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">commandToRun</span><span class="p">)</span> <span class="c1"># Execute O2 generated commands</span>
+    <span class="n">runPycacheRemover</span><span class="p">()</span> <span class="c1"># Run pycacheRemover</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Ionut Cristian Arsene, Cevat Batuhan Tolon.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

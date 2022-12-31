@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>extramodules.dqLibGetter &mdash; O2-DQ Framework Python Based User Interface 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> O2-DQ Framework Python Based User Interface
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">O2-DQ Framework Python Based User Interface</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">extramodules.dqLibGetter</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for extramodules.dqLibGetter</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># PYTHON_ARGCOMPLETE_OK</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1"># Copyright 2019-2020 CERN and copyright holders of ALICE O2.</span>
+<span class="c1"># See https://alice-o2.web.cern.ch/copyright for details of the copyright holders.</span>
+<span class="c1"># All rights not expressly granted are reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># This software is distributed under the terms of the GNU General Public</span>
+<span class="c1"># License v3 (GPL Version 3), copied verbatim in the file &quot;COPYING&quot;.</span>
+<span class="c1">#</span>
+<span class="c1"># In applying this license CERN does not waive the privileges and immunities</span>
+<span class="c1"># granted to it by virtue of its status as an Intergovernmental Organization</span>
+<span class="c1"># or submit itself to any jurisdiction.</span>
+
+<span class="c1"># \Author: ionut.cristian.arsene@cern.ch</span>
+<span class="c1"># \Interface:  cevat.batuhan.tolon@cern.ch</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">Request</span><span class="p">,</span> <span class="n">urlopen</span>
+<span class="kn">import</span> <span class="nn">ssl</span>
+<span class="kn">import</span> <span class="nn">pathlib</span>
+
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">getIfStartedInDoubleQuotes</span><span class="p">,</span> <span class="n">writeFile</span>
+
+
+<div class="viewcode-block" id="DQLibGetter"><a class="viewcode-back" href="../../extramodules.html#extramodules.dqLibGetter.DQLibGetter">[docs]</a><span class="k">class</span> <span class="nc">DQLibGetter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for Downloading DQ Libraries Github and It gets analysis selections</span>
+<span class="sd">    like analysis cuts, MC signals and event mixing variables</span>
+<span class="sd">    Args:</span>
+<span class="sd">        object (object): self</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">allAnalysisCuts</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">allOnlyPairCuts</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">allMCSignals</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">allSels</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">allMixing</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">allHistos</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">allEventHistos</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">allTrackHistos</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">allMCTruthHistos</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">allPairHistos</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">allDileptonHistos</span> <span class="o">=</span> <span class="p">[])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        
+        <span class="c1"># Define Analysis Cuts, MC Signals and Histograms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allAnalysisCuts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">allAnalysisCuts</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allOnlyPairCuts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">allOnlyPairCuts</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allMCSignals</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">allMCSignals</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allSels</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">allSels</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allMixing</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">allMixing</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allHistos</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">allHistos</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allEventHistos</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">allEventHistos</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allTrackHistos</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">allTrackHistos</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allMCTruthHistos</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">allMCTruthHistos</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allPairHistos</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">allPairHistos</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allDileptonHistos</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">allDileptonHistos</span><span class="p">)</span>
+        
+        <span class="c1"># For filter selections</span>
+        <span class="n">allPairCuts</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># only pair cuts</span>
+        <span class="n">selsWithDoubleColon</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># e.g. muonQualityCuts::2</span>
+        <span class="n">pairCutsWithSingleColon</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># e.g paircutMass:3</span>
+        <span class="n">selsWithSingleColon</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># track/muon cut:paircut:n</span>
+        <span class="n">singleColon</span> <span class="o">=</span> <span class="s2">&quot;:&quot;</span> <span class="c1"># Namespace reference</span>
+        <span class="n">doubleColon</span> <span class="o">=</span> <span class="s2">&quot;::&quot;</span> <span class="c1"># Namespace reference</span>
+        
+        <span class="c1"># Flags for DQ Lib Getter</span>
+        <span class="n">kEvents</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">kTracks</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">kMCtruths</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">kPairs</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="c1"># kDileptons = True</span>
+        
+        <span class="c1"># Lists for saving Histograms</span>
+        <span class="n">eventHistos</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">trackHistos</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">mctruthHistos</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">pairHistos</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">dileptonHistos</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">allHistograms</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36&quot;</span>
+            <span class="p">}</span>
+        
+        <span class="n">URL_CUTS_LIBRARY</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/CutsLibrary.h?raw=true&quot;</span>
+        <span class="n">URL_MCSIGNALS_LIBRARY</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MCSignalLibrary.h?raw=true&quot;</span>
+        <span class="n">URL_MIXING_LIBRARY</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MixingLibrary.h?raw=true&quot;</span>
+        <span class="n">URL_HISTOGRAMS_LIBRARY</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/HistogramsLibrary.h?raw=true&quot;</span>
+        
+        <span class="c1"># Create templibs directory if not exist</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="s2">&quot;templibs&quot;</span><span class="p">):</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+            <span class="n">pathWithFile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;templibs&quot;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">pathWithFile</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+        
+        <span class="c1"># Github Links for CutsLibrary and MCSignalsLibrary from PWG-DQ --&gt; download from github</span>
+        <span class="c1"># This condition solves performance issues</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;templibs/tempCutsLibrary.h&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;templibs/tempMCSignalsLibrary.h&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;templibs/tempMixingLibrary.h&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s2">&quot;templibs/tempHistogramsLibrary.h&quot;</span><span class="p">))</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[INFO] Some Libs are Missing. They will download.&quot;</span><span class="p">)</span>
+            
+            <span class="c1"># Dummy SSL Adder</span>
+            <span class="n">context</span> <span class="o">=</span> <span class="n">ssl</span><span class="o">.</span><span class="n">_create_unverified_context</span><span class="p">()</span> <span class="c1"># prevent ssl problems</span>
+            <span class="c1"># request = urllib.request.urlopen(URL_CUTS_LIBRARY, context=context)</span>
+            
+            <span class="c1"># HTTP Request</span>
+            <span class="n">requestCutsLibrary</span> <span class="o">=</span> <span class="n">Request</span><span class="p">(</span><span class="n">URL_CUTS_LIBRARY</span><span class="p">,</span> <span class="n">headers</span> <span class="o">=</span> <span class="n">headers</span><span class="p">)</span>
+            <span class="n">requestMCSignalsLibrary</span> <span class="o">=</span> <span class="n">Request</span><span class="p">(</span><span class="n">URL_MCSIGNALS_LIBRARY</span><span class="p">,</span> <span class="n">headers</span> <span class="o">=</span> <span class="n">headers</span><span class="p">)</span>
+            <span class="n">requestMixingLibrary</span> <span class="o">=</span> <span class="n">Request</span><span class="p">(</span><span class="n">URL_MIXING_LIBRARY</span><span class="p">,</span> <span class="n">headers</span> <span class="o">=</span> <span class="n">headers</span><span class="p">)</span>
+            <span class="n">requestHistogramsLibrary</span> <span class="o">=</span> <span class="n">Request</span><span class="p">(</span><span class="n">URL_HISTOGRAMS_LIBRARY</span><span class="p">,</span> <span class="n">headers</span> <span class="o">=</span> <span class="n">headers</span><span class="p">)</span>
+            
+            <span class="c1"># Get Files With Http Requests</span>
+            <span class="n">htmlCutsLibrary</span> <span class="o">=</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">requestCutsLibrary</span><span class="p">,</span> <span class="n">context</span> <span class="o">=</span> <span class="n">context</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="n">htmlMCSignalsLibrary</span> <span class="o">=</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">requestMCSignalsLibrary</span><span class="p">,</span> <span class="n">context</span> <span class="o">=</span> <span class="n">context</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="n">htmlMixingLibrary</span> <span class="o">=</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">requestMixingLibrary</span><span class="p">,</span> <span class="n">context</span> <span class="o">=</span> <span class="n">context</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="n">htmlHistogramsLibrary</span> <span class="o">=</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">requestHistogramsLibrary</span><span class="p">,</span> <span class="n">context</span> <span class="o">=</span> <span class="n">context</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            
+            <span class="c1"># Save Disk to temp DQ libs</span>
+            <span class="n">writeFile</span><span class="p">(</span><span class="s2">&quot;templibs/tempCutsLibrary.h&quot;</span><span class="p">,</span> <span class="n">htmlCutsLibrary</span><span class="p">)</span>
+            <span class="n">writeFile</span><span class="p">(</span><span class="s2">&quot;templibs/tempMCSignalsLibrary.h&quot;</span><span class="p">,</span> <span class="n">htmlMCSignalsLibrary</span><span class="p">)</span>
+            <span class="n">writeFile</span><span class="p">(</span><span class="s2">&quot;templibs/tempMixingLibrary.h&quot;</span><span class="p">,</span> <span class="n">htmlMixingLibrary</span><span class="p">)</span>
+            <span class="n">writeFile</span><span class="p">(</span><span class="s2">&quot;templibs/tempHistogramsLibrary.h&quot;</span><span class="p">,</span> <span class="n">htmlHistogramsLibrary</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[INFO] Libs downloaded succesfully.&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># Get MC Signals and Mixing vars from DQ Framework header files</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allMCSignals</span> <span class="o">=</span> <span class="n">getIfStartedInDoubleQuotes</span><span class="p">(</span><span class="s2">&quot;templibs/tempMCSignalsLibrary.h&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allMixing</span> <span class="o">=</span> <span class="n">getIfStartedInDoubleQuotes</span><span class="p">(</span><span class="s2">&quot;templibs/tempMixingLibrary.h&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># Get All histograms with flags</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;templibs/tempHistogramsLibrary.h&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s2">&quot;if&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="s2">&quot;track&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">line</span> <span class="ow">and</span> <span class="n">kEvents</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span> <span class="c1"># get event histos</span>
+                        <span class="n">line</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;&quot;([^&quot;]*)&quot;&#39;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+                        <span class="n">eventHistos</span> <span class="o">+=</span> <span class="n">line</span>
+                        <span class="n">allHistograms</span> <span class="o">+=</span> <span class="n">line</span>
+                    <span class="k">elif</span> <span class="s2">&quot;mctruth&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">line</span> <span class="ow">and</span> <span class="n">kTracks</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span> <span class="c1"># get track histos</span>
+                        <span class="n">line</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;&quot;([^&quot;]*)&quot;&#39;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+                        <span class="n">kEvents</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="n">trackHistos</span> <span class="o">+=</span> <span class="n">line</span>
+                        <span class="n">allHistograms</span> <span class="o">+=</span> <span class="n">line</span>
+                    <span class="k">elif</span> <span class="s2">&quot;mctruth&quot;</span> <span class="ow">in</span> <span class="n">line</span> <span class="ow">and</span> <span class="n">kMCtruths</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span> <span class="c1"># get mctruth histos</span>
+                        <span class="n">line</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;&quot;([^&quot;]*)&quot;&#39;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+                        <span class="n">kTracks</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="n">mctruthHistos</span> <span class="o">+=</span> <span class="n">line</span>
+                        <span class="n">allHistograms</span> <span class="o">+=</span> <span class="n">line</span>
+                    <span class="k">elif</span> <span class="s2">&quot;dilepton&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">line</span> <span class="ow">and</span> <span class="n">kPairs</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span> <span class="c1"># get sep histos</span>
+                        <span class="n">line</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;&quot;([^&quot;]*)&quot;&#39;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+                        <span class="n">kMCtruths</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="n">pairHistos</span> <span class="o">+=</span> <span class="n">line</span>
+                        <span class="n">allHistograms</span> <span class="o">+=</span> <span class="n">line</span>
+                    <span class="k">else</span><span class="p">:</span> <span class="c1"># get dilepton histos</span>
+                        <span class="n">line</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s1">&#39;&quot;([^&quot;]*)&quot;&#39;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+                        <span class="n">kPairs</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="n">dileptonHistos</span> <span class="o">+=</span> <span class="n">line</span>
+                        <span class="n">allHistograms</span> <span class="o">+=</span> <span class="n">line</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        
+        <span class="c1"># Save histograms to class arguments</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allHistos</span> <span class="o">=</span> <span class="n">allHistograms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allEventHistos</span> <span class="o">+=</span> <span class="n">eventHistos</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allTrackHistos</span> <span class="o">+=</span> <span class="n">trackHistos</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allMCTruthHistos</span> <span class="o">+=</span> <span class="n">mctruthHistos</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allPairHistos</span> <span class="o">+=</span> <span class="n">pairHistos</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allDileptonHistos</span> <span class="o">+=</span> <span class="n">dileptonHistos</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">allAnalysisCuts</span> <span class="o">=</span> <span class="n">getIfStartedInDoubleQuotes</span><span class="p">(</span><span class="s2">&quot;templibs/tempCutsLibrary.h&quot;</span><span class="p">)</span>
+        <span class="n">getPairCuts</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">allAnalysisCuts</span> <span class="k">if</span> <span class="s2">&quot;pair&quot;</span> <span class="ow">in</span> <span class="n">y</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">getPairCuts</span><span class="p">:</span> <span class="c1"># if pair cut list is not empty</span>
+            <span class="n">allPairCuts</span> <span class="o">+=</span> <span class="n">getPairCuts</span> <span class="c1"># Get Only pair cuts from CutsLibrary.h</span>
+            <span class="n">namespacedPairCuts</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="n">singleColon</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">allPairCuts</span><span class="p">]</span> <span class="c1"># paircut:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">allOnlyPairCuts</span> <span class="o">+=</span> <span class="n">allPairCuts</span> <span class="c1"># Get all Pair Cuts from CutsLibrary.h</span>
+        
+        <span class="c1"># NOTE : Now we have brute-force solution for format specifiers (for dalitz cuts)</span>
+        <span class="c1"># TODO We need more simple and flexible solution for this isue</span>
+        <span class="n">getCleanDalitzCuts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">getDalitzCutsWithFormatSpecifiers</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">allAnalysisCuts</span> <span class="k">if</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
+        <span class="n">getDalitzCutsWithFormatSpecifiers</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span> <span class="n">getDalitzCutsWithFormatSpecifiers</span><span class="p">))</span> <span class="c1"># delete format specifiers with list comp.</span>
+        <span class="c1">#print(getDalitzCutsWithFormatSpecifiers)</span>
+        
+        <span class="c1"># add one to eight suffix due to for loop in O2-DQ Framework</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">getDalitzCutsWithFormatSpecifiers</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">):</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="c1"># add suffix integers</span>
+                <span class="n">getCleanDalitzCuts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="n">i</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># remove last character after suffix</span>
+        
+        <span class="c1"># after getting clean dalitz cuts, we need remove has format specifier dalitz cuts from allAnalysisCuts and add clean dalitz cuts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allAnalysisCuts</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">allAnalysisCuts</span> <span class="k">if</span> <span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span> <span class="c1"># clean the has format specifier dalitz cuts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allAnalysisCuts</span> <span class="o">+=</span> <span class="n">getCleanDalitzCuts</span> <span class="c1"># add clean dalitz cuts</span>
+        
+        <span class="c1"># in Filter PP Task, sels options for barrel and muon uses colons e.g. &quot;&lt;track-cut&gt;:[&lt;pair-cut&gt;]:&lt;n&gt; and &lt;track-cut&gt;::&lt;n&gt; For Manage this issue:</span>
+        <span class="n">allAnalysisCutsSingleColon</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="n">singleColon</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">allAnalysisCuts</span><span class="p">]</span> <span class="c1"># cut:</span>
+        <span class="n">allAnalysisCutsDoubleColon</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="n">doubleColon</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">allAnalysisCuts</span><span class="p">]</span> <span class="c1"># cut::</span>
+        
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
+            <span class="c1"># Style 1 &lt;track-cut&gt;::&lt;n&gt; --&gt; selsWithDoubleColon</span>
+            <span class="n">dubletStyle</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">allAnalysisCutsDoubleColon</span><span class="p">]</span> <span class="c1"># cut::n</span>
+            <span class="n">selsWithDoubleColon</span> <span class="o">+=</span> <span class="n">dubletStyle</span>
+            <span class="n">nAddedPairCuts</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">namespacedPairCuts</span><span class="p">]</span>
+            <span class="n">pairCutsWithSingleColon</span> <span class="o">+=</span> <span class="n">nAddedPairCuts</span>
+        
+        <span class="c1"># Style 2 &lt;track-cut&gt;:[&lt;pair-cut&gt;]:&lt;n&gt; --&gt; selsWithSingleColon:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">pairCutsWithSingleColon</span><span class="p">:</span>
+            <span class="n">tripletStyle</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">allAnalysisCutsSingleColon</span><span class="p">]</span>
+            <span class="n">selsWithSingleColon</span> <span class="o">+=</span> <span class="n">tripletStyle</span>
+        
+        <span class="c1"># Merge All possible styles for Sels (cfgBarrelSels and cfgMuonSels) in FilterPP Task</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">allSels</span> <span class="o">=</span> <span class="n">selsWithSingleColon</span> <span class="o">+</span> <span class="n">selsWithDoubleColon</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Ionut Cristian Arsene, Cevat Batuhan Tolon.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
