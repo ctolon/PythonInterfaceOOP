@@ -1,34 +1,128 @@
-# User Python Based Interface
+# User Python Based Interface for O2-DQ Framework
 
-\tableofcontents
+Repository Architecture:
 
-[![doxygen](https://img.shields.io/badge/doxygen-documentation-blue.svg)](https://dquserinterfaceoop.github.io/docs/html/)
+* **PythonInterfaceOOP**: Main python scripts folder (run Scripts)
 
-This project includes python based user interface development for PWG-DQ Workflows based on nightly-20221212. You can follow the instructions and you can find tutorials in table of contents (For prerequisites, Installation guide for argcomplete and Some Informations good to know).
+  * **PythonInterfaceOOP/configs**: JSON config files 
+
+  * **PythonInterfaceOOP/templibs**: Temp DQ Libraries from O2-DQ Framework (for **auto-completion**)
+
+  * **PythonInterfaceOOP/extramodules**: All extramodules for manage many utils for python scripts
+
+* **doc**: Main Documentation files
+
+* `runYAPF.sh`: Python code re-formatter like clang
+
+* `.flake8`: Rules for flake8 as Lint wrapper for python
+
+* `.style.yapf`: YAPF rules file
+
+* `README.md`: Main readme file
+ 
+* **.github/workflows**: CI integration (automated YAPF as Python formater and automated flake8 tests as Python Linter)
+
+This project includes python based user interface development for PWG-DQ Workflows based on nightly-20222212. You can follow the instructions and you can find tutorials in table of contents at the end of the page (For prerequisites, Installation guide for argcomplete and Some Informations good to know).
 
 ## Contact
 Ionut Cristian Arsene (Owner of [`O2DQWorkflows`](https://github.com/iarsene/O2DQworkflows))
 
+* Contact: iarsene@cern.ch / i.c.arsene@fys.uio.no 
+
 Cevat Batuhan Tolon (Author Of Interface)
 
-## LATEST CHANGES (VERY IMPORTANT!!!)
+* Contact: cevat.batuhan.tolon@cern.ch
 
-On 25/11/2022, serious changes occurred in the naming rules of the O2-DQ Framework. Interface has been updated to use naming conventions on and after this date. If you are using an older O2 version, pull the scripts from old commits. It is recommended to update O2Physics instead.
-
-Reference 1: https://github.com/AliceO2Group/O2Physics/pull/1520
-
-Reference 2 : https://github.com/AliceO2Group/O2Physics/pull/1534
+If you are having problems with scripts, you can first ask your questions on mattermost directly to @ctolon account or via e-mail at cevat.batuhan.tolon@cern.ch.
 
 ## Important
 
 Since the interface is constantly updated for stability, it is recommended to update it with `git pull --rebase` command
 
+## Standard Run Template
+
+We have standard run template for each run workflow python scripts.
+
+Template:
+
+`python3 <script.py> <config.json> --task-name:<configurable|processFunc> parameter ...`
+
+* `script.py` e.g:
+  * runAnalysis.py 
+  * runTableMaker.py
+
+* `config.json` e.g:
+  * configTableMakerDataRun3.json
+  * configAnalysisMC.json
+
+Note: You should provide config.json with full path! Like that: (configs/configAnalysisMC.json) 
+
+* `--task-name:<configurable|processFunc> parameter` e.g:
+  * --table-maker:processBarrelOnly true 
+  * --analysis-same-event-pairing:cfgTrackCuts jpsiPID1 jpsiPID2
+  * --analysis-event-selection:processSkimmed true --analysis-track-selection:cfgTrackCuts jpsiPID1 jpsiPID2
+
+
+Switcher Variables (in boolean type): `runOverMC` and `runOverSkimmed` (you can found runOverMC variable under the main() functions in runTableMaker.py and runAnalysis.py scripts, runOverSkimmed in runEMEfficiency.py script).
+
+Variable in script | Workflow Script | Value | Selected Task | Taskname in config
+--- | --- | --- | --- | --- | 
+runOverMC | runTableMaker.py | `False` | tableMaker.cxx | table-maker (For Real Data Skimming)
+runOverMC | runTableMaker.py | `True` | tableMakerMC.cxx | table-maker-m-c (For MC Skimming)
+runOverMC | runAnalysis.py | `False` | tableReader.cxx | analysis-event-selection (For Real Data Analysis)
+runOverMC | runAnalysis.py | `True` | dqEfficiency.cxx | analysis-event-selection (For MC Analysis)
+runOverSkimmed | runEMEfficiency.py | `False` | emEfficiency.cxx | analysis-event-selection (It will run with not skimmed MC)
+runOverSkimmed | runEMEfficiency.py | `True` | emEfficiency.cxx | analysis-event-selection (It will run with skimmed MC)
+
+**IMPORTANT NOTE:** It creates interface arguments by parsing the json before executing the script with dependency injection, so it is very important that you configure it correctly! 
+
+e.g. for run tableMaker.cxx with runTableMaker.py script (runOverMC is have to be False in script):
+
+```ruby
+  python3 runTableMaker.py configs/configTableMakerDataRun3.json --internal-dpl-aod-reader:aod-file Datas/AO2D_ppDataRun3_LHC22c.root --table-maker:processMuonOnlyWithCov true --table-maker:processBarrelOnlyWithCov true --event-selection-task:syst pp --table-maker:cfgQA true --table-maker:cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --table-maker:cfgBarrelTrackCuts jpsiPID1 jpsiPID2 jpsiO2MCdebugCuts --add_track_prop --logFile
+```
+
+## Which things are changed?
+
+* Some Scripts have been merged:
+* The runTableMaker.py and runTableMakerMC.py scripts have been merged into the runTableMaker.py script.
+  * **IMPORTANT**: You need Switch runOverMC variable to True in the script if you want work on tableMakerMC for MC else it will run for tableMaker for Data
+* The runTableReader.py and runDQEfficiency.py scripts have been merged into the runAnalysis.py script.
+  * **IMPORTANT**: You need Switch runOverMC variable to True in the script if you want work on dqEfficiency for MC else it will run for tableMaker for Data
+* the runEMEfficiency.py an runEMEfficiencyNotSkimmed.py scripts have been merged into the the runEMEfficiency.py script.
+  * **IMPORTANT**: You need Switch runOverSkimmed variable to True in the script if you want work on skimmed EM efficiency else it will run for not Skimmed EM efficiency
+
+* The argument parameter template has changed, now for each task, arguments in the form of doublets separated by separate colons are given, and then parameters are given (Template: `python3 <script.py> >config.json> --taskname:<configurable|processFunction> <parameters>`).
+  * OLD TEMPLATE e.g: `python3 runTableMaker.py configs/configTableMakerDataRun3.json --process BarrelOnly -cfgBarrelTrackCuts jpsiPID1 jpsiPID2 `
+  * NEW TEMPLATE e.g: `python3 runTableMaker.py configs/configTableMakerDataRun3.json --table-maker:processBarrelOnly true --table-maker:cfgBarrelTrackCuts jpsiPID1 jpsiPID2 `
+
+* Now interface arguments are not hard coded but dynamically generated by parsing JSON files. That's why interface scripts were deleted.
+
+* Since the arguments are configured according to the tasks, it is necessary to configure some configurations separately for each task. For example, when configuring cfgTrackCuts, in the old version of interface all cfgTrackCuts configs in JSON config files were configured, now they are configured for each task separately (important to keep in your mind!).
+
+
+## Modifying the scripts
+
+You can refer to this chapter to modify scripts:
+
+[Developer Guide](doc/7_DeveloperGuide.md)
+
+## Before the Send PR: run YAPF
+
+For code re-formatting, we use [YAPF](https://github.com/google/yapf). It's based off of 'clang-format', developed by Daniel Jasper.
+
+Install YAPF for code re-formatting
+
+`pip3 install yapf` or `pip install yapf`
+
+In root folder, execute runYAPF.sh bash script for code re-formatting:
+
+`bash runYAPF.sh`
+
 ## Table Of Contents
 - [Python Scripts And JSON Configs](doc/1_ScriptsAndConfigs.md)
   - [Main Python Scripts](doc/1_ScriptsAndConfigs.md#main-python-scripts)
   - [Config Files](doc/1_ScriptsAndConfigs.md#config-files)
-  - [DQ Interface Scripts](doc/1_ScriptsAndConfigs.md#dq-interface-scripts)
-  - [Common Deps Interface Scripts](doc/1_ScriptsAndConfigs.md#common-deps-interface-scripts)
   - [Extra Modules](doc/1_ScriptsAndConfigs.md#extra-modules)
 - [Prerequisites!!!](doc/2_Prerequisites.md)
   - [Cloning repository](doc/2_Prerequisites.md#cloning-repository)
@@ -41,6 +135,7 @@ Since the interface is constantly updated for stability, it is recommended to up
     - [Local Instalation (Not Need For O2)](doc/2_Prerequisites.md#local-instalation-not-need-for-o2-1)
     - [O2 Installation](doc/2_Prerequisites.md#o2-installation-1)
 - [Instructions for TAB Autocomplete](doc/3_InstructionsforTABAutocomplete.md)
+  - [Possible Autocompletions](doc/3_InstructionsforTABAutocomplete.md#possible-autocompletions) 
 - [Technical Informations](doc/4_TechincalInformations.md)
   - [Helper Command Functionality](doc/4_TechincalInformations.md#helper-command-functionality)
   - [Some Things You Should Be Careful For Using and Development](doc/4_TechincalInformations.md#some-things-you-should-be-careful-for-using-and-development)
@@ -50,16 +145,11 @@ Since the interface is constantly updated for stability, it is recommended to up
   - [Download CutsLibrary, MCSignalLibrary, MixingLibrary From Github](doc/5_InstructionsForPythonScripts.md#download-cutslibrary-mcsignallibrary-mixinglibrary-from-github)
   - [Get CutsLibrary, MCSignalLibrary, MixingLibrary From Local Machine](doc/5_InstructionsForPythonScripts.md#get-cutslibrary-mcsignallibrary-mixinglibrary-from-local-machine)
   - [Available configs in DownloadLibs.py Interface](doc/5_InstructionsForPythonScripts.md#available-configs-in-downloadlibspy-interface)
-- [Instructions for runTableMaker/runTableMakerMC.py](doc/5_InstructionsForPythonScripts.md#instructions-for-runtablemakerruntablemakermcpy)
-  - [Available configs in runTableMaker Interface](doc/5_InstructionsForPythonScripts.md#available-configs-in-runtablemakerruntablemakermc-interface)
-- [Instructions for runTableReader.py](doc/5_InstructionsForPythonScripts.md#instructions-for-runtablereaderpy)
-  - [Available configs in runTableReader Interface](doc/5_InstructionsForPythonScripts.md#available-configs-in-runtablereader-interface)
-- [Instructions for runDQEfficiency.py](doc/5_InstructionsForPythonScripts.md#instructions-for-rundqefficiencypy)
-  - [Available configs in runDQEfficiency Interface](doc/5_InstructionsForPythonScripts.md#available-configs-in-rundqefficiency-interface)
+  - [Hardcoded Arguments](doc/5_InstructionsForPythonScripts.md#hardcoded-arguments)
+- [Instructions for runTableMaker](doc/5_InstructionsForPythonScripts.md#instructions-for-runtablemaker)
+- [Instructions for runAnalysis.py](doc/5_InstructionsForPythonScripts.md#instructions-for-runanalysispy)
 - [Instructions for runFilterPP.py](doc/5_InstructionsForPythonScripts.md#instructions-for-runfilterpppy)
-  - [Available configs in runFilterPP Interface](doc/5_InstructionsForPythonScripts.md#available-configs-in-runfilterpp-interface)
 - [Instructions for runDQFlow.py](doc/5_InstructionsForPythonScripts.md#instructions-for-rundqflowpy)
-  - [Available configs in runDQFlow Interface](doc/5_InstructionsForPythonScripts.md#available-configs-in-rundqflow-interface)
 - [Tutorial Part](doc/6_Tutorials.md)
   - [Download Datas For Tutorials](doc/6_Tutorials.md#download-datas-for-tutorials)
     - [Workflows In Tutorials](doc/6_Tutorials.md#workflows-in-tutorials)
@@ -85,15 +175,15 @@ Since the interface is constantly updated for stability, it is recommended to up
   - [Special Part : Dilepton Analysis For Non-Standart Existing Workflows in DQ](doc/6_Tutorials.md#special-part--dilepton-analysis-for-non-standart-existing-workflows-in-dq)
     - [MC : Dilepton Track Analysis (On Bc Simulation)](doc/6_Tutorials.md#mc--dilepton-track-analysis-on-bc-simulation)
     - [Data : Dilepton Hadron Analysis (On PbPb Data LHC15o)](doc/6_Tutorials.md#data--dilepton-hadron-analysis-on-pbpb-data-lhc15o)
+  - [Special Part : run tableMaker and tableReader at the same time](doc/6_Tutorials.md#special-part--run-tablemaker-and-tablereader-at-the-same-time)
 - [Developer Guide](doc/7_DeveloperGuide.md)
+  - [Developer Tools](doc/7_DeveloperGuide.md#developer-tools)
+    - [How to modify O2-DQ task dependencies](doc/7_DeveloperGuide.md#how-to-modify-o2-dq-task-dependencies)
+    - [How to modify or add new reduced tables](doc/7_DeveloperGuide.md#how-to-modify-or-add-new-reduced-tables)
+    - [How to add new CLI arguments](doc/7_DeveloperGuide.md#how-to-add-new-cli-arguments)
+    - [How to define new autocompletions](doc/7_DeveloperGuide.md#how-to-define-new-autocompletions)
+    - [How to add new O2 converter tasks](doc/7_DeveloperGuide.md#how-to-add-new-o2-converter-tasks)
   - [Naming Conventions](doc/7_DeveloperGuide.md#naming-conventions)
-- [TroubleshootingTreeNotFound](doc/8_TroubleshootingTreeNotFound.md)
+- [Troubleshooting: Tree Not Found](doc/8_TroubleshootingTreeNotFound.md)
   - [Converters](doc/8_TroubleshootingTreeNotFound.md#converters-special-additional-tasks-for-workflows)
   - [add_track_prop](doc/8_TroubleshootingTreeNotFound.md#addtrackprop)
-
-
-## TODO LIST
-
-- Add developer guide (for contributing) chapter
-- Maintaince need for available configs part (v0selector is missing)
-- Needed to explain O2-DQ Data Model and Workflow

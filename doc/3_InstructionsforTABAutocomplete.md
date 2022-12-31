@@ -1,6 +1,8 @@
 # Instructions for TAB Autocomplete
 
-@tableofcontents
+- [Instructions for TAB Autocomplete](#instructions-for-tab-autocomplete)
+  - [Possible Autocompletions](#possible-autocompletions)
+
 
 Before proceeding to this stage, you should make sure that you activate the O2 environment with alienv, then install the argcomplete package with `pip install argcomplete` and `pip3 install argcomplete` in O2, and then source the autocomplete bash script with `source argcomplete.sh`
 
@@ -8,23 +10,23 @@ You can Complete this with a TAB key after each word and character you type in c
 
 If you have successfully installed this package and successfully sourced the script, follow these steps.
 
-step 1: type python3 (If your symbolic link is python for python3, type python)
+**Step 1**: Type python3 (If your symbolic link is python for python3, type python)
 
 ```ruby
 python3
 ```
 
-step 2: type the name of your script (eg runTableMaker.py)
+**Step 2**: Type the name of your script (e.g runTableMaker.py)
 ```ruby
 python3 runTableMaker.py
 ```
 
-step 3: At this stage, since the JSON configuration files are in the Configs folder, enter the name of your JSON config file by completing it with TAB or listing the available options
+**Step 3**: At this stage, since the JSON configuration files are in the Configs folder, enter the name of your JSON config file by completing it with TAB or listing the available options
 
 for ex. if you type:
 
 ```ruby
-python3 runTableMaker.py Configs
+python3 runTableMaker.py configs
 ```
 
 you will get this displayed options in your terminal:
@@ -39,49 +41,41 @@ configs/configFlowDataRun2.json                  configs/configTableMakerMCRun3.
 then you can complete your JSON config file (for example assuming you export configTableMakerMCRun3.json to configure tablemaker for mc run 3
 
 ```ruby
-python3 runTableMaker.py configs/configTableMakerMCRun3.json
+python3 runTableMaker.py configs/configTableMakerDataRun3.json
 ```
 
-P.S You can Complete this with a TAB key after each word and character you type in command line.
+**P.S** You can Complete this with a TAB key after each word and character you type in command line.
 
-step 4: now when you type -- and press TAB key all parameter options in interface will be listed
+**Step 4**: Now when you type -- and press TAB key all parameter options in interface will be listed
 
 ```ruby
-python3 runTableMaker.py configs/configTableMakerMCRun3.json --
+python3 runTableMaker.py configs/configTableMakerDataRun3.json --
 ```
 
 if you type like this and press TAB you will see all the parameters in the interface in your terminal like this:
 ```ruby
---add_fdd_conv           --cfgBarrelSels          --cfgMinTpcSignal        --cfgPairCuts            --dcamin                 --isCovariance           --mincrossedrows         --syst
---add_mc_conv            --cfgBarrelTrackCuts     --cfgMuonCuts            --cfgWithQA              --dcav0dau               --isFilterPPTiny         --muonSelection          --tof-expreso
---add_track_prop         --cfgDetailedQA          --cfgMuonLowPt           --customDeltaBC          --debug                  --isProcessEvTime        --onlySelect             --v0cospa
---aod                    --cfgEventCuts           --cfgMuonsCuts           --cutLister              --est                    --logFile                --pid                    --v0Rmax
---autoDummy              --cfgMaxTpcSignal        --cfgMuonSels            --d_bz                   --help                   --maxchi2tpc             --process                --v0Rmin
---cfgBarrelLowPt         --cfgMCsignals           --cfgNoQA                --dcamax                 --isBarrelSelectionTiny  --MCSignalsLister        --run 
+--add_fdd_conv                                          --internal-dpl-aod-reader:aod-file                      --tof-pid:param-sigma
+--add_mc_conv                                           --internal-dpl-aod-reader:end-value-enumeration         --tof-pid:pid-al
+--add_track_prop                                        --internal-dpl-aod-reader:orbit-multiplier-enumeration  --tof-pid:pid-de
+--add_weakdecay_ind                                     --internal-dpl-aod-reader:orbit-offset-enumeration      --tof-pid:pid-el
+--analysis-qvector:ccdb-no-later-than                   --internal-dpl-aod-reader:start-value-enumeration       --tof-pid:pid-he
+--analysis-qvector:ccdb-path                            --internal-dpl-aod-reader:step-value-enumeration        --tof-pid:pid-ka
+--analysis-qvector:ccdb-url                             --internal-dpl-aod-reader:time-limit                    --tof-pid:pid-mu
+--analysis-qvector:cfgAcceptance                        --logFile                                               --tof-pid:pid-pi
+--analysis-qvector:cfgBarrelTrackCuts                   --multiplicity-table:doVertexZeq                        --tof-pid:pid-pr
+--analysis-qvector:cfgCutEta                            --multiplicity-table:processRun2                        --tof-pid:pid-tr
+--analysis-qvector:cfgCutPtMax                          --multiplicity-table:processRun3                        --tof-pid:processWoSlice
+--analysis-qvector:cfgCutPtMin                          --overrider                                             --tof-pid:processWSlice
+--analysis-qvector:cfgEfficiency                        --table-maker:ccdb-path-tpc                             --tpc-pid-full:autofetchNetworks
+--analysis-qvector:cfgEtaLimit                          --table-maker:ccdb-url                                  --tpc-pid-full:ccdbPath
+--analysis-qvector:cfgEventCuts                         --table-maker:cfgAddEventHistogram                      --tpc-pid-full:ccdb-timestamp
+etc.
 ```
 
-VERY IMPORTANT STEP AND P.S: When configuring the runTableMaker.py script, the -runData and -runMC parameters are used when configuring the tablemaker for MC or Data. Since these parameters start with a single minus, do not forget to configure the TableMaker script only at the first time, by pressing the tab and configuring it (other interfaces do not have a parameter that starts with a single minus)
+**Step 5**: After entering one of these parameters (e.g --table-maker:cfgBarrelTrackCuts for runTableMaker.py) leave a space and press tab again. As a result you will see each value this parameter can take.
 
 ```ruby
-python3 runTableMaker.py configs/configTableMakerMCRun3.json -
-```
-
-Then you will see -runData and -runMC in your parameters:
-
-```ruby
---add_fdd_conv           --cfgBarrelTrackCuts     --cfgMuonLowPt           --cutLister              -h                       --maxchi2tpc             --run                    --v0Rmin
---add_mc_conv            --cfgDetailedQA          --cfgMuonsCuts           --d_bz                   --help                   --MCSignalsLister        -runData                 
---add_track_prop         --cfgEventCuts           --cfgMuonSels            --dcamax                 --isBarrelSelectionTiny  --mincrossedrows         -runMC                   
---aod                    --cfgMaxTpcSignal        --cfgNoQA                --dcamin                 --isCovariance           --muonSelection          --syst                   
---autoDummy              --cfgMCsignals           --cfgPairCuts            --dcav0dau               --isFilterPPTiny         --onlySelect             --tof-expreso            
---cfgBarrelLowPt         --cfgMinTpcSignal        --cfgWithQA              --debug                  --isProcessEvTime        --pid                    --v0cospa                
---cfgBarrelSels          --cfgMuonCuts            --customDeltaBC          --est                    --logFile                --process                --v0Rmax  
-```
-
-step 5: After entering one of these parameters (eg --cfgBarrelTrackCuts for runTableMaker.py) leave a space and press tab again. As a result you will see each value this parameter can take.
-
-```ruby
-python3 runTableMaker.py configs/configTableMakerMCRun3.json -runMC --cfgBarrelTrackCuts
+python3 runTableMaker.py configs/configTableMakerMCRun3.json --table-maker:cfgBarrelTrackCuts 
 ```
 
 
@@ -107,42 +101,76 @@ eventDimuonStandard                  jpsiPIDnsigma                        lmee_T
 eventMuonStandard                    jpsiPIDnsigmaRandomized              matchedFwd                           pairUpsilon
 ```
 
-step 6: after configuring the config, type space and -- again to see other parameters again and see other parameters and use autocomplete with TAB as you type
+**Step 6**: After configuring the argument - parameter pair, type space and -- again to see other parameters again and see other parameters and use autocomplete with TAB as you type
 
 ```ruby
-python3 runTableMaker.py configs/configTableMakerMCRun3.json -runMC --cfgBarrelTrackCuts --
+python3 runTableMaker.py configs/configTableMakerMCRun3.json --table-maker:cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --
 ```
 
 ```ruby
---add_fdd_conv           --cfgBarrelSels          --cfgMinTpcSignal        --cfgPairCuts            --dcamin                 --isCovariance           --mincrossedrows         --syst
---add_mc_conv            --cfgBarrelTrackCuts     --cfgMuonCuts            --cfgWithQA              --dcav0dau               --isFilterPPTiny         --muonSelection          --tof-expreso
---add_track_prop         --cfgDetailedQA          --cfgMuonLowPt           --customDeltaBC          --debug                  --isProcessEvTime        --onlySelect             --v0cospa
---aod                    --cfgEventCuts           --cfgMuonsCuts           --cutLister              --est                    --logFile                --pid                    --v0Rmax
---autoDummy              --cfgMaxTpcSignal        --cfgMuonSels            --d_bz                   --help                   --maxchi2tpc             --process                --v0Rmin
---cfgBarrelLowPt         --cfgMCsignals           --cfgNoQA                --dcamax                 --isBarrelSelectionTiny  --MCSignalsLister        --run 
+--add_fdd_conv                                          --internal-dpl-aod-reader:aod-file                      --tof-pid:param-sigma
+--add_mc_conv                                           --internal-dpl-aod-reader:end-value-enumeration         --tof-pid:pid-al
+--add_track_prop                                        --internal-dpl-aod-reader:orbit-multiplier-enumeration  --tof-pid:pid-de
+--add_weakdecay_ind                                     --internal-dpl-aod-reader:orbit-offset-enumeration      --tof-pid:pid-el
+--analysis-qvector:ccdb-no-later-than                   --internal-dpl-aod-reader:start-value-enumeration       --tof-pid:pid-he
+--analysis-qvector:ccdb-path                            --internal-dpl-aod-reader:step-value-enumeration        --tof-pid:pid-ka
+--analysis-qvector:ccdb-url                             --internal-dpl-aod-reader:time-limit                    --tof-pid:pid-mu
+--analysis-qvector:cfgAcceptance                        --logFile                                               --tof-pid:pid-pi
+--analysis-qvector:cfgBarrelTrackCuts                   --multiplicity-table:doVertexZeq                        --tof-pid:pid-pr
+--analysis-qvector:cfgCutEta                            --multiplicity-table:processRun2                        --tof-pid:pid-tr
+--analysis-qvector:cfgCutPtMax                          --multiplicity-table:processRun3                        --tof-pid:processWoSlice
+--analysis-qvector:cfgCutPtMin                          --overrider                                             --tof-pid:processWSlice
+--analysis-qvector:cfgEfficiency                        --table-maker:ccdb-path-tpc                             --tpc-pid-full:autofetchNetworks
+--analysis-qvector:cfgEtaLimit                          --table-maker:ccdb-url                                  --tpc-pid-full:ccdbPath
+--analysis-qvector:cfgEventCuts                         --table-maker:cfgAddEventHistogram                      --tpc-pid-full:ccdb-timestamp
+etc.
 ```
 
 After that you can similarly continue configuring your parameters with autocompletion.
 
-VERY IMPORTANT P.S: Not every parameter in the interface has a value to configure. Some are configured as metavariable, meaning they are itself a value parameter. To explain this situation in detail, for example, `--cfgWithQA` parameter in tablemaker has to take one of two values as true or false, while `--add_track_prop` or `-runMC` is a parameter value directly and remains false when it is not added to the command line, they do not take a value. They are configured as true only when you type them on the command line.
+**VERY IMPORTANT P.S**: Not every argument in the interface has a parameter to configure. Some are configured as metavariable, meaning they are itself a value parameter. To explain this situation in detail, for example, `--table-maker:cfgBarrelTrackCuts` argument in tablemaker has to take one of two values as true or false, while e.g `--add_track_prop` is a parameter value directly and remains false when it is not added to the command line, they do not take a value. They are configured as True only when you type them on the command line.
 
 Example:
 
 ```ruby
-python3 runTableMaker.py configs/configTableMakerMCRun3.json -runMC --add_track_prop
+python3 runTableMaker.py configs/configTableMakerDataRun3.json --add_track_prop
 ```
 
 ```ruby
-python3 runTableMaker.py configs/configTableMakerMCRun3.json --cfgBarrelTrackCuts jpsiPID1 --cfgWithQA true
+python3 runTableMaker.py configs/configTableMakerDataRun3.json --table-maker:cfgBarrelTrackCuts jpsiPID1 --table-maker:cfgWithQA true
 ```
 
-list of metavar parameters:
+list of some metavar parameters:
 
 * `--add_track_prop`
 * `--add_fdd_conv`
 * `--add_mc_conv`
-* `-runMC` (This parameter is only for tableMakerMC)
-* `-runData` (This parameter is only for tableMaker)
+* `--add_weak_decay_ind`
 * `--logFile`
 
-[← Go back to Prerequisites](2_Prerequisites.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Techincal Informations →](4_TechincalInformations.md)
+
+## Possible Autocompletions
+
+In Python scripts, argument autocompletes are defined as built-in-method in the argcomplete package and CLI arguments do not need extra care for the arguments as the json files are created by parsing the json files before the script is executed, with the argcomplete package all arguments will be listed after typing -- and pressing TAB.
+
+The auto-completions for the parameters taken by the arguments are implemented with the sub string search technique according to the naming rules. For example, if a configuration starts with "process", then the parameters it can take are defined as "true" or "false" (for e.g. **process**BarrelOnly). Again, in the O2-DQ Framework, for each configuration containing the "Cuts" sub string, all the cut string names in the CutsLibrary.h file are recommended and printed on the screen when the TAB key is pressed with autocompletion (for e.g cfgBarrelTrack**Cuts**).
+
+Below you can see all the autocompletions for O2-DQ Framework currently available:
+
+Naming Convention | Autocompletion | Type
+--- | --- | --- |
+`Cuts` in configuration name | All possible analysis cut definitions from [CutsLibrary.h](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/CutsLibrary.h) | Flexible
+Configuration name endswith `signals` or `Signals` | All possible MC Signal definitions from [MCSignalLibrary.h](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MCSignalLibrary.h) | Flexible 
+`Histogram` in configuration name |  All possible histogram definitions from [HistogramLibrary.h](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/HistogramsLibrary.h) | Flexbile
+Configuration name endswith `Sels` | All possible event trigger types from [CutsLibrary.h](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/CutsLibrary.h) | Flexible
+`MixingVars` in configuration name | All possible mixing variables from [MixingLibrary.h](https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MixingLibrary.h) | Flexible 
+Configuration name startswith `cfg` and `QA` in configuration name | `true` or `false` | Flexible
+Configuration name equals to `cfgIsAmbiguous` | `true` or `false` | Hardcoded
+Configuration name equals to `cfgFillCandidateTable` | `true` or `false` | Hardcoded
+Configuration name equals to `cfgFlatTables` | `true` or `false` | Hardcoded
+Configuration name equals to `cfgTPCpostCalib` | `true` or `false` | Hardcoded
+Configuration name starts with `process` | `true` or `false` | Flexible
+
+If you want to know more autocompletion or for defining new autocompletions, you can visit [Developer guide](7_DeveloperGuide.md#how-to-define-new-autocompletions)
+
+[← Go back to Prerequisites](2_Prerequisites.md) | [↑ Go to the Table of Content ↑](../README.md#table-of-contents) | [Continue to Techincal Informations →](4_TechincalInformations.md)

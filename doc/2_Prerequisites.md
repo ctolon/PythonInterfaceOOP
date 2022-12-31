@@ -1,6 +1,17 @@
 # Prerequisites!!!
 
-@tableofcontents
+- [Prerequisites!!!](#prerequisites)
+  - [Cloning repository](#cloning-repository)
+  - [argcomplete - Bash tab completion for argparse](#argcomplete---bash-tab-completion-for-argparse)
+  - [Instalation Guide For argcomplete](#instalation-guide-for-argcomplete)
+    - [Prerequisites Before Installation argcomplete Package For Linux Based Systems and LXPLUS](#prerequisites-before-installation-argcomplete-package-for-linux-based-systems-and-lxplus)
+    - [Local Instalation (Not Need For O2)](#local-instalation-not-need-for-o2)
+    - [O2 Installation](#o2-installation)
+    - [Prerequisites Before Installation argcomplete Package For MacOS Based Systems](#prerequisites-before-installation-argcomplete-package-for-macos-based-systems)
+    - [Local Instalation (Not Need For O2)](#local-instalation-not-need-for-o2-1)
+    - [O2 Installation](#o2-installation-1)
+
+
 
 ## Cloning repository
 
@@ -10,7 +21,7 @@ Clone Repository in your workspace:
 git clone https://github.com/ctolon/PythonInterfaceOOP.git
 ```
 
-Then go NewAllWorkFlows folder with `cd` commands
+Then go PythonInterfaceOOP folder with `cd` commands
 
 Since the scripts are still in development, it is recommended to update daily regularly with the following command:
 
@@ -79,9 +90,9 @@ or
 
 (Converts all system shell settings to bash)
 
-IMPORTANT P.S 1 : If you use the `exec` bash command you will need to use this command every time when you open a new terminal to for source the argcomplete.sh script.
+**IMPORTANT P.S 1** : If you use the `exec` bash command you will need to use this command every time when you open a new terminal to for source the argcomplete.sh script.
 
-IMPORTANT P.S 2 : If you cannot source the `argcomplete.sh` script even though you are using the `exec bash` command, use the `sudo chsh -s /bin/bash` command. This command will change the shell settings of the entire system. When you're done with O2-DQ Scripts, you can similarly use `sudo chsh -s /bin/<shelltype>` to return to your old shell system. For example, if your host's default shell configuration is `zsh`, you can restore the system with `sudo chsh -s /bin/zsh`
+**IMPORTANT P.S 2** : If you cannot source the `argcomplete.sh` script even though you are using the `exec bash` command, use the `sudo chsh -s /bin/bash` command. This command will change the shell settings of the entire system. When you're done with O2-DQ Scripts, you can similarly use `sudo chsh -s /bin/<shelltype>` to return to your old shell system. For example, if your host's default shell configuration is `zsh`, you can restore the system with `sudo chsh -s /bin/zsh`
 
 
 ### Local Instalation (Not Need For O2)
@@ -112,7 +123,7 @@ pip install argcomplete
 And go your Folder which includes your run scripts with cd commands (e.g.):
 
 ```ruby
-cd ~/NewAllWorkFlows
+cd ~/PythonInterfaceOOP/PythonInterfaceOOP
 ```
 
 
@@ -122,7 +133,7 @@ And then, source your argcomplete script for autocomplete:
 source argcomplete.sh
 ```
 
-VERY IMPORTANT P.S This script must be re-sourced every time you re-enter the O2 environment!!! (For autocompletion with TAB key)
+**VERY IMPORTANT P.S** This script must be re-sourced every time you re-enter the O2 environment!!! (For autocompletion with TAB key)
 
 ### Prerequisites Before Installation argcomplete Package For MacOS Based Systems
 
@@ -189,9 +200,9 @@ sudo chsh -s /bin/bash
 
 After then, Check the version of the running copy of bash with `echo $BASH_VERSION`. It must be greater than 4.2.
 
-IMPORTANT P.S 1 : If you use the `exec` bash command you will need to use this command every time when you open a new terminal to for source the argcomplete.sh script.
+**IMPORTANT P.S 1** : If you use the `exec` bash command you will need to use this command every time when you open a new terminal to for source the argcomplete.sh script.
 
-IMPORTANT P.S 2 : If you cannot source the `argcomplete.sh` script even though you are using the `exec bash` command, use the `sudo chsh -s /bin/bash` command. This command will change the shell settings of the entire system. When you're done with O2-DQ Scripts, you can similarly use `sudo chsh -s /bin/<shelltype>` to return to your old shell system. For example, if your host's default shell configuration is `zsh`, you can restore the system with `sudo chsh -s /bin/zsh`
+**IMPORTANT P.S 2** : If you cannot source the `argcomplete.sh` script even though you are using the `exec bash` command, use the `sudo chsh -s /bin/bash` command. This command will change the shell settings of the entire system. When you're done with O2-DQ Scripts, you can similarly use `sudo chsh -s /bin/<shelltype>` to return to your old shell system. For example, if your host's default shell configuration is `zsh`, you can restore the system with `sudo chsh -s /bin/zsh`
 
 For in O2
 
@@ -218,7 +229,7 @@ pip3 install argcomplete
 And go your Folder which includes your run scripts with cd commands (e.g.):
 
 ```ruby
-cd ~/PythonInterfaceOOP
+cd ~/PythonInterfaceOOP/PythonInterfaceOOP
 ```
 
 And then, source your argcomplete script for autocomplete:
@@ -227,6 +238,6 @@ And then, source your argcomplete script for autocomplete:
 source argcomplete.sh
 ```
 
-VERY IMPORTANT P.S This script must be re-sourced every time you re-enter the O2 environment!!! (For autocompletion with TAB key)
+**VERY IMPORTANT P.S** This script must be re-sourced every time you re-enter the O2 environment!!! (For autocompletion with TAB key)
 
-[← Go back to Python Scripts And JSON Configs ](1_ScriptsAndConfigs.md) | [↑ Go to the Table of Content ↑](../README.md) | [Continue to Instructions for TAB Autocomplete →](3_InstructionsforTABAutocomplete.md)
+[← Go back to Python Scripts And JSON Configs ](1_ScriptsAndConfigs.md) | [↑ Go to the Table of Content ↑](../README.md#table-of-contents) | [Continue to Instructions for TAB Autocomplete →](3_InstructionsforTABAutocomplete.md)
