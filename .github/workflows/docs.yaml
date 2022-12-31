@@ -10,8 +10,6 @@ jobs:
 
     - name: Build HTML
       uses: ammaraskar/sphinx-action@master
-      run: |
-        pip install sphinx Pallets-Sphinx-Themes sphinx sphinx_rtd_theme
       with:
         docs-folder: "html/"
 
