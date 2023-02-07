@@ -21,7 +21,7 @@
     },
     "analysis-track-selection": {
         "cfgTrackCuts": "jpsiO2MCdebugCuts",
-        "cfgDalitzCutId": "32",
+        "cfgPrefilterCutId": "32",
         "cfgQA": "true",
         "cfgAddTrackHistogram": "dca,its,tpcpid,tofpid",
         "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
