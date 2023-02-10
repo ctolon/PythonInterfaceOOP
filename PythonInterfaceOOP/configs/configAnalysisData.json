@@ -28,6 +28,7 @@
         "ccdb-path-tpc": "Users\/i\/iarsene\/Calib\/TPCpostCalib",
         "cfgTPCpostCalib": "false",
         "processSkimmed": "true",
+        "processSkimmedWithCov": "false",
         "processDummy": "false"
     },
     "analysis-prefilter-selection": {
@@ -57,6 +58,7 @@
     "analysis-same-event-pairing": {
         "cfgTrackCuts": "jpsiO2MCdebugCuts",
         "cfgMuonCuts": "muonQualityCuts",
+        "cfgPairCuts": "",
         "cfgAddSEPHistogram": "barrel,vertexing,flow",
         "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
         "ccdb-path": "Users\/lm",
