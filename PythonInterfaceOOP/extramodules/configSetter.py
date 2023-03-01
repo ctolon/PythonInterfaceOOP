@@ -29,7 +29,7 @@ from argcomplete.completers import ChoicesCompleter
 from typing import Any
 
 
-def dispArgs(allArgs: dict[str, Any]) -> None:
+def dispArgs(allArgs: dict) -> None:
     """Display all configured commands you provided in CLI
 
     Args:
@@ -110,7 +110,7 @@ def debugSettings(argDebug: bool, argLogFile: bool, fileName: str) -> None:
         log.addHandler(fh)
 
 
-def setConverters(allArgs: dict[str, Any], updatedConfigFileName: str, commandToRun: str) -> str:
+def setConverters(allArgs: dict, updatedConfigFileName: str, commandToRun: str) -> str:
     """Converter task setter function
 
     Args:
@@ -137,7 +137,7 @@ def setConverters(allArgs: dict[str, Any], updatedConfigFileName: str, commandTo
     return commandToRun
 
 
-def generateDescriptors(resfilename: str, tablesToProduce: dict, tables: dict[str, dict], writerConfigFileName: str, readerConfigFileName = 'aodReaderTempConfig', kFlag = False) -> None:
+def generateDescriptors(resfilename: str, tablesToProduce: dict, tables: dict, writerConfigFileName: str, readerConfigFileName = 'aodReaderTempConfig', kFlag = False) -> None:
     """Generates Descriptors for Writing/Reading Tables from AO2D with json config file (input descriptor is optional)
 
     Args:
@@ -187,7 +187,7 @@ def generateDescriptors(resfilename: str, tablesToProduce: dict, tables: dict[st
     logging.info(f"{writerConfig}")
 
 
-def tableProducerSkimming(config: dict[str, dict], taskNameInConfig: str, commonTables: list[str], barrelCommonTables: list[str], muonCommonTables: list[str], specificTables: list[str], specificDeps: dict[str, list], runOverMC: bool) -> dict:
+def tableProducerSkimming(config: dict, taskNameInConfig: str, commonTables: list, barrelCommonTables: list, muonCommonTables: list, specificTables: list, specificDeps: dict, runOverMC: bool) -> dict:
     """Table producer function for tableMaker/tableMakerMC
 
     Args:
@@ -242,7 +242,7 @@ def tableProducerSkimming(config: dict[str, dict], taskNameInConfig: str, common
     return tablesToProduce
 
 
-def tableProducerAnalysis(config: dict[str, dict], taskNameInConfig: str, commonTables: list[str], barrelCommonTables: list[str], muonCommonTables: list[str], specificTables: dict[str, list], runOverMC: bool) -> dict:
+def tableProducerAnalysis(config: dict, taskNameInConfig: str, commonTables: list, barrelCommonTables: list, muonCommonTables: list, specificTables: dict, runOverMC: bool) -> dict:
     """Table producer function for tableReader/dqEfficiency
     This method allows produce extra dilepton tables.
 
@@ -299,7 +299,7 @@ def tableProducerAnalysis(config: dict[str, dict], taskNameInConfig: str, common
     return tablesToProduce
 
 
-def setProcessDummy(config: dict[str, dict], dummyHasTasks: list[str]) -> None:
+def setProcessDummy(config: dict, dummyHasTasks: list) -> None:
     """Dummy Automizer
 
     Args:
@@ -329,7 +329,7 @@ def setProcessDummy(config: dict[str, dict], dummyHasTasks: list[str]) -> None:
                                 #logging.debug(" - [%s] processDummy : true", k)
 
 
-def setParallelismOnSkimming(commandToRun: str, updatedConfigFileName: str, analysisTaskName: str, analysisTaskTempConfig: str, config: dict[str, dict]) -> str:
+def setParallelismOnSkimming(commandToRun: str, updatedConfigFileName: str, analysisTaskName: str, analysisTaskTempConfig: str, config: dict) -> str:
     """Setter method for activate parallel sesion run in O2
 
     Args:
@@ -378,7 +378,7 @@ class SetArgsToArgumentParser(object):
         
     """
     
-    def __init__(self, cfgJsonName: str, tasksToPassList: list, parser = None, dummyHasTasks: list[str] = [], processFuncs: dict[str, list] = {}) -> None:
+    def __init__(self, cfgJsonName: str, tasksToPassList: list, parser = None, dummyHasTasks: list = [], processFuncs: dict = {}) -> None:
         
         self.cfgJsonName = cfgJsonName
         self.tasksToPassList = list(tasksToPassList)
@@ -482,6 +482,10 @@ class SetArgsToArgumentParser(object):
             containsAmbiguous = configurable == "cfgIsAmbiguous"
             containsFillCandidateTable = configurable == "cfgFillCandidateTable"
             containsFlatTables = configurable == "cfgFlatTables"
+            containsUseKFVertexing = configurable == "cfgUseKFVertexing"
+            containsUseRemoteField = configurable == "cfgUseRemoteField"
+            containsUseAbsDCA = configurable == "cfgUseAbsDCA"
+            containsPropToPCA = configurable == "cfgPropToPCA"
             containsTPCpostCalib = configurable == "cfgTPCpostCalib"
             containsProcess = configurable.startswith("process")
             
@@ -506,6 +510,14 @@ class SetArgsToArgumentParser(object):
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
             elif containsTPCpostCalib:
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+            elif containsUseKFVertexing:
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+            elif containsUseRemoteField:
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+            elif containsUseAbsDCA:
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+            elif containsPropToPCA:
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
             elif configurable == "processDummy": # NOTE we don't need configure processDummy since we have dummy automizer
                 continue
             
@@ -524,6 +536,18 @@ class SetArgsToArgumentParser(object):
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b").completer = ChoicesCompleter(itsMatchingSelections)
             elif configurable == "compatibilityIU":
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+            elif configurable == "produceFBextendedTable":
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+            elif configurable == "doNotCrashOnNull":
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+            elif configurable == "useParamCollection":
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+            elif configurable == "fatalOnPassNotAvailable":
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+            elif configurable == "doNotSwap":
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+            elif configurable == "debug":
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
             else:
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b") # Create other arguments without autocompletion
     
@@ -539,7 +563,7 @@ class SetArgsToArgumentParser(object):
         return self.parser.parse_args()
 
 
-def setConfigs(allArgs: dict[str, Any], config: dict[str, dict], cliMode: str) -> None:
+def setConfigs(allArgs: dict, config: dict, cliMode: str) -> None:
     """Setter function for CLI arguments to JSON config file
 
     Args:
@@ -569,7 +593,7 @@ def setConfigs(allArgs: dict[str, Any], config: dict[str, dict], cliMode: str) -
                 logging.info(" - [%s] %s : %s", taskname, configurable, parameter)
 
 
-def setSwitch(config: dict[str, dict], processFuncs: dict[str, list], allArgs: dict, cliMode: str, processFuncToPass: list[str] = []) -> None:
+def setSwitch(config: dict, processFuncs: dict, allArgs: dict, cliMode: str, processFuncToPass: list = []) -> None:
     """This method providees Process function automation for overrider mode
 
     Args:
@@ -607,7 +631,7 @@ def setSwitch(config: dict[str, dict], processFuncs: dict[str, list], allArgs: d
                         logging.info(" - [%s] %s : %s", taskName, processFunc, "false")
 
 
-def commonDepsToRun(commonDeps: list[str]) -> dict:
+def commonDepsToRun(commonDeps: list) -> dict:
     """Produces common deps to run dict
 
     Args:

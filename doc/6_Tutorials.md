@@ -296,7 +296,7 @@ python3 runAnalysis.py configs/configAnalysisData.json --internal-dpl-aod-reader
 Command To Run:
 
 ```ruby
-python3 runTableMaker.py configs/configTableMakerDataRun2.json --internal-dpl-aod-reader:aod-file Datas/AO2D_PbPbDataRun2_LHC15o.root --table-maker:processFullWithCent true --table-maker:processBarrelOnlyWithQvector true --event-selection-task:syst PbPb --table-maker:cfgQA true --centrality-table:estRun2V0M 1 --table-maker:cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --analysis-qvector:cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --add_fdd_conv --logFile
+python3 runTableMaker.py configs/configTableMakerDataRun2.json --internal-dpl-aod-reader:aod-file Datas/AO2D_PbPbDataRun2_LHC15o.root --table-maker:processFullWithCent true --table-maker:processBarrelOnlyWithQvector true --event-selection-task:syst PbPb --table-maker:cfgQA true --centrality-table:estRun2V0M 1 --table-maker:cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --d-q-event-qvector:cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --add_fdd_conv --logFile
 ```
 
 ### Run tableReader on LHC15o with Generic Flow Analysis (LHC15o PbPb Run2Data)
@@ -314,7 +314,7 @@ python3 runAnalysis.py configs/configAnalysisData.json --internal-dpl-aod-reader
 Command To Run:
 
 ```ruby
-python3 runDQFlow.py configs/configFlowDataRun2.json --internal-dpl-aod-reader:aod-file Datas/AO2D_PbPbDataRun2_LHC15o.root --event-selection-task:syst PbPb --analysis-qvector:cfgQA true --centrality-table:estRun2V0M 1 --analysis-qvector:cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --analysis-qvector:cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --add_fdd_conv
+python3 runDQFlow.py configs/configFlowDataRun2.json --internal-dpl-aod-reader:aod-file Datas/AO2D_PbPbDataRun2_LHC15o.root --event-selection-task:syst PbPb --d-q-event-qvector:cfgQA true --centrality-table:estRun2V0M 1 --d-q-event-qvector:cfgBarrelTrackCuts jpsiPID1 jpsiPID2 --d-q-event-qvector:cfgMuonCuts muonQualityCuts muonTightQualityCutsForTests --add_fdd_conv
 ```
 ### Run v0Selector on LHC15o (LHC15o PbPb Run2Data)
 

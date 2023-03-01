@@ -33,6 +33,7 @@
     "track-selection": {
         "compatibilityIU": "false",
         "isRun3": "false",
+        "produceFBextendedTable": "false",
         "itsMatching": "0",
         "ptMin": "0.1",
         "ptMax": "1e+10",
@@ -63,8 +64,11 @@
         "param-sigma": "TOFResoParams",
         "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
         "ccdbPath": "Analysis\/PID\/TOF",
+        "passName": "",
         "ccdb-timestamp": "-1",
         "enableTimeDependentResponse": "false",
+        "useParamCollection": "false",
+        "fatalOnPassNotAvailable": "true",
         "pid-el": "-1",
         "pid-mu": "-1",
         "pid-pi": "-1",
@@ -82,8 +86,11 @@
         "param-sigma": "TOFResoParams",
         "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
         "ccdbPath": "Analysis\/PID\/TOF",
+        "passName": "",
         "ccdb-timestamp": "-1",
         "enableTimeDependentResponse": "false",
+        "useParamCollection": "false",
+        "fatalOnPassNotAvailable": "true",
         "pid-el": "1",
         "pid-mu": "1",
         "pid-pi": "1",
@@ -104,6 +111,7 @@
         "useNetworkCorrection": "false",
         "autofetchNetworks": "true",
         "networkPathLocally": "network.onnx",
+        "networkSetNumThreads": "0",
         "enableNetworkOptimizations": "true",
         "networkPathCCDB": "Analysis\/PID\/TPC\/ML",
         "pid-el": "1",
@@ -142,8 +150,9 @@
     "d-q-barrel-track-selection": {
         "cfgBarrelTrackCuts": "jpsiPID2,jpsiPID1",
         "cfgWithQA": "false",
+        "ccdb-path-tpc": "Users/i/iarsene/Calib/TPCpostCalib",
+        "cfgTPCpostCalib": "false",
         "processSelection": "true",
-        "processSelectionTiny": "false",
         "processDummy": "false"
     },
     "d-q-muons-selection": {
@@ -157,7 +166,6 @@
         "cfgMuonSels": "muonLowPt::1,muonHighPt::1,muonLowPt:pairNoCut:1",
         "cfgWithQA": "false",
         "processFilterPP": "true",
-        "processFilterPPTiny": "false",
         "processDummy": "false"
     }
 }

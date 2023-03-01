@@ -58,17 +58,17 @@ if you type like this and press TAB you will see all the parameters in the inter
 --add_mc_conv                                           --internal-dpl-aod-reader:end-value-enumeration         --tof-pid:pid-al
 --add_track_prop                                        --internal-dpl-aod-reader:orbit-multiplier-enumeration  --tof-pid:pid-de
 --add_weakdecay_ind                                     --internal-dpl-aod-reader:orbit-offset-enumeration      --tof-pid:pid-el
---analysis-qvector:ccdb-no-later-than                   --internal-dpl-aod-reader:start-value-enumeration       --tof-pid:pid-he
---analysis-qvector:ccdb-path                            --internal-dpl-aod-reader:step-value-enumeration        --tof-pid:pid-ka
---analysis-qvector:ccdb-url                             --internal-dpl-aod-reader:time-limit                    --tof-pid:pid-mu
---analysis-qvector:cfgAcceptance                        --logFile                                               --tof-pid:pid-pi
---analysis-qvector:cfgBarrelTrackCuts                   --multiplicity-table:doVertexZeq                        --tof-pid:pid-pr
---analysis-qvector:cfgCutEta                            --multiplicity-table:processRun2                        --tof-pid:pid-tr
---analysis-qvector:cfgCutPtMax                          --multiplicity-table:processRun3                        --tof-pid:processWoSlice
---analysis-qvector:cfgCutPtMin                          --overrider                                             --tof-pid:processWSlice
---analysis-qvector:cfgEfficiency                        --table-maker:ccdb-path-tpc                             --tpc-pid-full:autofetchNetworks
---analysis-qvector:cfgEtaLimit                          --table-maker:ccdb-url                                  --tpc-pid-full:ccdbPath
---analysis-qvector:cfgEventCuts                         --table-maker:cfgAddEventHistogram                      --tpc-pid-full:ccdb-timestamp
+--d-q-event-qvector:ccdb-no-later-than                   --internal-dpl-aod-reader:start-value-enumeration       --tof-pid:pid-he
+--d-q-event-qvector:ccdb-path                            --internal-dpl-aod-reader:step-value-enumeration        --tof-pid:pid-ka
+--d-q-event-qvector:ccdb-url                             --internal-dpl-aod-reader:time-limit                    --tof-pid:pid-mu
+--d-q-event-qvector:cfgAcceptance                        --logFile                                               --tof-pid:pid-pi
+--d-q-event-qvector:cfgBarrelTrackCuts                   --multiplicity-table:doVertexZeq                        --tof-pid:pid-pr
+--d-q-event-qvector:cfgCutEta                            --multiplicity-table:processRun2                        --tof-pid:pid-tr
+--d-q-event-qvector:cfgCutPtMax                          --multiplicity-table:processRun3                        --tof-pid:processWoSlice
+--d-q-event-qvector:cfgCutPtMin                          --overrider                                             --tof-pid:processWSlice
+--d-q-event-qvector:cfgEfficiency                        --table-maker:ccdb-path-tpc                             --tpc-pid-full:autofetchNetworks
+--d-q-event-qvector:cfgEtaLimit                          --table-maker:ccdb-url                                  --tpc-pid-full:ccdbPath
+--d-q-event-qvector:cfgEventCuts                         --table-maker:cfgAddEventHistogram                      --tpc-pid-full:ccdb-timestamp
 etc.
 ```
 
@@ -112,17 +112,17 @@ python3 runTableMaker.py configs/configTableMakerMCRun3.json --table-maker:cfgBa
 --add_mc_conv                                           --internal-dpl-aod-reader:end-value-enumeration         --tof-pid:pid-al
 --add_track_prop                                        --internal-dpl-aod-reader:orbit-multiplier-enumeration  --tof-pid:pid-de
 --add_weakdecay_ind                                     --internal-dpl-aod-reader:orbit-offset-enumeration      --tof-pid:pid-el
---analysis-qvector:ccdb-no-later-than                   --internal-dpl-aod-reader:start-value-enumeration       --tof-pid:pid-he
---analysis-qvector:ccdb-path                            --internal-dpl-aod-reader:step-value-enumeration        --tof-pid:pid-ka
---analysis-qvector:ccdb-url                             --internal-dpl-aod-reader:time-limit                    --tof-pid:pid-mu
---analysis-qvector:cfgAcceptance                        --logFile                                               --tof-pid:pid-pi
---analysis-qvector:cfgBarrelTrackCuts                   --multiplicity-table:doVertexZeq                        --tof-pid:pid-pr
---analysis-qvector:cfgCutEta                            --multiplicity-table:processRun2                        --tof-pid:pid-tr
---analysis-qvector:cfgCutPtMax                          --multiplicity-table:processRun3                        --tof-pid:processWoSlice
---analysis-qvector:cfgCutPtMin                          --overrider                                             --tof-pid:processWSlice
---analysis-qvector:cfgEfficiency                        --table-maker:ccdb-path-tpc                             --tpc-pid-full:autofetchNetworks
---analysis-qvector:cfgEtaLimit                          --table-maker:ccdb-url                                  --tpc-pid-full:ccdbPath
---analysis-qvector:cfgEventCuts                         --table-maker:cfgAddEventHistogram                      --tpc-pid-full:ccdb-timestamp
+--d-q-event-qvector:ccdb-no-later-than                   --internal-dpl-aod-reader:start-value-enumeration       --tof-pid:pid-he
+--d-q-event-qvector:ccdb-path                            --internal-dpl-aod-reader:step-value-enumeration        --tof-pid:pid-ka
+--d-q-event-qvector:ccdb-url                             --internal-dpl-aod-reader:time-limit                    --tof-pid:pid-mu
+--d-q-event-qvector:cfgAcceptance                        --logFile                                               --tof-pid:pid-pi
+--d-q-event-qvector:cfgBarrelTrackCuts                   --multiplicity-table:doVertexZeq                        --tof-pid:pid-pr
+--d-q-event-qvector:cfgCutEta                            --multiplicity-table:processRun2                        --tof-pid:pid-tr
+--d-q-event-qvector:cfgCutPtMax                          --multiplicity-table:processRun3                        --tof-pid:processWoSlice
+--d-q-event-qvector:cfgCutPtMin                          --overrider                                             --tof-pid:processWSlice
+--d-q-event-qvector:cfgEfficiency                        --table-maker:ccdb-path-tpc                             --tpc-pid-full:autofetchNetworks
+--d-q-event-qvector:cfgEtaLimit                          --table-maker:ccdb-url                                  --tpc-pid-full:ccdbPath
+--d-q-event-qvector:cfgEventCuts                         --table-maker:cfgAddEventHistogram                      --tpc-pid-full:ccdb-timestamp
 etc.
 ```
 

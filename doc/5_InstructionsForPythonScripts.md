@@ -226,7 +226,7 @@ Examples:
 
 In case of multiple configs example
   ```ruby
-python3 runDQFlow.py configs/configFlowDataRun3.json --internal-dpl-aod-reader:aod-file Datas/AO2D.root --event-selection-task:syst PbPb --analysis-qvector:cfgBarrelTrackCuts jpsiPID1 --analysis-qvector:cfgMuonCuts muonQualityCuts --analysis-qvector:cfgWithQA true --analysis-qvector:cfgCutPtMin 1 --analysis-qvector:cfgCutPtMax 15 
+python3 runDQFlow.py configs/configFlowDataRun3.json --internal-dpl-aod-reader:aod-file Datas/AO2D.root --event-selection-task:syst PbPb --d-q-event-qvector:cfgBarrelTrackCuts jpsiPID1 --d-q-event-qvector:cfgMuonCuts muonQualityCuts --d-q-event-qvector:cfgWithQA true --d-q-event-qvector:cfgCutPtMin 1 --d-q-event-qvector:cfgCutPtMax 15 
   ```
 
 

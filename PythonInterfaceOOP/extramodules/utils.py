@@ -21,7 +21,7 @@ import logging
 from typing import Any
 
 
-def listToString(s: list[Any]):
+def listToString(s: list):
     """
     ListToString provides converts lists to strings with commas.
     This function is written to save as string type instead of list
@@ -45,7 +45,7 @@ def listToString(s: list[Any]):
         return str1.join(s)
 
 
-def convertListToStr(s: list[Any]) -> str:
+def convertListToStr(s: list) -> str:
     """Alternative List to string method
 
     Args:
@@ -95,21 +95,21 @@ def writeFile(openFile: str, writeFile: str):
     f.close()
 
 
-def loadJson(fileName: str) -> dict[str, dict]:
+def loadJson(fileName: str) -> dict:
     """JSON Loader util function"""
     
     with open(fileName) as configFile:
         return json.load(configFile)
 
 
-def dumpJson(updatedConfigFileName: str, config: dict[str, Any]) -> None:
+def dumpJson(updatedConfigFileName: str, config: dict) -> None:
     """JSON dump util function"""
     
     with open(updatedConfigFileName, "w") as outputFile:
         json.dump(config, outputFile, indent = 2)
 
 
-def getIfStartedInDoubleQuotes(headerFileName: str) -> list[str]:
+def getIfStartedInDoubleQuotes(headerFileName: str) -> list:
     """Parse file lines get string in double quotes if line starts with 'if' """
     
     mylist = []
