@@ -20,7 +20,7 @@
 
 # run template: `python3 runDQFlow.py <config.json> --task-name:<configurable|processFunc> parameter ...`
 # parameter can be multiple like this:
-# --analysis-qvector:cfgBarrelTrackCuts jpsiPID1 jpsiPID2
+# --d-q-event-qvector:cfgBarrelTrackCuts jpsiPID1 jpsiPID2
 
 import sys
 import logging
@@ -61,7 +61,7 @@ def main():
     # Load the configuration file provided as the first parameter
     config = loadJson(args.cfgFileName)
     
-    taskNameInConfig = "analysis-qvector"
+    taskNameInConfig = "d-q-event-qvector"
     taskNameInCommandLine = "o2-analysis-dq-flow"
     
     mainTaskChecker(config, taskNameInConfig)

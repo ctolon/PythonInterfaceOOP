@@ -33,6 +33,7 @@
     "track-selection": {
         "compatibilityIU": "false",
         "isRun3": "false",
+        "produceFBextendedTable": "false",
         "itsMatching": "0",
         "ptMin": "0.1",
         "ptMax": "1e+10",
@@ -71,27 +72,23 @@
         "ccdburl": "http://alice-ccdb.cern.ch",
         "ccdbpath": "Centrality/Estimators",
         "genname": "",
+        "doNotCrashOnNull": "false",
         "processRun2": "true",
         "processRun3": "false"
     },
     "weak-decay-indices-cascades": "",
     "weak-decay-indices-v0": "",
     "v0-selector": {
-        "d_bz_input": "-999",
+        "v0max_mee" : "0.1",
+        "maxpsipair" : "1.6",
         "v0cospa": "0.998",
-        "v0max_mee" : "0.06",
-        "maxpsipair" : "0.3",
         "dcav0dau": "0.3",
         "v0Rmin": "0",
         "v0Rmax": "90.0",
         "dcamin": "0",
         "dcamax": "1e+10",
         "mincrossedrows": "70",
-        "maxchi2tpc": "4",
-        "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
-        "lutPath": "GLO\/Param\/MatLUT",
-        "geoPath": "GLO\/Config\/GeometryAligned",
-        "grpmagPath": "GLO/Config/GRPMagField"
+        "maxchi2tpc": "4"
     },
     "track-pid-qa": {
         "dcamin": "0",
@@ -101,17 +98,16 @@
         "processQA": "true",
         "processDummy": "false"
     },
-    "v0-gamma-qa": {
-        "processNM": "false",
-        "processDummy": "true"
-    },
     "tof-pid": {
         "param-file": "",
         "param-sigma": "TOFResoParams",
         "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
         "ccdbPath": "Analysis\/PID\/TOF",
+        "passName": "",
         "ccdb-timestamp": "-1",
         "enableTimeDependentResponse": "false",
+        "useParamCollection": "false",
+        "fatalOnPassNotAvailable": "true",
         "pid-el": "-1",
         "pid-mu": "-1",
         "pid-pi": "-1",
@@ -129,8 +125,11 @@
         "param-sigma": "TOFResoParams",
         "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
         "ccdbPath": "Analysis\/PID\/TOF",
+        "passName": "",
         "ccdb-timestamp": "-1",
         "enableTimeDependentResponse": "false",
+        "useParamCollection": "false",
+        "fatalOnPassNotAvailable": "true",
         "pid-el": "1",
         "pid-mu": "1",
         "pid-pi": "1",
@@ -151,6 +150,7 @@
         "useNetworkCorrection": "false",
         "autofetchNetworks": "true",
         "networkPathLocally": "network.onnx",
+        "networkSetNumThreads": "0",
         "enableNetworkOptimizations": "true",
         "networkPathCCDB": "Analysis\/PID\/TPC\/ML",
         "pid-el": "1",
@@ -190,10 +190,13 @@
         "cfgEtaCut": "0.9",
         "cfgTPCNSigElLow": "-3",
         "cfgTPCNSigElHigh": "3",
+        "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
+        "ccdb-path-tpc": "Users/i/iarsene/Calib/TPCpostCalib",
+        "cfgTPCpostCalib": "false",
         "processFullTracks": "true",
         "processDummy": "false"
     },
-    "analysis-qvector": {
+    "d-q-event-qvector": {
         "cfgEventCuts": "eventStandard",
         "cfgBarrelTrackCuts": "jpsiPID1,jpsiPID2,jpsiPIDnsigma",
         "cfgMuonCuts": "muonQualityCuts,muonTightQualityCutsForTests",
@@ -211,15 +214,17 @@
         "ccdb-url": "http:\/\/ccdb-test.cern.ch:8080",
         "ccdb-path": "Users\/lm",
         "ccdb-no-later-than": "1660516676044",
-        "processBarrelQvector": "true",
+        "processBarrelQvector": "false",
+        "processBarrelQvectorRun2": "true",
         "processForwardQvector": "false",
         "processDummy": "false"
     },
-    "d-q-barrel-track-selection-task": {
+    "d-q-barrel-track-selection": {
         "cfgBarrelTrackCuts": "jpsiPID1,jpsiPID2,jpsiPIDnsigma",
         "cfgWithQA": "false",
+        "ccdb-path-tpc": "Users/i/iarsene/Calib/TPCpostCalib",
+        "cfgTPCpostCalib": "false",
         "processSelection": "true",
-        "processSelectionTiny": "false",
         "processDummy": "false"
     },
     "d-q-muons-selection": {
@@ -239,7 +244,6 @@
         "cfgMuonSels": "muonQualityCuts:pairMassLow:1",
         "cfgWithQA": "false",
         "processFilterPP": "true",
-        "processFilterPPTiny": "false",
         "processDummy": "false"
     },
     "table-maker": {
@@ -262,12 +266,17 @@
         "cfgTPCpostCalib": "false",
         "processFull": "false",
         "processFullWithCov": "false",
+        "processFullWithCovAndEventFilter": "false",
         "processFullWithCent": "false",
+        "processFullWithCentAndMults": "false",
         "processBarrelOnlyWithV0Bits": "false",
         "processBarrelOnlyWithDalitzBits": "false",
         "processBarrelOnlyWithEventFilter": "false",
-        "processBarrelOnlyWithQvector" : "false",
+        "processBarrelOnlyWithQvector": "false",
+        "processBarrelOnlyWithMults": "false",
+        "processBarrelOnlyWithCovAndEventFilter": "false",
         "processBarrelOnlyWithCent": "false",
+        "processBarrelOnlyWithCentAndMults": "false",
         "processBarrelOnlyWithCov": "false",
         "processBarrelOnly": "false",
         "processMuonOnlyWithCent": "false",
@@ -276,6 +285,7 @@
         "processMuonOnlyWithQvector": "false",
         "processMuonOnlyWithFilter": "false",
         "processAmbiguousMuonOnly": "false",
+        "processAmbiguousMuonOnlyWithCov": "false",
         "processAmbiguousBarrelOnly": "false",
         "processOnlyBCs": "true"
     },

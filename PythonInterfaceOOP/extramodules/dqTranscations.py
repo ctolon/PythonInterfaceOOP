@@ -72,7 +72,7 @@ def aodFileChecker(aod: str):
             raise TypeError(f"{argProvidedAod} is wrong formatted file!!!")
 
 
-def trackPropagationChecker(trackProp: bool, deps: list[str]):
+def trackPropagationChecker(trackProp: bool, deps: list):
     """This method automatically deletes the o2-analysis-trackextension(for run2) task from your workflow
     when you add the o2-analysis-track-propagation (for run3)
     task to your workflow. Two tasks are not compatible at the same time
@@ -87,7 +87,7 @@ def trackPropagationChecker(trackProp: bool, deps: list[str]):
         logging.info("o2-analysis-trackextension is not valid dep for run 3, It will deleted from your workflow.")
 
 
-def mainTaskChecker(config: dict[str, dict], taskNameInConfig: str):
+def mainTaskChecker(config: dict, taskNameInConfig: str):
     """1. Checks whether the workflow you want to run in your JSON file has a main task.
     
        2. Checks If you are running the O2Physics environment
@@ -145,7 +145,7 @@ def jsonTypeChecker(cfgFileName: str):
         sys.exit()
 
 
-def depsChecker(config: dict[str, dict], deps: dict[str, dict], task: str):
+def depsChecker(config: dict, deps: dict, task: str):
     """This function written to check dependencies for process function
 
     Args:
@@ -170,7 +170,7 @@ def depsChecker(config: dict[str, dict], deps: dict[str, dict], task: str):
                 raise TypeError(f"Dependency dict must be dict (right side) : {dep}")
 
 
-def mandatoryArgChecker(config: dict[str, dict], taskname: str, processFunc: str):
+def mandatoryArgChecker(config: dict, taskname: str, processFunc: str):
     """The process function, which must be included in the workflow, if it is missing, the transaction function to include it
 
     Args:

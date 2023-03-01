@@ -11,21 +11,7 @@
 //
 // Contact: iarsene@cern.ch, i.c.arsene@fys.uio.no
 //
-
-#ifndef PWGDQ_CORE_MCSIGNALLIBRARY_H_
-#define PWGDQ_CORE_MCSIGNALLIBRARY_H_
-
-#include <string>
-#include "PWGDQ/Core/MCProng.h"
-#include "PWGDQ/Core/MCSignal.h"
-
-namespace o2::aod
-{
-namespace dqmcsignals
-{
-MCSignal* GetMCSignal(const char* signalName);
-}
-} // namespace o2::aod
+#include "PWGDQ/Core/MCSignalLibrary.h"
 
 MCSignal* o2::aod::dqmcsignals::GetMCSignal(const char* name)
 {
@@ -202,11 +188,6 @@ MCSignal* o2::aod::dqmcsignals::GetMCSignal(const char* name)
     signal = new MCSignal(name, "All prompt charm hadrons (not from beauty)", {prong}, {-1});
     return signal;
   }
-  if (!nameStr.compare("electronFromPi0")) {
-    MCProng prong(2, {11, 111}, {true, true}, {false, false}, {0, 0}, {0, 0}, {false, false});
-    signal = new MCSignal(name, "Electrons from pi0 decays", {prong}, {-1});
-    return signal;
-  }
   if (!nameStr.compare("Pi0decayTOe")) {
     MCProng prong(2, {111, 11}, {true, true}, {false, false}, {0, 0}, {0, 0}, {false, false});
     prong.SetSignalInTime(true); // set direction to check for daughters (true, in time) or for mothers (false, back in time)
@@ -276,6 +257,11 @@ MCSignal* o2::aod::dqmcsignals::GetMCSignal(const char* name)
   }
 
   // LMEE single signals
+  if (!nameStr.compare("eFromAnything")) {
+    MCProng prong(2, {11, MCProng::kPDGCodeNotAssigned}, {true, true}, {false, false}, {0, 0}, {0, 0}, {false, false});
+    signal = new MCSignal(name, "Electrons from any mother", {prong}, {-1});
+    return signal;
+  }
   if (!nameStr.compare("eFromPhoton")) {
     MCProng prong(2, {11, 22}, {true, true}, {false, false}, {0, 0}, {0, 0}, {false, false});
     signal = new MCSignal(name, "Electrons from photon conversion", {prong}, {-1});
@@ -345,6 +331,13 @@ MCSignal* o2::aod::dqmcsignals::GetMCSignal(const char* name)
     signal = new MCSignal(name, "Electrons from LF meson + quarkonia decays", {prong}, {-1}); // pi0,eta,eta',rho,omega,phi,jpsi,psi2s mesons
     return signal;
   }
+  if (!nameStr.compare("AnythingToE")) {
+    MCProng prong(2, {MCProng::kPDGCodeNotAssigned, 11}, {true, true}, {false, false}, {0, 0}, {0, 0}, {false, false});
+    // prong.SetSourceBit(0, MCProng::kPhysicalPrimary, false);  // set source to be ALICE primary particles
+    prong.SetSignalInTime(true);                                            // set direction to check for daughters (true, in time) or for mothers (false, back in time)
+    signal = new MCSignal(name, "Decay of anything into e", {prong}, {-1}); // pi0,eta,eta',rho,omega,phi,jpsi,psi2s mesons
+    return signal;
+  }
   if (!nameStr.compare("LFQdecayToE")) {
     MCProng prong(2, {900, 11}, {true, true}, {false, false}, {0, 0}, {0, 0}, {false, false});
     // prong.SetSourceBit(0, MCProng::kPhysicalPrimary, false);  // set source to be ALICE primary particles
@@ -402,6 +395,54 @@ MCSignal* o2::aod::dqmcsignals::GetMCSignal(const char* name)
   if (!nameStr.compare("eFromNonPromptHc")) {
     MCProng prong(3, {11, 402, 502}, {true, true, true}, {false, false, false}, {0, 0, 0}, {0, 0, 0}, {false, false, false});
     signal = new MCSignal(name, "Electrons from open charmed hadron decays from b hadron decays", {prong}, {-1});
+    return signal;
+  }
+  if (!nameStr.compare("HcToE")) {
+    MCProng prong(2, {402, 11}, {true, true}, {false, false}, {0, 0}, {0, 0}, {false, false});
+    prong.SetSignalInTime(true); // set direction to check for daughters (true, in time) or for mothers (false, back in time)
+    signal = new MCSignal(name, "Open charmed hadron decays into e", {prong}, {-1});
+    return signal;
+  }
+  if (!nameStr.compare("HbToE")) {
+    MCProng prong(2, {502, 11}, {true, true}, {false, false}, {0, 0}, {0, 0}, {false, false});
+    prong.SetSignalInTime(true); // set direction to check for daughters (true, in time) or for mothers (false, back in time)
+    signal = new MCSignal(name, "Open beauty hadron decays into e", {prong}, {-1});
+    return signal;
+  }
+  if (!nameStr.compare("McToE")) {
+    MCProng prong(2, {401, 11}, {true, true}, {false, false}, {0, 0}, {0, 0}, {false, false});
+    prong.SetSignalInTime(true); // set direction to check for daughters (true, in time) or for mothers (false, back in time)
+    signal = new MCSignal(name, "Open charmed meson decays into e", {prong}, {-1});
+    return signal;
+  }
+  if (!nameStr.compare("MbToE")) {
+    MCProng prong(2, {501, 11}, {true, true}, {false, false}, {0, 0}, {0, 0}, {false, false});
+    prong.SetSignalInTime(true); // set direction to check for daughters (true, in time) or for mothers (false, back in time)
+    signal = new MCSignal(name, "Open beauty meson decays into e", {prong}, {-1});
+    return signal;
+  }
+  if (!nameStr.compare("BcToE")) {
+    MCProng prong(2, {4001, 11}, {true, true}, {false, false}, {0, 0}, {0, 0}, {false, false});
+    prong.SetSignalInTime(true); // set direction to check for daughters (true, in time) or for mothers (false, back in time)
+    signal = new MCSignal(name, "Open charmed baryon decays into e", {prong}, {-1});
+    return signal;
+  }
+  if (!nameStr.compare("BbToE")) {
+    MCProng prong(2, {5001, 11}, {true, true}, {false, false}, {0, 0}, {0, 0}, {false, false});
+    prong.SetSignalInTime(true); // set direction to check for daughters (true, in time) or for mothers (false, back in time)
+    signal = new MCSignal(name, "Open beauty baryon decay into e", {prong}, {-1});
+    return signal;
+  }
+  if (!nameStr.compare("PromptHcToE")) {
+    MCProng prong(3, {502, 402, 11}, {true, true, true}, {true, false, false}, {0, 0, 0}, {0, 0, 0}, {false, false, false});
+    prong.SetSignalInTime(true); // set direction to check for daughters (true, in time) or for mothers (false, back in time)
+    signal = new MCSignal(name, "Open charmed hadron decays into e", {prong}, {-1});
+    return signal;
+  }
+  if (!nameStr.compare("NonPromptHcToE")) {
+    MCProng prong(3, {502, 402, 11}, {true, true, true}, {false, false, false}, {0, 0, 0}, {0, 0, 0}, {false, false, false});
+    prong.SetSignalInTime(true); // set direction to check for daughters (true, in time) or for mothers (false, back in time)
+    signal = new MCSignal(name, "b hadron decays to open charmed hadron decays to e", {prong}, {-1});
     return signal;
   }
   if (!nameStr.compare("HFdecayToE")) {
@@ -563,4 +604,3 @@ MCSignal* o2::aod::dqmcsignals::GetMCSignal(const char* name)
   }
   return nullptr;
 }
-#endif // PWGDQ_CORE_MCSIGNALLIBRARY_H_

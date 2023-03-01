@@ -53,15 +53,15 @@ def main():
     
     ALICE_SOFTWARE_PATH = os.environ["HOME"] + "/alice"
     
-    localPathCutsLibrary = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/CutsLibrary.h"
-    localPathMCSignalsLibrary = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/MCSignalLibrary.h"
-    localPathEventMixing = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/MixingLibrary.h"
-    localPathHistogramsLibrary = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/HistogramsLibrary.h"
+    localPathCutsLibrary = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/CutsLibrary.cxx"
+    localPathMCSignalsLibrary = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/MCSignalLibrary.cxx"
+    localPathEventMixing = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/MixingLibrary.cxx"
+    localPathHistogramsLibrary = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/HistogramsLibrary.cxx"
     
-    URL_CUTS_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/CutsLibrary.h?raw=true")
-    URL_MCSIGNALS_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MCSignalLibrary.h?raw=true")
-    URL_MIXING_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MixingLibrary.h?raw=true")
-    URL_HISTOGRAMS_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/HistogramsLibrary.h?raw=true"
+    URL_CUTS_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/CutsLibrary.cxx?raw=true")
+    URL_MCSIGNALS_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MCSignalLibrary.cxx?raw=true")
+    URL_MIXING_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MixingLibrary.cxx?raw=true")
+    URL_HISTOGRAMS_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/HistogramsLibrary.cxx?raw=true"
     
     isLibsExist = True
     
@@ -90,10 +90,10 @@ def main():
     if extrargs.version and extrargs.local is False:
         logging.info("DQ libs will downloaded from github. Your Version For Downloading DQ Libs From Github : %s", extrargs.version,)
         
-        URL_CUTS_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/" + extrargs.version + "/PWGDQ/Core/CutsLibrary.h?raw=true")
-        URL_MCSIGNALS_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/" + extrargs.version + "/PWGDQ/Core/MCSignalLibrary.h?raw=true")
-        URL_MIXING_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/" + extrargs.version + "/PWGDQ/Core/MixingLibrary.h?raw=true")
-        URL_HISTOGRAMS_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/" + extrargs.version + "/PWGDQ/Core/HistogramsLibrary.h?raw=true")
+        URL_CUTS_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/" + extrargs.version + "/PWGDQ/Core/CutsLibrary.cxx?raw=true")
+        URL_MCSIGNALS_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/" + extrargs.version + "/PWGDQ/Core/MCSignalLibrary.cxx?raw=true")
+        URL_MIXING_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/" + extrargs.version + "/PWGDQ/Core/MixingLibrary.cxx?raw=true")
+        URL_HISTOGRAMS_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/" + extrargs.version + "/PWGDQ/Core/HistogramsLibrary.cxx?raw=true")
     
     if extrargs.local and extrargs.version:
         logging.warning("Your provided configuration for getting DQ libs in locally. You don't need to configure your github nightly version. It's for Online Downloading")
@@ -124,58 +124,58 @@ def main():
         
         logging.info("DQ libs will be getting from local folders. You alice software path : %s", ALICE_SOFTWARE_PATH,)
         
-        localPathCutsLibrary = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/CutsLibrary.h"
-        localPathMCSignalsLibrary = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/MCSignalLibrary.h"
-        localPathEventMixing = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/MixingLibrary.h"
-        localPathHistogramsLibrary = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/HistogramsLibrary.h"
+        localPathCutsLibrary = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/CutsLibrary.cxx"
+        localPathMCSignalsLibrary = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/MCSignalLibrary.cxx"
+        localPathEventMixing = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/MixingLibrary.cxx"
+        localPathHistogramsLibrary = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/HistogramsLibrary.cxx"
         
-        logging.info("Local CutsLibrary.h Path: %s ", localPathCutsLibrary)
-        logging.info("Local MCSignalsLibrary.h Path: %s ", localPathMCSignalsLibrary)
-        logging.info("Local MixingLibrary.h Path: %s ", localPathEventMixing)
-        logging.info("Local HistogramsLibrary.h Path: %s ", localPathHistogramsLibrary)
+        logging.info("Local CutsLibrary.cxx Path: %s ", localPathCutsLibrary)
+        logging.info("Local MCSignalsLibrary.cxx Path: %s ", localPathMCSignalsLibrary)
+        logging.info("Local MixingLibrary.cxx Path: %s ", localPathEventMixing)
+        logging.info("Local HistogramsLibrary.cxx Path: %s ", localPathHistogramsLibrary)
         try:
-            with open(MY_PATH + TEMP_LIB_PATH + "tempCutsLibrary.h", "wb") as f:
-                shutil.copyfile(localPathCutsLibrary, MY_PATH + TEMP_LIB_PATH + "tempCutsLibrary.h")
-                if os.path.isfile("templibs/tempCutsLibrary.h") is True:
-                    logging.info("tempCutsLibrary.h created at %s", MY_PATH + TEMP_LIB_PATH)
+            with open(MY_PATH + TEMP_LIB_PATH + "tempCutsLibrary.cxx", "wb") as f:
+                shutil.copyfile(localPathCutsLibrary, MY_PATH + TEMP_LIB_PATH + "tempCutsLibrary.cxx")
+                if os.path.isfile("templibs/tempCutsLibrary.cxx") is True:
+                    logging.info("tempCutsLibrary.cxx created at %s", MY_PATH + TEMP_LIB_PATH)
                 else:
-                    logging.error("tempCutsLibrary.h not created at %s Fatal Error", MY_PATH + TEMP_LIB_PATH)
+                    logging.error("tempCutsLibrary.cxx not created at %s Fatal Error", MY_PATH + TEMP_LIB_PATH)
                     sys.exit()
         except FileNotFoundError:
             logging.error("%s not found in your provided alice-software path!!! Check your alice software path", localPathCutsLibrary,)
             sys.exit()
         
         try:
-            with open(MY_PATH + TEMP_LIB_PATH + "tempMCSignalsLibrary.h", "wb") as f:
-                shutil.copyfile(localPathMCSignalsLibrary, MY_PATH + TEMP_LIB_PATH + "tempMCSignalsLibrary.h")
-                if os.path.isfile("templibs/tempMCSignalsLibrary.h") is True:
-                    logging.info("tempMCSignalsLibrary.h created at %s", MY_PATH)
+            with open(MY_PATH + TEMP_LIB_PATH + "tempMCSignalsLibrary.cxx", "wb") as f:
+                shutil.copyfile(localPathMCSignalsLibrary, MY_PATH + TEMP_LIB_PATH + "tempMCSignalsLibrary.cxx")
+                if os.path.isfile("templibs/tempMCSignalsLibrary.cxx") is True:
+                    logging.info("tempMCSignalsLibrary.cxx created at %s", MY_PATH)
                 else:
-                    logging.error("tempMCSignalsLibrary.h not created at %s Fatal Error", MY_PATH + TEMP_LIB_PATH)
+                    logging.error("tempMCSignalsLibrary.cxx not created at %s Fatal Error", MY_PATH + TEMP_LIB_PATH)
                     sys.exit()
         except FileNotFoundError:
             logging.error("%s not found in your provided alice-software path!!! Check your alice software path", localPathMCSignalsLibrary,)
             sys.exit()
         
         try:
-            with open(MY_PATH + TEMP_LIB_PATH + "tempMixingLibrary.h", "wb") as f:
-                shutil.copyfile(localPathEventMixing, MY_PATH + TEMP_LIB_PATH + "tempMixingLibrary.h")
-                if os.path.isfile("templibs/tempMixingLibrary.h") is True:
-                    logging.info("tempMixingLibrary.h created at %s", MY_PATH + TEMP_LIB_PATH)
+            with open(MY_PATH + TEMP_LIB_PATH + "tempMixingLibrary.cxx", "wb") as f:
+                shutil.copyfile(localPathEventMixing, MY_PATH + TEMP_LIB_PATH + "tempMixingLibrary.cxx")
+                if os.path.isfile("templibs/tempMixingLibrary.cxx") is True:
+                    logging.info("tempMixingLibrary.cxx created at %s", MY_PATH + TEMP_LIB_PATH)
                 else:
-                    logging.error("tempMixingLibrary.h not created at %s Fatal Error", MY_PATH + TEMP_LIB_PATH)
+                    logging.error("tempMixingLibrary.cxx not created at %s Fatal Error", MY_PATH + TEMP_LIB_PATH)
                     sys.exit()
         except FileNotFoundError:
             logging.error("%s not found in your provided alice-software path!!! Check your alice software path", localPathEventMixing,)
             sys.exit()
         
         try:
-            with open(MY_PATH + TEMP_LIB_PATH + "tempHistogramsLibrary.h", "wb") as f:
-                shutil.copyfile(localPathHistogramsLibrary, MY_PATH + TEMP_LIB_PATH + "tempHistogramsLibrary.h")
-                if os.path.isfile("templibs/tempHistogramsLibrary.h") is True:
-                    logging.info("tempHistogramsLibrary.h created at %s", MY_PATH + TEMP_LIB_PATH)
+            with open(MY_PATH + TEMP_LIB_PATH + "tempHistogramsLibrary.cxx", "wb") as f:
+                shutil.copyfile(localPathHistogramsLibrary, MY_PATH + TEMP_LIB_PATH + "tempHistogramsLibrary.cxx")
+                if os.path.isfile("templibs/tempHistogramsLibrary.cxx") is True:
+                    logging.info("tempHistogramsLibrary.cxx created at %s", MY_PATH + TEMP_LIB_PATH)
                 else:
-                    logging.error("tempHistogramsLibrary.h not created at %s Fatal Error", MY_PATH + TEMP_LIB_PATH)
+                    logging.error("tempHistogramsLibrary.cxx not created at %s Fatal Error", MY_PATH + TEMP_LIB_PATH)
                     sys.exit()
         except FileNotFoundError:
             logging.error("%s not found in your provided alice-software path!!! Check your alice software path", localPathHistogramsLibrary,)
@@ -185,12 +185,12 @@ def main():
         sys.exit()
     
     if extrargs.local is False:
-        if (os.path.isfile("tempCutsLibrary.h") and os.path.isfile("tempMCSignalsLibrary.h") and os.path.isfile("tempMixingLibrary.h") and os.path.isfile("tempHistogramsLibrary.h")) is False:
+        if (os.path.isfile("tempCutsLibrary.cxx") and os.path.isfile("tempMCSignalsLibrary.cxx") and os.path.isfile("tempMixingLibrary.cxx") and os.path.isfile("tempHistogramsLibrary.cxx")) is False:
             logging.info("Some Libs are Missing. All DQ libs will download")
-            logging.info("Github CutsLibrary.h Path: %s ", URL_CUTS_LIBRARY)
-            logging.info("Github MCSignalsLibrary.h Path: %s ", URL_MCSIGNALS_LIBRARY)
-            logging.info("Github MixingLibrary.h Path: %s ", URL_MIXING_LIBRARY)
-            logging.info("Github HistogramsLibrary.h Path: %s ", URL_HISTOGRAMS_LIBRARY)
+            logging.info("Github CutsLibrary.cxx Path: %s ", URL_CUTS_LIBRARY)
+            logging.info("Github MCSignalsLibrary.cxx Path: %s ", URL_MCSIGNALS_LIBRARY)
+            logging.info("Github MixingLibrary.cxx Path: %s ", URL_MIXING_LIBRARY)
+            logging.info("Github HistogramsLibrary.cxx Path: %s ", URL_HISTOGRAMS_LIBRARY)
             isLibsExist = False
             if extrargs.debug:
                 try:
@@ -218,18 +218,18 @@ def main():
             htmlMixingLibrary = urlopen(requestMixingLibrary, context = context).read()
             htmlHistogramsLibrary = urlopen(requestHistogramsLibrary, context = context).read()
             
-            with open("templibs/tempCutsLibrary.h", "wb") as f:
+            with open("templibs/tempCutsLibrary.cxx", "wb") as f:
                 f.write(htmlCutsLibrary)
-                logging.info("tempCutsLibrary.h downloaded successfully from github")
-            with open("templibs/tempMCSignalsLibrary.h", "wb") as f:
+                logging.info("tempCutsLibrary.cxx downloaded successfully from github")
+            with open("templibs/tempMCSignalsLibrary.cxx", "wb") as f:
                 f.write(htmlMCSignalsLibrary)
-                logging.info("tempMCSignalsLibrary.h downloaded successfully from github")
-            with open("templibs/tempMixingLibrary.h", "wb") as f:
+                logging.info("tempMCSignalsLibrary.cxx downloaded successfully from github")
+            with open("templibs/tempMixingLibrary.cxx", "wb") as f:
                 f.write(htmlMixingLibrary)
-                logging.info("tempMixingLibrary.h downloaded successfully from github")
-            with open("templibs/tempHistogramsLibrary.h", "wb") as f:
+                logging.info("tempMixingLibrary.cxx downloaded successfully from github")
+            with open("templibs/tempHistogramsLibrary.cxx", "wb") as f:
                 f.write(htmlHistogramsLibrary)
-                logging.info("tempHistogramsLibrary.h downloaded successfully from github")
+                logging.info("tempHistogramsLibrary.cxx downloaded successfully from github")
         
         if isLibsExist:
             logging.info("DQ Libraries have been downloaded before. If you want to update, delete they manually and run this script again.")

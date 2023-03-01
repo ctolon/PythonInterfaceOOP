@@ -11,17 +11,7 @@
 //
 // Contact: iarsene@cern.ch, i.c.arsene@fys.uio.no
 //
-#include <TString.h>
-#include "PWGDQ/Core/MixingHandler.h"
-#include "PWGDQ/Core/VarManager.h"
-
-namespace o2::aod
-{
-namespace dqmixing
-{
-void SetUpMixing(MixingHandler* mh, const char* mixingVarible);
-} // namespace dqmixing
-} // namespace o2::aod
+#include "PWGDQ/Core/MixingLibrary.h"
 
 void o2::aod::dqmixing::SetUpMixing(MixingHandler* mh, const char* mixingVarible)
 {

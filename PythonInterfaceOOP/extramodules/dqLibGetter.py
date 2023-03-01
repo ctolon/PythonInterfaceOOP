@@ -76,10 +76,10 @@ class DQLibGetter(object):
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36"
             }
         
-        URL_CUTS_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/CutsLibrary.h?raw=true"
-        URL_MCSIGNALS_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MCSignalLibrary.h?raw=true"
-        URL_MIXING_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MixingLibrary.h?raw=true"
-        URL_HISTOGRAMS_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/HistogramsLibrary.h?raw=true"
+        URL_CUTS_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/CutsLibrary.cxx?raw=true"
+        URL_MCSIGNALS_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MCSignalLibrary.cxx?raw=true"
+        URL_MIXING_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MixingLibrary.cxx?raw=true"
+        URL_HISTOGRAMS_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/HistogramsLibrary.cxx?raw=true"
         
         # Create templibs directory if not exist
         if not os.path.isdir("templibs"):
@@ -92,7 +92,7 @@ class DQLibGetter(object):
         
         # Github Links for CutsLibrary and MCSignalsLibrary from PWG-DQ --> download from github
         # This condition solves performance issues
-        if (os.path.isfile("templibs/tempCutsLibrary.h") and os.path.isfile("templibs/tempMCSignalsLibrary.h") and os.path.isfile("templibs/tempMixingLibrary.h") and os.path.isfile("templibs/tempHistogramsLibrary.h")) is False:
+        if (os.path.isfile("templibs/tempCutsLibrary.cxx") and os.path.isfile("templibs/tempMCSignalsLibrary.cxx") and os.path.isfile("templibs/tempMixingLibrary.cxx") and os.path.isfile("templibs/tempHistogramsLibrary.cxx")) is False:
             print("[INFO] Some Libs are Missing. They will download.")
             
             # Dummy SSL Adder
@@ -112,18 +112,18 @@ class DQLibGetter(object):
             htmlHistogramsLibrary = urlopen(requestHistogramsLibrary, context = context).read()
             
             # Save Disk to temp DQ libs
-            writeFile("templibs/tempCutsLibrary.h", htmlCutsLibrary)
-            writeFile("templibs/tempMCSignalsLibrary.h", htmlMCSignalsLibrary)
-            writeFile("templibs/tempMixingLibrary.h", htmlMixingLibrary)
-            writeFile("templibs/tempHistogramsLibrary.h", htmlHistogramsLibrary)
+            writeFile("templibs/tempCutsLibrary.cxx", htmlCutsLibrary)
+            writeFile("templibs/tempMCSignalsLibrary.cxx", htmlMCSignalsLibrary)
+            writeFile("templibs/tempMixingLibrary.cxx", htmlMixingLibrary)
+            writeFile("templibs/tempHistogramsLibrary.cxx", htmlHistogramsLibrary)
             print("[INFO] Libs downloaded succesfully.")
         
         # Get MC Signals and Mixing vars from DQ Framework header files
-        self.allMCSignals = getIfStartedInDoubleQuotes("templibs/tempMCSignalsLibrary.h")
-        self.allMixing = getIfStartedInDoubleQuotes("templibs/tempMixingLibrary.h")
+        self.allMCSignals = getIfStartedInDoubleQuotes("templibs/tempMCSignalsLibrary.cxx")
+        self.allMixing = getIfStartedInDoubleQuotes("templibs/tempMixingLibrary.cxx")
         
         # Get All histograms with flags
-        with open("templibs/tempHistogramsLibrary.h") as f:
+        with open("templibs/tempHistogramsLibrary.cxx") as f:
             for line in f:
                 if "if" in line:
                     if "track" not in line and kEvents is True: # get event histos
@@ -160,12 +160,12 @@ class DQLibGetter(object):
         self.allPairHistos += pairHistos
         self.allDileptonHistos += dileptonHistos
         
-        self.allAnalysisCuts = getIfStartedInDoubleQuotes("templibs/tempCutsLibrary.h")
+        self.allAnalysisCuts = getIfStartedInDoubleQuotes("templibs/tempCutsLibrary.cxx")
         getPairCuts = [y for y in self.allAnalysisCuts if "pair" in y]
         if getPairCuts: # if pair cut list is not empty
-            allPairCuts += getPairCuts # Get Only pair cuts from CutsLibrary.h
+            allPairCuts += getPairCuts # Get Only pair cuts from CutsLibrary.cxx
             namespacedPairCuts = [x + singleColon for x in allPairCuts] # paircut:
-            self.allOnlyPairCuts += allPairCuts # Get all Pair Cuts from CutsLibrary.h
+            self.allOnlyPairCuts += allPairCuts # Get all Pair Cuts from CutsLibrary.cxx
         
         # NOTE : Now we have brute-force solution for format specifiers (for dalitz cuts)
         # TODO We need more simple and flexible solution for this isue
