@@ -1,0 +1,18 @@
+v0-selector:
+  - v0max_mee: "max mee for photon"
+  - maxpsipair: "max psi_pair for photon"
+  - v0cospa: "V0 CosPA"
+  - dcav0dau: "DCA V0 Daughters"
+  - v0Rmin: "v0Rmin"
+  - v0Rmax: "v0Rmax"
+  - dcamin: "dcamin"
+  - dcamax: "dcamax"
+  - mincrossedrows: "min crossed rows"
+  - maxchi2tpc: "max chi2/NclsTPC"
+
+track-pid-qa:
+  - dcamin: "dcamin"
+  - dcamax: "dcamax"
+  - mincrossedrows: "min crossed rows"
+  - maxchi2tpc: "max chi2/NclsTPC"
+  - processQA: "Run PID QA for barrel tracks"

@@ -16,7 +16,7 @@
 # This script includes setter functions for configurables (Developer package)
 
 from extramodules.dqLibGetter import DQLibGetter
-from .utils import convertListToStr, listToString, stringToList
+from .utils import convertListToStr, listToString, stringToList, helperMessageGenerator, helpMessageBuilder
 import logging
 from logging import handlers
 import sys
@@ -382,7 +382,7 @@ class SetArgsToArgumentParser(object):
         
         self.cfgJsonName = cfgJsonName
         self.tasksToPassList = list(tasksToPassList)
-        self.parser = argparse.ArgumentParser(description = 'Arguments to pass', formatter_class = argparse.ArgumentDefaultsHelpFormatter)
+        self.parser = argparse.ArgumentParser(description = 'Arguments to pass', formatter_class = argparse.RawTextHelpFormatter)
         self.dummyHasTasks = dummyHasTasks
         self.processFuncs = processFuncs
         
@@ -409,6 +409,11 @@ class SetArgsToArgumentParser(object):
         # allPairHistos = dqLibGetter.allPairHistos
         # allDileptonHistos = dqLibGetter.allDileptonHistos
         
+        # Generate helper messages
+        gen_obj = helperMessageGenerator()
+        helperMessageUnpackaged = [value for value in gen_obj]
+        helperMessages = {k: v for d in helperMessageUnpackaged for k, v in d.items()}
+        
         # Predefined lists for autocompletion
         booleanSelections = ["true", "false"]
         itsMatchingSelections = ["0", "1", "2", "3"]
@@ -420,12 +425,15 @@ class SetArgsToArgumentParser(object):
         
         # list for save all arguments (template --> taskname:configuration)
         arglist = []
+        defaultParamsList = []
         
         # Iterating in JSON config file
         for task, cfgValuePair in configForParsing.items():
             if isinstance(cfgValuePair, dict):
-                for argument in cfgValuePair.keys():
+                for argument, value in cfgValuePair.items():
                     arglist.append(task + ":" + argument) # Set CLI argument as --> taskname:config
+                    defaultParamsList.append(value)
+        defaultParamDict = dict(zip(arglist, defaultParamsList))
         
         # We can define hard coded global arguments
         self.parser.add_argument("cfgFileName", metavar = "Config.json", default = "config.json", help = "config JSON file name (mandatory)")
@@ -491,65 +499,65 @@ class SetArgsToArgumentParser(object):
             
             # Create arguments with possible autocompletions for DQ Framework
             if containsCuts:
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allAnalysisCuts)
+                groupJsonParser.add_argument("--" + arg, help = helpMessageBuilder(arg, helperMessages, defaultParamDict), action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allAnalysisCuts)
             elif containsSignals:
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allMCSignals)
+                groupJsonParser.add_argument("--" + arg, help = helpMessageBuilder(arg, helperMessages, defaultParamDict), action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allMCSignals)
             elif containsHistogram:
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allHistos)
+                groupJsonParser.add_argument("--" + arg, help = helpMessageBuilder(arg, helperMessages, defaultParamDict), action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allHistos)
             elif containsSels:
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allSels)
+                groupJsonParser.add_argument("--" + arg, help = helpMessageBuilder(arg, helperMessages, defaultParamDict), action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allSels)
             elif containsMixingVars:
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allMixing)
+                groupJsonParser.add_argument("--" + arg, help = helpMessageBuilder(arg, helperMessages, defaultParamDict), action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allMixing)
             elif containsQA:
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+                groupJsonParser.add_argument("--" + arg, help = helpMessageBuilder(arg, helperMessages, defaultParamDict), action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
             elif containsAmbiguous:
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+                groupJsonParser.add_argument("--" + arg, help = helpMessageBuilder(arg, helperMessages, defaultParamDict), action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
             elif containsFillCandidateTable:
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+                groupJsonParser.add_argument("--" + arg, help = helpMessageBuilder(arg, helperMessages, defaultParamDict), action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
             elif containsFlatTables:
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+                groupJsonParser.add_argument("--" + arg, help = helpMessageBuilder(arg, helperMessages, defaultParamDict), action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
             elif containsTPCpostCalib:
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+                groupJsonParser.add_argument("--" + arg, help = helpMessageBuilder(arg, helperMessages, defaultParamDict), action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
             elif containsUseKFVertexing:
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+                groupJsonParser.add_argument("--" + arg, help = helpMessageBuilder(arg, helperMessages, defaultParamDict), action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
             elif containsUseRemoteField:
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+                groupJsonParser.add_argument("--" + arg, help = helpMessageBuilder(arg, helperMessages, defaultParamDict), action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
             elif containsUseAbsDCA:
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+                groupJsonParser.add_argument("--" + arg, help = helpMessageBuilder(arg, helperMessages, defaultParamDict), action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
             elif containsPropToPCA:
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+                groupJsonParser.add_argument("--" + arg, help = helpMessageBuilder(arg, helperMessages, defaultParamDict), action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
             elif configurable == "processDummy": # NOTE we don't need configure processDummy since we have dummy automizer
                 continue
             
             # Create arguments with possible autocompletions for Common Framework
             elif containsProcess: # NOTE This is an global definition in O2 Analysis framework, all process functions startswith "process"
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+                groupJsonParser.add_argument("--" + arg, help = helpMessageBuilder(arg, helperMessages, defaultParamDict), action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
             elif configurable == "syst":
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b").completer = ChoicesCompleter(collisionSystemSelections)
+                groupJsonParser.add_argument("--" + arg, help = helpMessageBuilder(arg, helperMessages, defaultParamDict), action = "store", type = str, metavar = "\b").completer = ChoicesCompleter(collisionSystemSelections)
             elif configurable == "doVertexZeq":
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b").completer = ChoicesCompleter(binarySelection)
+                groupJsonParser.add_argument("--" + arg, help = helpMessageBuilder(arg, helperMessages, defaultParamDict), action = "store", type = str, metavar = "\b").completer = ChoicesCompleter(binarySelection)
             elif configurable.startswith("pid-") or configurable.startswith("est"):
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(tripletSelection)
+                groupJsonParser.add_argument("--" + arg, help = helpMessageBuilder(arg, helperMessages, defaultParamDict), action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(tripletSelection)
             elif configurable == "muonSelection":
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b").completer = ChoicesCompleter(eventMuonSelections)
+                groupJsonParser.add_argument("--" + arg, help = helpMessageBuilder(arg, helperMessages, defaultParamDict), action = "store", type = str, metavar = "\b").completer = ChoicesCompleter(eventMuonSelections)
             elif configurable == "itsMatching":
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b").completer = ChoicesCompleter(itsMatchingSelections)
+                groupJsonParser.add_argument("--" + arg, help = helpMessageBuilder(arg, helperMessages, defaultParamDict), action = "store", type = str, metavar = "\b").completer = ChoicesCompleter(itsMatchingSelections)
             elif configurable == "compatibilityIU":
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+                groupJsonParser.add_argument("--" + arg, help = helpMessageBuilder(arg, helperMessages, defaultParamDict), action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
             elif configurable == "produceFBextendedTable":
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+                groupJsonParser.add_argument("--" + arg, help = helpMessageBuilder(arg, helperMessages, defaultParamDict), action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
             elif configurable == "doNotCrashOnNull":
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+                groupJsonParser.add_argument("--" + arg, help = helpMessageBuilder(arg, helperMessages, defaultParamDict), action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
             elif configurable == "useParamCollection":
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+                groupJsonParser.add_argument("--" + arg, help = helpMessageBuilder(arg, helperMessages, defaultParamDict), action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
             elif configurable == "fatalOnPassNotAvailable":
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+                groupJsonParser.add_argument("--" + arg, help = helpMessageBuilder(arg, helperMessages, defaultParamDict), action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
             elif configurable == "doNotSwap":
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+                groupJsonParser.add_argument("--" + arg, help = helpMessageBuilder(arg, helperMessages, defaultParamDict), action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
             elif configurable == "debug":
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
+                groupJsonParser.add_argument("--" + arg, help = helpMessageBuilder(arg, helperMessages, defaultParamDict), action = "store", type = str.lower, metavar = "\b").completer = ChoicesCompleter(booleanSelections)
             else:
-                groupJsonParser.add_argument("--" + arg, help = "", action = "store", type = str, metavar = "\b") # Create other arguments without autocompletion
+                groupJsonParser.add_argument("--" + arg, help = helpMessageBuilder(arg, helperMessages, defaultParamDict), action = "store", type = str, metavar = "\b") # Create other arguments without autocompletion
     
     def parseArgs(self, testString = None):
         """

@@ -18,7 +18,8 @@
 import json
 import re
 import logging
-from typing import Any
+import yaml
+from glob import glob
 
 
 def listToString(s: list):
@@ -120,3 +121,44 @@ def getIfStartedInDoubleQuotes(headerFileName: str) -> list:
         return mylist
     
     #f.close()
+    
+def yamlHelperDataStreamHandler(stream):
+    """Helper Message Data Stream Handler"""
+    
+    bufferDict = {}
+    try:
+        loadedData = yaml.safe_load(stream)
+    except yaml.YAMLError as exc:
+        raise exc
+    if loadedData is not None:
+        for taskname, configurableHelpMessagePair in loadedData.items():
+            transformFirst = list(map(lambda x:(list(x.keys()) + list(x.values())) ,configurableHelpMessagePair))
+            _ = [index.insert(0, taskname) for index in transformFirst]
+            transformSecond = list(map(lambda x: f"{x[0]}:{x[1]}&${x[2]}", transformFirst))
+            transformThird = [index.split("&$") for index in transformSecond]
+            for i in transformThird:
+                transformFourth = dict(map(lambda index: (i[index], i[index+1]), range(len(i)-1)[::2]))
+                bufferDict = {**bufferDict,**transformFourth}
+        yield bufferDict
+
+def helperMessageGenerator():
+    """Helper Message generator function for parser args"""
+    helperYamlList = []
+    for file in glob("helpers/*.yml"):
+        helperYamlList.append(file)
+    for yamlFile in helperYamlList:
+        with open(yamlFile, 'r') as stream:
+            yield from yamlHelperDataStreamHandler(stream)
+
+"""
+def helpMessageHandler(arg, helpMessages):    
+    return helpMessages[arg] if arg in helpMessages.keys() else ""
+
+def defaultValueHandler(arg, defaultParamsDict):
+    return f" (default: {defaultParamsDict[arg]}) " if arg in defaultParamsDict.keys() else ""
+"""
+    
+def helpMessageBuilder(arg, helpMessages, defaultParamsDict):
+    rawHelpMessage = helpMessages[arg] if arg in helpMessages.keys() else ""
+    defaultValueMessage = f" (default: {defaultParamsDict[arg]}) " if arg in defaultParamsDict.keys() else ""
+    return rawHelpMessage + defaultValueMessage
