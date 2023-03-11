@@ -62,16 +62,16 @@ def main():
     specificDeps = {
         "processFull": [],
         "processFullWithCov": [],
-        "processFullWithCovAndEventFilter" : ["o2-analysis-dq-filter-pp","o2-analysis-fwdtrackextension"],
+        "processFullWithCovAndEventFilter" : ["o2-analysis-dq-filter-pp"],
         "processFullWithCent": ["o2-analysis-centrality-table"],
         "processFullWithCentAndMults": ["o2-analysis-centrality-table"],
         "processBarrelOnly": [],
         "processBarrelOnlyWithCov": [],
         "processBarrelOnlyWithV0Bits": ["o2-analysis-dq-v0-selector"],
         "processBarrelOnlyWithDalitzBits": ["o2-analysis-dq-dalitz-selection"],
-        "processBarrelOnlyWithEventFilter": ["o2-analysis-dq-filter-pp","o2-analysis-fwdtrackextension"],
+        "processBarrelOnlyWithEventFilter": ["o2-analysis-dq-filter-pp"],
         "processBarrelOnlyWithMults": [],
-        "processBarrelOnlyWithCovAndEventFilter" : ["o2-analysis-dq-filter-pp","o2-analysis-fwdtrackextension"],
+        "processBarrelOnlyWithCovAndEventFilter" : ["o2-analysis-dq-filter-pp"],
         "processBarrelOnlyWithQvector": ["o2-analysis-centrality-table", "o2-analysis-dq-flow"],
         "processBarrelOnlyWithCent": ["o2-analysis-centrality-table"],
         "processBarrelOnlyWithCentAndMults": ["o2-analysis-centrality-table"],
@@ -209,7 +209,7 @@ def main():
             if "processFull" in processFunc or "processBarrel" in processFunc or "processAmbiguousBarrel" in processFunc or "Filter" in processFunc: # NOTE For event filter, we need run all dependencies
                 for dep in barrelDeps:
                     depsToRun[dep] = 1
-            if "processFull" in processFunc or "processMuon" in processFunc or "processAmbiguousMuon" in processFunc:
+            if "processFull" in processFunc or "processMuon" in processFunc or "processAmbiguousMuon" in processFunc or "Filter" in processFunc:
                 for dep in muonDeps:
                     depsToRun[dep] = 1
             for dep in specificDeps[processFunc]:
