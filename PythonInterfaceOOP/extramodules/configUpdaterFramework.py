@@ -63,6 +63,9 @@ class ConfigMerger:
             elif isinstance(value, dict) and isinstance(mergedConfig[key], dict):
                 # If both values are dictionaries, recursively merge them
                 mergedConfig[key] = ConfigMerger(mergedConfig[key], value).mergedConfig
+            elif isinstance(value, dict) and not isinstance(mergedConfig[key], dict):
+                # If the value in config1 is not a dictionary but the value in config2 is, then overwrite it with the value from config2
+                mergedConfig[key] = value
             elif value != mergedConfig[key] and showWarnings is True:
                 # If both values are not dictionaries and they differ, print a warning
                 logging.warning(f"'{key}' has different values in the two configs: '{value}' vs '{mergedConfig[key]}'")
@@ -80,21 +83,21 @@ def defaultValueHandler(dataType, defaultValue):
     return defaultValue
 
 
-def replaceDictKeys(originalDict: dict, key_mapping: dict):
+def replaceDictKeys(originalDict: dict, keyMapping: dict):
     """
-    Replaces the keys in `key_mapping` dictionary with the corresponding keys in `original_dict`,
+    Replaces the keys in `keyMapping` dictionary with the corresponding keys in `originalDict`,
     if the value associated with the original key is not an empty string.
 
     Args:
-        original_dict (dict): The dictionary to be used for key replacement.
-        key_mapping (dict): A dictionary of keys to replace, where the keys represent the original keys
-                            in `original_dict` and the values represent the new keys.
+        originalDict (dict): The dictionary to be used for key replacement.
+        keyMapping (dict): A dictionary of keys to replace, where the keys represent the original keys
+                            in `originalDict` and the values represent the new keys.
 
     Returns:
         dict: A new dictionary with replaced keys.
     
     Example:
-    >>> original_dict = {'MultiplicityTableTaskIndexed': 'multiplicity-table',
+    >>> originalDict = {'MultiplicityTableTaskIndexed': 'multiplicity-table',
                          'TrackSelectionTask': {'isRun3': 'false',
                                                 'produceFBextendedTable': 'false',
                                                 'compatibilityIU': 'false',
@@ -103,8 +106,8 @@ def replaceDictKeys(originalDict: dict, key_mapping: dict):
                                                 'ptMax': '1e10f',
                                                 'etaMin': '-0.8',
                                                 'etaMax': '0.8'}}
-    >>> key_mapping = {'MultiplicityTableTaskIndexed': 'multiplicity-table'}
-    >>> replaceDictKeys(original_dict, key_mapping)
+    >>> keyMapping = {'MultiplicityTableTaskIndexed': 'multiplicity-table'}
+    >>> replaceDictKeys(originalDict, keyMapping)
     {'multiplicity-table': {
         'isRun3': 'false',
         'produceFBextendedTable': 'false',
@@ -117,25 +120,12 @@ def replaceDictKeys(originalDict: dict, key_mapping: dict):
         }
     """
     
-    result_dict = key_mapping.copy()
-    for key, value in key_mapping.items():
+    resultDict = keyMapping.copy()
+    for key, value in keyMapping.items():
         if key in originalDict and originalDict[key] != '':
-            result_dict[originalDict[key]] = value
-            result_dict.pop(key)
-    return result_dict
-
-
-def sortDictByKeysAndAddNewTasks(d1: dict, d2: dict):
-    sortedDict = {}
-    for key in d2.keys():
-        if key in d1:
-            sortedDict[key] = d1[key]
-    for key, value in d1.items():
-        if isinstance(value, dict) and key not in sortedDict.keys():
-            logging.info(f"New Task will added: [{key}]")
-            logging.info(f"New Task Configurables: {d1[key]}")
-            sortedDict[key] = d1[key]
-    return sortedDict
+            resultDict[originalDict[key]] = value
+            resultDict.pop(key)
+    return resultDict
 
 
 def listToDict(lst):
@@ -162,10 +152,10 @@ def listToDict(lst):
     """
     d = {}
     for item in lst:
-        curr_dict = d
+        currDict = d
         for key in item[:-2]:
-            curr_dict = curr_dict.setdefault(key, {})
-        curr_dict[item[-2]] = item[-1]
+            currDict = currDict.setdefault(key, {})
+        currDict[item[-2]] = item[-1]
     return d
 
 
@@ -187,6 +177,14 @@ def newAddedConfigsReport(dict1: dict, dict2: dict):
     """
     extra = []
     extraKeys = None
+    extraParrentKeys = set(dict1.keys() - dict2.keys())
+    if len(extraParrentKeys) > 0:
+        for key, value in dict1.items():
+            if key in extraParrentKeys and isinstance(value, dict):
+                logging.info(f"New Task: [{key}]")
+                for k,v in value.items():
+                    logging.info(f"{k} : {v}")
+                    
     for key, value in dict1.items():
         if key in dict2:
             subDict1 = dict1[key]
@@ -204,14 +202,14 @@ def newAddedConfigsReport(dict1: dict, dict2: dict):
     return extra
 
 
-def transformTaskname(input_str: str) -> str:
+def transformTaskname(inputStr: str) -> str:
     """
     Transforms the input string according to the required rules:
     - First character converted to lower case
     - Subsequent uppercase characters converted to lower case and prefixed with a hyphen
 
     Args:
-    - input_str: A string to be transformed
+    - inputStr: A string to be transformed
 
     Returns:
     - The transformed string
@@ -221,13 +219,13 @@ def transformTaskname(input_str: str) -> str:
     >>> transformTaskname(task)
     d-q-event-selection-task
     """
-    output_str = input_str[0].lower()
-    for c in input_str[1 :]:
+    outputStr = inputStr[0].lower()
+    for c in inputStr[1 :]:
         if c.isupper():
-            output_str += f"-{c.lower()}"
+            outputStr += f"-{c.lower()}"
         else:
-            output_str += c
-    return output_str
+            outputStr += c
+    return outputStr
 
 
 def transformDictKeys(mergedDict: dict, adaptAnalysisDict: dict) -> dict:
@@ -375,66 +373,6 @@ def rawAdaptiveTaskProcessor(rawData):
     return buffer
 
 
-def rawHelpMessageProcessor(rawData):
-    """
-    Processes the raw configuration data extracted from a web page and returns two dictionaries.
-    
-    Args:
-    - rawData (list of dicts): The raw configuration data to be processed. The expected format is as follows:
-    
-      [
-        {
-          "taskName": <str>,
-          "configurables": [
-            {
-              "dataType": <str>,
-              "variableName": <str>,
-              "defaultValue": <str>,
-              "configName": <str>,
-              "description": <str>
-            },
-            ...
-          ],
-          "processFunc": [
-            {
-              "taskName": <str>,
-              "processFunc": <str>,
-              "processFuncDesc": <str>,
-              "processFuncDefaultValue": <str>
-            },
-            ...
-          ],
-          "adaptAnalysisTask": [
-            {
-              "adaptAnalysisTaskName": <str>,
-              "variables": [<str>, <str>, ...]
-            },
-            ...
-          ]
-        },
-        ...
-      ]
-    
-    Returns:
-    - Dictionary maps help messages to their default descriptions.
-    
-    Example usage:
-    ```
-    >>> rawData = ... # some raw configuration data
-    processedHelpMessages = rawHelpMessageProcessor(rawData)
-    ```
-    """
-    buffer = []
-    for index in rawData:
-        taskName = index["taskName"]
-        unprocessedConfigurables = index["configurables"]
-        unprocessedProcessFuncs = index["processFunc"]
-        for element in unprocessedConfigurables:
-            buffer.append([taskName, element["configName"], element["description"]])
-        for element in unprocessedProcessFuncs:
-            buffer.append([element["taskName"], element["processFunc"], element["processFuncDesc"]])
-    return listToDict(buffer)
-
 
 def configurableSelectorWithRegex(file):
     """
@@ -555,25 +493,26 @@ def configurableSelectorWithRegex(file):
                         })
     return configurableValues
 
-
-def alignDicts(dict1: dict, dict2: dict, keepParrentKeys = None):
-    newDict = {}
-    for key, value in dict1.items():
-        newValue = {}
-        for subKey in value:
-            if subKey in dict2[key]:
-                newValue[subKey] = dict2[key][subKey]
-            else:
-                newValue[subKey] = value[subKey]
-        for subKey in dict2[key]:
-            if subKey not in newValue:
-                newValue[subKey] = dict2[key][subKey]
-        newDict[key] = newValue
+def alignDicts(dict1: dict, dict2: dict, keepParentKeys=None) -> dict:
+    newDict = OrderedDict()
+    dict2Ordered = OrderedDict()
     for key, value in dict2.items():
-        if keepParrentKeys is not None and key in keepParrentKeys:
-            newDict[key] = value
+        dict2Ordered[key] = value
+    for key in dict2Ordered.keys():
+        if key in dict1:
+            newValue = {}
+            for subKey in dict1[key]:
+                if subKey in dict2Ordered[key]:
+                    newValue[subKey] = dict2Ordered[key][subKey]
+                else:
+                    newValue[subKey] = dict1[key][subKey]
+            for subKey in dict2Ordered[key]:
+                if subKey not in newValue:
+                    newValue[subKey] = dict2Ordered[key][subKey]
+            newDict[key] = newValue
+        elif key in dict2Ordered and (keepParentKeys is None or key in keepParentKeys):
+            newDict[key] = dict2Ordered[key]
     return newDict
-
 
 def removeUnmatchedSubkeys(d1: dict, d2: dict, keepParrentKeys = None, keepSubKeys = None):
     if keepParrentKeys is None:
@@ -614,7 +553,7 @@ def removeUnmatchedSubkeys(d1: dict, d2: dict, keepParrentKeys = None, keepSubKe
     return d1
 
 
-def latestConfigFileGenerator(input: dict) -> None:
+def latestConfigFileGenerator(input: dict) -> dict:
     """
     Downloads HTML content from the URLs provided in the input dictionary, extracts configurable parameters from the 
     HTML using a configurable selector function, processes and merges the extracted data into a single dictionary, 
@@ -672,62 +611,3 @@ def latestConfigFileGenerator(input: dict) -> None:
     mergedConfig = replaceDictKeys(mergedAdapt, mergedConfig)
     mergedConfig = transformDictKeys(mergedConfig, mergedAdapt)
     return mergedConfig
-
-
-def latestHelperFileGenerator(input: dict) -> None:
-    """
-    Downloads HTML content from the URLs provided in the input dictionary, extracts configurable parameters from the 
-    HTML using a configurable selector function, processes and merges the extracted data into a single dictionary, 
-    updates dictionary keys according to specific rules, and retruns the resulting dictionary.
-
-    Args:
-    - input: A dictionary containing URLs as values and their corresponding analysis names as keys.
-
-    Returns:
-    - mergedHelp: Latest help messages in O2
-    """
-    
-    helpList = []
-    mergedHelp = {}
-    
-    adaptList = []
-    mergedAdapt = {}
-    
-    # header for github download
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.47 Safari/537.36"
-        }
-    try:
-        context = ssl._create_unverified_context() # prevent ssl problems
-    except urllib.error.HTTPError as error:
-        logging.error(error)
-    
-    for url in input.values():
-        try:
-            htmlContent = urlopen(Request(url, headers = headers), context = context).read().decode("utf-8")
-        except urllib.error.HTTPError as error:
-            logging.exception(error)
-            sys.exit()
-        
-        # call configurable selector function
-        rawConfigurables = configurableSelectorWithRegex(htmlContent)
-        
-        # process raw datas
-        processedHelpMessages = rawHelpMessageProcessor(rawConfigurables)
-        adaptAnalysisDict = rawAdaptiveTaskProcessor(rawConfigurables)
-        
-        # Add all processed data to list
-        helpList.append(processedHelpMessages)
-        adaptList.append(adaptAnalysisDict)
-    
-    # Merge all of the processed data into dict
-    for helpConfig in helpList:
-        mergedHelp.update(helpConfig)
-    
-    for adapt in adaptList:
-        mergedAdapt.update(adapt)
-    
-    # apply transformations
-    mergedHelp = replaceDictKeys(mergedAdapt, mergedHelp)
-    mergedHelp = transformDictKeys(mergedHelp, adaptAnalysisDict)
-    return mergedHelp

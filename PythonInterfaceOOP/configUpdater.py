@@ -18,7 +18,7 @@
 from extramodules.configSetter import MasterLogger
 from extramodules.o2TaskEnums import DQTasksUrlEnum, DQBarrelDepsUrlEnum, DQCommonDepsUrlEnum, DQMuonDepsUrlEnum, ConverterTasksUrlEnum, CentralityTaskEnum
 from extramodules.utils import loadJson, dumpJson
-from extramodules.configUpdaterFramework import ConfigMerger, removeUnmatchedSubkeys, sortDictByKeysAndAddNewTasks, alignDicts, latestConfigFileGenerator, newAddedConfigsReport
+from extramodules.configUpdaterFramework import ConfigMerger, removeUnmatchedSubkeys, alignDicts, latestConfigFileGenerator, newAddedConfigsReport
 from extramodules.choicesHandler import ChoicesCompleterList
 import json
 import argparse
@@ -30,7 +30,7 @@ import time
 logger = MasterLogger().getAdvancedLogger(f"configUpdater_{int(time.time())}.log", "INFO")
 
 
-def taskUpdater(taskWithDeps: dict, oldConfigList: list, keepTasks = [], keepSubkeys: list = []):
+def updatedConfigFileGenerator(taskWithDeps: dict, oldConfigList: list, keepTasks = [], keepSubkeys: list = []):
     """
     Update configuration files for a given task with new dependencies and settings.
 
@@ -73,29 +73,30 @@ def taskUpdater(taskWithDeps: dict, oldConfigList: list, keepTasks = [], keepSub
     
     configsToCreate = [element.replace(oldConfigsDir, newConfigsDir) for element in oldConfigList]
     
-    # Merge config json file with latest version
-    for configJson in oldConfigJsonList:
-        tempObj = ConfigMerger(configJson, taskWithDepsJson)
+    # Merge config json file with latest version (for keeping aod dpl tasks and re-order parrent keys as tasks)
+    for oldConfigJson in oldConfigJsonList:
+        tempObj = ConfigMerger(oldConfigJson, taskWithDepsJson)
         mergedConfigs.append(tempObj.mergeConfigs())
     
-    # Remove deprecated options and align Jsons
+
     for i, mergedConfig in enumerate(mergedConfigs):
+        # Remove deprecated tasks and configurables/process functions
         logger.info(f"Key Remove Section for ==> {oldConfigList[i]}")
         transformConfig = removeUnmatchedSubkeys(mergedConfig, taskWithDepsJson, keepTasks, keepSubKeys)
+        
+        # Re-order Sub keys (configurables/process funcs) as expected
         transformConfig = alignDicts(taskWithDepsJson, transformConfig, keepTasks)
         transformedConfigList.append(transformConfig)
-    
-    # Re-order Tasks as expected
-    for i, (oldConfig, transformedConfig) in enumerate(zip(oldConfigJsonList, transformedConfigList)):
-        logger.info(f"Sort Dict By Keys and Add New Tasks Section for ==> {oldConfigList[i]}")
-        latestConfigList.append(sortDictByKeysAndAddNewTasks(transformedConfig, oldConfig))
-    
-    # Generate latest configs
-    for oldConfig, oldConfigJson, transformedConfig, configToCreate, latestConfig in zip(oldConfigList, oldConfigJsonList, transformedConfigList, configsToCreate, latestConfigList):
-        logger.info(f"New Added Configs Section For ==> {oldConfig}")
-        newAddedConfigsReport(latestConfig, oldConfigJson)
         
-        dumpJson(configToCreate, latestConfig, 4)
+
+    for oldConfig, oldConfigJson, transformedConfig, configToCreate in zip(oldConfigList, oldConfigJsonList, transformedConfigList, configsToCreate):
+        
+        # Generate report for new configs - tasks
+        logger.info(f"New Added Configs Section For ==> {oldConfig}")
+        newAddedConfigsReport(transformedConfig, oldConfigJson)
+        
+        # Generate latest configs
+        dumpJson(configToCreate, transformedConfig, 4)
         logger.info(f"{configToCreate} created successfully.")
     
     logger.info("Config Updating process finished.")
@@ -266,65 +267,65 @@ if __name__ == "__main__":
         logger.info("Report Generation for All PWG-DQ Configs...")
         
         logger.info("Generating Report For TableMaker===")
-        taskUpdater(tableMaker, configListTableMakerData, keepTasks, keepSubKeys)
+        updatedConfigFileGenerator(tableMaker, configListTableMakerData, keepTasks, keepSubKeys)
         
         logger.info("Generating Report For TableMakerMC===")
-        taskUpdater(tableMakerMC, configListTableMakerMC, keepTasks)
+        updatedConfigFileGenerator(tableMakerMC, configListTableMakerMC, keepTasks)
         
         logger.info("Generating Report For dqEfficiency===")
-        taskUpdater(dqEfficiency, configListDQEfficiency, keepTasks)
+        updatedConfigFileGenerator(dqEfficiency, configListDQEfficiency, keepTasks)
         
         logger.info("Generating Report for TableReader===")
-        taskUpdater(tableReader, configListTableReader, keepTasks)
+        updatedConfigFileGenerator(tableReader, configListTableReader, keepTasks)
         
         logger.info("Generating Report For dqFlow===")
-        taskUpdater(dqFlow, configListDQFlow, keepTasks)
+        updatedConfigFileGenerator(dqFlow, configListDQFlow, keepTasks)
         
         logger.info("Generating Report For dalitzSelection===")
-        taskUpdater(dalitzSelection, configListDalitzSelection, keepTasks)
+        updatedConfigFileGenerator(dalitzSelection, configListDalitzSelection, keepTasks)
         
         logger.info("Generating Report For filterPP===")
-        taskUpdater(filterPP, configListFilterPP, keepTasks)
+        updatedConfigFileGenerator(filterPP, configListFilterPP, keepTasks)
         
         logger.info("Generating Report For filterPPwithAssociation===")
-        taskUpdater(filterPPWithAssociation, configListFilterPPWithAssociation, keepTasks)
+        updatedConfigFileGenerator(filterPPWithAssociation, configListFilterPPWithAssociation, keepTasks)
         
         logger.info("Generating Report For v0selector===")
-        taskUpdater(v0selector, configListV0selector, keepTasks)
+        updatedConfigFileGenerator(v0selector, configListV0selector, keepTasks)
         sys.exit()
     
     if "tableMaker" in args.update:
         logger.info("Generating Report For TableMaker===")
-        taskUpdater(tableMaker, configListTableMakerData, keepTasks, keepSubKeys)
+        updatedConfigFileGenerator(tableMaker, configListTableMakerData, keepTasks, keepSubKeys)
     
     if "tableMakerMC" in args.update:
         logger.info("Generating Report For TableMakerMC===")
-        taskUpdater(tableMakerMC, configListTableMakerMC, keepTasks)
+        updatedConfigFileGenerator(tableMakerMC, configListTableMakerMC, keepTasks)
     
     if "dqEfficiency" in args.update:
         logger.info("Generating Report For dqEfficiency===")
-        taskUpdater(dqEfficiency, configListDQEfficiency, keepTasks)
+        updatedConfigFileGenerator(dqEfficiency, configListDQEfficiency, keepTasks)
     
     if "tableReader" in args.update:
         logger.info("Generating Report for TableReader===")
-        taskUpdater(tableReader, configListTableReader, keepTasks)
+        updatedConfigFileGenerator(tableReader, configListTableReader, keepTasks)
     
     if "dqFlow" in args.update:
         logger.info("Generating Report For dqFlow===")
-        taskUpdater(dqFlow, configListDQFlow, keepTasks)
+        updatedConfigFileGenerator(dqFlow, configListDQFlow, keepTasks)
     
     if "dalitzSelection" in args.update:
         logger.info("Generating Report For dalitzSelection===")
-        taskUpdater(dalitzSelection, configListDalitzSelection, keepTasks)
+        updatedConfigFileGenerator(dalitzSelection, configListDalitzSelection, keepTasks)
     
     if "filterPP" in args.update:
         logger.info("Generating Report For filterPP===")
-        taskUpdater(filterPP, configListFilterPP, keepTasks)
+        updatedConfigFileGenerator(filterPP, configListFilterPP, keepTasks)
     
     if "filterPPwithAssociation" in args.update:
         logger.info("Generating Report For filterPPwithAssociation===")
-        taskUpdater(filterPPWithAssociation, configListFilterPPWithAssociation, keepTasks)
+        updatedConfigFileGenerator(filterPPWithAssociation, configListFilterPPWithAssociation, keepTasks)
     
     if "v0selector" in args.update:
         logger.info("Generating Report For v0selector===")
-        taskUpdater(v0selector, configListV0selector, keepTasks)
+        updatedConfigFileGenerator(v0selector, configListV0selector, keepTasks)
