@@ -16,17 +16,61 @@
 # This script includes setter functions for configurables (Developer package)
 
 from extramodules.dqLibGetter import DQLibGetter
-from .utils import convertListToStr, listToString, stringToList
+from extramodules.utils import convertListToStr, listToString, stringToList
+from extramodules.choicesHandler import ChoicesCompleterList
+from argcomplete.completers import ChoicesCompleter
 import logging
-from logging import handlers
+from logging import handlers, RootLogger
 import sys
 import os
 import json
 import argparse
-from extramodules.choicesHandler import ChoicesCompleterList
 import argcomplete
-from argcomplete.completers import ChoicesCompleter
-from typing import Any
+
+
+class MasterLogger(object):
+    
+    """Main class for logging complex pipelines"""
+    
+    def __init__(self):
+        self._logger = logging.getLogger("crumbs")
+        #self._logfmt = "{%(filename)s - L#%(lineno)d} [%(levelname)s] - %(message)s"
+        self._logfmt = "[%(levelname)s] - %(message)s"
+    
+    @property
+    def getBasicLogger(self) -> RootLogger:
+        logging.basicConfig(format = self._logfmt, level = "INFO")
+        return self._logger
+    
+    @staticmethod
+    def getInterfaceLogger(level: str) -> None:
+        logging.basicConfig(format = "[%(levelname)s] %(message)s", level = level)
+    
+    @staticmethod
+    def getInterfaceLoggerFile(argDebug, fileName):
+        log = logging.getLogger("")
+        level = logging.getLevelName(argDebug)
+        log.setLevel(level)
+        format = logging.Formatter("[%(levelname)s] %(message)s")
+        
+        ch = logging.StreamHandler(sys.stdout)
+        ch.setFormatter(format)
+        log.addHandler(ch)
+        
+        loggerFile = fileName
+        if os.path.isfile(loggerFile):
+            os.remove(loggerFile)
+        
+        fh = handlers.RotatingFileHandler(loggerFile, maxBytes = (1048576 * 5), backupCount = 7, mode = "w")
+        fh.setFormatter(format)
+        log.addHandler(fh)
+    
+    def getAdvancedLogger(self, logFileName, level = "INFO") -> RootLogger:
+        stream_handler = logging.StreamHandler()
+        stream_handler.flush = lambda: None # Set flush to a no-op function to avoid buffering
+        file_handler = logging.FileHandler(logFileName)
+        logging.basicConfig(format = self._logfmt, level = level, handlers = [stream_handler, file_handler])
+        return self._logger
 
 
 def dispArgs(allArgs: dict) -> None:
@@ -72,11 +116,11 @@ def dispO2HelpMessage(argHelpO2: bool, commandToRun: str):
         sys.exit()
 
 
-def debugSettings(argDebug: bool, argLogFile: bool, fileName: str) -> None:
+def debugSettings(argDebug: str, argLogFile: bool, fileName: str) -> None:
     """Set Debug settings for CLI
 
     Args:
-        argDebug (bool): Debug Level
+        argDebug (str): Debug Level
         argLogFile (bool): CLI argument as logFile
         fileName (str): Output name of log file
 
@@ -89,25 +133,10 @@ def debugSettings(argDebug: bool, argLogFile: bool, fileName: str) -> None:
         numeric_level = getattr(logging, DEBUG_SELECTION.upper(), None)
         if not isinstance(numeric_level, int):
             raise ValueError("Invalid log level: %s" % DEBUG_SELECTION)
-        logging.basicConfig(format = "[%(levelname)s] %(message)s", level = DEBUG_SELECTION)
+        MasterLogger().getInterfaceLogger(DEBUG_SELECTION)
     
     if argLogFile and argDebug:
-        log = logging.getLogger("")
-        level = logging.getLevelName(argDebug)
-        log.setLevel(level)
-        format = logging.Formatter("[%(levelname)s] %(message)s")
-        
-        ch = logging.StreamHandler(sys.stdout)
-        ch.setFormatter(format)
-        log.addHandler(ch)
-        
-        loggerFile = fileName
-        if os.path.isfile(loggerFile):
-            os.remove(loggerFile)
-        
-        fh = handlers.RotatingFileHandler(loggerFile, maxBytes = (1048576 * 5), backupCount = 7, mode = "w")
-        fh.setFormatter(format)
-        log.addHandler(fh)
+        MasterLogger().getInterfaceLoggerFile(argDebug, fileName)
 
 
 def setConverters(allArgs: dict, updatedConfigFileName: str, commandToRun: str) -> str:

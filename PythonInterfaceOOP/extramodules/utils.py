@@ -18,7 +18,6 @@
 import json
 import re
 import logging
-from typing import Any
 
 
 def listToString(s: list):
@@ -107,6 +106,15 @@ def dumpJson(updatedConfigFileName: str, config: dict) -> None:
     
     with open(updatedConfigFileName, "w") as outputFile:
         json.dump(config, outputFile, indent = 2)
+
+
+"""
+def dumpYaml(updatedConfigFileName: str, config: dict) -> None:
+    import yaml
+    
+    with open(updatedConfigFileName, "w") as outputFile:
+        yaml.dump(config, outputFile, indent = 4, width=float("inf"))
+"""
 
 
 def getIfStartedInDoubleQuotes(headerFileName: str) -> list:

@@ -62,7 +62,7 @@ def main():
     specificDeps = {
         "processFull": [],
         "processFullWithCov": [],
-        "processFullWithCovAndEventFilter" : ["o2-analysis-dq-filter-pp"],
+        "processFullWithCovAndEventFilter": ["o2-analysis-dq-filter-pp"],
         "processFullWithCent": ["o2-analysis-centrality-table"],
         "processFullWithCentAndMults": ["o2-analysis-centrality-table"],
         "processBarrelOnly": [],
@@ -71,7 +71,7 @@ def main():
         "processBarrelOnlyWithDalitzBits": ["o2-analysis-dq-dalitz-selection"],
         "processBarrelOnlyWithEventFilter": ["o2-analysis-dq-filter-pp"],
         "processBarrelOnlyWithMults": [],
-        "processBarrelOnlyWithCovAndEventFilter" : ["o2-analysis-dq-filter-pp"],
+        "processBarrelOnlyWithCovAndEventFilter": ["o2-analysis-dq-filter-pp"],
         "processBarrelOnlyWithQvector": ["o2-analysis-centrality-table", "o2-analysis-dq-flow"],
         "processBarrelOnlyWithCent": ["o2-analysis-centrality-table"],
         "processBarrelOnlyWithCentAndMults": ["o2-analysis-centrality-table"],

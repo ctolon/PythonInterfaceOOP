@@ -49,9 +49,9 @@ def main():
     
     MY_PATH = os.path.abspath(os.getcwd())
     TEMP_LIB_PATH = '/templibs/'
-    # HOME_PATH = os.environ["HOME"]
+    HOME_PATH = os.environ["HOME"]
     
-    ALICE_SOFTWARE_PATH = os.environ["HOME"] + "/alice"
+    ALICE_SOFTWARE_PATH = HOME_PATH + "/alice"
     
     localPathCutsLibrary = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/CutsLibrary.cxx"
     localPathMCSignalsLibrary = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/MCSignalLibrary.cxx"
@@ -195,16 +195,11 @@ def main():
             if extrargs.debug:
                 try:
                     context = ssl._create_unverified_context() # prevent ssl problems
-                    # request = urllib.request.urlopen(URL_CUTS_LIBRARY, context = context)
-                    # request = urllib.request.urlopen(URL_MCSIGNALS_LIBRARY, context = context)
-                    # request = urllib.request.urlopen(URL_MIXING_LIBRARY, context = context)
-                    # request = urllib.request.urlopen(URL_HISTOGRAMS_LIBRARY, context = context)
                 except urllib.error.HTTPError as error:
                     logging.error(error)
             else:
                 # Dummy SSL Adder
                 context = ssl._create_unverified_context() # prevent ssl problems
-                # request = urllib.request.urlopen(URL_CUTS_LIBRARY, context = context)
             
             # HTTP Request
             requestCutsLibrary = Request(URL_CUTS_LIBRARY, headers = headers)
