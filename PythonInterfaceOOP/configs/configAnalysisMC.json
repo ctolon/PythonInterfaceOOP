@@ -8,7 +8,7 @@
         "end-value-enumeration": "-1",
         "step-value-enumeration": "1",
         "aod-file": "reducedAod_mc.root",
-        "aod-reader-json": "configs\/readerConfiguration_reducedEventMC.json"
+        "aod-reader-json": "configs/readerConfiguration_reducedEventMC.json"
     },
     "internal-dpl-injected-dummy-sink": "",
     "analysis-event-selection": {
@@ -40,7 +40,7 @@
         "cfgUseKFVertexing": "false",
         "cfgUseRemoteField": "false",
         "cfgMagField": "5.0",
-        "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
+        "ccdburl": "http://alice-ccdb.cern.ch",
         "grpmagPath": "GLO/Config/GRPMagField",
         "cfgUseAbsDCA": "false",
         "cfgPropToPCA": "false",

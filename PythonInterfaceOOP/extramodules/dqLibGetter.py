@@ -34,7 +34,7 @@ class DQLibGetter(object):
         object (object): self
     """
     
-    def __init__(self, allAnalysisCuts = [], allOnlyPairCuts = [], allMCSignals = [], allSels = [], allMixing = [], allHistos = [], allEventHistos = [], allTrackHistos = [], allMCTruthHistos = [], allPairHistos = [], allDileptonHistos = []) -> None:
+    def __init__(self, allAnalysisCuts = [], allOnlyPairCuts = [], allMCSignals = [], allSels = [], allMixing = [], allLHCPeriods = [], allHistos = [], allEventHistos = [], allTrackHistos = [], allMCTruthHistos = [], allPairHistos = [], allDileptonHistos = []) -> None:
         
         # Define Analysis Cuts, MC Signals and Histograms
         self.allAnalysisCuts = list(allAnalysisCuts)
@@ -42,6 +42,7 @@ class DQLibGetter(object):
         self.allMCSignals = list(allMCSignals)
         self.allSels = list(allSels)
         self.allMixing = list(allMixing)
+        self.allLHCPeriods = list(allLHCPeriods)
         self.allHistos = list(allHistos)
         self.allEventHistos = list(allEventHistos)
         self.allTrackHistos = list(allTrackHistos)
@@ -80,6 +81,7 @@ class DQLibGetter(object):
         URL_MCSIGNALS_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MCSignalLibrary.cxx?raw=true"
         URL_MIXING_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MixingLibrary.cxx?raw=true"
         URL_HISTOGRAMS_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/HistogramsLibrary.cxx?raw=true"
+        URL_VAR_MANAGER = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/VarManager.cxx?raw=true"
         
         # Create templibs directory if not exist
         if not os.path.isdir("templibs"):
@@ -92,7 +94,7 @@ class DQLibGetter(object):
         
         # Github Links for CutsLibrary and MCSignalsLibrary from PWG-DQ --> download from github
         # This condition solves performance issues
-        if (os.path.isfile("templibs/tempCutsLibrary.cxx") and os.path.isfile("templibs/tempMCSignalsLibrary.cxx") and os.path.isfile("templibs/tempMixingLibrary.cxx") and os.path.isfile("templibs/tempHistogramsLibrary.cxx")) is False:
+        if (os.path.isfile("templibs/tempCutsLibrary.cxx") and os.path.isfile("templibs/tempMCSignalsLibrary.cxx") and os.path.isfile("templibs/tempMixingLibrary.cxx") and os.path.isfile("templibs/tempHistogramsLibrary.cxx") and os.path.isfile("templibs/tempVarManager.cxx")) is False:
             print("[INFO] Some Libs are Missing. They will download.")
             
             # Dummy SSL Adder
@@ -104,24 +106,33 @@ class DQLibGetter(object):
             requestMCSignalsLibrary = Request(URL_MCSIGNALS_LIBRARY, headers = headers)
             requestMixingLibrary = Request(URL_MIXING_LIBRARY, headers = headers)
             requestHistogramsLibrary = Request(URL_HISTOGRAMS_LIBRARY, headers = headers)
+            requestVarManager = Request(URL_VAR_MANAGER, headers = headers)
             
             # Get Files With Http Requests
             htmlCutsLibrary = urlopen(requestCutsLibrary, context = context).read()
             htmlMCSignalsLibrary = urlopen(requestMCSignalsLibrary, context = context).read()
             htmlMixingLibrary = urlopen(requestMixingLibrary, context = context).read()
             htmlHistogramsLibrary = urlopen(requestHistogramsLibrary, context = context).read()
+            htmlVarManager= urlopen(requestVarManager, context = context).read()
             
             # Save Disk to temp DQ libs
             writeFile("templibs/tempCutsLibrary.cxx", htmlCutsLibrary)
             writeFile("templibs/tempMCSignalsLibrary.cxx", htmlMCSignalsLibrary)
             writeFile("templibs/tempMixingLibrary.cxx", htmlMixingLibrary)
             writeFile("templibs/tempHistogramsLibrary.cxx", htmlHistogramsLibrary)
+            writeFile("templibs/tempVarManager.cxx", htmlVarManager)
             print("[INFO] Libs downloaded succesfully.")
         
         # Get MC Signals and Mixing vars from DQ Framework header files
         self.allMCSignals = getIfStartedInDoubleQuotes("templibs/tempMCSignalsLibrary.cxx")
         self.allMixing = getIfStartedInDoubleQuotes("templibs/tempMixingLibrary.cxx")
         
+        # Get LHC Periods from DQ Framework VarManager cxx file
+        with open("templibs/tempVarManager.cxx") as f:
+            stringIfSearch = [x for x in f if "if" and "period.Contains" in x]
+            for i in stringIfSearch:
+                self.allLHCPeriods.extend(re.findall('"([^"]*)"', i))
+            
         # Get All histograms with flags
         with open("templibs/tempHistogramsLibrary.cxx") as f:
             for line in f:

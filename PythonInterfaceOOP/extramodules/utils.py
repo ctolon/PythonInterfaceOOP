@@ -101,11 +101,11 @@ def loadJson(fileName: str) -> dict:
         return json.load(configFile)
 
 
-def dumpJson(updatedConfigFileName: str, config: dict) -> None:
+def dumpJson(updatedConfigFileName: str, config: dict, indent = 2) -> None:
     """JSON dump util function"""
     
     with open(updatedConfigFileName, "w") as outputFile:
-        json.dump(config, outputFile, indent = 2)
+        json.dump(config, outputFile, indent = indent)
 
 
 """

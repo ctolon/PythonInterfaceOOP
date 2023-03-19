@@ -7,16 +7,15 @@
         "start-value-enumeration": "0",
         "end-value-enumeration": "-1",
         "step-value-enumeration": "1",
-        "aod-file": "\/home\/iarsene\/data\/2020\/LHC20f6\/246994\/PWGZZ\/Run3_Conversion\/207_20210919-0804\/AOD\/001\/AO2D.root"
+        "aod-file": "/home/iarsene/data/2020/LHC20f6/246994/PWGZZ/Run3_Conversion/207_20210919-0804/AOD/001/AO2D.root"
     },
     "internal-dpl-aod-spawner": "",
     "internal-dpl-aod-index-builder": "",
-    "mc-converter": "",
     "timestamp-task": {
         "verbose": "false",
-        "rct-path": "RCT\/Info\/RunInformation",
-        "orbit-reset-path": "CTP\/Calib\/OrbitReset",
-        "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
+        "rct-path": "RCT/Info/RunInformation",
+        "orbit-reset-path": "CTP/Calib/OrbitReset",
+        "ccdb-url": "http://alice-ccdb.cern.ch",
         "isRun2MC": "true"
     },
     "event-selection-task": {
@@ -28,13 +27,14 @@
         "processRun3": "false"
     },
     "bc-selection-task": {
+        "triggerBcShift": "999",
         "processRun2": "true",
         "processRun3": "false"
     },
     "track-selection": {
-        "compatibilityIU": "false",
         "isRun3": "false",
         "produceFBextendedTable": "false",
+        "compatibilityIU": "false",
         "itsMatching": "0",
         "ptMin": "0.1",
         "ptMax": "1e+10",
@@ -42,11 +42,11 @@
         "etaMax": "0.8"
     },
     "track-propagation": {
-        "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
-        "lutPath": "GLO\/Param\/MatLUT",
-        "geoPath": "GLO\/Config\/GeometryAligned",
-        "grpPath": "GLO\/GRP\/GRP",
-        "mVtxPath": "GLO\/Calib\/MeanVertex",
+        "ccdb-url": "http://alice-ccdb.cern.ch",
+        "lutPath": "GLO/Param/MatLUT",
+        "geoPath": "GLO/Config/GeometryAligned",
+        "grpmagPath": "GLO/Config/GRPMagField",
+        "mVtxPath": "GLO/Calib/MeanVertex",
         "processStandard": "false",
         "processCovariance": "true"
     },
@@ -68,20 +68,22 @@
         "estRun2CL1": "-1",
         "estFV0A": "-1",
         "estFT0M": "-1",
+        "estFT0A": "-1",
+        "estFT0C": "-1",
         "estFDDM": "-1",
         "estNTPV": "-1",
         "ccdburl": "http://alice-ccdb.cern.ch",
         "ccdbpath": "Centrality/Estimators",
-        "genname": "",
         "doNotCrashOnNull": "false",
         "processRun2": "true",
-        "processRun3": "false"
+        "processRun3": "false",
+        "genname": ""
     },
     "tof-pid": {
         "param-file": "",
         "param-sigma": "TOFResoParams",
-        "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
-        "ccdbPath": "Analysis\/PID\/TOF",
+        "ccdb-url": "http://alice-ccdb.cern.ch",
+        "ccdbPath": "Analysis/PID/TOF",
         "passName": "",
         "ccdb-timestamp": "-1",
         "enableTimeDependentResponse": "false",
@@ -102,8 +104,8 @@
     "tof-pid-full": {
         "param-file": "",
         "param-sigma": "TOFResoParams",
-        "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
-        "ccdbPath": "Analysis\/PID\/TOF",
+        "ccdb-url": "http://alice-ccdb.cern.ch",
+        "ccdbPath": "Analysis/PID/TOF",
         "passName": "",
         "ccdb-timestamp": "-1",
         "enableTimeDependentResponse": "false",
@@ -119,19 +121,20 @@
         "pid-he": "-1",
         "pid-al": "-1",
         "processWSlice": "true",
-        "processWoSlice": "false"
+        "processWoSlice": "false",
+        "processWoSliceDev": "false"
     },
     "tpc-pid-full": {
         "param-file": "",
-        "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
-        "ccdbPath": "Analysis\/PID\/TPC\/Response",
+        "ccdb-url": "http://alice-ccdb.cern.ch",
+        "ccdbPath": "Analysis/PID/TPC/Response",
         "ccdb-timestamp": "0",
         "useNetworkCorrection": "false",
         "autofetchNetworks": "true",
         "networkPathLocally": "network.onnx",
-        "networkSetNumThreads": "0",
+        "networkPathCCDB": "Analysis/PID/TPC/ML",
         "enableNetworkOptimizations": "true",
-        "networkPathCCDB": "Analysis\/PID\/TPC\/ML",
+        "networkSetNumThreads": "0",
         "pid-el": "1",
         "pid-mu": "1",
         "pid-pi": "1",
@@ -145,17 +148,21 @@
     "tof-event-time": {
         "minMomentum": "0.5",
         "maxMomentum": "2.0",
+        "maxEvTimeTOF": "100000.0",
         "param-file": "",
         "param-sigma": "TOFReso",
-        "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
-        "ccdbPath": "Analysis\/PID\/TOF",
+        "ccdb-url": "http://alice-ccdb.cern.ch",
+        "ccdbPath": "Analysis/PID/TOF",
         "ccdb-timestamp": "-1",
         "processRun2": "true",
         "processNoFT0": "false",
         "processFT0": "false",
         "processOnlyFT0": "false"
     },
-    "tof-signal": "",
+    "tof-signal": {
+        "processRun3": "false",
+        "processRun2": "true"
+    },
     "tof-pid-beta": {
         "tof-expreso": "80"
     },
@@ -169,7 +176,7 @@
         "cfgEtaCut": "0.9",
         "cfgTPCNSigElLow": "-3",
         "cfgTPCNSigElHigh": "3",
-        "ccdb-url": "http:\/\/alice-ccdb.cern.ch",
+        "ccdb-url": "http://alice-ccdb.cern.ch",
         "ccdb-path-tpc": "Users/i/iarsene/Calib/TPCpostCalib",
         "cfgTPCpostCalib": "false",
         "processFullTracks": "true",
@@ -179,6 +186,10 @@
         "cfgEventCuts": "eventStandardNoINT7",
         "cfgBarrelTrackCuts": "jpsiPID1",
         "cfgMuonCuts": "muonQualityCuts,muonTightQualityCutsForTests",
+        "cfgAddEventHistogram": "triggerall,cent,mc",
+        "cfgAddTrackHistogram": "dca,its,tpcpid,tofpid,mc",
+        "cfgAddMuonHistogram": "muon,mc",
+        "cfgAddMCTruthHistogram": "",
         "cfgBarrelLowPt": "1.0",
         "cfgMuonLowPt": "1.0",
         "cfgMinTpcSignal": "30",
@@ -187,10 +198,7 @@
         "cfgIsRun2": "true",
         "cfgQA": "true",
         "cfgDetailedQA": "true",
-        "cfgAddEventHistogram": "triggerall,cent,mc",
-        "cfgAddTrackHistogram": "dca,its,tpcpid,tofpid,mc",
-        "cfgAddMuonHistogram": "muon,mc",
-        "cfgAddMCTruthHistogram": "",
+        "cfgIsAmbiguous": "false",
         "processFull": "false",
         "processFullWithCov": "false",
         "processBarrelOnly": "false",

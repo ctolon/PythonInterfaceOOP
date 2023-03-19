@@ -95,7 +95,7 @@ def taskUpdater(taskWithDeps: dict, oldConfigList: list, keepTasks = [], keepSub
         logger.info(f"New Added Configs Section For ==> {oldConfig}")
         newAddedConfigsReport(latestConfig, oldConfigJson)
         
-        dumpJson(configToCreate, latestConfig)
+        dumpJson(configToCreate, latestConfig, 4)
         logger.info(f"{configToCreate} created successfully.")
     
     logger.info("Config Updating process finished.")
@@ -104,7 +104,7 @@ def taskUpdater(taskWithDeps: dict, oldConfigList: list, keepTasks = [], keepSub
 
 if __name__ == "__main__":
     
-    mainDQTasks = ["all", "tableMaker", "tableMakerMC", "dqEfficiency", "dqFlow", "dalitzSelection", "filterPP", "filterPPwithAssociation", "v0selector"]
+    mainDQTasks = ["all", "tableMaker", "tableMakerMC", "dqEfficiency", "tableReader", "dqFlow", "dalitzSelection", "filterPP", "filterPPwithAssociation", "v0selector"]
     
     parser = argparse.ArgumentParser(description = "Arguments to pass")
     parser.add_argument("--update", help = "Tasks to Update", action = "store", nargs = "*", type = str, choices = mainDQTasks, required = True).completer = ChoicesCompleterList(mainDQTasks)
@@ -119,7 +119,7 @@ if __name__ == "__main__":
     configListDQEfficiency = ["configs/configAnalysisMC.json"]
     configListDalitzSelection = ["configs/configDalitzSelectionDataRun2.json", "configs/configDalitzSelectionDataRun3.json"]
     configListFilterPP = ["configs/configFilterPPDataRun2.json", "configs/configFilterPPDataRun3.json"]
-    configListFilterPPWithAssociation = ["configs/configFİlterPPwithAssociationDataRun2.json", "configs/configFİlterPPwithAssociationDataRun3.json"]
+    configListFilterPPWithAssociation = ["configs/configFilterPPwithAssociationDataRun2.json", "configs/configFilterPPwithAssociationDataRun3.json"]
     configListDQFlow = ["configs/configFlowDataRun2.json", "configs/configFlowDataRun3.json"]
     configListV0selector = ["configs/configV0SelectorDataRun2.json", "configs/configV0SelectorDataRun3.json"]
     

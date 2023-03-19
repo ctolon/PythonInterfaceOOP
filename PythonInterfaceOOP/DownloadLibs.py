@@ -62,6 +62,8 @@ def main():
     URL_MCSIGNALS_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MCSignalLibrary.cxx?raw=true")
     URL_MIXING_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/MixingLibrary.cxx?raw=true")
     URL_HISTOGRAMS_LIBRARY = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/HistogramsLibrary.cxx?raw=true"
+    URL_VAR_MANAGER = "https://github.com/AliceO2Group/O2Physics/blob/master/PWGDQ/Core/VarManager.cxx?raw=true"
+
     
     isLibsExist = True
     
@@ -94,6 +96,8 @@ def main():
         URL_MCSIGNALS_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/" + extrargs.version + "/PWGDQ/Core/MCSignalLibrary.cxx?raw=true")
         URL_MIXING_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/" + extrargs.version + "/PWGDQ/Core/MixingLibrary.cxx?raw=true")
         URL_HISTOGRAMS_LIBRARY = ("https://github.com/AliceO2Group/O2Physics/blob/" + extrargs.version + "/PWGDQ/Core/HistogramsLibrary.cxx?raw=true")
+        URL_VAR_MANAGER = ("https://github.com/AliceO2Group/O2Physics/blob/" + extrargs.version +  "/PWGDQ/Core/VarManager.cxx?raw=true")
+
     
     if extrargs.local and extrargs.version:
         logging.warning("Your provided configuration for getting DQ libs in locally. You don't need to configure your github nightly version. It's for Online Downloading")
@@ -128,11 +132,14 @@ def main():
         localPathMCSignalsLibrary = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/MCSignalLibrary.cxx"
         localPathEventMixing = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/MixingLibrary.cxx"
         localPathHistogramsLibrary = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/HistogramsLibrary.cxx"
+        localPathVarManager = ALICE_SOFTWARE_PATH + "/O2Physics/PWGDQ/Core/VarManager.cxx"
         
         logging.info("Local CutsLibrary.cxx Path: %s ", localPathCutsLibrary)
         logging.info("Local MCSignalsLibrary.cxx Path: %s ", localPathMCSignalsLibrary)
         logging.info("Local MixingLibrary.cxx Path: %s ", localPathEventMixing)
         logging.info("Local HistogramsLibrary.cxx Path: %s ", localPathHistogramsLibrary)
+        logging.info("Local VarManager.cxx Path: %s ", localPathVarManager)
+
         try:
             with open(MY_PATH + TEMP_LIB_PATH + "tempCutsLibrary.cxx", "wb") as f:
                 shutil.copyfile(localPathCutsLibrary, MY_PATH + TEMP_LIB_PATH + "tempCutsLibrary.cxx")
@@ -180,17 +187,30 @@ def main():
         except FileNotFoundError:
             logging.error("%s not found in your provided alice-software path!!! Check your alice software path", localPathHistogramsLibrary,)
             sys.exit()
+            
+        try:
+            with open(MY_PATH + TEMP_LIB_PATH + "tempVarManager.cxx", "wb") as f:
+                shutil.copyfile(localPathVarManager, MY_PATH + TEMP_LIB_PATH + "tempVarManager.cxx")
+                if os.path.isfile("templibs/tempVarManager.cxx") is True:
+                    logging.info("tempVarManager.cxx created at %s", MY_PATH + TEMP_LIB_PATH)
+                else:
+                    logging.error("tempVarManager.cxx not created at %s Fatal Error", MY_PATH + TEMP_LIB_PATH)
+                    sys.exit()
+        except FileNotFoundError:
+            logging.error("%s not found in your provided alice-software path!!! Check your alice software path", localPathVarManager,)
+            sys.exit()
         
         logging.info("DQ Libraries pulled from local alice software successfully!")
         sys.exit()
     
     if extrargs.local is False:
-        if (os.path.isfile("tempCutsLibrary.cxx") and os.path.isfile("tempMCSignalsLibrary.cxx") and os.path.isfile("tempMixingLibrary.cxx") and os.path.isfile("tempHistogramsLibrary.cxx")) is False:
+        if (os.path.isfile("templibs/tempCutsLibrary.cxx") and os.path.isfile("templibs/tempMCSignalsLibrary.cxx") and os.path.isfile("templibs/tempMixingLibrary.cxx") and os.path.isfile("templibs/tempHistogramsLibrary.cxx") and os.path.isfile("templibs/tempVarManager.cxx")) is False:
             logging.info("Some Libs are Missing. All DQ libs will download")
             logging.info("Github CutsLibrary.cxx Path: %s ", URL_CUTS_LIBRARY)
             logging.info("Github MCSignalsLibrary.cxx Path: %s ", URL_MCSIGNALS_LIBRARY)
             logging.info("Github MixingLibrary.cxx Path: %s ", URL_MIXING_LIBRARY)
             logging.info("Github HistogramsLibrary.cxx Path: %s ", URL_HISTOGRAMS_LIBRARY)
+            logging.info("Github VarManager.cxx Path: %s ", URL_VAR_MANAGER)
             isLibsExist = False
             if extrargs.debug:
                 try:
@@ -206,12 +226,16 @@ def main():
             requestMCSignalsLibrary = Request(URL_MCSIGNALS_LIBRARY, headers = headers)
             requestMixingLibrary = Request(URL_MIXING_LIBRARY, headers = headers)
             requestHistogramsLibrary = Request(URL_HISTOGRAMS_LIBRARY, headers = headers)
-            
+            requestVarManager = Request(URL_VAR_MANAGER, headers = headers)
+
+
             # Get Files With Http Requests
             htmlCutsLibrary = urlopen(requestCutsLibrary, context = context).read()
             htmlMCSignalsLibrary = urlopen(requestMCSignalsLibrary, context = context).read()
             htmlMixingLibrary = urlopen(requestMixingLibrary, context = context).read()
             htmlHistogramsLibrary = urlopen(requestHistogramsLibrary, context = context).read()
+            htmlVarManager= urlopen(requestVarManager, context = context).read()
+
             
             with open("templibs/tempCutsLibrary.cxx", "wb") as f:
                 f.write(htmlCutsLibrary)
@@ -225,6 +249,9 @@ def main():
             with open("templibs/tempHistogramsLibrary.cxx", "wb") as f:
                 f.write(htmlHistogramsLibrary)
                 logging.info("tempHistogramsLibrary.cxx downloaded successfully from github")
+            with open("templibs/tempVarManager.cxx", "wb") as f:
+                f.write(htmlVarManager)
+                logging.info("tempVarManager.cxx downloaded successfully from github")
         
         if isLibsExist:
             logging.info("DQ Libraries have been downloaded before. If you want to update, delete they manually and run this script again.")

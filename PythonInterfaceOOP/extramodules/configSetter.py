@@ -428,6 +428,7 @@ class SetArgsToArgumentParser(object):
         allMCSignals = dqLibGetter.allMCSignals
         allSels = dqLibGetter.allSels
         allMixing = dqLibGetter.allMixing
+        allRunPeriods = dqLibGetter.allLHCPeriods
         
         # Get all histogram groups for DQ Framework from histogram library
         # NOTE Now we use only all histos for backward comp.
@@ -516,6 +517,7 @@ class SetArgsToArgumentParser(object):
             containsUseAbsDCA = configurable == "cfgUseAbsDCA"
             containsPropToPCA = configurable == "cfgPropToPCA"
             containsTPCpostCalib = configurable == "cfgTPCpostCalib"
+            containsRunPeriods = configurable == "cfgRunPeriods"
             containsProcess = configurable.startswith("process")
             
             # Create arguments with possible autocompletions for DQ Framework
@@ -523,6 +525,8 @@ class SetArgsToArgumentParser(object):
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allAnalysisCuts)
             elif containsSignals:
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allMCSignals)
+            elif containsRunPeriods:
+                groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allRunPeriods)
             elif containsHistogram:
                 groupJsonParser.add_argument("--" + arg, help = "", action = "store", nargs = "*", type = str, metavar = "\b").completer = ChoicesCompleterList(allHistos)
             elif containsSels:
